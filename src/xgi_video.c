@@ -53,11 +53,6 @@ THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <linux/ioctl.h>
 #include <linux/types.h> /* for __u32,__s32....*/
 
-#ifndef __s64
-typedef __signed__ long long __s64;
-typedef unsigned long long __u64;
-#endif
-
 #include <linux/videodev.h>
 #include <linux/fcntl.h> /* for open flags*/
 #include <linux/videodev2.h>
