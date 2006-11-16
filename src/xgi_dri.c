@@ -53,9 +53,9 @@ static char XGIClientDriverName[] = "xgi";
 
 static Bool XGIInitVisualConfigs(ScreenPtr pScreen);
 static Bool XGICreateContext(ScreenPtr pScreen, VisualPtr visual,
-			      drmContext hwContext, void *pVisualConfigPriv,
+			      drm_context_t hwContext, void *pVisualConfigPriv,
 			      DRIContextType contextStore);
-static void XGIDestroyContext(ScreenPtr pScreen, drmContext hwContext,
+static void XGIDestroyContext(ScreenPtr pScreen, drm_context_t hwContext,
 			       DRIContextType contextStore);
 static void XGIDRISwapContext(ScreenPtr pScreen, DRISyncType syncType,
 			       DRIContextType readContextType,
@@ -297,7 +297,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
 
   pXGIDRI->regs.size = XGIIOMAPSIZE;
   pXGIDRI->regs.map = 0;
-  if (drmAddMap(pXGI->drmSubFD, (drmHandle)pXGI->IOAddress,
+  if (drmAddMap(pXGI->drmSubFD, (drm_handle_t)pXGI->IOAddress,
 		pXGIDRI->regs.size, DRM_REGISTERS, 0,
 		&pXGIDRI->regs.handle)<0)
   {
@@ -368,7 +368,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
     /* by mem-map pXGIDRI->agp.handle             */
     /**********************************************/
     pXGIDRI->agp.size = pXGI->agpSize;
-    if (drmAddMap(pXGI->drmSubFD, (drmHandle)0,
+    if (drmAddMap(pXGI->drmSubFD, (drm_handle_t)0,
                  pXGIDRI->agp.size, DRM_AGP, 0,
                  &pXGIDRI->agp.handle) < 0) {
       xf86DrvMsg(pScreen->myNum, X_ERROR,
@@ -469,14 +469,14 @@ XGIDRICloseScreen(ScreenPtr pScreen)
  */
 static Bool
 XGICreateContext(ScreenPtr pScreen, VisualPtr visual,
-		  drmContext hwContext, void *pVisualConfigPriv,
+		  drm_context_t hwContext, void *pVisualConfigPriv,
 		  DRIContextType contextStore)
 {
   return TRUE;
 }
 
 static void
-XGIDestroyContext(ScreenPtr pScreen, drmContext hwContext,
+XGIDestroyContext(ScreenPtr pScreen, drm_context_t hwContext,
 		   DRIContextType contextStore)
 {
 }
