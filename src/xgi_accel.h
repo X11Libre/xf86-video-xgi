@@ -172,7 +172,7 @@ int nanosleep(const struct timespec_ *, struct timespec_ *);
 \
 	WaitCount=65535;\
 	if(pXGI->Chipset == PCI_CHIP_XGIXG20)\
-	{\	
+	{\
 		WaitCount=1;\
 		switch(CurrentHDisplay)\
 		{\
@@ -201,7 +201,7 @@ int nanosleep(const struct timespec_ *, struct timespec_ *);
 				WaitCount=1600;\
 			else if(CurrentColorDepth == 24)\
 				WaitCount=6000;\
-			break;\		
+			break;\
 \
 			case 1280:\
 			if(CurrentColorDepth == 8)\
@@ -210,8 +210,8 @@ int nanosleep(const struct timespec_ *, struct timespec_ *);
 				WaitCount=2000;\
 			else if(CurrentColorDepth == 24)\
 				WaitCount=8000;\
-			break;\	
-\	
+			break;\
+\
 			default:\
 			break;\
 		}\
