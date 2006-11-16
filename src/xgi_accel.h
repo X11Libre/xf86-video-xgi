@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_accel.h,v 1.12 2004/02/25 17:45:13 twini Exp $ */
 /*
  * 2D acceleration for 5597/5598 and 6326
  * Definitions for the XGI engine communication

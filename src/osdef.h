@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/osdef.h,v 1.10 2004/02/25 17:45:11 twini Exp $ */
 /*
  * OS depending defines
  *

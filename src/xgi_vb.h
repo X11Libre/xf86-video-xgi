@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_vb.h,v 1.17 2004/02/25 17:45:14 twini Exp $ */
 /*
  * Video bridge detection and configuration for 300, 315 and 330 series
  * Data and prototypes

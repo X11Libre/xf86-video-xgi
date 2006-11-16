@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/init.c,v 1.53 2004/02/26 15:58:43 twini Exp $ */
 /*
  * Mode initializing code (CRT1 section) 
  * (Universal module for Linux kernel framebuffer and XFree86 4.x)
@@ -60,6 +59,10 @@
  * All comments in this file are by me, regardless if they are marked TW or not.
  *
  */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "init.h"
 #include "vgatypes.h"

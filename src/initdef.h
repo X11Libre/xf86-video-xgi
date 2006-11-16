@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/initdef.h,v 1.34 2004/02/25 17:45:11 twini Exp $ */
 /*
  * Global definitions for init.c and init301.c
  *

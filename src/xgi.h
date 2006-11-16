@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi.h,v 1.111 2004/02/26 09:16:20 twini Exp $ */
 /*
  * Main global data and definitions
  *
@@ -108,6 +107,10 @@
 #include "vgaHW.h"
 #include "vbe.h"
 
+#ifdef XORG_VERSION_CURRENT
+#include "xorgVersion.h"
+#endif
+
 #include "xgi_pci.h"
 
 #include "osdef.h"
@@ -166,7 +169,7 @@
 #define NEED_REPLIES  		/* ? */
 #define EXTENSION_PROC_ARGS void *
 #include "extnsionst.h"  	/* required */
-#include "panoramiXproto.h"  	/* required */
+#include <X11/extensions/panoramiXproto.h>  	/* required */
 #endif
 #endif
 

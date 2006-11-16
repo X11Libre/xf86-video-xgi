@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_common.h,v 1.3 2004/01/03 20:08:02 twini Exp $ */
 /*
  * Common header definitions for XGI 2D/3D/DRM suite
  *

@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_opt.c,v 1.57 2004/02/25 17:45:13 twini Exp $ */
 /*
  * Video driver option evaluation
  *
@@ -33,6 +32,10 @@
  * Authors:  	Thomas Winischhofer <thomas@winischhofer.net>
  *              ?
  */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "xf86.h"
 #include "xf86PciInfo.h"

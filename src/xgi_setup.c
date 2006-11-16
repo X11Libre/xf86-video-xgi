@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_setup.c,v 1.31 2004/02/25 17:45:13 twini Exp $ */
 /*
  * Basic hardware and memory detection
  *
@@ -31,6 +30,11 @@
  * Ideas and methods for old series based on code by Can-Ru Yeou, XGI Inc.
  *
  */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "xf86PciInfo.h"
 #include "xf86Pci.h"
 #include "xf86.h"
@@ -50,11 +54,11 @@
 /* #include "valid_mode.h" */
 
 #define _XF86DGA_SERVER_
-#include "extensions/xf86dgastr.h"
+#include <X11/extensions/xf86dgastr.h>
 
 #include "globals.h"
 #define DPMS_SERVER
-#include "extensions/dpms.h"
+#include <X11/extensions/dpms.h>
 
 #include "initdef.h"   //yilin
 extern  int  FbDevExist;

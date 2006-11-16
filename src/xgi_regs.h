@@ -25,7 +25,6 @@
  *           Mitani Hiroshi <hmitani@drl.mei.co.jp>
  *           David Thomas <davtom@dream.org.uk>.
  */
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_regs.h,v 1.14 2000/12/02 01:16:18 dawes Exp $ */
 
 #ifndef _XGI_REGS_H_
 #define _XGI_REGS_H_

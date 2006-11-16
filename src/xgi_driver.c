@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_driver.c,v 1.185 2004/02/27 17:29:24 twini Exp $ */
 /*
  * XGI driver main code
  *
@@ -44,6 +43,10 @@
  *           David Thomas <davtom@dream.org.uk>.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "fb.h"
 #include "mibank.h"
 #include "micmap.h"
@@ -74,16 +77,16 @@
 #include "valid_mode.h" 
 
 #define _XF86DGA_SERVER_
-#include "extensions/xf86dgastr.h"
+#include <X11/extensions/xf86dgastr.h>
 
 #include "globals.h"
 
 #define DPMS_SERVER
-#include "extensions/dpms.h"
+#include <X11/extensions/dpms.h>
 
 #if (XF86_VERSION_CURRENT >= XF86_VERSION_NUMERIC(4,3,99,0,0)) || (defined(XvExtension))
 #include "xf86xv.h"
-#include "Xv.h"
+#include <X11/extensions/Xv.h>
 #endif
 
 #ifdef XF86DRI

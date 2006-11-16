@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_vga.c,v 1.46 2004/02/26 15:07:02 twini Exp $ */
 /*
  * Mode setup and basic video bridge detection
  *
@@ -32,6 +31,10 @@
  * previously based on code which is Copyright (C) 1998,1999 by Alan
  * Hourihane, Wigan, England
  */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "xf86.h"
 #include "xf86_OSproc.h"

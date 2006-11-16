@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/initdef.h,v 1.4 2000/12/02 01:16:17 dawes Exp $ */
 #ifndef _INITDEF_
 #define _INITDEF_
 

@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_dac.c,v 1.61 2004/02/25 23:22:16 twini Exp $ */
 /*
  * DAC helper functions (Save/Restore, MemClk, etc)
  *
@@ -41,6 +40,10 @@
  * (http://www.xfree86.org/current/LICENSE1.html)
  *
  */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "xf86.h"
 #include "xf86_OSproc.h"

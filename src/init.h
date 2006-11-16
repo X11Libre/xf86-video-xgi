@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/init.h,v 1.48 2004/02/25 17:45:10 twini Exp $ */
 /*
  * Data and prototypes for init.c
  *

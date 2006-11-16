@@ -1,5 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_dri.h,v 1.2 2000/08/04 03:51:46 tsi Exp $ */
-
 /* modified from tdfx_dri.h */
 
 #ifndef _XGI_DRI_

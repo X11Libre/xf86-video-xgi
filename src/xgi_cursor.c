@@ -1,4 +1,3 @@
-
 /*
  * XGI hardware cursor handling
  *
@@ -31,6 +30,10 @@
  * Idea based on code by Can-Ru Yeou, XGI Inc.
  *
  */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "xf86.h"
 #include "xf86PciInfo.h"

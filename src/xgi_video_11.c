@@ -24,7 +24,6 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 **************************************************************************/
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_video.c,v 1.1 2000/12/02 01:16:19 dawes Exp $ */
 
 /*
  * Formerly based on Xv driver for SiS 300, 315 and 330 series by
@@ -53,7 +52,7 @@ THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "xgi.h"
 #include "xf86xv.h"
-#include "Xv.h"
+#include <X11/extensions/Xv.h>
 #include "xaa.h"
 #include "xaalocal.h"
 #include "dixstruct.h"

@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_driver.h,v 1.38 2004/02/25 17:45:13 twini Exp $ */
 /*
  * Global data and definitions
  *

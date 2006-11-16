@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/xgi/xgi_cursor.h,v 1.17 2004/02/25 17:45:13 twini Exp $ */
 /*
  * XGI hardware cursor handling
  * Definitions

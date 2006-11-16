@@ -1,5 +1,3 @@
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/sis/xgi_vidregs.h,v 1.2 2000/12/04 18:50:01 dawes Exp $ */
-
 #ifndef _SIS_VIDREG_H_
 #define _SIS_VIDREG_H_
 
