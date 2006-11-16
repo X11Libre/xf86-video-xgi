@@ -59,19 +59,19 @@
 
 #define xgiG1CRT1_SetCursorPositionX(x,preset)\
 	{\
-		XGIMMIOLONG(0x850C) = BE_SWAP32((x) | ((preset)>>16));\ 
+		XGIMMIOLONG(0x850C) = BE_SWAP32((x) | ((preset)>>16));\
 	}
 
 #define xgiG1CRT1_SetCursorPositionY(y,preset)\
 	{\
-		XGIMMIOLONG(0x8510) =BE_SWAP32((y) | ((preset)>>16));\ 
+		XGIMMIOLONG(0x8510) =BE_SWAP32((y) | ((preset)>>16));\
 	}
 
 /* Jill, read MMIO need swap, 2006/6/22*/
 #define xgiG2CRT1_SetCursorAddressPattern(address,pat_id) \
 {\
 		unsigned long ulTemp ;\
-		ulTemp = BE_SWAP32(XGIMMIOLONG(0x8500)) ;\ 
+		ulTemp = BE_SWAP32(XGIMMIOLONG(0x8500)) ;\
 		ulTemp &= 0xF0FC0000 ;\
 		ulTemp |= (address) & 0x3FFFF ;\
 		ulTemp |= ((pat_id)&0xF)<<24 ;\
@@ -83,7 +83,7 @@
 {\
 		unsigned long ulTemp ;\
 		ulTemp = XGIMMIOLONG(0x8520) ;\
-		ulTemp = BE_SWAP32(ulTemp) ;\		
+		ulTemp = BE_SWAP32(ulTemp) ;\
 		ulTemp &= 0xF0FC0000 ;\
 		ulTemp |= (address) & 0x3FFFF ;\
 		ulTemp |= ((pat_id)&0xF)<<24 ;\
@@ -95,7 +95,7 @@
 	{\
 		unsigned long ulTemp ;\
 		ulTemp = XGIMMIOLONG(0x8500) ;\
-		ulTemp = BE_SWAP32(ulTemp) ;\		
+		ulTemp = BE_SWAP32(ulTemp) ;\
 		ulTemp &= 0xFFFC0000 ;\
 		ulTemp |= (address) & 0x3FFFF ;\
 		XGIMMIOLONG(0x8500) = BE_SWAP32(ulTemp) ;\
@@ -106,7 +106,7 @@
 	{\
 		unsigned long ulTemp ;\
 		ulTemp = XGIMMIOLONG(0x8500) ;\
-		ulTemp = BE_SWAP32(ulTemp) ;\		
+		ulTemp = BE_SWAP32(ulTemp) ;\
 		ulTemp &= 0xF0FFFFFF ;\
 		ulTemp |= ((pat_id)&0xF)<<24 ;\
 		XGIMMIOLONG(0x8500) = BE_SWAP32(ulTemp) ;\
@@ -142,7 +142,7 @@
 	{\
 		unsigned long ulTemp ;\
 		ulTemp = XGIMMIOLONG(0x8520) ;\
-		ulTemp = BE_SWAP32(ulTemp) ;\		
+		ulTemp = BE_SWAP32(ulTemp) ;\
 		ulTemp &= 0xFFFC0000 ;\
 		ulTemp |= (address) & 0x3FFFF ;\
 		XGIMMIOLONG(0x8520) = BE_SWAP32(ulTemp) ;\
@@ -153,7 +153,7 @@
 	{\
 		unsigned long ulTemp ;\
 		ulTemp = XGIMMIOLONG(0x8520) ;\
-		ulTemp = BE_SWAP32(ulTemp) ;\		
+		ulTemp = BE_SWAP32(ulTemp) ;\
 		ulTemp &= 0xF0FFFFFF ;\
 		ulTemp |= ((pat_id)&0xF) << 24 ;\
 		XGIMMIOLONG(0x8520) = BE_SWAP32(ulTemp) ;\
@@ -164,7 +164,7 @@
 	{\
 	    CARD32 ulTemp ;\
 		ulTemp = XGIMMIOLONG(0x8500) ;\
-		ulTemp = BE_SWAP32(ulTemp) ;\		
+		ulTemp = BE_SWAP32(ulTemp) ;\
 		ulTemp &= 0x00FC0000 ;\
 		ulTemp |= 1<<30 ;\
 		ulTemp |= (cursor_base) & 0x3FFFF ;\
@@ -182,7 +182,7 @@
 	{\
 	    CARD32 ulTemp ;\
 		ulTemp = XGIMMIOLONG(0x8520) ;\
-		ulTemp = BE_SWAP32(ulTemp) ;\		
+		ulTemp = BE_SWAP32(ulTemp) ;\
 		ulTemp &= 0x00FC0000 ;\
 		ulTemp |= 1<<30 ;\
 		ulTemp |= (cursor_base) & 0x3FFFF ;\
@@ -191,8 +191,3 @@
 	}
 
 /*******************************************************************/
-
-
-
-
-
