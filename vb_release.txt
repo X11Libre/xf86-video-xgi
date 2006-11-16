@@ -1,0 +1,44 @@
+[2004/08/18] 
+1. Merge XG20 and XG4x C Code
+
+[2004/08/20] 
+1. Code modify : Add CR97 in header and reference DDR/DDR2x according to this byte
+2. Dram Size setting from the data which read from VBIOS
+
+[2004/08/20] XG42 by Hsuan
+1. Add auto over driver in XG42.
+2. When MCLK=207MHz, ECLK=207 or 250MHz, SR32 D[1:0] set 10b.
+
+[2004/9/03] XG42 by Vicent
+1. New Feature: #41, XG42 solve 32-bit boot to Widnows hang issue 
+ - Modify: vb_init.c
+	Modify XG42 SR1F, SR31, SR32, and SR33 for HW request.
+	
+[2004/09/08] XG42 by Hsuan
+1. Feature Modify: Modify XGINew DDR2x default registers. (XG42 #473, #488)
+ - Modify: vb_init.c
+	Modify CR82, CR85, CR86, CR98 in XG42.
+           
+[2004/09/08] XG4x by Vicent
+1. Feature Modify: Add ReadVBIOSTablData function in XGINew_SetDRAMModeRegister340. (XG42 #473, #488)
+ - Modify: vb_init.c
+	Add ReadVBIOSTablData function in XGINew_SetDRAMModeRegister340.
+	
+[2004/09/15] XG20 by kuku
+1. Feature Modify: To set CR51, CR52 value for XG20
+ - Modify: vb_setmode.c
+ 	In XGI_SetCRT1ModeRegs() , set CR51=0x02 and CR52=0x33 when driver mode , CR52=0x73 when dos mode for XG20	            
+
+[2004/09/16] XG4X by Hsuan
+1. Bug Fixed: #524 Multi adapter dos full screen sometimes, CRT have green screen.
+ - Modify: vb_setmode.c
+        In XGI_SetCRT1ModeRegs(), it can't set SR3F D[7:6] = 00b.
+        The DPMS is handled by 2D.  	
+        
+[2004/10/01] XG42 by kuku
+1. Bug Fixed: #530 [32-32] Enable "Overscan" and do Dos prompt switch, the screen shift
+ - Modify: xgiv.h, vb,c, tv301.c
+ 	In xgiv.h add globel parameter. When enable "Overscan" , parameter will be "1"
+ 	And lTVPosTempShift will be "0"
+2. Move down the screen and change mode to another mode, the display is not default(The screen move up).
+   The solution is the same as above.
