@@ -290,8 +290,6 @@ static const char *driSymbols[] = {
 };
 #endif
 
-#ifdef XFree86LOADER
-
 static MODULESETUPPROTO(xgiSetup);
 
 static XF86ModuleVersionInfo xgiVersRec =
@@ -300,10 +298,18 @@ static XF86ModuleVersionInfo xgiVersRec =
     MODULEVENDORSTRING,
     MODINFOSTRING1,
     MODINFOSTRING2,
+#ifdef XORG_VERSION_CURRENT
+    XORG_VERSION_CURRENT,
+#else
     XF86_VERSION_CURRENT,
+#endif
     XGI_MAJOR_VERSION, XGI_MINOR_VERSION, XGI_PATCHLEVEL,
     ABI_CLASS_VIDEODRV,         /* This is a video driver */
+#ifdef ABI_VIDEODRV_VERSION
+    ABI_VIDEODRV_VERSION,
+#else
     6,
+#endif
     MOD_CLASS_VIDEODRV,
     {0,0,0,0}
 };
@@ -420,8 +426,6 @@ xgiSetup(pointer module, pointer opts, int *errmaj, int *errmin)
     if(errmaj) *errmaj = LDR_ONCEONLY;
     return NULL;
 }
-
-#endif /* XFree86LOADER */
 
 
 static Bool
@@ -2575,13 +2579,13 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         XF86_VERSION_MAJOR, XF86_VERSION_MINOR,
         XF86_VERSION_PATCH, XF86_VERSION_SNAP);
 
-	#if XF86_VERSION_CURRENT >= XF86_VERSION_NUMERIC(4,2,99,0,0)
-    if(xf86GetVersion() != XF86_VERSION_CURRENT) 
+#if (XF86_VERSION_CURRENT >= XF86_VERSION_NUMERIC(4,2,99,0,0)) && !defined(XORG_VERSION_CURRENT)
+    if(xf86GetVersion() != XF86_VERSION_CURRENT)
     {
        xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
          "This version of the driver is not compiled for this version of XFree86!\n");
     }
-	#endif
+#endif
 
     /* Allocate a vgaHWRec */
     if(!vgaHWGetHWRec(pScrn)) 
