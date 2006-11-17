@@ -493,58 +493,50 @@ typedef struct {
     ScrnInfoPtr         pScrn_2;
     unsigned char *     BIOS;
     XGI_Private   *     XGI_Pr;
-    unsigned long 	agpHandle;
-    unsigned long	agpAddr;
-    unsigned char 	*agpBase;
-    unsigned int 	agpSize;
-    unsigned int        agpWantedSize;
-    unsigned int        agpWantedPages;
-    unsigned long	agpCmdBufAddr;  /* 300 series */
-    unsigned char 	*agpCmdBufBase;
-    unsigned int 	agpCmdBufSize;
-    unsigned int 	agpCmdBufFree;
-    unsigned long	agpVtxBufAddr;	/* 315 series */
-    unsigned char       *agpVtxBufBase;
-    unsigned int        agpVtxBufSize;
-    unsigned int        agpVtxBufFree;
-#ifdef XF86DRI
-    xgiRegion 		agp;
-    int 		drmSubFD;
-#endif
-    Bool		AGPInitOK;
     int			CRT1ModeNo;		/* Current display mode for CRT1 */
     DisplayModePtr	CRT1DMode;		/* Current display mode for CRT1 */
     int 		CRT2ModeNo;		/* Current display mode for CRT2 */
-    DisplayModePtr	CRT2DMode;		/* Current display mode for CRT2 */
     Bool		CRT2ModeSet;		/* CRT2 mode has been set */
-    Bool		CRT2IsCustom;
     unsigned char	CRT2CR30, CRT2CR31, CRT2CR35, CRT2CR38;
     int			refCount;
-    int 		lastInstance;		/* number of entities */
+    
+    /**
+     * Number of entities
+     *
+     * \bug
+     * This field is tested in one place, but it doesn't appear to ever be
+     * set or modified.
+     */
+    int 		lastInstance;
+
     Bool		DisableDual;		/* Emergency flag */
     Bool		ErrorAfterFirst;	/* Emergency flag: Error after first init -> Abort second */
-    Bool		HWCursor;		/* Backup master settings for use on slave */
-    Bool                TurboQueue;
-    int                 ForceCRT1Type;
-    int                 ForceCRT2Type;
-    int                 OptTVStand;
-    int                 OptTVOver;
-    int			OptTVSOver;
-    int                 OptROMUsage;
-    int			OptUseOEM;
-    Bool                NoAccel;
-    int			forceCRT1;
-    int			DSTN, FSTN;
-    Bool		XvOnCRT2;
     int                 maxUsedClock;  		/* Max used pixelclock on master head */
-    unsigned long       masterFbAddress;	/* Framebuffer addresses and sizes */
+    
+    /**
+     * Framebuffer addresses and sizes
+     *
+     * \bug
+     * These 4 fields are set, but the stored values don't appear to be used.
+     */
+    unsigned long       masterFbAddress;
     unsigned long	masterFbSize;
     unsigned long       slaveFbAddress;
     unsigned long	slaveFbSize;
+
     unsigned char *     FbBase;         	/* VRAM linear address */
     unsigned char *     IOBase;         	/* MMIO linear address */
-    unsigned short      MapCountIOBase;		/* map/unmap queue counter */
-    unsigned short      MapCountFbBase;		/* map/unmap queue counter */
+
+    /**
+     * Map / unmap queue counter.
+     *
+     * \bug
+     * These vales are tested, set to zero, or decremented.  However, I don't
+     * see anywhere in the code where they are incremented.
+     */
+    unsigned short      MapCountIOBase;
+    unsigned short      MapCountFbBase;
+
     Bool 		forceUnmapIOBase;	/* ignore counter and unmap */
     Bool		forceUnmapFbBase;	/* ignore counter and unmap */
 #ifdef __alpha__
@@ -552,50 +544,18 @@ typedef struct {
     unsigned short      MapCountIOBaseDense;
     Bool		forceUnmapIOBaseDense;  /* ignore counter and unmap */
 #endif
-    int			chtvlumabandwidthcvbs;  /* TV settings for Chrontel TV encoder */
-    int			chtvlumabandwidthsvideo;
-    int			chtvlumaflickerfilter;
-    int			chtvchromabandwidth;
-    int			chtvchromaflickerfilter;
-    int			chtvcvbscolor;
-    int			chtvtextenhance;
-    int			chtvcontrast;
-    int			xgitvedgeenhance;	/* TV settings for bridge */
-    int			xgitvantiflicker;
-    int			xgitvsaturation;
-    int       		xgitvcolcalibc;
-    int       		xgitvcolcalibf;
-    int			xgitvcfilter;
-    int			xgitvyfilter;
-    int			tvxpos, tvypos;
-    int		      	tvxscale, tvyscale;
-    int			ForceTVType, SenseYPbPr;
-    unsigned long	ForceYPbPrType, ForceYPbPrAR;
-    int			chtvtype;
-    int                 NonDefaultPAL, NonDefaultNTSC;
-    unsigned short	tvx, tvy;
-    unsigned char	p2_01, p2_02, p2_1f, p2_20, p2_43, p2_42, p2_2b;
-    unsigned char	p2_44, p2_45, p2_46;
-    unsigned long       xgitvccbase;
-    unsigned char       p2_35, p2_36, p2_37, p2_38, p2_48, p2_49, p2_4a;
-    unsigned char	p2_0a, p2_2f, p2_30, p2_47;
-    unsigned char       scalingp1[9], scalingp4[9], scalingp2[64];
-    unsigned short      cursorBufferNum;
-    BOOLEAN		restorebyset;
-    BOOLEAN		CRT1gamma, CRT1gammaGiven, CRT2gamma, XvGamma, XvGammaGiven;
-    int			XvGammaRed, XvGammaGreen, XvGammaBlue;
-    int			GammaBriR, GammaBriG, GammaBriB;	/* strictly for Xinerama */
-    int			GammaPBriR, GammaPBriG, GammaPBriB;	/* strictly for Xinerama */
-    int			curxvcrtnum;
-    int			UsePanelScaler, CenterLCD;
-    int			AllowHotkey;
-    BOOLEAN		enablexgictrl;
-    unsigned long	cmdQ_SharedWritePort_2D;
+    BOOLEAN		CRT1gamma;
+    
+    /**
+     * \bug This field is tested and set to \c NULL but never used.
+     */
     unsigned char       *RenderAccelArray;
     unsigned char *	FbBase1;
     unsigned long	OnScreenSize1;
-    unsigned char       OldMode;
-    int			HWCursorMBufNum, HWCursorCBufNum;
+    
+    /**
+     * \bug This field is set to \c FALSE but is never used.
+     */
     BOOLEAN		ROM661New;
 #ifdef XGI_CP
     XGI_CP_H_ENT
@@ -659,58 +619,87 @@ typedef struct {
     DGAModePtr          DGAModes;
     int                 numDGAModes;
     Bool                DGAactive;
+
+    /**
+     * \bug This field is set but never used.
+     */
     int                 DGAViewportStatus;
-    unsigned char       OldMode;        /* Back old modeNo (if available) */
+
+    /**
+     * Back old modeNo (if available)
+     *
+     * \bug This field is set but never used.
+     */
+    unsigned char       OldMode;
+
     Bool                NoAccel;
     Bool                NoXvideo;
-    Bool		XvOnCRT2;       /* see xgi_opt.c */
+
+    /**
+     * \bug This field is set but never used.
+     */
+    Bool		XvOnCRT2;
+
     Bool                HWCursor;
-    Bool                UsePCIRetry;
     Bool                TurboQueue;
     int			VESA;
     int                 ForceCRT1Type;
     int                 ForceCRT2Type;
+
+    /**
+     * \bug This field is set but never used.
+     */
     int                 OptTVStand;
+
     int                 OptTVOver;
     int                 OptROMUsage;
     int                 UseCHOverScan;
     Bool                ValidWidth;
-    Bool                FastVram;		/* now unused */
+
+    /**
+     * \bug This field is set but never used.
+     */
     int			forceCRT1;
+
+    /**
+     * \bug This field is set but never used.
+     */
     Bool		CRT1changed;
-    unsigned char       oldCR17, oldCR63, oldSR1F;
-    unsigned char       oldCR32, oldCR36, oldCR37;
-    unsigned char       myCR32, myCR36, myCR37, myCR63;
+
+    unsigned char       myCR63;
     unsigned char       newCR32;
     unsigned long   	VBFlags;		/* Video bridge configuration */
     unsigned long       VBFlags_backup;         /* Backup for SlaveMode-modes */
     unsigned long	VBLCDFlags;             /* Moved LCD panel size bits here */
-    int                 ChrontelType;           /* CHRONTEL_700x or CHRONTEL_701x */
+    
+    /**
+     * CHRONTEL_700x or CHRONTEL_701x
+     * 
+     * \bug This field is tested but never initialized.
+     */
+    int                 ChrontelType;
+
     unsigned int        PDC, PDCA;		/* PanelDelayCompensation */
     short               scrnOffset;		/* Screen pitch (data) */
     short               scrnPitch;		/* Screen pitch (display; regarding interlace) */
     unsigned long       DstColor;
     int                 xcurrent;               /* for temp use in accel */
     int                 ycurrent;               /* for temp use in accel */
-    long		XGI310_AccelDepth; 	/* used in accel for 315 series */
-    int                 Xdirection;  		/* for temp use in accel */
-    int                 Ydirection;  		/* for temp use in accel */
-    int                 xgiPATternReg[4];
-    int                 ROPReg;
     int                 CommandReg;
-    int                 MaxCMDQueueLen;
-    int                 CurCMDQueueLen;
-    int                 MinCMDQueueLen;
     CARD16		CursorSize;  		/* Size of HWCursor area (bytes) */
-    CARD32		cursorOffset;		/* see xgi_driver.c and xgi_cursor.c */
-    int                 DstX;
-    int                 DstY;
-    unsigned char *     XAAScanlineColorExpandBuffers[2];
-    CARD32              AccelFlags;
-    Bool                ClipEnabled;
+
+    /**
+     * see xgi_driver.c and xgi_cursor.c
+     *
+     * \bug This field is set to 0 but never used.
+     */
+    CARD32		cursorOffset;
+
+    /**
+     * \bug This field is set to \c FALSE but never used.
+     */
     Bool                DoColorExpand;
-    Bool                ColorExpandBusy;
-    Bool                alphaBlitBusy;
+
     XGIRegRec           SavedReg;
     XGIRegRec           ModeReg;
     xf86CursorInfoPtr   CursorInfoPtr;
@@ -733,63 +722,64 @@ typedef struct {
     unsigned long	cmdQueueLenMin;
     unsigned char	*cmdQueueBase;
     int			*cmdQueueLenPtr;	/* Ptr to variable holding the current queue length */
-    int			*cmdQueueLenPtrBackup;	/* Backup for DRI init/restore */
     unsigned int        cmdQueueOffset;
     unsigned int        cmdQueueSize;
     unsigned long       cmdQueueSizeMask;
-    unsigned long	cmdQ_SharedWritePort_2D;
-    unsigned long	*cmdQ_SharedWritePort;
-    unsigned long	*cmdQ_SharedWritePortBackup;
-    unsigned int        cmdQueueSize_div2;
-    unsigned int        cmdQueueSize_div4;
-    unsigned int        cmdQueueSize_4_3;
+
+    /**
+     * \bug This field is set but never used.
+     */
+    unsigned int        agpWantedPages;
+
+#ifdef XF86DRI
     unsigned long 	agpHandle;
     unsigned long	agpAddr;
     unsigned char 	*agpBase;
     unsigned int 	agpSize;
-    unsigned int        agpWantedSize;
-    unsigned int        agpWantedPages;
-    unsigned long	agpCmdBufAddr;  /* 300 series */
-    unsigned char 	*agpCmdBufBase;
-    unsigned int 	agpCmdBufSize;
-    unsigned int 	agpCmdBufFree;
     unsigned long	agpVtxBufAddr;	/* 315 series */
     unsigned char       *agpVtxBufBase;
     unsigned int        agpVtxBufSize;
     unsigned int        agpVtxBufFree;
-#ifdef XF86DRI
     xgiRegion 		agp;
-#endif
-    Bool		AGPInitOK;
     Bool 		irqEnabled;
     int 		irq;
-    Bool		IsAGPCard;
+#endif
     unsigned long	DRIheapstart, DRIheapend;
 
     void		(*RenderCallback)(ScrnInfoPtr);
-    Time		RenderTime;
+
+    /**
+     * \bug This field is tested and set to \c NULL but never used.
+     */
     unsigned char       *RenderAccelArray;
+
+    /**
+     * \bug This field is to \c TRUE but never used.
+     */
     Bool		doRender;
 
-    int 		ColorExpandRingHead;
-    int 		ColorExpandRingTail;
     int 		PerColorExpandBufferSize;
     int 		ColorExpandBufferNumber;
-    int 		ColorExpandBufferCountMask;
     unsigned char 	*ColorExpandBufferAddr[32];
     int 		ColorExpandBufferScreenOffset[32];
-    long       		ColorExpandBase;
+
+    /**
+     * \bug This field is read but never initialized.
+     */
     int 		ImageWriteBufferSize;
+
     unsigned char 	*ImageWriteBufferAddr;
 
     int 		Rotate;
-    void        	(*PointerMoved)(int index, int x, int y);
 
     /* ShadowFB support */
     Bool 		ShadowFB;
     unsigned char 	*ShadowPtr;
     int  		ShadowPitch;
 
+    /**
+     * \bug This field is set but never used.
+     */
     Bool		loadDRI;
 
 #ifdef XF86DRI
@@ -799,27 +789,33 @@ typedef struct {
     int 		numVisualConfigs;
     __GLXvisualConfig* 	pVisualConfigs;
     XGIConfigPrivPtr 	pVisualConfigsPriv;
-    XGIRegRec 		DRContextRegs;
 #endif
 
     HW_DEVICE_EXTENSION xgi_HwDevExt;      /* For new mode switching code */
-    /* XGI_HW_DEVICE_INFO  HwDeviceExtension ; *//* Never Used */
     VB_DEVICE_INFO      VBInfo ;
     PVB_DEVICE_INFO     pVBInfo ;
 
     XF86VideoAdaptorPtr adaptor;
     ScreenBlockHandlerProcPtr BlockHandler;
+
+    /**
+     * \bug This field is tested and used but never set.
+     */
     void                (*VideoTimerCallback)(ScrnInfoPtr, Time);
+
     void		(*ResetXv)(ScrnInfoPtr);
     void		(*ResetXvGamma)(ScrnInfoPtr);
 
     OptionInfoPtr 	Options;
+
+    /**
+     * \bug This field is used but never initialized.
+     */
     unsigned char 	LCDon;
 #ifdef XGIDUALHEAD
-    Bool		BlankCRT1, BlankCRT2;
+    Bool		BlankCRT2;
 #endif
     Bool 		Blank;
-    unsigned char 	BIOSModeSave;
     int 		CRT1off;		/* 1=CRT1 off, 0=CRT1 on */
     CARD16 		LCDheight;		/* Vertical resolution of LCD panel */
     CARD16 		LCDwidth;		/* Horizontal resolution of LCD panel */
@@ -829,40 +825,60 @@ typedef struct {
     VbeInfoBlock 	*vbeInfo;
     int 		UseVESA;
     xgiModeInfoPtr      XGIVESAModeList;
-    xf86MonPtr 		monitor;
-    CARD16 		maxBytesPerScanline;
-    CARD32 		*pal, *savedPal;
-    int 		mapPhys, mapOff, mapSize;
     int 		statePage, stateSize, stateMode;
-	int	SavedMode ;
-	UCHAR ScratchSet[16] ;
-	MonitorRangeRec CRT1Range,CRT2Range ;
+    int	SavedMode;
+    UCHAR ScratchSet[16];
+    MonitorRangeRec CRT1Range,CRT2Range;
 
     CARD8 		*fonts;
     CARD8 		*state, *pstate;
-    void 		*base, *VGAbase;
 #ifdef XGIDUALHEAD
     BOOL 		DualHeadMode;		/* TRUE if we use dual head mode */
     BOOL 		SecondHead;		/* TRUE is this is the second head */
     XGIEntPtr 		entityPrivate;		/* Ptr to private entity (see above) */
-    BOOL		xgiXinerama;		/* Do we use Xinerama mode? */
 #endif
     XGIFBLayout         CurrentLayout;		/* Current framebuffer layout */
-    USHORT              XGI_DDC2_Index;
-    USHORT              XGI_DDC2_Data;
-    USHORT              XGI_DDC2_Clk;
     BOOL		Primary;		/* Display adapter is primary */
     xf86Int10InfoPtr    pInt;			/* Our int10 */
-    int                 oldChipset;		/* Type of old chipset */
+    
+    /**
+     * Type of old chipset
+     * 
+     * \bug This field is used but never set.
+     */
+    int                 oldChipset;
+
     int              	RealVideoRam;		/* 6326 can only address 4MB, but TQ can be above */
     CARD32              CmdQueLenMask;		/* Mask of queue length in MMIO register */
     CARD32              CmdQueLenFix;           /* Fix value to subtract from QueLen (530/620) */
     CARD32              CmdQueMaxLen;           /* (6326/5597/5598) Amount of cmds the queue can hold */
-    CARD32              TurboQueueLen;		/* For future use */
-    CARD32              detectedCRT2Devices;	/* detected CRT2 devices before mask-out */
-    Bool                NoHostBus;		/* Enable/disable 5597/5598 host bus */
-    Bool		noInternalModes;	/* Use our own default modes? */
+
+    /**
+     * Detected CRT2 devices before mask-out
+     *
+     * \bug This field is set but never used.
+     */
+    CARD32              detectedCRT2Devices;
+
+    /**
+     * Enable/disable 5597/5598 host bus
+     *
+     * \bug This field is set but never used.
+     */
+    Bool                NoHostBus;
+
+    /**
+     * Use our own default modes? 
+     *
+     * \bug This field is set but never used.
+     */
+    Bool		noInternalModes;
+
     int			OptUseOEM;		/* Use internal OEM data? */
+
+    /**
+     * \bug These fields are set but never used.
+     */
     int			chtvlumabandwidthcvbs;  /* TV settings for Chrontel TV encoder */
     int			chtvlumabandwidthsvideo;
     int			chtvlumaflickerfilter;
@@ -871,6 +887,7 @@ typedef struct {
     int			chtvcvbscolor;
     int			chtvtextenhance;
     int			chtvcontrast;
+    int			chtvtype;
     int			xgitvedgeenhance;	/* TV settings for  bridges */
     int			xgitvantiflicker;
     int			xgitvsaturation;
@@ -879,9 +896,16 @@ typedef struct {
     int			xgitvcfilter;
     int			xgitvyfilter;
     int			OptTVSOver;		/* Chrontel 7005: Superoverscan */
+
     int			tvxpos, tvypos;
     int		      	tvxscale, tvyscale;
-    int			XGI6326Flags;		/* 6326 TV settings */
+    
+    /**
+     * 6326 TV settings
+     *
+     * \bug These fields are set but never used.
+     */
+    int			XGI6326Flags;
     int			xgi6326enableyfilter;
     int			xgi6326yfilterstrong;
     int			xgi6326tvplug;
@@ -892,46 +916,35 @@ typedef struct {
     unsigned char       xgifblcda;
     int			xgifbscalelcd;
     unsigned long	xgifbspecialtiming;
-    BOOL		xgifb_haveemi, xgifb_haveemilcd;
-    unsigned char	xgifb_emi30,xgifb_emi31,xgifb_emi32,xgifb_emi33;
+    BOOL		xgifb_haveemi;
     int			EMI;
+
     int			NoYV12;			/* Disable Xv YV12 support (old series) */
-    unsigned char       postVBCR32;
     int			newFastVram;		/* Replaces FastVram */
     int			ForceTVType, SenseYPbPr;
     int                 NonDefaultPAL, NonDefaultNTSC;
     unsigned long	ForceYPbPrType, ForceYPbPrAR;
     unsigned long       lockcalls;		/* Count unlock calls for debug */
-    unsigned short	tvx, tvy;		/* Backup TV position registers */
-    unsigned char	p2_01, p2_02, p2_1f, p2_20, p2_43, p2_42, p2_2b; /* Backup TV position registers */
-    unsigned short      tvx1, tvx2, tvx3, tvy1; /* Backup TV position registers */
-    unsigned char	p2_44, p2_45, p2_46;
-    unsigned long       xgitvccbase;
-    unsigned char       p2_35, p2_36, p2_37, p2_38, p2_48, p2_49, p2_4a;
-    unsigned char	p2_0a, p2_2f, p2_30, p2_47;
-    unsigned char       scalingp1[9], scalingp4[9], scalingp2[64];
+
+    /**
+     * \bug This field is set but never used.
+     */
     BOOLEAN		ForceCursorOff;
+
     BOOLEAN		HaveCustomModes;
     BOOLEAN		IsCustom;
-    DisplayModePtr	backupmodelist;
-    int			chtvtype;
     Atom                xvBrightness, xvContrast, xvColorKey, xvHue, xvSaturation;
     Atom                xvAutopaintColorKey, xvSetDefaults, xvSwitchCRT;
     Atom		xvDisableGfx, xvDisableGfxLR, xvTVXPosition, xvTVYPosition;
     Atom		xvDisableColorkey, xvUseChromakey, xvChromaMin, xvChromaMax;
     Atom		xvInsideChromakey, xvYUVChromakey;
     Atom		xvGammaRed, xvGammaGreen, xvGammaBlue;
-    Atom		xv_QVF, xv_QVV, xv_USD, xv_SVF, xv_QDD, xv_TAF, xv_TSA, xv_TEE, xv_GSF;
-    Atom		xv_TTE, xv_TCO, xv_TCC, xv_TCF, xv_TLF, xv_CMD, xv_CMDR, xv_CT1, xv_SGA;
-    Atom		xv_GDV, xv_GHI, xv_OVR, xv_GBI, xv_TXS, xv_TYS, xv_CFI, xv_COC, xv_COF;
-    Atom		xv_YFI, xv_GSS, xv_BRR, xv_BRG, xv_BRB, xv_PBR, xv_PBG, xv_PBB, xv_SHC;
-    Atom		xv_BRR2, xv_BRG2, xv_BRB2, xv_PBR2, xv_PBG2, xv_PBB2, xv_PMD;
-#ifdef TWDEBUG
-    Atom		xv_STR;
-#endif
-    int			xv_xgidirectunlocked;
-    unsigned long	xv_sd_result;
+
+    /**
+     * \bug This field is set but never used.
+     */
     int			CRT1isoff;
+
 #ifdef XGI_CP
     XGI_CP_H
 #endif
@@ -961,7 +974,6 @@ typedef struct {
     CARD32		MiscFlags;
     int			UsePanelScaler, CenterLCD;
     FBLinearPtr		AccelLinearScratch;
-    void		(*AccelRenderCallback)(ScrnInfoPtr);
     float		zClearVal;
     unsigned long	bClrColor, dwColor;
     int			AllowHotkey;
@@ -1026,12 +1038,6 @@ typedef struct {
 //~::::    
 } XGIRec, *XGIPtr;
 
-typedef struct _ModeInfoData {
-    int mode;
-    VbeModeInfoBlock *data;
-    VbeCRTCInfoBlock *block;
-} ModeInfoData;
-
 #define SEQ_ADDRESS_PORT  0x0014
 #define MISC_OUTPUT_REG_WRITE_PORT  0x0012
 #define MISC_OUTPUT_REG_READ_PORT   0x001C
@@ -1066,25 +1072,6 @@ typedef struct _region {
     int x0,x1,y0,y1;
 } region;
 
-typedef struct _myhddctiming {
-    int           whichone;
-    unsigned char mask;
-    float         rate;
-} myhddctiming;
-
-typedef struct _myvddctiming {
-    int           whichone;
-    unsigned char mask;
-    int           rate;
-} myvddctiming;
-
-typedef struct _myddcstdmodes {
-    int hsize;
-    int vsize;
-    int refresh;
-    float hsync;
-} myddcstdmodes;
-
 typedef struct _pdctable {
     int subsysVendor;
     int subsysCard;
@@ -1114,17 +1101,6 @@ typedef struct _customttable {
     unsigned long SpecialID;
     char *optionName;
 } customttable;
-
-#ifdef XGIMERGED
-#ifdef XGIXINERAMA
-typedef struct _xgiXineramaData {
-    int x;
-    int y;
-    int width;
-    int height;
-} xgiXineramaData;
-#endif
-#endif
 
 extern void  xgiSaveUnlockExtRegisterLock(XGIPtr pXGI, unsigned char *reg1, unsigned char *reg2);
 extern void  xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1, unsigned char reg2);
