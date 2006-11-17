@@ -630,11 +630,6 @@ typedef struct {
      */
     int			forceCRT1;
 
-    /**
-     * \bug This field is set but never used.
-     */
-    Bool		CRT1changed;
-
     unsigned char       myCR63;
     unsigned char       newCR32;
     unsigned long   	VBFlags;		/* Video bridge configuration */
@@ -823,13 +818,6 @@ typedef struct {
     CARD32              CmdQueMaxLen;           /* (6326/5597/5598) Amount of cmds the queue can hold */
 
     /**
-     * Detected CRT2 devices before mask-out
-     *
-     * \bug This field is set but never used.
-     */
-    CARD32              detectedCRT2Devices;
-
-    /**
      * Use our own default modes? 
      *
      * \bug This field is set but never used.
@@ -883,7 +871,6 @@ typedef struct {
     BOOLEAN		disablecolorkeycurrent;
     CARD32		colorKey;
     CARD32		MiscFlags;
-    int			UsePanelScaler, CenterLCD;
     FBLinearPtr		AccelLinearScratch;
     float		zClearVal;
     unsigned long	bClrColor, dwColor;

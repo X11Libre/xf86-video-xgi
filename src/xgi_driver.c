@@ -3208,8 +3208,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     /* Detect CRT2-VGA */
      XGICRT2PreInit(pScrn); 
     PDEBUG(ErrorF("3496 pXGI->VBFlags =%x\n",pXGI->VBFlags)) ;
-     /* Backup detected CRT2 devices */
-    pXGI->detectedCRT2Devices = pXGI->VBFlags & (CRT2_LCD|CRT2_TV|CRT2_VGA|TV_AVIDEO|TV_SVIDEO|TV_SCART|TV_HIVISION|TV_YPBPR);
 
     if(!(pXGI->XGI_SD_Flags & XGI_SD_SUPPORTYPBPR)) 
     {
@@ -3292,10 +3290,9 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
        }
     }
 
-    /* Handle ForceCRT1 option (part 2) */
-    pXGI->CRT1changed = FALSE;
-
-    /* Check if CRT1 used or needed.  There are three cases where this can
+    /* Handle ForceCRT1 option (part 2)
+     *
+     * Check if CRT1 used or needed.  There are three cases where this can
      * happen:
      *     - No video bridge.
      *     - No CRT2 output.

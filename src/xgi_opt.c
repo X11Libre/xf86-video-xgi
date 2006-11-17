@@ -176,8 +176,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_XVYUVCHROMAKEY,		"XvYUVChromaKey",         OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_XVDISABLECOLORKEY,		"XvDisableColorKey",      OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_XVMEMCPY,			"XvUseMemcpy",  	  OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_SCALELCD,			"ScaleLCD",	   	  OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_CENTERLCD,			"CenterLCD",	   	  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_ENABLEHOTKEY,		"EnableHotkey",	   	  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_ENABLEXGICTRL,		"EnableXGICtrl",   	  OPTV_BOOLEAN,   {0}, -1    },
 #ifdef XGIMERGED
@@ -278,8 +276,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->XvDefSat = 0;
     pXGI->XvDefDisableGfx = FALSE;
     pXGI->XvDefDisableGfxLR = FALSE;
-    pXGI->UsePanelScaler = -1;
-    pXGI->CenterLCD = -1;
     pXGI->XvUseMemcpy = TRUE;
     pXGI->XvUseChromaKey = FALSE;
     pXGI->XvDisableColorKey = FALSE;
@@ -436,12 +432,6 @@ xgiOptions(ScrnInfoPtr pScrn)
        }
        if(xf86GetOptValString(pXGI->Options, OPTION_YPBPRAR)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "YPbPrAspectRatio");
-       }
-       if(xf86GetOptValBool(pXGI->Options, OPTION_SCALELCD, &val)) {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "ScaleLCD");
-       }
-        if(xf86GetOptValBool(pXGI->Options, OPTION_CENTERLCD, &val)) {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "CenterLCD");
        }
        if((xf86GetOptValInteger(pXGI->Options, OPTION_PDC, &vali)) ||
           (xf86GetOptValInteger(pXGI->Options, OPTION_PDCS, &vali))) {
