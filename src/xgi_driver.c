@@ -3171,12 +3171,12 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 
     /* Handle ForceCRT1 option */
-    if(pXGI->forceCRT1 != -1) 
-    {
-       if(pXGI->forceCRT1) pXGI->CRT1off = 0;
-       else                pXGI->CRT1off = 1;
+    if (pXGI->forceCRT1 != -1) {
+        pXGI->CRT1off = (pXGI->forceCRT1) ? 0 : 1;
     }
-    else                 pXGI->CRT1off = -1;
+    else {
+        pXGI->CRT1off = -1;
+    }
 
     /* Detect video bridge and sense TV/VGA2 */
     XGIVGAPreInit(pScrn);
@@ -3319,28 +3319,21 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     /* Handle ForceCRT1 option (part 2) */
     pXGI->CRT1changed = FALSE;
 
-    /* Check if CRT1 used (or needed; this eg. if no CRT2 detected) */
-    if(pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) 
-    {
-
-        /* No CRT2 output? Then we NEED CRT1!
-     * We also need CRT1 if depth = 8 and bridge=LVDS|301B-DH
+    /* Check if CRT1 used or needed.  There are three cases where this can
+     * happen:
+     *     - No video bridge.
+     *     - No CRT2 output.
+     *     - Depth = 8 and bridge=LVDS|301B-DH
+     *     - LCDA
      */
-        if( (!(pXGI->VBFlags & (CRT2_VGA | CRT2_LCD | CRT2_TV))) ||
-        ( (pScrn->bitsPerPixel == 8) && ( pXGI->XGI_Pr->XGI_VBType  & VB_XGI301LV302LV )  ) ) 
-            {
-        pXGI->CRT1off = 0;
-    }
-    }
-    else 
-    { /* no video bridge? */
-
-        /* Then we NEED CRT1... */
+    if (((pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) == 0)
+        || ((pXGI->VBFlags & (CRT2_VGA | CRT2_LCD | CRT2_TV)) == 0)
+        || ((pScrn->bitsPerPixel == 8)
+            && (pXGI->XGI_Pr->XGI_VBType & VB_XGI301LV302LV))
+        || (pXGI->VBFlags & CRT1_LCDA)) {
         pXGI->CRT1off = 0;
     }
 
-    /* LCDA? Then we don't switch off CRT1 */
-    if(pXGI->VBFlags & CRT1_LCDA) pXGI->CRT1off = 0;
 
     /* Handle TVStandard option */
     if((pXGI->NonDefaultPAL != -1) || (pXGI->NonDefaultNTSC != -1)) 

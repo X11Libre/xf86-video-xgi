@@ -108,49 +108,31 @@ void XGICRT1PreInit(ScrnInfoPtr pScrn)
 {
     XGIPtr  pXGI = XGIPTR(pScrn);
     unsigned char CR32;
-    unsigned char CRT1Detected = 0;
-    unsigned char OtherDevices = 0;
+    unsigned char CRT1Detected;
 
-    if(!(pXGI->XGI_Pr->XGI_VBType & VB_XGIVB)) {
-       pXGI->CRT1off = 0;
-       return;
-    }
-
+    if(!(pXGI->XGI_Pr->XGI_VBType & VB_XGIVB)
 #ifdef XGIDUALHEAD
-    if(pXGI->DualHeadMode) {
-       pXGI->CRT1off = 0;
-       return;
-    }
+       || pXGI->DualHeadMode
 #endif
-
 #ifdef XGIMERGED
-    if((pXGI->MergedFB) && (!(pXGI->MergedFBAuto))) {
+       || ((pXGI->MergedFB) && (!(pXGI->MergedFBAuto)))
+#endif
+       ) {
        pXGI->CRT1off = 0;
        return;
     }
-#endif
 
     inXGIIDXREG(XGICR, 0x32, CR32);
 
-    if(CR32 & 0x20)  CRT1Detected = 1;
-    else CRT1Detected = XGI_XGIDetectCRT1(pScrn);
+    CRT1Detected = (CR32 & 0x20) ? 1 : XGI_XGIDetectCRT1(pScrn);
 
-    if(CR32 & 0x5F)  OtherDevices = 1;
+    if (pXGI->CRT1off == -1) {
+	const int OtherDevices = ((CR32 & 0x5F) != 0);
 
-    if(pXGI->CRT1off == -1) {
-       if(!CRT1Detected) {
-
-          /* No CRT1 detected. */
-	  /* If other devices exist, switch it off */
-	  if(OtherDevices) pXGI->CRT1off = 1;
-	  else             pXGI->CRT1off = 0;
-
-       } else {
-
-          /* CRT1 detected, leave/switch it on */
-	  pXGI->CRT1off = 0;
-
-       }
+	/* If no CRT1 detected and other devices exist, switch CRT1 off.
+	 * Otherwise, switch it on.
+	 */
+	pXGI->CRT1off = (!CRT1Detected && OtherDevices) ? 1 : 0;
     }
 
     xf86DrvMsg(pScrn->scrnIndex, X_PROBED,
