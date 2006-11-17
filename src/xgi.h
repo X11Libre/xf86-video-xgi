@@ -887,13 +887,6 @@ typedef struct {
     int			xgi6326yfilterstrong;
     int			xgi6326tvplug;
     int			xgi6326fscadjust;
-    BOOL		xgifbfound;
-    BOOL		donttrustpdc;		/* Don't trust the detected PDC */
-    unsigned char	xgifbpdc, xgifbpdca;
-    unsigned char       xgifblcda;
-    int			xgifbscalelcd;
-    unsigned long	xgifbspecialtiming;
-    BOOL		xgifb_haveemi;
     int			EMI;
 
     int			NoYV12;			/* Disable Xv YV12 support (old series) */

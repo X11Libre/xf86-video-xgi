@@ -2576,26 +2576,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         }
     }
 
-    /* Now check if xgifb is loaded. Since xgifb only supports
-     * the 300 and 315 series, we only do this for these chips.
-     * We use this for checking where xgifb starts its memory
-     * heap in order to automatically detect the correct MaxXFBMem
-     * setting (which normally is given by the option of the same name).
-     * Under kernel 2.4.y, that only works if xgifb is completely
-     * running, ie with a video mode because the fbdev will not be
-     * installed otherwise. Under 2.5 and later, xgifb will install
-     * the framebuffer device in any way and running it with mode=none
-     * is no longer supported (or necessary).
-     */
-
-    pXGI->donttrustpdc = FALSE;
-    pXGI->xgifbpdc = 0xff;
-    pXGI->xgifbpdca = 0xff;
-    pXGI->xgifblcda = 0xff;
-    pXGI->xgifbscalelcd = -1;
-    pXGI->xgifbspecialtiming = CUT_NONE;
-    pXGI->xgifb_haveemi = FALSE;
-    pXGI->xgifbfound = FALSE;
 
     /*
      * The first thing we should figure out is the depth, bpp, etc.
