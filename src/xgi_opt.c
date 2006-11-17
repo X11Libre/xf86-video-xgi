@@ -175,7 +175,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_VESA,			"Vesa",		          OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_MAXXFBMEM,         	"MaxXFBMem",              OPTV_INTEGER,   {0}, -1    },
     { OPTION_FORCECRT1,         	"ForceCRT1",              OPTV_BOOLEAN,   {0}, FALSE },
-    { OPTION_XVONCRT2,          	"XvOnCRT2",               OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_PDC,               	"PanelDelayCompensation", OPTV_INTEGER,   {0}, -1    },
     { OPTION_PDCA,               	"PanelDelayCompensation1",OPTV_INTEGER,   {0}, -1    },
     { OPTION_PDCS,               	"PDC", 			  OPTV_INTEGER,   {0}, -1    },
@@ -315,7 +314,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->forceCRT1 = -1;
     pXGI->DSTN = FALSE;
     pXGI->FSTN = FALSE;
-    pXGI->XvOnCRT2 = FALSE;
     pXGI->NoYV12 = -1;
     pXGI->PDC = -1;
     pXGI->PDCA = -1;
@@ -591,9 +589,6 @@ xgiOptions(ScrnInfoPtr pScrn)
        }
        if(xf86GetOptValBool(pXGI->Options, OPTION_CRT2GAMMA, &val)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "CRT2Gamma");
-       }
-       if(xf86GetOptValBool(pXGI->Options, OPTION_XVONCRT2, &val)) {
-	  xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "XvOnCRT2");
        }
 #ifdef XGI_CP
        XGI_CP_OPT_DH_WARN

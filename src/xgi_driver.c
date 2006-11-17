@@ -3331,18 +3331,12 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             {
         pXGI->CRT1off = 0;
     }
-    /* No CRT2 output? Then we can't use Xv on CRT2 */
-    if(!(pXGI->VBFlags & (CRT2_VGA | CRT2_LCD | CRT2_TV)))
-        pXGI->XvOnCRT2 = FALSE;
-
     }
     else 
     { /* no video bridge? */
 
         /* Then we NEED CRT1... */
         pXGI->CRT1off = 0;
-    /* ... and can't use CRT2 for Xv output */
-    pXGI->XvOnCRT2 = FALSE;
     }
 
     /* LCDA? Then we don't switch off CRT1 */

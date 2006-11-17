@@ -625,12 +625,6 @@ typedef struct {
 
     Bool                NoAccel;
     Bool                NoXvideo;
-
-    /**
-     * \bug This field is set but never used.
-     */
-    Bool		XvOnCRT2;
-
     Bool                HWCursor;
     Bool                TurboQueue;
     int			VESA;
