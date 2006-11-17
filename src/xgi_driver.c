@@ -2595,7 +2595,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     pXGI->xgifbscalelcd = -1;
     pXGI->xgifbspecialtiming = CUT_NONE;
     pXGI->xgifb_haveemi = FALSE;
-    pXGI->OldMode = 0;
     pXGI->xgifbfound = FALSE;
 
     /*

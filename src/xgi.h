@@ -615,14 +615,6 @@ typedef struct {
     DGAModePtr          DGAModes;
     int                 numDGAModes;
     Bool                DGAactive;
-
-    /**
-     * Back old modeNo (if available)
-     *
-     * \bug This field is set but never used.
-     */
-    unsigned char       OldMode;
-
     Bool                NoAccel;
     Bool                NoXvideo;
     Bool                HWCursor;
