@@ -3008,10 +3008,8 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     pXGI->CurMonoSrc = NULL;
     pXGI->CurFGCol = pXGI->CurBGCol = 0;
 
-    switch(pXGI->VGAEngine) 
-    {
-      default:
-        /* cursorOffset not used in cursor functions for 530 and
+
+    /* cursorOffset not used in cursor functions for 530 and
      * older chips, because the cursor is *above* the TQ.
      * On 5597 and older revisions of the 6326, the TQ is
      * max 32K, on newer 6326 revisions and the 530 either 30
@@ -3023,33 +3021,31 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      * queue does not seem to last that far anyway.)
      * The TQ must be located at 32KB boundaries.
      */
-    if(pXGI->RealVideoRam < 3072) 
-    {
-       if(pXGI->TurboQueue) 
-       {
-          xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-    	    "Not enough video RAM for TurboQueue. TurboQueue disabled\n");
-          pXGI->TurboQueue = FALSE;
-       }
+    if (pXGI->RealVideoRam < 3072) {
+        if (pXGI->TurboQueue) {
+            xf86DrvMsg(pScrn->scrnIndex, X_INFO,
+                       "Not enough video RAM for TurboQueue. TurboQueue disabled\n");
+            pXGI->TurboQueue = FALSE;
+        }
     }
+
     pXGI->CmdQueMaxLen = 32;
-     	if(pXGI->TurboQueue) 
-     	{
-                  	      pXGI->availMem -= (64*1024);
-    		      pXGI->CmdQueMaxLen = 900;   /* To make sure; should be 992 */
+    if (pXGI->TurboQueue) {
+        pXGI->availMem -= (64*1024);
+        pXGI->CmdQueMaxLen = 900;   /* To make sure; should be 992 */
     }
     else if(pXGI->HWCursor) 
     {
-                          pXGI->availMem -= pXGI->CursorSize;
+        pXGI->availMem -= pXGI->CursorSize;
     }
 
-        pXGI->CmdQueLenMask = (pXGI->TurboQueue) ? 0x7FFF : 0x003F;
+    pXGI->CmdQueLenMask = (pXGI->TurboQueue) ? 0x7FFF : 0x003F;
 
     /* This is to be subtracted from MMIO queue length register contents
      * for getting the real Queue length.
      */
     pXGI->CmdQueLenFix  = (pXGI->TurboQueue) ? 32 : 0;
-    }
+
 
 #ifdef XGIDUALHEAD
     /* In dual head mode, we share availMem equally - so align it
@@ -3058,20 +3054,16 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      */
    if(pXGI->DualHeadMode)
       pXGI->availMem &= 0xFFFFE000;
-#endif
 
     /* Check MaxXFBMem setting */
-#ifdef XGIDUALHEAD
     /* Since DRI is not supported in dual head mode, we
        don't need the MaxXFBMem setting. */
-    if(pXGI->DualHeadMode) 
-    {
-       if(pXGI->maxxfbmem) 
-       {
-      xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-    	"MaxXFBMem not used in Dual Head mode. Using all VideoRAM.\n");
-       }
-       pXGI->maxxfbmem = pXGI->availMem;
+    if (pXGI->DualHeadMode) {
+        if (pXGI->maxxfbmem) {
+            xf86DrvMsg(pScrn->scrnIndex, X_INFO,
+                       "MaxXFBMem not used in Dual Head mode. Using all VideoRAM.\n");
+        }
+        pXGI->maxxfbmem = pXGI->availMem;
     }
     else
 #endif
