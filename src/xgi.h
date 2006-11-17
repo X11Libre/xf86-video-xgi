@@ -838,13 +838,6 @@ typedef struct {
     CARD32              detectedCRT2Devices;
 
     /**
-     * Enable/disable 5597/5598 host bus
-     *
-     * \bug This field is set but never used.
-     */
-    Bool                NoHostBus;
-
-    /**
      * Use our own default modes? 
      *
      * \bug This field is set but never used.

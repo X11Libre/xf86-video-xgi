@@ -52,7 +52,6 @@ typedef enum {
     OPTION_NOACCEL,
     OPTION_TURBOQUEUE,
     OPTION_FAST_VRAM,
-    OPTION_NOHOSTBUS,
     OPTION_RENDER,
     OPTION_FORCE_CRT1TYPE,
     OPTION_FORCE_CRT2TYPE,
@@ -159,7 +158,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_NOACCEL,           	"NoAccel",                OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_TURBOQUEUE,        	"TurboQueue",             OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_FAST_VRAM,         	"FastVram",               OPTV_BOOLEAN,   {0}, FALSE },
-    { OPTION_NOHOSTBUS,         	"NoHostBus",              OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_RENDER,        		"RenderAcceleration",     OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_FORCE_CRT1TYPE,    	"ForceCRT1Type",          OPTV_STRING,    {0}, FALSE },
     { OPTION_FORCE_CRT2TYPE,    	"ForceCRT2Type",          OPTV_STRING,    {0}, FALSE },
@@ -292,7 +290,6 @@ xgiOptions(ScrnInfoPtr pScrn)
 #endif 
 */
     pXGI->newFastVram = -1;
-    pXGI->NoHostBus = FALSE;
     pXGI->TurboQueue = TRUE;
 #ifdef XGIVRAMQ
     /* TODO: Option (315 series VRAM command queue) */
