@@ -622,15 +622,7 @@ typedef struct {
     int			VESA;
     int                 ForceCRT1Type;
     int                 ForceCRT2Type;
-
-    /**
-     * \bug This field is set but never used.
-     */
-    int                 OptTVStand;
-
-    int                 OptTVOver;
     int                 OptROMUsage;
-    int                 UseCHOverScan;
     Bool                ValidWidth;
 
     /**
@@ -845,43 +837,6 @@ typedef struct {
     Bool		noInternalModes;
 
     int			OptUseOEM;		/* Use internal OEM data? */
-
-    /**
-     * \bug These fields are set but never used.
-     */
-    int			chtvlumabandwidthcvbs;  /* TV settings for Chrontel TV encoder */
-    int			chtvlumabandwidthsvideo;
-    int			chtvlumaflickerfilter;
-    int			chtvchromabandwidth;
-    int			chtvchromaflickerfilter;
-    int			chtvcvbscolor;
-    int			chtvtextenhance;
-    int			chtvcontrast;
-    int			chtvtype;
-    int			xgitvedgeenhance;	/* TV settings for  bridges */
-    int			xgitvantiflicker;
-    int			xgitvsaturation;
-    int       		xgitvcolcalibc;
-    int       		xgitvcolcalibf;
-    int			xgitvcfilter;
-    int			xgitvyfilter;
-    int			OptTVSOver;		/* Chrontel 7005: Superoverscan */
-
-    int			tvxpos, tvypos;
-    int		      	tvxscale, tvyscale;
-    
-    /**
-     * 6326 TV settings
-     *
-     * \bug These fields are set but never used.
-     */
-    int			XGI6326Flags;
-    int			xgi6326enableyfilter;
-    int			xgi6326yfilterstrong;
-    int			xgi6326tvplug;
-    int			xgi6326fscadjust;
-
-    int			NoYV12;			/* Disable Xv YV12 support (old series) */
     int			newFastVram;		/* Replaces FastVram */
     int			ForceTVType, SenseYPbPr;
     int                 NonDefaultPAL, NonDefaultNTSC;

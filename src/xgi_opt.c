@@ -69,38 +69,9 @@ typedef enum {
     OPTION_PDCA,
     OPTION_PDCS,
     OPTION_PDCAS,
-    OPTION_TVSTANDARD,
     OPTION_USEROMDATA,
     OPTION_NOINTERNALMODES,
     OPTION_USEOEM,
-    OPTION_NOYV12,
-    OPTION_CHTVOVERSCAN,
-    OPTION_CHTVSOVERSCAN,
-    OPTION_CHTVLUMABANDWIDTHCVBS,
-    OPTION_CHTVLUMABANDWIDTHSVIDEO,
-    OPTION_CHTVLUMAFLICKERFILTER,
-    OPTION_CHTVCHROMABANDWIDTH,
-    OPTION_CHTVCHROMAFLICKERFILTER,
-    OPTION_CHTVCVBSCOLOR,
-    OPTION_CHTVTEXTENHANCE,
-    OPTION_CHTVCONTRAST,
-    OPTION_XGITVEDGEENHANCE,
-    OPTION_XGITVANTIFLICKER,
-    OPTION_XGITVSATURATION,
-    OPTION_XGITVCHROMAFILTER,
-    OPTION_XGITVLUMAFILTER,
-    OPTION_XGITVCOLCALIBFINE,
-    OPTION_XGITVCOLCALIBCOARSE,
-    OPTION_TVXPOSOFFSET,
-    OPTION_TVYPOSOFFSET,
-    OPTION_TVXSCALE,
-    OPTION_TVYSCALE,
-    OPTION_XGI6326ANTIFLICKER,
-    OPTION_XGI6326ENABLEYFILTER,
-    OPTION_XGI6326YFILTERSTRONG,
-    OPTION_XGI6326FORCETVPPLUG,
-    OPTION_XGI6326FSCADJUST,
-    OPTION_CHTVTYPE,
     OPTION_USERGBCURSOR,
     OPTION_USERGBCURSORBLEND,
     OPTION_USERGBCURSORBLENDTH,
@@ -177,38 +148,9 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_PDCAS,               	"PDC1",			  OPTV_INTEGER,   {0}, -1    },
     { OPTION_LVDSHL,			"LVDSHL", 	  	  OPTV_INTEGER,   {0}, -1    },
     { OPTION_SPECIALTIMING,        	"SpecialTiming",          OPTV_STRING,    {0}, -1    },
-    { OPTION_TVSTANDARD,        	"TVStandard",             OPTV_STRING,    {0}, -1    },
     { OPTION_USEROMDATA,		"UseROMData",	          OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_NOINTERNALMODES,   	"NoInternalModes",        OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_USEOEM, 			"UseOEMData",		  OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_NOYV12, 			"NoYV12",		  OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_CHTVTYPE,			"CHTVType",	          OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_CHTVOVERSCAN,		"CHTVOverscan",	          OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_CHTVSOVERSCAN,		"CHTVSuperOverscan",      OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_CHTVLUMABANDWIDTHCVBS,	"CHTVLumaBandwidthCVBS",  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_CHTVLUMABANDWIDTHSVIDEO,	"CHTVLumaBandwidthSVIDEO",OPTV_INTEGER,   {0}, -1    },
-    { OPTION_CHTVLUMAFLICKERFILTER,	"CHTVLumaFlickerFilter",  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_CHTVCHROMABANDWIDTH,	"CHTVChromaBandwidth",    OPTV_INTEGER,   {0}, -1    },
-    { OPTION_CHTVCHROMAFLICKERFILTER,	"CHTVChromaFlickerFilter",OPTV_INTEGER,   {0}, -1    },
-    { OPTION_CHTVCVBSCOLOR,		"CHTVCVBSColor",          OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_CHTVTEXTENHANCE,		"CHTVTextEnhance",	  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_CHTVCONTRAST,		"CHTVContrast",		  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_XGITVEDGEENHANCE,		"XGITVEdgeEnhance",	  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_XGITVANTIFLICKER,		"XGITVAntiFlicker",	  OPTV_STRING,    {0}, FALSE },
-    { OPTION_XGITVSATURATION,		"XGITVSaturation",	  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_XGITVCHROMAFILTER,		"XGITVCFilter",      	  OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_XGITVLUMAFILTER,		"XGITVYFilter",	  	  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_XGITVCOLCALIBFINE,		"XGITVColorCalibFine",	  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_XGITVCOLCALIBCOARSE,	"XGITVColorCalibCoarse",  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_TVXSCALE,			"XGITVXScale", 	  	  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_TVYSCALE,			"XGITVYScale", 	  	  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_TVXPOSOFFSET,		"TVXPosOffset", 	  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_TVYPOSOFFSET,		"TVYPosOffset", 	  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_XGI6326ANTIFLICKER,	"XGI6326TVAntiFlicker",   OPTV_STRING,    {0}, FALSE  },
-    { OPTION_XGI6326ENABLEYFILTER,	"XGI6326TVEnableYFilter", OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_XGI6326YFILTERSTRONG,	"XGI6326TVYFilterStrong", OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_XGI6326FORCETVPPLUG,	"XGI6326TVForcePlug",     OPTV_STRING,    {0}, -1    },
-    { OPTION_XGI6326FSCADJUST,		"XGI6326FSCAdjust", 	  OPTV_INTEGER,   {0}, -1    },
     { OPTION_USERGBCURSOR, 		"UseColorHWCursor",	  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_USERGBCURSORBLEND,		"ColorHWCursorBlending",  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_USERGBCURSORBLENDTH,	"ColorHWCursorBlendThreshold", OPTV_INTEGER,{0},-1   },
@@ -308,40 +250,12 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->forceCRT1 = -1;
     pXGI->DSTN = FALSE;
     pXGI->FSTN = FALSE;
-    pXGI->NoYV12 = -1;
     pXGI->PDC = -1;
     pXGI->PDCA = -1;
-    pXGI->OptTVStand = -1;
     pXGI->OptROMUsage = -1;
     pXGI->noInternalModes = FALSE;
     pXGI->OptUseOEM = -1;
-    pXGI->OptTVOver = -1;
-    pXGI->OptTVSOver = -1;
-    pXGI->chtvlumabandwidthcvbs = -1;
-    pXGI->chtvlumabandwidthsvideo = -1;
-    pXGI->chtvlumaflickerfilter = -1;
-    pXGI->chtvchromabandwidth = -1;
-    pXGI->chtvchromaflickerfilter = -1;
-    pXGI->chtvcvbscolor = -1;
-    pXGI->chtvtextenhance = -1;
-    pXGI->chtvcontrast = -1;
-    pXGI->xgitvedgeenhance = -1;
-    pXGI->xgitvantiflicker = -1;
-    pXGI->xgitvsaturation = -1;
-    pXGI->xgitvcfilter = -1;
-    pXGI->xgitvyfilter = 1; /* 0 = off, 1 = default, 2-8 = filter no */
-    pXGI->xgitvcolcalibc = 0;
-    pXGI->xgitvcolcalibf = 0;
-    pXGI->xgi6326enableyfilter = -1;
-    pXGI->xgi6326yfilterstrong = -1;
-    pXGI->xgi6326tvplug = -1;
-    pXGI->xgi6326fscadjust = 0;
-    pXGI->tvxpos = 0;
-    pXGI->tvypos = 0;
-    pXGI->tvxscale = 0;
-    pXGI->tvyscale = 0;
     pXGI->NonDefaultPAL = pXGI->NonDefaultNTSC = -1;
-    pXGI->chtvtype = -1;
     pXGI->restorebyset = TRUE;
     pXGI->nocrt2ddcdetection = FALSE;
     pXGI->forcecrt2redetection = TRUE;   /* default changed since 13/09/2003 */
@@ -543,40 +457,6 @@ xgiOptions(ScrnInfoPtr pScrn)
        if(xf86GetOptValString(pXGI->Options, OPTION_LVDSHL)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "LVDSHL");
        }
-       if(xf86GetOptValString(pXGI->Options, OPTION_TVSTANDARD)) {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "TVStandard");
-       }
-       if(xf86GetOptValString(pXGI->Options, OPTION_CHTVTYPE)) {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "CHTVType");
-       }
-       if(xf86GetOptValBool(pXGI->Options, OPTION_CHTVOVERSCAN, &val)) {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "CHTVOverscan");
-       }
-       if(xf86GetOptValBool(pXGI->Options, OPTION_CHTVSOVERSCAN, &val)) {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "CHTVSuperOverscan");
-       }
-       if((xf86GetOptValInteger(pXGI->Options, OPTION_CHTVLUMABANDWIDTHCVBS, &vali)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_CHTVLUMABANDWIDTHSVIDEO, &vali)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_CHTVLUMAFLICKERFILTER, &vali)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_CHTVCHROMABANDWIDTH, &vali)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_CHTVCHROMAFLICKERFILTER, &vali)) ||
-          (xf86GetOptValBool(pXGI->Options, OPTION_CHTVCVBSCOLOR, &val)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_CHTVTEXTENHANCE, &vali)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_CHTVCONTRAST, &vali)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_XGITVEDGEENHANCE, &vali)) ||
-	  (xf86GetOptValString(pXGI->Options, OPTION_XGITVANTIFLICKER)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_XGITVSATURATION, &vali)) ||
-	  (xf86GetOptValBool(pXGI->Options, OPTION_XGITVCHROMAFILTER, &val)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_XGITVLUMAFILTER, &vali)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_XGITVCOLCALIBCOARSE, &vali)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_XGITVCOLCALIBFINE, &vali)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_TVXPOSOFFSET, &vali)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_TVYPOSOFFSET, &vali)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_TVXSCALE, &vali)) ||
-	  (xf86GetOptValInteger(pXGI->Options, OPTION_TVYSCALE, &vali))) {
-	  xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-	      "TV related options are only accepted in Master Head's device section");
-       }
        if(xf86GetOptValBool(pXGI->Options, OPTION_CRT2GAMMA, &val)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "CRT2Gamma");
        }
@@ -716,20 +596,6 @@ xgiOptions(ScrnInfoPtr pScrn)
        if(!pXGI->NoXvideo) {
           Bool val;
 	  int tmp;
-
-	  if((pXGI->VGAEngine == XGI_OLD_VGA) || (pXGI->VGAEngine == XGI_530_VGA)) {
-	     /* NoYV12 (for 5597/5598, 6326 and 530/620 only)
-	      * YV12 has problems with videos larger than 384x288. So
-	      * allow the user to disable YV12 support to force the
-	      * application to use YUV2 instead.
-	      */
-             if(xf86GetOptValBool(pXGI->Options, OPTION_NOYV12, &val)) {
-	        pXGI->NoYV12 = val ? 1 : 0;
-		xf86DrvMsg(pScrn->scrnIndex, X_CONFIG,
-			"Xv YV12/I420 support is %s\n",
-			pXGI->NoYV12 ? disabledstr : enabledstr);
-	     }
-	  }
 
 	  /* Some Xv properties' defaults can be set by options */
           if(xf86GetOptValInteger(pXGI->Options, OPTION_XVDEFCONTRAST, &tmp)) {

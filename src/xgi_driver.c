@@ -2506,8 +2506,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 	PDEBUG(ErrorF(" --- Chipset : %s \n", pScrn->chipset));
 
 
-    pXGI->XGI6326Flags = 0;
-
     /*
      * This shouldn't happen because such problems should be caught in
      * XGIProbe(), but check it just in case.
@@ -2669,7 +2667,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #endif
        memset(pXGI->XGI_Pr, 0, sizeof(XGI_Private));
        pXGI->XGI_Pr->XGI_Backup70xx = 0xff;
-       pXGI->XGI_Pr->XGI_CHOverScan = -1;
        pXGI->XGI_Pr->XGI_ChSW = FALSE;
        pXGI->XGI_Pr->XGI_CustomT = CUT_NONE;
        pXGI->XGI_Pr->PanelSelfDetected = FALSE;
@@ -3330,34 +3327,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #ifdef XGI_CP
     XGI_CP_DRIVER_RECONFIGOPT
 #endif
-PDEBUG(ErrorF("3629 pXGI->VBFlags =%x\n",pXGI->VBFlags)) ;
-    /* Do some checks */
-    if(pXGI->OptTVOver != -1) 
-    {
-      xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-        	"CHTVOverscan only supported on CHRONTEL 70xx\n");
-          pXGI->UseCHOverScan = -1;
-    }
-    else pXGI->UseCHOverScan = -1;
-
-    if(pXGI->xgitvedgeenhance != -1) 
-    {
-       if(!(pXGI->XGI_Pr->XGI_VBType & VB_XGI301)) 
-       {
-      xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-           "XGITVEdgeEnhance only supported on XGI301\n");
-      pXGI->xgitvedgeenhance = -1;
-       }
-    }
-    if(pXGI->xgitvsaturation != -1) 
-    {
-       if(pXGI->XGI_Pr->XGI_VBType & VB_XGI301) 
-       {
-      xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-           "XGITVSaturation not supported on XGI301\n");
-      pXGI->xgitvsaturation = -1;
-       }
-    }
 
     /* Do some MergedFB mode initialisation */
 #ifdef XGIMERGED
@@ -6640,15 +6609,6 @@ PDEBUG(ErrorF("VBFlags=0x%lx\n", pXGI->VBFlags));
       }
 
       CR31 &= ~0x04;   /* Clear NotSimuMode */
-      pXGI->XGI_Pr->XGI_CHOverScan = pXGI->UseCHOverScan;
-      if((pXGI->OptTVSOver == 1) && (pXGI->ChrontelType == CHRONTEL_700x)) 
-      {
-         pXGI->XGI_Pr->XGI_CHSOverScan = TRUE;
-      }
-      else 
-      {
-         pXGI->XGI_Pr->XGI_CHSOverScan = FALSE;
-      }
 #ifdef XGI_CP
       XGI_CP_DRIVER_CONFIG
 #endif
