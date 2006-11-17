@@ -368,37 +368,6 @@ XGISetupImageVideo(ScreenPtr pScreen)
     return adapt;
 }
 
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,3,99,0,0)
-static Bool
-RegionsEqual(RegionPtr A, RegionPtr B)
-{
-    int *dataA, *dataB;
-    int num;
-
-    num = REGION_NUM_RECTS(A);
-    if(num != REGION_NUM_RECTS(B))
-        return FALSE;
-
-    if((A->extents.x1 != B->extents.x1) ||
-       (A->extents.x2 != B->extents.x2) ||
-       (A->extents.y1 != B->extents.y1) ||
-       (A->extents.y2 != B->extents.y2))
-        return FALSE;
-
-    dataA = (int*)REGION_RECTS(A);
-    dataB = (int*)REGION_RECTS(B);
-
-    while(num--) {
-        if((dataA[0] != dataB[0]) || (dataA[1] != dataB[1]))
-           return FALSE;
-        dataA += 2;
-        dataB += 2;
-    }
-
-    return TRUE;
-}
-#endif 
-
 
 static int
 XGISetPortAttribute(
@@ -1474,25 +1443,15 @@ XGIPutImage(
    XGIDisplayVideo(pScrn, pPriv);
 
    /* update cliplist */
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,3,99,0,0)
-     if(!RegionsEqual(&pPriv->clip, clipBoxes)) 
-#else
      if(!REGION_EQUAL(pScrn->pScreen, &pPriv->clip, clipBoxes)) 
-#endif
      {      
      	REGION_COPY(pScrn->pScreen, &pPriv->clip, clipBoxes);
 	
         /* draw these */
      } else {
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-           XAAFillSolidRects(pScrn, pPriv->colorKey, GXcopy, ~0,
-                           REGION_NUM_RECTS(clipBoxes),
-                           REGION_RECTS(clipBoxes));
-#else
-	   xf86XVFillKeyHelper(pScrn->pScreen, pPriv->colorKey, clipBoxes);
-#endif
-   } /* update cliplist */
-   
+	 xf86XVFillKeyHelper(pScrn->pScreen, pPriv->colorKey, clipBoxes);
+     } /* update cliplist */
+
    pPriv->currentBuf ^= 1;
    pPriv->videoStatus = CLIENT_VIDEO_ON;
 

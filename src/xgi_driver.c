@@ -84,7 +84,7 @@
 #define DPMS_SERVER
 #include <X11/extensions/dpms.h>
 
-#if (XF86_VERSION_CURRENT >= XF86_VERSION_NUMERIC(4,3,99,0,0)) || (defined(XvExtension))
+#if defined(XvExtension)
 #include "xf86xv.h"
 #include <X11/extensions/Xv.h>
 #endif
@@ -168,9 +168,6 @@ static const char *xaaSymbols[] = {
     "XAACopyROP",
     "XAACreateInfoRec",
     "XAADestroyInfoRec",
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,3,99,0,0)
-    "XAAFillSolidRects",
-#endif
     "XAAFillMono8x8PatternRects",
     "XAAPatternROP",
     "XAAHelpPatternROP",
@@ -236,11 +233,7 @@ static const char *int10Symbols[] = {
 };
 
 static const char *vbeSymbols[] = {
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-    "VBEInit",
-#else
     "VBEExtendedInit",
-#endif
     "vbeDoEDID",
     "vbeFree",
     "VBEGetVBEInfo",
@@ -806,176 +799,6 @@ PDEBUG(ErrorF(" --- XGIProbe \n"));
     return foundScreen;
 }
 
-
-/* If monitor section has no HSync/VRefresh data,
- * derive it from DDC data. Done by common layer
- * since 4.3.99.14.
- */
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,3,99,14,0)
-static void
-XGISetSyncRangeFromEdid(ScrnInfoPtr pScrn, int flag)
-{
-   MonPtr      mon = pScrn->monitor;
-   xf86MonPtr  ddc = mon->DDC;
-   int         i,j;
-   float       myhhigh, myhlow;
-   int         myvhigh, myvlow;
-   unsigned char temp;
-   const myhddctiming myhtiming[11] = 
-   {
-       { 1, 0x20, 31.6 }, /* rounded up by .1 */
-       { 1, 0x02, 35.3 },
-       { 1, 0x04, 37.6 },
-       { 1, 0x08, 38.0 },
-       { 1, 0x01, 38.0 },
-       { 2, 0x40, 47.0 },
-       { 2, 0x80, 48.2 },
-       { 2, 0x08, 48.5 },
-       { 2, 0x04, 56.6 },
-       { 2, 0x02, 60.1 },
-       { 2, 0x01, 80.1 }
-   };
-   const myvddctiming myvtiming[10] = 
-   {
-       { 1, 0x02, 56 },
-       { 1, 0x01, 60 },
-       { 2, 0x08, 60 },
-       { 2, 0x04, 70 },
-       { 1, 0x08, 72 },
-       { 2, 0x80, 72 },
-       { 1, 0x04, 75 },
-       { 2, 0x40, 75 },
-       { 2, 0x02, 75 },
-       { 2, 0x01, 75 }
-   };
-   /* "Future modes"; we only check the really high ones */
-   const myddcstdmodes mystdmodes[8] = 
-   {
-       { 1280, 1024, 85, 91.1  },
-       { 1600, 1200, 60, 75.0  },
-       { 1600, 1200, 65, 81.3  },
-       { 1600, 1200, 70, 87.5  },
-       { 1600, 1200, 75, 93.8  },
-       { 1600, 1200, 85, 106.3 },
-       { 1920, 1440, 60, 90.0  },
-       { 1920, 1440, 75, 112.5 }
-   };
-
-   if(flag) 
-   { /* HSync */
-      for(i = 0; i < 4; i++) 
-      {
-    	 if(ddc->det_mon[i].type == DS_RANGES) 
-    	 {
-            mon->nHsync = 1;
-            mon->hsync[0].lo = ddc->det_mon[i].section.ranges.min_h;
-            mon->hsync[0].hi = ddc->det_mon[i].section.ranges.max_h;
-            return;
-         }
-      }
-      /* If no sync ranges detected in detailed timing table, we
-       * derive them from supported VESA modes. */
-      myhlow = myhhigh = 0.0;
-      for(i=0; i<11; i++) 
-      {
-         if(myhtiming[i].whichone == 1) temp = ddc->timings1.t1;
-     else                           temp = ddc->timings1.t2;
-     if(temp & myhtiming[i].mask) 
-     {
-        if((i==0) || (myhlow > myhtiming[i].rate))
-                myhlow = myhtiming[i].rate;
-     }
-     if(myhtiming[10-i].whichone == 1) temp = ddc->timings1.t1;
-     else                              temp = ddc->timings1.t2;
-     if(temp & myhtiming[10-i].mask) 
-     {
-        if((i==0) || (myhhigh < myhtiming[10-i].rate))
-                myhhigh = myhtiming[10-i].rate;
-     }
-      }
-      for(i=0;i<STD_TIMINGS;i++) 
-      {
-     if(ddc->timings2[i].hsize > 256) 
-     {
-            for(j=0; j<8; j++) 
-            {
-           if((ddc->timings2[i].hsize == mystdmodes[j].hsize) &&
-              (ddc->timings2[i].vsize == mystdmodes[j].vsize) &&
-    	  (ddc->timings2[i].refresh == mystdmodes[j].refresh)) 
-    	  {
-    	  if(mystdmodes[j].hsync > myhhigh)
-    	     myhhigh = mystdmodes[j].hsync;
-           }
-        }
-     }
-      }
-      if((myhhigh) && (myhlow)) 
-      {
-         mon->nHsync = 1;
-     mon->hsync[0].lo = myhlow - 0.1;
-     mon->hsync[0].hi = myhhigh;
-      }
-
-
-   }
-   else 
-   {  /* Vrefresh */
-
-      for(i = 0; i < 4; i++) 
-      {
-         if(ddc->det_mon[i].type == DS_RANGES) 
-         {
-            mon->nVrefresh = 1;
-            mon->vrefresh[0].lo = ddc->det_mon[i].section.ranges.min_v;
-            mon->vrefresh[0].hi = ddc->det_mon[i].section.ranges.max_v;
-            return;
-         }
-      }
-
-      myvlow = myvhigh = 0;
-      for(i=0; i<10; i++) 
-      {
-         if(myvtiming[i].whichone == 1) temp = ddc->timings1.t1;
-     else                           temp = ddc->timings1.t2;
-     if(temp & myvtiming[i].mask) 
-     {
-        if((i==0) || (myvlow > myvtiming[i].rate))
-               myvlow = myvtiming[i].rate;
-     }
-     if(myvtiming[9-i].whichone == 1) temp = ddc->timings1.t1;
-     else                             temp = ddc->timings1.t2;
-     if(temp & myvtiming[9-i].mask) 
-     {
-        if((i==0) || (myvhigh < myvtiming[9-i].rate))
-               myvhigh = myvtiming[9-i].rate;
-     }
-      }
-      for(i=0;i<STD_TIMINGS;i++) 
-      {
-     if(ddc->timings2[i].hsize > 256) 
-     {
-            for(j=0; j<8; j++) 
-            {
-           if((ddc->timings2[i].hsize == mystdmodes[j].hsize) &&
-              (ddc->timings2[i].vsize == mystdmodes[j].vsize) &&
-    	  (ddc->timings2[i].refresh == mystdmodes[j].refresh)) 
-    	  {
-    	  if(mystdmodes[j].refresh > myvhigh)
-    	     myvhigh = mystdmodes[j].refresh;
-           }
-        }
-     }
-      }
-      if((myvhigh) && (myvlow)) 
-      {
-         mon->nVrefresh = 1;
-     mon->vrefresh[0].lo = myvlow;
-     mon->vrefresh[0].hi = myvhigh;
-      }
-
-    }
-}
-#endif
 
 /* Some helper functions for MergedFB mode */
 
@@ -2125,10 +1948,6 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
 
     static const char *ddcsstr = "CRT%d DDC monitor info: ************************************\n";
     static const char *ddcestr = "End of CRT%d DDC monitor info ******************************\n";
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,3,99,14,0)
-    static const char *subshstr = "Substituting missing CRT%d monitor HSync data by DDC data\n";
-    static const char *subsvstr = "Substituting missing CRT%d monitor VRefresh data by DDC data\n";
-#endif
 
     /* Now for something completely different: DDC.
      * For 300 and 315/330 series, we provide our
@@ -2322,58 +2141,12 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
 		}
 	}
 	#endif
-		
-	/* If there is no HSync or VRefresh data for the monitor,
-	* derive it from DDC data. Done by common layer since
-	* 4.3.99.14.
-	*/
-	#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,3,99,14,0)
-	if(pScrn->monitor->DDC) 
-	{
-		if(pScrn->monitor->nHsync <= 0) 
-		{
-			xf86DrvMsg(pScrn->scrnIndex, X_INFO, subshstr,
-			#ifdef XGIDUALHEAD
-				pXGI->DualHeadMode ? (pXGI->SecondHead ? 1 : 2) :
-			#endif
-				pXGI->CRT1off ? 2 : 1);
-			XGISetSyncRangeFromEdid(pScrn, 1);
-		}
 
-		if(pScrn->monitor->nVrefresh <= 0) 
-		{
-			xf86DrvMsg(pScrn->scrnIndex, X_INFO, subsvstr,
-			#ifdef XGIDUALHEAD
-				pXGI->DualHeadMode ? (pXGI->SecondHead ? 1 : 2) :
-			#endif
-				pXGI->CRT1off ? 2 : 1);
-			XGISetSyncRangeFromEdid(pScrn, 0);
-		}
-	}
-	#endif
-		
-	#ifdef XGIMERGED
-	if(pXGI->MergedFB) 
-	{
-		#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,3,99,14,0)
-		if(pXGI->CRT2pScrn->monitor->DDC) 
-		{
-			if(pXGI->CRT2pScrn->monitor->nHsync <= 0) 
-			{
-				xf86DrvMsg(pScrn->scrnIndex, X_INFO, subshstr, 2);
-				XGISetSyncRangeFromEdid(pXGI->CRT2pScrn, 1);
-			}
-			if(pXGI->CRT2pScrn->monitor->nVrefresh <= 0) 
-			{
-				xf86DrvMsg(pScrn->scrnIndex, X_INFO, subsvstr, 2);
-				XGISetSyncRangeFromEdid(pXGI->CRT2pScrn, 0);
-			}
-		}
-		#endif
-		
-		xf86DrvMsg(pScrn->scrnIndex, X_INFO, crtsetupstr, 1);
+#ifdef XGIMERGED
+    if(pXGI->MergedFB) {
+        xf86DrvMsg(pScrn->scrnIndex, X_INFO, crtsetupstr, 1);
     }
-	#endif
+#endif
 
     /* end of DDC */
 }
@@ -2507,7 +2280,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 	/****************** Code Start ***********************/
 
 	DumpDDIName("XGIPreInit\n") ;
-	
+
 //inXGIIDXREG(XGICR, 0x4D, tmpval);
 //tmpval = tmpval | 0x05;
 //outXGIIDXREG(XGICR, 0x4D, tmpval);
@@ -2518,13 +2291,8 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
        {
           int index = xf86GetEntityInfo(pScrn->entityList[0])->index;
 
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-      if((pVbe = VBEInit(NULL,index))) 
-      {
-#else
           if((pVbe = VBEExtendedInit(NULL,index,0))) 
           {
-#endif
              ConfiguredMonitor = vbeDoEDID(pVbe, NULL);
              vbeFree(pVbe);
           }
@@ -2574,18 +2342,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     xf86DrvMsg(pScrn->scrnIndex, X_INFO,
         "Copyright (C) 2001-2004 Thomas Winischhofer <thomas@winischhofer.net> and others\n");
-        xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-        "Compiled for XFree86 %d.%d.%d.%d\n",
-        XF86_VERSION_MAJOR, XF86_VERSION_MINOR,
-        XF86_VERSION_PATCH, XF86_VERSION_SNAP);
-
-#if (XF86_VERSION_CURRENT >= XF86_VERSION_NUMERIC(4,2,99,0,0)) && !defined(XORG_VERSION_CURRENT)
-    if(xf86GetVersion() != XF86_VERSION_CURRENT)
-    {
-       xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-         "This version of the driver is not compiled for this version of XFree86!\n");
-    }
-#endif
 
     /* Allocate a vgaHWRec */
     if(!vgaHWGetHWRec(pScrn)) 
@@ -2603,11 +2359,8 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     pXGI = XGIPTR(pScrn);
     pXGI->pScrn = pScrn;
 
-	#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-		pXGI->IODBase = 0;
-	#else
-		pXGI->IODBase = pScrn->domainIOBase;
-	#endif
+    pXGI->IODBase = pScrn->domainIOBase;
+
 
     /* Get the entity, and make sure it is PCI. */
     pXGI->pEnt = xf86GetEntityInfo(pScrn->entityList[0]);
@@ -2687,18 +2440,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 		#endif /* !defined(__alpha__) */
     }
 
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-    {
-        resRange vgamem[] = {   
-        {ResShrMemBlock,0xA0000,0xAFFFF},
-                                {ResShrMemBlock,0xB0000,0xB7FFF},
-                                {ResShrMemBlock,0xB8000,0xBFFFF},
-                            _END };
-        xf86SetOperatingState(vgamem, pXGI->pEnt->index, ResUnusedOpr);
-    }
-#else
     xf86SetOperatingState(resVgaMem, pXGI->pEnt->index, ResUnusedOpr);
-#endif
 
     /* Operations for which memory access is required */
     pScrn->racMemFlags = RAC_FB | RAC_COLORMAP | RAC_CURSOR | RAC_VIEWPORT;
@@ -3874,18 +3616,14 @@ PDEBUG(ErrorF("3782 pXGI->VBFlags =%x\n",pXGI->VBFlags)) ;
 	/* Now load and initialize VBE module. */
 	if(xf86LoadSubModule(pScrn, "vbe")) 
 	{
-		xf86LoaderReqSymLists(vbeSymbols, NULL);
-		#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-			pXGI->pVbe = VBEInit(pXGI->pInt,pXGI->pEnt->index);
-		#else
-			pXGI->pVbe = VBEExtendedInit(pXGI->pInt,pXGI->pEnt->index,
-				SET_BIOS_SCRATCH | RESTORE_BIOS_SCRATCH);
-		#endif
-		if(!pXGI->pVbe) 
-		{
-			xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-				"Could not initialize VBE module for DDC\n");
-		}
+	    xf86LoaderReqSymLists(vbeSymbols, NULL);
+	    pXGI->pVbe = VBEExtendedInit(pXGI->pInt,pXGI->pEnt->index,
+					 SET_BIOS_SCRATCH | RESTORE_BIOS_SCRATCH);
+	    if(!pXGI->pVbe) 
+	      {
+		  xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
+			     "Could not initialize VBE module for DDC\n");
+	      }
 	}
 	else 
 	{
@@ -4333,13 +4071,9 @@ PDEBUG(ErrorF("3782 pXGI->VBFlags =%x\n",pXGI->VBFlags)) ;
        {
           if(xf86LoadSubModule(pScrn, "vbe")) 
           {
-         xf86LoaderReqSymLists(vbeSymbols, NULL);
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-         pXGI->pVbe = VBEInit(pXGI->pInt,pXGI->pEnt->index);
-#else
-             pXGI->pVbe = VBEExtendedInit(pXGI->pInt,pXGI->pEnt->index,
-        			SET_BIOS_SCRATCH | RESTORE_BIOS_SCRATCH);
-#endif
+	      xf86LoaderReqSymLists(vbeSymbols, NULL);
+	      pXGI->pVbe = VBEExtendedInit(pXGI->pInt,pXGI->pEnt->index,
+					   SET_BIOS_SCRATCH | RESTORE_BIOS_SCRATCH);
           }
        }
        if(pXGI->pVbe) 
@@ -4600,11 +4334,7 @@ XGI_SaveFonts(ScrnInfoPtr pScrn)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
     unsigned char miscOut, attr10, gr4, gr5, gr6, seq2, seq4, scrn;
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-    CARD8 *vgaIOBase = (CARD8 *)VGAHWPTR(pScrn)->IOBase;
-#else
     pointer vgaIOBase = VGAHWPTR(pScrn)->Base;
-#endif
 
     if(pXGI->fonts) return;
 
@@ -4673,11 +4403,7 @@ XGI_RestoreFonts(ScrnInfoPtr pScrn)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
     unsigned char miscOut, attr10, gr1, gr3, gr4, gr5, gr6, gr8, seq2, seq4, scrn;
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-    CARD8 *vgaIOBase = (CARD8 *)VGAHWPTR(pScrn)->IOBase;
-#else
     pointer vgaIOBase = VGAHWPTR(pScrn)->Base;
-#endif
 
     if(!pXGI->fonts) return;
 
@@ -5331,13 +5057,9 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 #if !defined(__powerpc__)
        if(xf86LoadSubModule(pScrn, "vbe")) 
        {
-      xf86LoaderReqSymLists(vbeSymbols, NULL);
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-          pXGI->pVbe = VBEInit(NULL, pXGI->pEnt->index);
-#else
-          pXGI->pVbe = VBEExtendedInit(NULL, pXGI->pEnt->index,
-                       SET_BIOS_SCRATCH | RESTORE_BIOS_SCRATCH);
-#endif
+	   xf86LoaderReqSymLists(vbeSymbols, NULL);
+	   pXGI->pVbe = VBEExtendedInit(NULL, pXGI->pEnt->index,
+					SET_BIOS_SCRATCH | RESTORE_BIOS_SCRATCH);
        }
        else 
        {
@@ -5647,7 +5369,7 @@ PDEBUG(ErrorF("XGILoadPalette() check-return.  \n"));
 
     pXGI->ResetXv = pXGI->ResetXvGamma = NULL;
 
-#if (XF86_VERSION_CURRENT >= XF86_VERSION_NUMERIC(4,3,99,0,0)) || (defined(XvExtension))
+#if defined(XvExtension)
     if(!pXGI->NoXvideo) 
     {
            XGIInitVideo(pScreen);

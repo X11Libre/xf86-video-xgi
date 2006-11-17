@@ -119,13 +119,10 @@
 #include "vb_struct.h"
 #include "vstruct.h"
 #ifdef XF86DRI
-#undef XGINEWDRI
-#undef XGINEWDRI2
-#if XF86_VERSION_CURRENT >= XF86_VERSION_NUMERIC(4,3,99,14,0)
 #define XGINEWDRI
+#undef XGINEWDRI2
 #if XF86_VERSION_CURRENT >= XF86_VERSION_NUMERIC(4,4,99,99,0)	/* Adapt this when the time has come */
 #define XGINEWDRI2
-#endif
 #endif
 #include "xf86drm.h"
 #include "sarea.h"

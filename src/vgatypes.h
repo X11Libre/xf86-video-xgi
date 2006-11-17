@@ -82,12 +82,7 @@ typedef unsigned long XGIIOADDRESS;
 #endif
 
 #ifdef LINUX_XF86
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,0,0,0)
-typedef unsigned char IOADDRESS;
-typedef unsigned char XGIIOADDRESS;
-#else
 typedef IOADDRESS XGIIOADDRESS;
-#endif
 #endif
 
 #ifndef VBIOS_VER_MAX_LENGTH

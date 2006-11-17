@@ -404,9 +404,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     XGI_CP_OPT_DEFAULT
 #endif
 
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-    pXGI->OptUseColorCursor = 0;
-#endif
 
     /* Collect the options */
 
@@ -446,13 +443,7 @@ xgiOptions(ScrnInfoPtr pScrn)
      */
     if(xf86ReturnOptValBool(pXGI->Options, OPTION_NOACCEL, FALSE)) {
         pXGI->NoAccel = TRUE;
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-	pXGI->NoXvideo = TRUE;
-	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "2D Acceleration and Xv disabled\n");
-#else
 	xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "2D Acceleration disabled\n");
-#endif
-
     }
 
 	if (PCI_CHIP_XGIXG20 == pXGI->Chipset)
@@ -666,14 +657,8 @@ xgiOptions(ScrnInfoPtr pScrn)
     }
     if(pXGI->ShadowFB) {
 	pXGI->NoAccel = TRUE;
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-	pXGI->NoXvideo = TRUE;
-    	xf86DrvMsg(pScrn->scrnIndex, from,
-	   "Using \"Shadow Frame Buffer\" - 2D acceleration and Xv disabled\n");
-#else
     	xf86DrvMsg(pScrn->scrnIndex, from,
 	   "Using \"Shadow Frame Buffer\" - 2D acceleration disabled\n");
-#endif
     }
 
     /* Rotate */
@@ -698,24 +683,11 @@ xgiOptions(ScrnInfoPtr pScrn)
           pXGI->ShadowFB = TRUE;
           pXGI->NoAccel  = TRUE;
           pXGI->HWCursor = FALSE;
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-	  pXGI->NoXvideo = TRUE;
-          xf86DrvMsg(pScrn->scrnIndex, X_CONFIG,
-              "Rotating screen %sclockwise; (2D acceleration and Xv disabled)\n",
-	      (pXGI->Rotate == -1) ? "counter " : "");
-#else
 	  xf86DrvMsg(pScrn->scrnIndex, X_CONFIG,
               "Rotating screen %sclockwise (2D acceleration %sdisabled)\n",
 	      (pXGI->Rotate == -1) ? "counter " : "",
-#if XF86_VERSION_CURRENT >= XF86_VERSION_NUMERIC(4,3,0,0,0)
               "and RandR extension "
-#else
-	      ""
-#endif
 	      );
-
-#endif
-
        }
     }
 
@@ -750,11 +722,7 @@ xgiOptions(ScrnInfoPtr pScrn)
     /* NoXVideo
      * Set this to TRUE to disable Xv hardware video acceleration
      */
-#if XF86_VERSION_CURRENT < XF86_VERSION_NUMERIC(4,2,99,0,0)
-    if((!pXGI->NoAccel) && (!pXGI->NoXvideo)) {
-#else
     if(!pXGI->NoXvideo) {
-#endif
        if(xf86ReturnOptValBool(pXGI->Options, OPTION_NOXVIDEO, FALSE)) {
           pXGI->NoXvideo = TRUE;
           xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "XVideo extension disabled\n");
