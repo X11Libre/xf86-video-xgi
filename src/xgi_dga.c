@@ -320,24 +320,20 @@ XGI_SetMode(
 }
 
 static int
-XGI_GetViewport(
-  ScrnInfoPtr pScrn
-){
-    XGIPtr pXGI = XGIPTR(pScrn);
+XGI_GetViewport(ScrnInfoPtr pScrn)
+{
+    (void) pScrn;
 
-    return pXGI->DGAViewportStatus;
+    /* There are never pending Adjusts */
+    return 0;
 }
 
 static void
-XGI_SetViewport(
-   ScrnInfoPtr pScrn,
-   int x, int y,
-   int flags
-){
+XGI_SetViewport(ScrnInfoPtr pScrn, int x, int y, int flags)
+{
    XGIPtr pXGI = XGIPTR(pScrn);
 
    (*pScrn->AdjustFrame)(pScrn->pScreen->myNum, x, y, flags);
-   pXGI->DGAViewportStatus = 0;  /* There are never pending Adjusts */
 }
 
 static void

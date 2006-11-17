@@ -617,11 +617,6 @@ typedef struct {
     Bool                DGAactive;
 
     /**
-     * \bug This field is set but never used.
-     */
-    int                 DGAViewportStatus;
-
-    /**
      * Back old modeNo (if available)
      *
      * \bug This field is set but never used.
