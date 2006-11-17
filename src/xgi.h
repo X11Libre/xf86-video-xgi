@@ -887,7 +887,6 @@ typedef struct {
     int			xgi6326yfilterstrong;
     int			xgi6326tvplug;
     int			xgi6326fscadjust;
-    int			EMI;
 
     int			NoYV12;			/* Disable Xv YV12 support (old series) */
     int			newFastVram;		/* Replaces FastVram */

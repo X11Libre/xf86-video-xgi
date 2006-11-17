@@ -66,12 +66,10 @@ typedef enum {
     OPTION_VESA,
     OPTION_MAXXFBMEM,
     OPTION_FORCECRT1,
-    OPTION_XVONCRT2,
     OPTION_PDC,
     OPTION_PDCA,
     OPTION_PDCS,
     OPTION_PDCAS,
-    OPTION_EMI,
     OPTION_TVSTANDARD,
     OPTION_USEROMDATA,
     OPTION_NOINTERNALMODES,
@@ -179,7 +177,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_PDCA,               	"PanelDelayCompensation1",OPTV_INTEGER,   {0}, -1    },
     { OPTION_PDCS,               	"PDC", 			  OPTV_INTEGER,   {0}, -1    },
     { OPTION_PDCAS,               	"PDC1",			  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_EMI,               	"EMI", 			  OPTV_INTEGER,   {0}, -1    },
     { OPTION_LVDSHL,			"LVDSHL", 	  	  OPTV_INTEGER,   {0}, -1    },
     { OPTION_SPECIALTIMING,        	"SpecialTiming",          OPTV_STRING,    {0}, -1    },
     { OPTION_TVSTANDARD,        	"TVStandard",             OPTV_STRING,    {0}, -1    },
@@ -317,7 +314,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->NoYV12 = -1;
     pXGI->PDC = -1;
     pXGI->PDCA = -1;
-    pXGI->EMI = -1;
     pXGI->OptTVStand = -1;
     pXGI->OptROMUsage = -1;
     pXGI->noInternalModes = FALSE;
@@ -543,9 +539,6 @@ xgiOptions(ScrnInfoPtr pScrn)
        if((xf86GetOptValInteger(pXGI->Options, OPTION_PDCA, &vali)) ||
           (xf86GetOptValInteger(pXGI->Options, OPTION_PDCAS, &vali))) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "PanelDelayCompensation1 (PDC1)");
-       }
-       if(xf86GetOptValInteger(pXGI->Options, OPTION_EMI, &vali)) {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "EMI");
        }
        if(xf86GetOptValString(pXGI->Options, OPTION_SPECIALTIMING)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "SpecialTiming");
