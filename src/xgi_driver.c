@@ -2636,7 +2636,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
          pXGI->DualHeadMode = TRUE;
          pXGIEnt->DisableDual = FALSE;
          pXGIEnt->BIOS = NULL;
-         pXGIEnt->ROM661New = FALSE;
          pXGIEnt->XGI_Pr = NULL;
          pXGIEnt->RenderAccelArray = NULL;
       }
@@ -2904,7 +2903,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     pXGI->xgi_HwDevExt.pjVirtualRomBase = NULL;
     pXGI->BIOS = NULL;
     pXGI->xgi_HwDevExt.UseROM = FALSE;
-    pXGI->ROM661New = FALSE;
 
     /* Evaluate options */
     xgiOptions(pScrn);

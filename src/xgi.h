@@ -552,11 +552,7 @@ typedef struct {
     unsigned char       *RenderAccelArray;
     unsigned char *	FbBase1;
     unsigned long	OnScreenSize1;
-    
-    /**
-     * \bug This field is set to \c FALSE but is never used.
-     */
-    BOOLEAN		ROM661New;
+
 #ifdef XGI_CP
     XGI_CP_H_ENT
 #endif
@@ -992,7 +988,6 @@ typedef struct {
     unsigned long       HWCursorBackup[16];
     int			HWCursorMBufNum, HWCursorCBufNum;
     unsigned long	mmioSize;
-    BOOLEAN		ROM661New;
 #ifdef XGIMERGED
     Bool		MergedFB, MergedFBAuto;
     XGIScrn2Rel		CRT2Position;
