@@ -100,7 +100,6 @@
 
 #include "xf86Pci.h"
 #include "xf86Cursor.h"
-#include "xf86_ansic.h"
 #include "xf86xv.h"
 #include "compiler.h"
 #include "xaa.h"

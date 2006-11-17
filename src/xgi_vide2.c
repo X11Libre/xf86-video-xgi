@@ -43,7 +43,6 @@ THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "xf86.h"
 #include "xf86_OSproc.h"
 #include "xf86Resources.h"
-#include "xf86_ansic.h"
 #include "compiler.h"
 #include "xf86PciInfo.h"
 #include "xf86Pci.h"
@@ -955,7 +954,7 @@ XGIPutImage(
    /* copy data */
    if((pXGI->XvUseMemcpy) || (totalSize < 16)) {
    	    #ifdef NewPath
-	   		xf86memcpy(pXGI->FbBase + pPriv->bufAddr[pPriv->currentBuf], buf, totalSize);
+	   		memcpy(pXGI->FbBase + pPriv->bufAddr[pPriv->currentBuf], buf, totalSize);
 
 	   #else
 		   switch(id){
@@ -976,12 +975,12 @@ XGIPutImage(
   	              srcU = srcV + width  * height / 4;
 #if !defined(__powerpc__)
 		      for(i=0; i<height; i++)
-		         xf86memcpy(Y + i * pPriv->srcPitch, srcY + i*width, width);
+		         memcpy(Y + i * pPriv->srcPitch, srcY + i*width, width);
 			  
 		      for(i=0; i<height2; i++)
 		      {
-		         xf86memcpy(V + i * srcPitch2, srcV + i*width2, width2);
-		         xf86memcpy(U + i * srcPitch2, srcU + i*width2, width2);
+		         memcpy(V + i * srcPitch2, srcV + i*width2, width2);
+		         memcpy(U + i * srcPitch2, srcU + i*width2, width2);
 		      }
 #else
           if(pScrn->depth == 16)//16 BPP
@@ -1064,10 +1063,10 @@ XGIPutImage(
 #if !defined(__powerpc__)
 		      
 		      for(i=0; i<height; i++)
-		         xf86memcpy(Y + i * pPriv->srcPitch, srcY + i*width, width);
+		         memcpy(Y + i * pPriv->srcPitch, srcY + i*width, width);
 			  
 		      for(i=0; i<height2; i++)
-		         xf86memcpy(VU + i * pPriv->srcPitch, srcVU + i*width, width);
+		         memcpy(VU + i * pPriv->srcPitch, srcVU + i*width, width);
 #else
           if(pScrn->depth == 16)//16 BPP
           {
@@ -1134,7 +1133,7 @@ XGIPutImage(
 		     
 		      for(i=0; i<height; i++)
 #if !defined(__powerpc__)			      
-		         xf86memcpy( Base + i * pPriv->srcPitch, buf + i*width*2, width*2);
+		         memcpy( Base + i * pPriv->srcPitch, buf + i*width*2, width*2);
 #else
           if(pScrn->depth == 16)//16 BPP
 		      {
@@ -1163,7 +1162,7 @@ XGIPutImage(
 		      break;
 		   }
 		   default:
-		      xf86memcpy(pXGI->FbBase + pPriv->bufAddr[pPriv->currentBuf], buf, totalSize);
+		      memcpy(pXGI->FbBase + pPriv->bufAddr[pPriv->currentBuf], buf, totalSize);
 		      break;
 		   	}
 		   #endif

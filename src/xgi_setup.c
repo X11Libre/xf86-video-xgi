@@ -43,7 +43,6 @@
 #include "xf4bpp.h"
 #include "xf86_OSproc.h"
 #include "xf86Resources.h"
-#include "xf86_ansic.h"
 #include "xf86Version.h"
 
 #include "xf86cmap.h"

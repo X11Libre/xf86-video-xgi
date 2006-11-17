@@ -54,7 +54,6 @@
 #include "xf86Priv.h"
 #include "xf86_OSproc.h"
 #include "xf86Resources.h"
-#include "xf86_ansic.h"
 #include "dixstruct.h"
 #include "xf86Version.h"
 #include "xf86PciInfo.h"

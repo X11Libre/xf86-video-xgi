@@ -6,7 +6,6 @@
 
 #include "xf86.h"
 #include "xf86_OSproc.h"
-#include "xf86_ansic.h"
 #include "xf86Priv.h"
 
 #include "xf86PciInfo.h"
@@ -396,11 +395,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
       agp.offset = 0; /* AGP_VTXBUF_SIZE; */
       agp.size = pXGI->agpSize; /* AGP_SIZE - AGP_VTXBUF_SIZE; */
 #ifdef DRM_IOCTL_XGI_AGP_INIT
-      xf86ioctl(pXGI->drmSubFD, DRM_IOCTL_XGI_AGP_INIT, &agp);
-/*
-#else
-      xf86ioctl(pXGI->drmSubFD, XGI_IOCTL_AGP_INIT, &agp);
-*/
+      ioctl(pXGI->drmSubFD, DRM_IOCTL_XGI_AGP_INIT, &agp);
 #endif
 #endif
     }
