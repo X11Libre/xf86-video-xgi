@@ -3446,8 +3446,6 @@ PDEBUG(ErrorF("3674 pXGI->VBFlags =%x\n",pXGI->VBFlags)) ;
          }
 #endif
          pXGI->VBFlags |= VB_DISPMODE_SINGLE;
-         /* No CRT1? Then we use the video overlay on CRT2 */
-         pXGI->XvOnCRT2 = TRUE;
     }
     else			/* CRT1 and CRT2 - mirror or dual head ----- */
 #ifdef XGIDUALHEAD
