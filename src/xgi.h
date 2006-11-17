@@ -924,12 +924,6 @@ typedef struct {
     Atom		xvDisableColorkey, xvUseChromakey, xvChromaMin, xvChromaMax;
     Atom		xvInsideChromakey, xvYUVChromakey;
     Atom		xvGammaRed, xvGammaGreen, xvGammaBlue;
-
-    /**
-     * \bug This field is set but never used.
-     */
-    int			CRT1isoff;
-
 #ifdef XGI_CP
     XGI_CP_H
 #endif

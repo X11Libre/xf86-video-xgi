@@ -6877,7 +6877,6 @@ PDEBUG(ErrorF(" XGIPostSetMode(). \n"));
     xf86DrvMsg(pScrn->scrnIndex, X_INFO,
     	"CRT1off is %d\n", pXGI->CRT1off);
 #endif
-    pXGI->CRT1isoff = pXGI->CRT1off;
 
 #ifdef UNLOCK_ALWAYS
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
