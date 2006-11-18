@@ -228,27 +228,6 @@ typedef struct _XGI_New_ModeResInfoStruct
 
 typedef UCHAR DRAM4sType[4];
 
-/* Defines for XGI_CustomT */
-/* Never change these for xgifb compatibility */
-#define CUT_NONE          0
-#define CUT_FORCENONE     1
-#define CUT_BARCO1366     2
-#define CUT_BARCO1024     3
-#define CUT_COMPAQ1280    4
-#define CUT_COMPAQ12802   5
-#define CUT_PANEL848      6
-#define CUT_CLEVO1024     7
-#define CUT_CLEVO10242    8
-#define CUT_CLEVO1400     9
-#define CUT_CLEVO14002    10
-#define CUT_UNIWILL1024   11
-#define CUT_ASUSL3000D    12
-#define CUT_UNIWILL10242  13
-#define CUT_ACER1280      14
-#define CUT_COMPAL1400_1  15
-#define CUT_COMPAL1400_2  16
-#define CUT_ASUSA2H_1     17
-#define CUT_ASUSA2H_2     18
 
 typedef struct _XGI_Private
 {
@@ -291,10 +270,8 @@ typedef struct _XGI_Private
 	BOOLEAN PanelSelfDetected;
 	int     XGI_CHOverScan;
 	BOOLEAN XGI_CHSOverScan;
-	BOOLEAN XGI_ChSW;
 	BOOLEAN XGI_UseLCDA;
 	int     XGI_UseOEM;
-	ULONG   XGI_CustomT;
 	USHORT  XGI_Backup70xx;
 	BOOLEAN HaveEMI;
 	BOOLEAN HaveEMILCD;

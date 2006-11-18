@@ -968,35 +968,6 @@ typedef struct _region {
     int x0,x1,y0,y1;
 } region;
 
-typedef struct _pdctable {
-    int subsysVendor;
-    int subsysCard;
-    int pdc;
-    char *vendorName;
-    char *cardName;
-} pdctable;
-
-typedef struct _chswtable {
-    int subsysVendor;
-    int subsysCard;
-    char *vendorName;
-    char *cardName;
-} chswtable;
-
-typedef struct _customttable {
-    unsigned short chipID;
-    char *biosversion;
-    char *biosdate;
-    unsigned long bioschksum;
-    unsigned short biosFootprintAddr[5];
-    unsigned char biosFootprintData[5];
-    unsigned short pcisubsysvendor;
-    unsigned short pcisubsyscard;
-    char *vendorName;
-    char *cardName;
-    unsigned long SpecialID;
-    char *optionName;
-} customttable;
 
 extern void  xgiSaveUnlockExtRegisterLock(XGIPtr pXGI, unsigned char *reg1, unsigned char *reg2);
 extern void  xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1, unsigned char reg2);

@@ -44,8 +44,6 @@
 
 #include "xgi.h"
 
-extern const customttable mycustomttable[];
-
 typedef enum {
     OPTION_SW_CURSOR,
     OPTION_HW_CURSOR,

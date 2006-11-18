@@ -2667,8 +2667,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #endif
        memset(pXGI->XGI_Pr, 0, sizeof(XGI_Private));
        pXGI->XGI_Pr->XGI_Backup70xx = 0xff;
-       pXGI->XGI_Pr->XGI_ChSW = FALSE;
-       pXGI->XGI_Pr->XGI_CustomT = CUT_NONE;
        pXGI->XGI_Pr->PanelSelfDetected = FALSE;
        pXGI->XGI_Pr->UsePanelScaler = -1;
        pXGI->XGI_Pr->CenterScreen = -1;
@@ -3076,75 +3074,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     xf86DrvMsg(pScrn->scrnIndex, X_INFO, "Using %ldK of framebuffer memory\n",
     				pXGI->maxxfbmem / 1024);
 
-
-    /* There are some machines out there which require a special
-     * setup of the GPIO registers in order to make the Chrontel
-     * work. Try to find out if we're running on such a machine.
-     * Furthermore, there is some highly customized hardware,
-     * which requires some non-standard LVDS timing. Since the
-     * vendors don't seem to care about PCI subsystem ID's we
-     * need to find out using the BIOS version and date strings.
-     */
-    pXGI->XGI_Pr->XGI_ChSW = FALSE;
-
-    if(pXGI->XGI_Pr->XGI_CustomT == CUT_NONE) 
-    {
-       int i = 0, j;
-       unsigned short bversptr = 0;
-       BOOLEAN footprint;
-       unsigned long chksum = 0;
-
-       if(pXGI->xgi_HwDevExt.UseROM) 
-       {
-          bversptr = pXGI->BIOS[0x16] | (pXGI->BIOS[0x17] << 8);
-          for(i=0; i<32768; i++) chksum += pXGI->BIOS[i];
-       }
-
-       i = 0;
-       do 
-       {
-      if( (mycustomttable[i].chipID == pXGI->xgi_HwDevExt.jChipType)                 &&
-          ((!strlen(mycustomttable[i].biosversion)) ||
-           (pXGI->xgi_HwDevExt.UseROM &&
-           (!strncmp(mycustomttable[i].biosversion, (char *)&pXGI->BIOS[bversptr],
-                    strlen(mycustomttable[i].biosversion)))))                     &&
-          ((!strlen(mycustomttable[i].biosdate)) ||
-           (pXGI->xgi_HwDevExt.UseROM &&
-           (!strncmp(mycustomttable[i].biosdate, (char *)&pXGI->BIOS[0x2c],
-                    strlen(mycustomttable[i].biosdate)))))			      &&
-          ((!mycustomttable[i].bioschksum) ||
-           (pXGI->xgi_HwDevExt.UseROM &&
-           (mycustomttable[i].bioschksum == chksum)))			      &&
-          (mycustomttable[i].pcisubsysvendor == pXGI->PciInfo->subsysVendor)      &&
-          (mycustomttable[i].pcisubsyscard == pXGI->PciInfo->subsysCard) ) 
-          {
-         footprint = TRUE;
-         for(j=0; j<5; j++) 
-         {
-            if(mycustomttable[i].biosFootprintAddr[j]) 
-            {
-    	   if(pXGI->xgi_HwDevExt.UseROM) 
-    	   {
-                  if(pXGI->BIOS[mycustomttable[i].biosFootprintAddr[j]] !=
-    	      				mycustomttable[i].biosFootprintData[j])
-    	         footprint = FALSE;
-    	   }
-    	   else footprint = FALSE;
-            }
-         }
-         if(footprint) 
-         {
-            xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-               "Identified %s %s, special timing applies\n",
-    	   mycustomttable[i].vendorName, mycustomttable[i].cardName);
-            pXGI->XGI_Pr->XGI_CustomT = mycustomttable[i].SpecialID;
-            break;
-         }
-          }
-          i++;
-       }
-       while(mycustomttable[i].chipID);
-    }
 
     /* Handle ForceCRT1 option */
     if (pXGI->forceCRT1 != -1) {
@@ -7072,17 +7001,6 @@ XGI_CheckCalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode, unsigned long VBF
          (!(mode->type & M_T_DEFAULT)) &&
      (!(mode->Flags & V_INTERLACE)))
          return 0xfe;
-
-      if( ((mode->HDisplay <= pXGI->LCDwidth) &&
-           (mode->VDisplay <= pXGI->LCDheight)) ||
-      ((pXGI->XGI_Pr->XGI_CustomT == CUT_PANEL848) &&
-       (((mode->HDisplay == 1360) && (mode->HDisplay == 768)) ||
-        ((mode->HDisplay == 1024) && (mode->HDisplay == 768)) ||
-        ((mode->HDisplay ==  800) && (mode->HDisplay == 600)))) ) 
-        {
-
-      }
-
    }
    else if(VBFlags & CRT2_TV) 
    {		/* CRT2 is TV */
