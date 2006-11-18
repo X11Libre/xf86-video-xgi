@@ -87,12 +87,6 @@ typedef enum {
     OPTION_XVDEFDISABLEGFX,
     OPTION_XVDEFDISABLEGFXLR,
     OPTION_XVMEMCPY,
-    OPTION_XVUSECHROMAKEY,
-    OPTION_XVCHROMAMIN,
-    OPTION_XVCHROMAMAX,
-    OPTION_XVDISABLECOLORKEY,
-    OPTION_XVINSIDECHROMAKEY,
-    OPTION_XVYUVCHROMAKEY,
     OPTION_SCALELCD,
     OPTION_CENTERLCD,
     OPTION_SPECIALTIMING,
@@ -167,12 +161,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_XVDEFSATURATION,		"XvDefaultSaturation", 	  OPTV_INTEGER,   {0}, -1    },
     { OPTION_XVDEFDISABLEGFX,		"XvDefaultDisableGfx", 	  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_XVDEFDISABLEGFXLR,		"XvDefaultDisableGfxLR",  OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_XVCHROMAMIN,		"XvChromaMin", 	  	  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_XVCHROMAMAX,		"XvChromaMax", 	  	  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_XVUSECHROMAKEY,		"XvUseChromaKey",         OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_XVINSIDECHROMAKEY,		"XvInsideChromaKey",      OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_XVYUVCHROMAKEY,		"XvYUVChromaKey",         OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_XVDISABLECOLORKEY,		"XvDisableColorKey",      OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_XVMEMCPY,			"XvUseMemcpy",  	  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_ENABLEHOTKEY,		"EnableHotkey",	   	  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_ENABLEXGICTRL,		"EnableXGICtrl",   	  OPTV_BOOLEAN,   {0}, -1    },
@@ -275,16 +263,7 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->XvDefDisableGfx = FALSE;
     pXGI->XvDefDisableGfxLR = FALSE;
     pXGI->XvUseMemcpy = TRUE;
-    pXGI->XvUseChromaKey = FALSE;
-    pXGI->XvDisableColorKey = FALSE;
-    pXGI->XvInsideChromaKey = FALSE;
-    pXGI->XvYUVChromaKey = FALSE;
-    pXGI->XvChromaMin = 0x000101fe;
-    pXGI->XvChromaMax = 0x000101ff;
-    pXGI->XvGammaRed = pXGI->XvGammaGreen = pXGI->XvGammaBlue =
-       pXGI->XvGammaRedDef = pXGI->XvGammaGreenDef = pXGI->XvGammaBlueDef = 1000;
-    pXGI->GammaBriR = pXGI->GammaBriG = pXGI->GammaBriB = 1000;
-    pXGI->GammaPBriR = pXGI->GammaPBriG = pXGI->GammaPBriB = 1000;
+    pXGI->XvGammaRed = pXGI->XvGammaGreen = pXGI->XvGammaBlue = 1000;
 #ifdef XGIMERGED
     pXGI->MergedFB = pXGI->MergedFBAuto = FALSE;
     pXGI->CRT2Position = xgiRightOf;

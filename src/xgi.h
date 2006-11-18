@@ -861,11 +861,7 @@ typedef struct {
     int			XvDefCon, XvDefBri, XvDefHue, XvDefSat;
     BOOLEAN		XvDefDisableGfx, XvDefDisableGfxLR;
     BOOLEAN		XvUseMemcpy;
-    BOOLEAN		XvUseChromaKey, XvDisableColorKey;
-    BOOLEAN		XvInsideChromaKey, XvYUVChromaKey;
-    int			XvChromaMin, XvChromaMax;
     int			XvGammaRed, XvGammaGreen, XvGammaBlue;
-    int			XvGammaRedDef, XvGammaGreenDef, XvGammaBlueDef;
     CARD8		XvGammaRampRed[256], XvGammaRampGreen[256], XvGammaRampBlue[256];
     BOOLEAN		disablecolorkeycurrent;
     CARD32		colorKey;
@@ -882,8 +878,6 @@ typedef struct {
     CARD32		CurFGCol, CurBGCol;
     unsigned char *	CurMonoSrc;
     CARD32 *            CurARGBDest;
-    int			GammaBriR, GammaBriG, GammaBriB;
-    int			GammaPBriR, GammaPBriG, GammaPBriB;
     unsigned long	mmioSize;
 #ifdef XGIMERGED
     Bool		MergedFB, MergedFBAuto;
