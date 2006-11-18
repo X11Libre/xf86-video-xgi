@@ -3073,14 +3073,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     xf86DrvMsg(pScrn->scrnIndex, X_INFO, "Using %ldK of framebuffer memory\n",
     				pXGI->maxxfbmem / 1024);
 
-
-    /* Handle ForceCRT1 option */
-    if (pXGI->forceCRT1 != -1) {
-        pXGI->CRT1off = (pXGI->forceCRT1) ? 0 : 1;
-    }
-    else {
-        pXGI->CRT1off = -1;
-    }
+    pXGI->CRT1off = -1;
 
     /* Detect video bridge and sense TV/VGA2 */
     XGIVGAPreInit(pScrn);
@@ -3218,9 +3211,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
        }
     }
 
-    /* Handle ForceCRT1 option (part 2)
-     *
-     * Check if CRT1 used or needed.  There are three cases where this can
+    /* Check if CRT1 used or needed.  There are three cases where this can
      * happen:
      *     - No video bridge.
      *     - No CRT2 output.

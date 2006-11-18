@@ -624,12 +624,6 @@ typedef struct {
     int                 ForceCRT2Type;
     int                 OptROMUsage;
     Bool                ValidWidth;
-
-    /**
-     * \bug This field is set but never used.
-     */
-    int			forceCRT1;
-
     unsigned char       myCR63;
     unsigned long   	VBFlags;		/* Video bridge configuration */
     unsigned long       VBFlags_backup;         /* Backup for SlaveMode-modes */

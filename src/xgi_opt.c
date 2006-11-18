@@ -62,7 +62,6 @@ typedef enum {
     OPTION_NOXVIDEO,
     OPTION_VESA,
     OPTION_MAXXFBMEM,
-    OPTION_FORCECRT1,
     OPTION_PDC,
     OPTION_PDCA,
     OPTION_PDCS,
@@ -133,7 +132,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_NOXVIDEO,          	"NoXvideo",               OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_VESA,			"Vesa",		          OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_MAXXFBMEM,         	"MaxXFBMem",              OPTV_INTEGER,   {0}, -1    },
-    { OPTION_FORCECRT1,         	"ForceCRT1",              OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_PDC,               	"PanelDelayCompensation", OPTV_INTEGER,   {0}, -1    },
     { OPTION_PDCA,               	"PanelDelayCompensation1",OPTV_INTEGER,   {0}, -1    },
     { OPTION_PDCS,               	"PDC", 			  OPTV_INTEGER,   {0}, -1    },
@@ -231,7 +229,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->VESA = -1;
     pXGI->NoXvideo = FALSE;
     pXGI->maxxfbmem = 0;
-    pXGI->forceCRT1 = -1;
     pXGI->DSTN = FALSE;
     pXGI->FSTN = FALSE;
     pXGI->PDC = -1;
@@ -386,9 +383,6 @@ xgiOptions(ScrnInfoPtr pScrn)
        }
        if(xf86GetOptValBool(pXGI->Options, OPTION_USEOEM, &val)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "UseOEMData");
-       }
-       if(xf86GetOptValBool(pXGI->Options, OPTION_FORCECRT1, &val)) {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "ForceCRT1");
        }
        if(xf86GetOptValBool(pXGI->Options, OPTION_NODDCFORCRT2, &val)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "NoCRT2Detection");
