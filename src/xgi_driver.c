@@ -2535,7 +2535,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     /* Determine chipset and VGA engine type */
     pXGI->ChipFlags = 0;
     pXGI->XGI_SD_Flags = 0;
-    pXGI->HWCursorMBufNum = pXGI->HWCursorCBufNum = 0;
 
     switch(pXGI->Chipset) 
     {

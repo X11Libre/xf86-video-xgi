@@ -884,10 +884,6 @@ typedef struct {
     CARD32 *            CurARGBDest;
     int			GammaBriR, GammaBriG, GammaBriB;
     int			GammaPBriR, GammaPBriG, GammaPBriB;
-    Bool		HideHWCursor;  /* Custom application */
-    Bool		HWCursorIsVisible;
-    unsigned long       HWCursorBackup[16];
-    int			HWCursorMBufNum, HWCursorCBufNum;
     unsigned long	mmioSize;
 #ifdef XGIMERGED
     Bool		MergedFB, MergedFBAuto;
@@ -905,9 +901,6 @@ typedef struct {
     Bool		CheckForCRT2;
     Bool		IsCustomCRT2;
     BOOLEAN 		HaveCustomModes2;
-    int			maxCRT1_X1, maxCRT1_X2, maxCRT1_Y1, maxCRT1_Y2;
-    int			maxCRT2_X1, maxCRT2_X2, maxCRT2_Y1, maxCRT2_Y2;
-    int			maxClone_X1, maxClone_X2, maxClone_Y1, maxClone_Y2;
     int			MergedFBXDPI, MergedFBYDPI;
 #ifdef XGIXINERAMA
     Bool		UsexgiXinerama;

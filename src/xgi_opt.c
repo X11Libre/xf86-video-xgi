@@ -285,8 +285,6 @@ xgiOptions(ScrnInfoPtr pScrn)
        pXGI->XvGammaRedDef = pXGI->XvGammaGreenDef = pXGI->XvGammaBlueDef = 1000;
     pXGI->GammaBriR = pXGI->GammaBriG = pXGI->GammaBriB = 1000;
     pXGI->GammaPBriR = pXGI->GammaPBriG = pXGI->GammaPBriB = 1000;
-    pXGI->HideHWCursor = FALSE;
-    pXGI->HWCursorIsVisible = FALSE;
 #ifdef XGIMERGED
     pXGI->MergedFB = pXGI->MergedFBAuto = FALSE;
     pXGI->CRT2Position = xgiRightOf;
