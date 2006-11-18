@@ -6319,7 +6319,7 @@ XGIEnableTurboQueue(ScrnInfoPtr pScrn)
 void XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
 {
     XGIPtr         pXGI = XGIPTR(pScrn);
-    unsigned char  CR30, CR31, CR32, CR33;
+    unsigned char  CR30, CR31, CR33;
     unsigned char  CR3B = 0;
     unsigned char  CR17, CR38 = 0;
     unsigned char  CR35 = 0, CR79 = 0;
@@ -6502,13 +6502,12 @@ PDEBUG(ErrorF("VBFlags=0x%lx\n", pXGI->VBFlags));
 
     inXGIIDXREG(XGICR, 0x30, CR30);
     inXGIIDXREG(XGICR, 0x31, CR31);
-    CR32 = pXGI->newCR32;
     inXGIIDXREG(XGICR, 0x33, CR33);
 
        inXGIIDXREG(XGICR, 0x3b, CR3B);
        xf86DrvMsgVerb(pScrn->scrnIndex, X_PROBED, 4,
-       "Before: CR30=0x%02x, CR31=0x%02x, CR32=0x%02x, CR33=0x%02x, CR%02x=0x%02x\n",
-              CR30, CR31, CR32, CR33, temp, CR38);
+       "Before: CR30=0x%02x, CR31=0x%02x, CR33=0x%02x, CR%02x=0x%02x\n",
+              CR30, CR31, CR33, temp, CR38);
 
     xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 4, "VBFlags=0x%lx\n", pXGI->VBFlags);
 

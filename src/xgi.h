@@ -631,7 +631,6 @@ typedef struct {
     int			forceCRT1;
 
     unsigned char       myCR63;
-    unsigned char       newCR32;
     unsigned long   	VBFlags;		/* Video bridge configuration */
     unsigned long       VBFlags_backup;         /* Backup for SlaveMode-modes */
     unsigned long	VBLCDFlags;             /* Moved LCD panel size bits here */
