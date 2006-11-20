@@ -332,29 +332,6 @@ typedef unsigned long ULong;
 typedef unsigned short UShort;
 typedef unsigned char UChar;
 
-/* VGA engine types */
-#define UNKNOWN_VGA 0
-#define XGI_530_VGA 1
-#define XGI_OLD_VGA 2
-#define XGI_300_VGA 3
-#define XGI_315_VGA 4   /* Includes 330/660/661/741/760 and M versions thereof */
-#define XGI_XGX_VGA 5
-
-
-/* oldChipset */
-#define OC_UNKNOWN   0
-#define OC_XGI86201  1
-#define OC_XGI86202  2
-#define OC_XGI6205A  3
-#define OC_XGI6205B  4
-#define OC_XGI82204  5
-#define OC_XGI6205C  6
-#define OC_XGI6225   7
-#define OC_XGI5597   8
-#define OC_XGI6326   9
-#define OC_XGI530A  11
-#define OC_XGI530B  12
-#define OC_XGI620   13
 
 /* Chrontel type */
 #define CHRONTEL_700x 0
@@ -585,7 +562,6 @@ typedef struct {
     EntityInfoPtr       pEnt;
     int                 Chipset;
     int                 ChipRev;
-    int	                hasTwoOverlays; /* Chipset supports two video overlays? */
     XGI_Private   *     XGI_Pr;         /* For new mode switching code */
     int			DSTN; 		/* For 550 FSTN/DSTN; set by option, no detection */
     unsigned long       FbAddress;      /* VRAM physical address (in DHM: for each Fb!) */
@@ -797,13 +773,6 @@ typedef struct {
     BOOL		Primary;		/* Display adapter is primary */
     xf86Int10InfoPtr    pInt;			/* Our int10 */
     
-    /**
-     * Type of old chipset
-     * 
-     * \bug This field is used but never set.
-     */
-    int                 oldChipset;
-
     /**
      * Use our own default modes? 
      *
