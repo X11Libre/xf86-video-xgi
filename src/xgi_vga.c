@@ -227,12 +227,9 @@ PDEBUG(ErrorF("XG40Init()\n"));
     pReg->xgiRegs3C2 = inb(pXGI->RelIO+0x4c) | 0x0C; /*Programmable Clock*/
 
     if (!pXGI->NoAccel) {
+	/* Enable 2D accelerator. 
+	 */
         pReg->xgiRegs3C4[0x1E] |= 0x42;
-        if (pXGI->TurboQueue) { /* set Turbo Queue as 512k */
-            temp = ((pScrn->videoRam/64)-4);
-            pReg->xgiRegs3C4[0x26] = temp & 0xFF;
-            pReg->xgiRegs3C4[0x27] = ((temp >> 8) & 3) || 0xF0;
-        }
     }
 
     /* set threshold value */

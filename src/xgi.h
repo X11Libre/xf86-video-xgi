@@ -804,11 +804,6 @@ typedef struct {
      */
     int                 oldChipset;
 
-    int              	RealVideoRam;		/* 6326 can only address 4MB, but TQ can be above */
-    CARD32              CmdQueLenMask;		/* Mask of queue length in MMIO register */
-    CARD32              CmdQueLenFix;           /* Fix value to subtract from QueLen (530/620) */
-    CARD32              CmdQueMaxLen;           /* (6326/5597/5598) Amount of cmds the queue can hold */
-
     /**
      * Use our own default modes? 
      *

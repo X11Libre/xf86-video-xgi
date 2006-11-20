@@ -238,18 +238,6 @@ extern int xgiReg32MMIO[];
   while(*(volatile unsigned short *)(pXGI->IOBase + BR(10)+2) & \
     (0x4000)){}
 
-/* According to 6326 2D programming guide, 16 bits position at   */
-/* 0x82A8 returns queue free. But this don't work, so don't wait     */
-/* anything when turbo-queue is enabled. If there are frequent syncs */
-/* this should work. But not for xaa_benchmark :-(     */
-
-#define xgiBLTWAIT \
-  if (!pXGI->TurboQueue) {\
-    while(*(volatile unsigned short *)(pXGI->IOBase + BR(10)+2) & \
-    (0x4000)){}} /* \
-    else {while(*(volatile unsigned short *)(pXGI->IOBase + BR(10)) < \
-    63){}} */
-
 #define xgiSETPATREG()\
    ((unsigned char *)(pXGI->IOBase + BR(11)))
 

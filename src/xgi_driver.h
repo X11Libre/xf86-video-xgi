@@ -744,7 +744,6 @@ static void    XGIBuildVesaModeList(ScrnInfoPtr pScrn, vbeInfoPtr pVbe, VbeInfoB
 static UShort  XGICalcVESAModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode);
 static void    XGIVESASaveRestore(ScrnInfoPtr pScrn, vbeSaveRestoreFunction function);
 static void    XGIBridgeRestore(ScrnInfoPtr pScrn);
-static void    XGIEnableTurboQueue(ScrnInfoPtr pScrn);
 unsigned char  XGISearchCRT1Rate(ScrnInfoPtr pScrn, DisplayModePtr mode);
 static void    XGIWaitVBRetrace(ScrnInfoPtr pScrn);
 void           XGIWaitRetraceCRT1(ScrnInfoPtr pScrn);

@@ -2939,9 +2939,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
       	"Option \"VideoRAM\" ignored\n");
     }
 
-    pXGI->RealVideoRam = pScrn->videoRam;
-
-        xf86DrvMsg(pScrn->scrnIndex, from, "VideoRAM: %d KB\n",
+    xf86DrvMsg(pScrn->scrnIndex, from, "VideoRAM: %d KB\n",
                pScrn->videoRam);
 
     pXGI->FbMapSize = pXGI->availMem = pScrn->videoRam * 1024;
@@ -2959,19 +2957,14 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     pXGI->CurFGCol = pXGI->CurBGCol = 0;
 
 
-    /* cursorOffset not used in cursor functions for 530 and
-     * older chips, because the cursor is *above* the TQ.
-     * On 5597 and older revisions of the 6326, the TQ is
-     * max 32K, on newer 6326 revisions and the 530 either 30
-     * (or 32?) or 62K (or 64?). However, to make sure, we
-     * use only 30K (or 32?), but reduce the available memory
-     * by 64, and locate the TQ at the beginning of this last
-     * 64K block. (We do this that way even when using the
-     * HWCursor, because the cursor only takes 2K and the
-     * queue does not seem to last that far anyway.)
+    /* TQ is max 64KiB.  Reduce the available memory by 64KiB, and locate the
+     * TQ at the beginning of this last 64KiB block.  This is done even when
+     * using the HWCursor, because the cursor only takes 2KiB and the queue
+     * does not seem to last that far anyway.
+     *
      * The TQ must be located at 32KB boundaries.
      */
-    if (pXGI->RealVideoRam < 3072) {
+    if (pScrn->videoRam < 3072) {
         if (pXGI->TurboQueue) {
             xf86DrvMsg(pScrn->scrnIndex, X_INFO,
                        "Not enough video RAM for TurboQueue. TurboQueue disabled\n");
@@ -2979,22 +2972,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         }
     }
 
-    pXGI->CmdQueMaxLen = 32;
-    if (pXGI->TurboQueue) {
-        pXGI->availMem -= (64*1024);
-        pXGI->CmdQueMaxLen = 900;   /* To make sure; should be 992 */
-    }
-    else if(pXGI->HWCursor) 
-    {
-        pXGI->availMem -= pXGI->CursorSize;
-    }
-
-    pXGI->CmdQueLenMask = (pXGI->TurboQueue) ? 0x7FFF : 0x003F;
-
-    /* This is to be subtracted from MMIO queue length register contents
-     * for getting the real Queue length.
-     */
-    pXGI->CmdQueLenFix  = (pXGI->TurboQueue) ? 32 : 0;
+    pXGI->availMem -= (pXGI->TurboQueue) ? (64*1024) : pXGI->CursorSize;
 
 
 #ifdef XGIDUALHEAD
@@ -4905,16 +4883,6 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
 #endif
 
-    /* Enable TurboQueue so that XGISave() saves it in enabled
-     * state. If we don't do this, X will hang after a restart!
-     * (Happens for some unknown reason only when using VESA
-     * for mode switching; assumingly a BIOS issue.)
-     * This is done on 300 and 315 series only.
-     */
-    if (pXGI->UseVESA) {
-        XGIEnableTurboQueue(pScrn);
-    }
-
     /* Save the current state */
     XGISave(pScrn);
 
@@ -5008,9 +4976,7 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
     }
 
     /* Point cmdQueuePtr to pXGIEnt for shared usage
-     * (same technique is then eventually used in DRIScreeninit)
-     * For 315/330 series, this is done in EnableTurboQueue
-     * which has already been called during ModeInit().
+     * (same technique is then eventually used in DRIScreeninit).
      */
 #ifdef XGIDUALHEAD
     if(pXGI->SecondHead)
@@ -6171,15 +6137,6 @@ XGIModifyModeInfo(DisplayModePtr mode)
         mode->CrtcVBlankEnd--;
 }
 
-/* Enable the Turboqueue/Commandqueue (For 300 and 315/330 series only) */
-void
-XGIEnableTurboQueue(ScrnInfoPtr pScrn)
-{
-/*    XGIPtr pXGI = XGIPTR(pScrn);
-    unsigned short SR26, SR27;
-    unsigned long  temp;  */
-}
-
 /* Things to do before a ModeSwitch. We set up the
  * video bridge configuration and the TurboQueue.
  */
@@ -6630,9 +6587,6 @@ PDEBUG(ErrorF("VBFlags=0x%lx\n", pXGI->VBFlags));
     	    CR30, CR31, CR33, temp, CR38);
 
      pXGI->XGI_Pr->XGI_UseOEM = pXGI->OptUseOEM;
-
-     /* Enable TurboQueue */
-    XGIEnableTurboQueue(pScrn);
 
      if((!pXGI->UseVESA) && (pXGI->VBFlags & CRT2_ENABLE)) 
      {
