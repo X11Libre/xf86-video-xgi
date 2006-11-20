@@ -280,20 +280,6 @@ xgiOptions(ScrnInfoPtr pScrn)
 
     /* Collect the options */
 
-    /* FastVRAM (5597/5598, 6326 and 530/620 only)
-     */
-    if((pXGI->VGAEngine == XGI_OLD_VGA) || (pXGI->VGAEngine == XGI_530_VGA)) {
-       from = X_DEFAULT;
-       if(xf86GetOptValBool(pXGI->Options, OPTION_FAST_VRAM, &pXGI->newFastVram)) {
-          from = X_CONFIG;
-       }
-       xf86DrvMsg(pScrn->scrnIndex, from, "Fast VRAM %s\n",
-                   (pXGI->newFastVram == -1) ?
-		         ((pXGI->oldChipset == OC_XGI620) ? "enabled (for read only)" :
-			                                    "enabled (for write only)") :
-		   	 (pXGI->newFastVram ? "enabled (for read and write)" : disabledstr));
-    }
-
     /* MaxXFBMem
      * This options limits the amount of video memory X uses for screen
      * and off-screen buffers. This option should be used if using DRI
@@ -364,13 +350,12 @@ xgiOptions(ScrnInfoPtr pScrn)
        static const char *mystring = "Option \"%s\" is only accepted in Master Head's device section\n";
        Bool val;
        int vali;
-       if(pXGI->VGAEngine != XGI_315_VGA) {
-          if(xf86GetOptValBool(pXGI->Options, OPTION_TURBOQUEUE, &val)) {
-             xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "TurboQueue");
-          }
+
+       if(xf86GetOptValBool(pXGI->Options, OPTION_TURBOQUEUE, &val)) {
+          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "TurboQueue");
        }
        if(xf86GetOptValBool(pXGI->Options, OPTION_RESTOREBYSET, &val)) {
-	  xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "RestoreBySetMode");
+          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "RestoreBySetMode");
        }
        if(xf86GetOptValBool(pXGI->Options, OPTION_ENABLEHOTKEY, &val)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "EnableHotKey");

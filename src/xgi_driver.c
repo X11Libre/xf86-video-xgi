@@ -626,31 +626,19 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode, int fla
         return;
     }
 
-    if(docrt1) 
-    {
-       setXGIIDXREG(XGISR, 0x01, ~0x20, sr1);    /* Set/Clear "Display On" bit */
-       switch(pXGI->VGAEngine) 
-       {
-       case XGI_OLD_VGA:
-            inXGIIDXREG(XGISR, 0x11, oldpmreg);
-            setXGIIDXREG(XGICR, 0x17, 0x7f, cr17);
-        setXGIIDXREG(XGISR, 0x11, 0x3f, pmreg);
-        break;
-        /* fall through */
-       default:
-            if((!(pXGI->VBFlags & CRT1_LCDA)) || (pXGI->XGI_Pr->XGI_VBType & VB_XGI301C)) 
-            {
-               inXGIIDXREG(XGISR, 0x1f, oldpmreg);
-               if(!pXGI->CRT1off) 
-               {
-              setXGIIDXREG(XGISR, 0x1f, 0x3f, pmreg);
-           }
-        }
-        /* TODO: Check if Chrontel TV is active and in slave mode,
-         * don't go into power-saving mode this in this case!
+    if (docrt1) {
+        /* Set/Clear "Display On" bit 
          */
-       }
-       oldpmreg &= 0xc0;
+        setXGIIDXREG(XGISR, 0x01, ~0x20, sr1);
+
+        if ((!(pXGI->VBFlags & CRT1_LCDA))
+            || (pXGI->XGI_Pr->XGI_VBType & VB_XGI301C)) {
+            inXGIIDXREG(XGISR, 0x1f, oldpmreg);
+            if (!pXGI->CRT1off) {
+                setXGIIDXREG(XGISR, 0x1f, 0x3f, pmreg);
+            }
+        }
+        oldpmreg &= 0xc0;
     }
 
     if((docrt1) && (pmreg != oldpmreg) && ((!(pXGI->VBFlags & CRT1_LCDA)) || (pXGI->XGI_Pr->XGI_VBType & VB_XGI301C))) 
@@ -2536,21 +2524,22 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     pXGI->ChipFlags = 0;
     pXGI->XGI_SD_Flags = 0;
 
-    switch(pXGI->Chipset) 
-    {
-
+    switch (pXGI->Chipset) {
     case PCI_CHIP_XGIXG40:
     case PCI_CHIP_XGIXG20:
-    	pXGI->xgi_HwDevExt.jChipType = XG40;
-    	pXGI->VGAEngine = XGI_XGX_VGA;
-    	pXGI->myCR63 = 0x63;
-    	pXGI->mmioSize = 64;
-                break;
+        pXGI->xgi_HwDevExt.jChipType = XG40;
+        pXGI->myCR63 = 0x63;
+        pXGI->mmioSize = 64;
+        break;
     default:
-    	pXGI->xgi_HwDevExt.jChipType = XGI_OLD;
-    	pXGI->VGAEngine = XGI_OLD_VGA;
-    	pXGI->mmioSize = 64;
-    	break;
+        /* This driver currently only supports V3XE, V3XT, V5, V8 (all of
+         * which are XG40 chips) and Z7 (which is XG20).
+         */
+        if (pXGI->pInt) {
+            xf86FreeInt10(pXGI->pInt);
+        }
+        XGIFreeRec(pScrn);
+        return FALSE;
     }
 
 /* load frame_buffer */
@@ -2578,17 +2567,8 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      * The first thing we should figure out is the depth, bpp, etc.
      * Additionally, determine the size of the HWCursor memory area.
      */
-    switch(pXGI->VGAEngine) 
-    {
-      case XGI_XGX_VGA:
-        pXGI->CursorSize = 4096;
-    	pix24flags = Support32bppFb;
-    break;
-      default:
-        pXGI->CursorSize = 2048;
-        pix24flags = Support24bppFb;
-    break;
-    }
+    pXGI->CursorSize = 4096;
+    pix24flags = Support32bppFb;
 
 #ifdef XGIDUALHEAD
     /* In case of Dual Head, we need to determine if we are the "master" head or
@@ -3531,40 +3511,21 @@ PDEBUG(ErrorF("3782 pXGI->VBFlags =%x\n",pXGI->VBFlags)) ;
      */
 
     /* Select valid modes from those available */
-    /*
-     * Assuming min pitch 256, min height 128
-     */
-    {
-       int minpitch, maxpitch, minheight, maxheight;
-       minpitch = 256;
-       minheight = 128;
-       switch(pXGI->VGAEngine) 
-       {
-       case XGI_OLD_VGA:
-          maxpitch = 2040;
-          maxheight = 2048;
-          break;
-       default:
-          maxpitch = 2048;
-          maxheight = 2048;
-          break;
-       }
 #ifdef XGIMERGED
-       pXGI->CheckForCRT2 = FALSE;
+    pXGI->CheckForCRT2 = FALSE;
 #endif
-		XGIDumpMonPtr(pScrn->monitor) ;
-       i = xf86ValidateModes(pScrn, pScrn->monitor->Modes,
-                      pScrn->display->modes, clockRanges, NULL,
-                      minpitch, maxpitch,
-                      pScrn->bitsPerPixel * 8,
-    	      minheight, maxheight,
-                      pScrn->display->virtualX,
-                      pScrn->display->virtualY,
-                      pXGI->maxxfbmem,
-                      LOOKUP_BEST_REFRESH);
-    }
+    XGIDumpMonPtr(pScrn->monitor) ;
+    i = xf86ValidateModes(pScrn, pScrn->monitor->Modes,
+                          pScrn->display->modes, clockRanges, NULL,
+                          256, 2048, /* min / max pitch */
+                          pScrn->bitsPerPixel * 8,
+                          128, 2048, /* min / max height */
+                          pScrn->display->virtualX,
+                          pScrn->display->virtualY,
+                          pXGI->maxxfbmem,
+                          LOOKUP_BEST_REFRESH);
 
-    if(i == -1) 
+    if(i == -1)
     {
         XGIErrorLog(pScrn, "xf86ValidateModes() error\n");
 #ifdef XGIDUALHEAD
@@ -4950,13 +4911,8 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
      * for mode switching; assumingly a BIOS issue.)
      * This is done on 300 and 315 series only.
      */
-    if(pXGI->UseVESA) 
-    {
-#ifdef XGIVRAMQ
-       if(pXGI->VGAEngine != XGI_315_VGA)
-#endif
-          XGIEnableTurboQueue(pScrn);
-
+    if (pXGI->UseVESA) {
+        XGIEnableTurboQueue(pScrn);
     }
 
     /* Save the current state */
@@ -5079,7 +5035,6 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
        else
 #endif
        /* Force the initialization of the context */
-/* if(pXGI->VGAEngine != XGI_315_VGA) { */
        if( (FbDevExist) && (pXGI->Chipset != PCI_CHIP_XGIXG20) ) 
        {
           pXGI->directRenderingEnabled = XGIDRIScreenInit(pScreen);
@@ -5147,17 +5102,10 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 
     xf86SetBlackWhitePixels(pScreen);
 
-    if(!pXGI->NoAccel) 
-    {
-       switch(pXGI->VGAEngine) 
-       {
-      case XGI_XGX_VGA:
-/* Volari_EnableAccelerator(pScrn); */
-            PDEBUG(ErrorF("---Volari Accel..  \n"));
-          default:
-            Volari_AccelInit(pScreen);
-            break;
-       }
+    if (!pXGI->NoAccel) {
+        /* Volari_EnableAccelerator(pScrn); */
+        PDEBUG(ErrorF("---Volari Accel..  \n"));
+        Volari_AccelInit(pScreen);
     }
 
     PDEBUG(ErrorF("--- AccelInit ---  \n")) ;
@@ -6684,10 +6632,7 @@ PDEBUG(ErrorF("VBFlags=0x%lx\n", pXGI->VBFlags));
      pXGI->XGI_Pr->XGI_UseOEM = pXGI->OptUseOEM;
 
      /* Enable TurboQueue */
-#ifdef XGIVRAMQ
-     if(pXGI->VGAEngine != XGI_315_VGA)
-#endif
-        XGIEnableTurboQueue(pScrn);
+    XGIEnableTurboQueue(pScrn);
 
      if((!pXGI->UseVESA) && (pXGI->VBFlags & CRT2_ENABLE)) 
      {
@@ -6951,8 +6896,8 @@ XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode, unsigned long VBFlags,
       }
    }
 
-   return(XGI_GetModeID(pXGI->VGAEngine, VBFlags, mode->HDisplay, mode->VDisplay,
-   			i, pXGI->FSTN, pXGI->LCDwidth, pXGI->LCDheight));
+   return XGI_GetModeID(VBFlags, mode->HDisplay, mode->VDisplay,
+                        i, pXGI->FSTN, pXGI->LCDwidth, pXGI->LCDheight);
 }
 
 USHORT
@@ -7236,34 +7181,8 @@ xgiSaveUnlockExtRegisterLock(XGIPtr pXGI, unsigned char *reg1, unsigned char *re
     		i, val1, val2, mylockcalls);
       }
 #endif
-          if((pXGI->VGAEngine == XGI_OLD_VGA) || (pXGI->VGAEngine == XGI_530_VGA)) 
-          {
-         /* Emergency measure: unlock at 0x3c4, and try to enable Relocated IO ports */
-         outXGIIDXREG(0x3c4,0x05,0x86);
-         andXGIIDXREG(0x3c4,0x33,~0x20);
-         outXGIIDXREG(XGISR, 0x05, 0x86);
-          }
        }
     }
-/*
-    if((pXGI->VGAEngine == XGI_OLD_VGA) || (pXGI->VGAEngine == XGI_530_VGA)) 
-    {
-       inXGIIDXREG(XGICR, 0x80, val);
-       if(val != 0xa1) 
-       {
-          / * save State * /
-          if(reg2) *reg2 = val;
-          outXGIIDXREG(XGICR, 0x80, 0x86);
-      inXGIIDXREG(XGICR, 0x80, val);
-      if(val != 0xA1) 
-      {
-         XGIErrorLog(pXGI->pScrn,
-            "Failed to unlock cr registers (%p, %lx, 0x%02x)\n",
-           (void *)pXGI, (unsigned long)pXGI->RelIO, val);
-      }
-       }
-    }
-*/
 }
 
 void
@@ -7272,10 +7191,6 @@ xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1, unsigned char reg2)
     /* restore lock */
 #ifndef UNLOCK_ALWAYS
     outXGIIDXREG(XGISR, 0x05, reg1 == 0xA1 ? 0x86 : 0x00);
-    if((pXGI->VGAEngine == XGI_OLD_VGA) || (pXGI->VGAEngine == XGI_530_VGA)) 
-    {
-       outXGIIDXREG(XGICR, 0x80, reg2 == 0xA1 ? 0x86 : 0x00);
-    }
 #endif
 }
 

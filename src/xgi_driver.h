@@ -763,8 +763,8 @@ unsigned char  XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned 
 static void    XGIDumpModeInfo(ScrnInfoPtr pScrn, DisplayModePtr mode);
 #endif
 
-extern USHORT   XGI_GetModeID(int VGAEngine, ULONG VBFlags, int HDisplay, int VDisplay,
-				  int Depth, BOOL FSTN, int LCDwith, int LCDheight);
+extern USHORT XGI_GetModeID(ULONG VBFlags, int HDisplay, int VDisplay,
+    int Depth, BOOL FSTN, int LCDwith, int LCDheight);
 
 extern BOOLEAN 	XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwDeviceExtension,
                                ScrnInfoPtr pScrn, DisplayModePtr mode, BOOLEAN IsCustom, BOOLEAN dosetpitch);

@@ -585,7 +585,6 @@ typedef struct {
     EntityInfoPtr       pEnt;
     int                 Chipset;
     int                 ChipRev;
-    int			VGAEngine;      /* see above */
     int	                hasTwoOverlays; /* Chipset supports two video overlays? */
     XGI_Private   *     XGI_Pr;         /* For new mode switching code */
     int			DSTN; 		/* For 550 FSTN/DSTN; set by option, no detection */

@@ -60,8 +60,6 @@ static int  XGI_GetViewport(ScrnInfoPtr);
 static void XGI_SetViewport(ScrnInfoPtr, int, int, int);
 static void XGI_FillRect(ScrnInfoPtr, int, int, int, int, unsigned long);
 static void XGI_BlitRect(ScrnInfoPtr, int, int, int, int, int, int);
-static void XGI_BlitTransRect(ScrnInfoPtr, int, int, int, int, int, int,
-                    unsigned long);
 
 static
 DGAFunctionRec XGIDGAFuncs = {
@@ -76,18 +74,6 @@ DGAFunctionRec XGIDGAFuncs = {
    NULL
 };
 
-static
-DGAFunctionRec XGIDGAFuncs3xx = {
-   XGI_OpenFramebuffer,
-   NULL,
-   XGI_SetMode,
-   XGI_SetViewport,
-   XGI_GetViewport,
-   XGI_Sync,
-   XGI_FillRect,
-   XGI_BlitRect,
-   XGI_BlitTransRect
-};
 
 static DGAModePtr
 XGISetupDGAMode(
@@ -144,11 +130,6 @@ SECOND_PASS:
 	    currentMode->flags     |= DGA_PIXMAP_AVAILABLE;
 	if(!pXGI->NoAccel) {
 	    currentMode->flags     |= DGA_FILL_RECT | DGA_BLIT_RECT;
-	    if((pXGI->VGAEngine == XGI_300_VGA) ||
-	       (pXGI->VGAEngine == XGI_315_VGA) ||
-	       (pXGI->VGAEngine == XGI_530_VGA)) {
-               currentMode->flags  |= DGA_BLIT_RECT_TRANS;
-            }
 	}
 	if(pMode->Flags & V_DBLSCAN)
 	    currentMode->flags     |= DGA_DOUBLESCAN;
@@ -245,34 +226,24 @@ XGIDGAInit(ScreenPtr pScreen)
 				? 0 : pScrn->displayWidth),
 			   0xf800, 0x07e0, 0x001f, TrueColor);
 
-   if((pXGI->VGAEngine == XGI_530_VGA) || (pXGI->VGAEngine == XGI_OLD_VGA)) {
-      /* 24 */
-      modes = XGISetupDGAMode(pScrn, modes, &num, 24, 24,
-	  		      (pScrn->bitsPerPixel == 24),
-			      ((pScrn->bitsPerPixel != 24)
-			 	 ? 0 : pScrn->displayWidth),
-			      0xff0000, 0x00ff00, 0x0000ff, TrueColor);
-   }
+    /* 32 */
+    modes = XGISetupDGAMode(pScrn, modes, &num, 32, 24,
+			    (pScrn->bitsPerPixel == 32),
+			    ((pScrn->bitsPerPixel != 32)
+			     ? 0 : pScrn->displayWidth),
+			    0xff0000, 0x00ff00, 0x0000ff, TrueColor);
 
-   if(pXGI->VGAEngine != XGI_OLD_VGA) {
-      /* 32 */
-      modes = XGISetupDGAMode(pScrn, modes, &num, 32, 24,
-			      (pScrn->bitsPerPixel == 32),
-			      ((pScrn->bitsPerPixel != 32)
-				  ? 0 : pScrn->displayWidth),
-			      0xff0000, 0x00ff00, 0x0000ff, TrueColor);
-   }
+    pXGI->numDGAModes = num;
+    pXGI->DGAModes = modes;
 
-   pXGI->numDGAModes = num;
-   pXGI->DGAModes = modes;
-
-   if((pXGI->VGAEngine == XGI_300_VGA) ||
-      (pXGI->VGAEngine == XGI_315_VGA) ||
-      (pXGI->VGAEngine == XGI_530_VGA)) {
-     return DGAInit(pScreen, &XGIDGAFuncs3xx, modes, num);
-   } else {
-     return DGAInit(pScreen, &XGIDGAFuncs, modes, num);
-   }
+    if (num) {
+	return DGAInit(pScreen, &XGIDGAFuncs, modes, num);
+    }
+    else {
+	xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
+		   "No DGA-suitable modes found, disabling DGA\n");
+	return TRUE;
+    }
 }
 
 
@@ -380,28 +351,6 @@ XGI_BlitRect(
       (*pXGI->AccelInfoPtr->SubsequentScreenToScreenCopy)(
           pScrn, srcx, srcy, dstx, dsty, w, h);
       SET_SYNC_FLAG(pXGI->AccelInfoPtr);
-    }
-}
-
-static void
-XGI_BlitTransRect(
-   ScrnInfoPtr pScrn,
-   int srcx, int srcy,
-   int w, int h,
-   int dstx, int dsty,
-   unsigned long color
-){
-    XGIPtr pXGI = XGIPTR(pScrn);
-
-    if(pXGI->AccelInfoPtr) {
-       int xdir = ((srcx < dstx) && (srcy == dsty)) ? -1 : 1;
-       int ydir = (srcy < dsty) ? -1 : 1;
-
-       (*pXGI->AccelInfoPtr->SetupForScreenToScreenCopy)(
-          pScrn, xdir, ydir, GXcopy, ~0, color);
-       (*pXGI->AccelInfoPtr->SubsequentScreenToScreenCopy)(
-          pScrn, srcx, srcy, dstx, dsty, w, h);
-       SET_SYNC_FLAG(pXGI->AccelInfoPtr);
     }
 }
 

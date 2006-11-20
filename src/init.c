@@ -78,7 +78,7 @@
 /*********************************************/
 
 USHORT
-XGI_GetModeID(int VGAEngine, ULONG VBFlags, int HDisplay, int VDisplay,
+XGI_GetModeID(ULONG VBFlags, int HDisplay, int VDisplay,
               int Depth, BOOLEAN FSTN, int LCDwidth, int LCDheight)
 {
    USHORT ModeIndex = 0;

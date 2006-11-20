@@ -1746,8 +1746,8 @@ static const XGI_PlasmaTables XGI_PlasmaTable[] = {
    { 0x0000 }
 };
 
-USHORT  XGI_GetModeID(int VGAEngine, ULONG VBFlags, int HDisplay, int VDisplay,
-			  int Depth, BOOLEAN FSTN, int LCDwith, int LCDheight);
+USHORT  XGI_GetModeID(ULONG VBFlags, int HDisplay, int VDisplay,
+    int Depth, BOOLEAN FSTN, int LCDwith, int LCDheight);
 
 void 	XGI_SetReg(XGIIOADDRESS port, USHORT index, USHORT data);
 void 	XGI_SetRegByte(XGIIOADDRESS port, USHORT data);
