@@ -817,7 +817,6 @@ typedef struct {
     Bool		noInternalModes;
 
     int			OptUseOEM;		/* Use internal OEM data? */
-    int			newFastVram;		/* Replaces FastVram */
     int			ForceTVType, SenseYPbPr;
     int                 NonDefaultPAL, NonDefaultNTSC;
     unsigned long	ForceYPbPrType, ForceYPbPrAR;
