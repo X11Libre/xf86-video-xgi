@@ -68,9 +68,6 @@ typedef enum {
     OPTION_USEROMDATA,
     OPTION_NOINTERNALMODES,
     OPTION_USEOEM,
-    OPTION_USERGBCURSOR,
-    OPTION_USERGBCURSORBLEND,
-    OPTION_USERGBCURSORBLENDTH,
     OPTION_RESTOREBYSET,
     OPTION_NODDCFORCRT2,
     OPTION_FORCECRT2REDETECTION,
@@ -139,9 +136,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_USEROMDATA,		"UseROMData",	          OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_NOINTERNALMODES,   	"NoInternalModes",        OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_USEOEM, 			"UseOEMData",		  OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_USERGBCURSOR, 		"UseColorHWCursor",	  OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_USERGBCURSORBLEND,		"ColorHWCursorBlending",  OPTV_BOOLEAN,   {0}, -1    },
-    { OPTION_USERGBCURSORBLENDTH,	"ColorHWCursorBlendThreshold", OPTV_INTEGER,{0},-1   },
     { OPTION_RESTOREBYSET,		"RestoreBySetMode", 	  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_NODDCFORCRT2,		"NoCRT2Detection", 	  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_FORCECRT2REDETECTION,	"ForceCRT2ReDetection",   OPTV_BOOLEAN,   {0}, -1    },
@@ -316,7 +310,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     if(xf86ReturnOptValBool(pXGI->Options, OPTION_SW_CURSOR, FALSE)) {
         from = X_CONFIG;
         pXGI->HWCursor = FALSE;
-	pXGI->OptUseColorCursor = 0;
     }
     xf86DrvMsg(pScrn->scrnIndex, from, "Using %s cursor\n",
                                 pXGI->HWCursor ? "HW" : "SW");

@@ -38,6 +38,7 @@
 #include "xf86.h"
 #include "xf86PciInfo.h"
 #include "cursorstr.h"
+#include "misc.h"
 #include "vgaHW.h"
 #include "xgi.h"
 #include "regs.h"
@@ -49,13 +50,12 @@ extern void    XGIWaitRetraceCRT1(ScrnInfoPtr pScrn);
 extern void    XGIWaitRetraceCRT2(ScrnInfoPtr pScrn);
 static void XGIG1_SetCursorPosition(ScrnInfoPtr pScrn, int x, int y) ;
 
-CARD32 BE_SWAP32 (CARD32 val)
-{
-    return   ((((val) & 0x000000ff) << 24) | \
-              (((val) & 0x0000ff00) << 8) |  \
-              (((val) & 0x00ff0000) >> 8) |  \
-              (((val) & 0xff000000) >> 24));
-}
+#if X_BYTE_ORDER == X_BIG_ENDIAN
+# define BE_SWAP32(v) (lswapl(v))
+#else
+# define BE_SWAP32(v) (v)
+#endif
+
 
 /* Helper function for Xabre to convert mono image to ARGB */
 /* The Xabre's cursor engine for CRT2 is buggy and can't
@@ -89,11 +89,7 @@ Volari_HideCursor(ScrnInfoPtr pScrn)
         xgiG1CRT2_DisableHWCursor() ;
     }
     XGIG1_SetCursorPosition(pScrn, currX, currY) ;
-	vWaitCRT1VerticalRetrace(pScrn) ;
-
-//#ifdef DEBUG4
-    XGIDumpCursorMMIO(pScrn) ;
-//#endif
+    vWaitCRT1VerticalRetrace(pScrn) ;
 }
 
 static void
@@ -123,7 +119,6 @@ XGIG1_SetCursorPosition(ScrnInfoPtr pScrn, int x, int y)
         xgiG1CRT2_SetCursorPositionX(x+13, x_preset) ;
         xgiG1CRT2_SetCursorPositionY(y, y_preset) ;
     }
-    XGIDumpCursorMMIO(pScrn);
 }
 
 static void
@@ -144,23 +139,16 @@ static void
 Volari_LoadCursorImage(ScrnInfoPtr pScrn, unsigned char *src)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
-    unsigned long cursor_addr = pXGI->CursorOffset ;
-    unsigned long cursor_base = pXGI->CursorOffset/1024 ;
-    unsigned char *pCursorShape ;
+    const unsigned long cursor_base = pXGI->CursorOffset / 1024;
+    unsigned char *const pCursorShape =
+        pXGI->FbBase + pXGI->CursorOffset;
 
-    /* cursor_addr = 1024*1024 ; */
-    /* cursor_base = 1024 ; */
-    pCursorShape = pXGI->FbBase + cursor_addr ;
 
     memcpy(pCursorShape, src, 1024);
 
     xgiG2CRT1_SetCursorAddressPattern(cursor_base,0) ;
-    /* xgiG2CRT1_SetCursorAddress(cursor_base) ; */
-    /* xgiG2CRT1_SetCursorPatternSelect(0) ; */
     if (pXGI->VBFlags & CRT2_ENABLE)  {
         xgiG2CRT2_SetCursorAddressPattern(cursor_base,0) ;
-        /* xgiG1CRT2_SetCursorAddress(cursor_base) ; */
-        /* xgiG1CRT2_SetCursorPatternSelect(0) ; */
     }
     XGIG1_SetCursorPosition(pScrn, currX, currY) ;
 }
@@ -189,7 +177,6 @@ XGIHWCursorInit(ScreenPtr pScreen)
     if(!infoPtr) return FALSE;
 
     pXGI->CursorInfoPtr = infoPtr;
-    pXGI->UseHWARGBCursor = FALSE;
 
     switch (pXGI->Chipset)  {
 
@@ -220,25 +207,3 @@ XGIHWCursorInit(ScreenPtr pScreen)
 
     return(xf86InitCursor(pScreen, infoPtr));
 }
-
-//#ifdef DEBUG4
-void
-XGIDumpCursorMMIO(ScrnInfoPtr pScrn)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-	unsigned long i ;
-/*
-	ErrorF("-------------------------------------------------\n" ) ;
-	ErrorF("Dump Cursor Information\n" ) ;
-	ErrorF("-------------------------------------------------\n" ) ;
-
-	for( i = 0x8500 ; i < 0x8540 ; i+=0x10 )
-	{
-		ErrorF( "MMIO[%04lX]=%08lX ", i,XGIMMIOLONG(i) ) ;
-		ErrorF( "MMIO[%04lX]=%08lX ", i+4,XGIMMIOLONG(i+4) ) ;
-		ErrorF( "MMIO[%04lX]=%08lX ", i+8,XGIMMIOLONG(i+8) ) ;
-		ErrorF( "MMIO[%04lX]=%08lX\n", i+12,XGIMMIOLONG(i+12) ) ;
-	}
-*/
-}
-//#endif

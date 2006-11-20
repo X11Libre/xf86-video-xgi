@@ -592,7 +592,6 @@ typedef struct {
     Bool                DGAactive;
     Bool                NoAccel;
     Bool                NoXvideo;
-    Bool                HWCursor;
     Bool                TurboQueue;
     int			VESA;
     int                 ForceCRT1Type;
@@ -618,14 +617,11 @@ typedef struct {
     int                 xcurrent;               /* for temp use in accel */
     int                 ycurrent;               /* for temp use in accel */
     int                 CommandReg;
-    CARD16		CursorSize;  		/* Size of HWCursor area (bytes) */
 
-    /**
-     * see xgi_driver.c and xgi_cursor.c
-     *
-     * \bug This field is set to 0 but never used.
-     */
-    CARD32		cursorOffset;
+    Bool                HWCursor;
+    CARD16		CursorSize;  		/* Size of HWCursor area (bytes) */
+    xf86CursorInfoPtr   CursorInfoPtr;
+    unsigned            CursorOffset;
 
     /**
      * \bug This field is set to \c FALSE but never used.
@@ -634,7 +630,6 @@ typedef struct {
 
     XGIRegRec           SavedReg;
     XGIRegRec           ModeReg;
-    xf86CursorInfoPtr   CursorInfoPtr;
     XAAInfoRecPtr       AccelInfoPtr;
     CloseScreenProcPtr  CloseScreen;
     Bool        	(*ModeInit)(ScrnInfoPtr pScrn, DisplayModePtr mode);
@@ -804,11 +799,6 @@ typedef struct {
 #endif
     unsigned long       ChipFlags;
     unsigned long       XGI_SD_Flags;
-    BOOLEAN		UseHWARGBCursor;
-    int			OptUseColorCursor;
-    int			OptUseColorCursorBlend;
-    CARD32		OptColorCursorBlendThreshold;
-    unsigned short      cursorBufferNum;
     int                 vb;
     BOOLEAN		restorebyset;
     BOOLEAN		nocrt2ddcdetection;
@@ -831,9 +821,6 @@ typedef struct {
     int			FSTN;
     BOOLEAN		AddedPlasmaModes;
     short               scrnPitch2;
-    CARD32		CurFGCol, CurBGCol;
-    unsigned char *	CurMonoSrc;
-    CARD32 *            CurARGBDest;
     unsigned long	mmioSize;
 #ifdef XGIMERGED
     Bool		MergedFB, MergedFBAuto;
@@ -860,7 +847,6 @@ typedef struct {
     Bool		AtLeastOneNonClone;
 #endif
 #endif
-    unsigned    CursorOffset ;
 
     /* Added for 3D */
     unsigned long        cmdQueue_shareWP_only2D;

@@ -2947,17 +2947,9 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     pXGI->xgi_HwDevExt.bSkipDramSizing = TRUE;
 
     /* Calculate real availMem according to Accel/TurboQueue and
-     * HWCursur setting. Also, initialize some variables used
-     * in other modules.
-     */
-
-    pXGI->cursorOffset = 0;
-    pXGI->CurARGBDest = NULL;
-    pXGI->CurMonoSrc = NULL;
-    pXGI->CurFGCol = pXGI->CurBGCol = 0;
-
-
-    /* TQ is max 64KiB.  Reduce the available memory by 64KiB, and locate the
+     * HWCursur setting.
+     *
+     * TQ is max 64KiB.  Reduce the available memory by 64KiB, and locate the
      * TQ at the beginning of this last 64KiB block.  This is done even when
      * using the HWCursor, because the cursor only takes 2KiB and the queue
      * does not seem to last that far anyway.
