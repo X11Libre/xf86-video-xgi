@@ -37,8 +37,6 @@
 #define _XGI_315_ACCEL_H_
 /* Definitions for the XGI engine communication. */
 
-#define XGI315_HCSIZE  (16*1024)
-
 #define PATREGSIZE 256
 
 #define XGIG2_SCR2SCRCOPY

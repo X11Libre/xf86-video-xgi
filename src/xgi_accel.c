@@ -247,7 +247,7 @@ Volari_InitCmdQueue(ScrnInfoPtr pScrn)
         }
     }
 
-    pXGI->CursorOffset = pXGI->cmdQueueOffset - VOLARI_CURSOR_SHAPE_SIZE ;
+    pXGI->CursorOffset = pXGI->cmdQueueOffset - VOLARI_CURSOR_SHAPE_SIZE;
 
     temp = (unsigned long)pXGI->FbBase ;
     temp += pXGI->cmdQueueOffset ;
@@ -359,9 +359,7 @@ Volari_AccelInit(ScreenPtr pScreen)
     long               UsableFbSize;
     unsigned char     *AvailBufBase;
     BoxRec            Avail;
-    int               i; /*, divider;
-    unsigned long     ulFbMgrSize;
-    Bool              bRetValue ; */
+    int               i;
 
 
     Avail.x1 = 0; Avail.y1 = 0; Avail.x2 = 0; Avail.y2 = 0;
@@ -424,7 +422,7 @@ Volari_AccelInit(ScreenPtr pScreen)
 
     if (pXGI->HWCursor)
     {
-        reservedFbSize += XGI315_HCSIZE ;
+        reservedFbSize += VOLARI_CURSOR_SHAPE_SIZE;
     }
 
 #ifdef XGIG2_COLOREXPSCANLN
@@ -434,10 +432,11 @@ Volari_AccelInit(ScreenPtr pScreen)
     UsableFbSize = pXGI->FbMapSize - reservedFbSize;
     AvailBufBase = pXGI->FbBase + UsableFbSize;
 
-    for (i=0; i<pXGI->ColorExpandBufferNumber; i++)
-    {
-        pXGI->ColorExpandBufferAddr[i] = AvailBufBase + i*pXGI->PerColorExpandBufferSize;
-        pXGI->ColorExpandBufferScreenOffset[i] = UsableFbSize + i*pXGI->PerColorExpandBufferSize;
+    for (i = 0; i < pXGI->ColorExpandBufferNumber; i++) {
+	const int base = i * pXGI->PerColorExpandBufferSize;
+
+        pXGI->ColorExpandBufferAddr[i] = AvailBufBase + base;
+        pXGI->ColorExpandBufferScreenOffset[i] = UsableFbSize + base;
     }
 
 #ifdef XGIG2_IMAGEWRITE
