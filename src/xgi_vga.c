@@ -43,7 +43,7 @@
 #include "xf86Pci.h"
 
 #include "xgi.h"
-#include "regs.h"
+#include "xgi_regs.h"
 #include "xgi_dac.h"
 
 Bool    XG40Init(ScrnInfoPtr pScrn, DisplayModePtr mode);

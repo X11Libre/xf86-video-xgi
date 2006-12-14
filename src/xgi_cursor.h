@@ -31,7 +31,7 @@
  * Idea based on code by Can-Ru Yeou, XGI Inc.
  *
  */
-#include "regs.h"
+#include "xgi_regs.h"
 #define CS(x)   (0x8500 + (x << 2))
 
 /* 300 series, CRT1 */

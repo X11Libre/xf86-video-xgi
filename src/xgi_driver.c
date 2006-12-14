@@ -68,7 +68,7 @@
 #include "mibstore.h"
 
 #include "xgi.h"
-#include "regs.h"
+#include "xgi_regs.h"
 #include "xgi_vb.h"
 #include "xgi_dac.h"
 #include "initdef.h"

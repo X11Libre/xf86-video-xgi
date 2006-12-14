@@ -45,7 +45,7 @@
 #include <miline.h>
 
 #include "xgi_accel.h"
-#include "regs.h"
+#include "xgi_regs.h"
 #include "xgi.h"
 
 #include "xaarop.h"

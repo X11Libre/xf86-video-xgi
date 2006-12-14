@@ -98,6 +98,8 @@
 #define CROFFSET       VGA_CRTC_INDEX_OFFSET + VGA_IOBASE_COLOR-VGA_RELIO_BASE
 #define MISCROFFSET    VGA_MISC_OUT_R - VGA_RELIO_BASE
 #define MISCWOFFSET    VGA_MISC_OUT_W - VGA_RELIO_BASE
+#define COLREGOFFSET    0x48
+#define INPUTSTATOFFSET 0x5A
 #define DACROFFSET     VGA_DAC_READ_ADDR - VGA_RELIO_BASE
 #define DACWOFFSET     VGA_DAC_WRITE_ADDR - VGA_RELIO_BASE
 #define DACDOFFSET     VGA_DAC_DATA - VGA_RELIO_BASE
@@ -121,39 +123,15 @@
 #define XGIDACWRITE    (pXGI->RelIO+DACWOFFSET)
 #define XGIDACDATA     (pXGI->RelIO+DACDOFFSET)
 #define XGIVIDEO       (pXGI->RelIO+0x02)
+#define XGICOLIDX      (pXGI->RelIO+COLREGOFFSET)
+#define XGICOLDATA     (pXGI->RelIO+COLREGOFFSET+1)
+#define XGIINPSTAT     (pXGI->RelIO+INPUTSTATOFFSET)
 #define XGIPART1       (pXGI->RelIO+0x04)
 #define XGIPART2       (pXGI->RelIO+0x10)
 #define XGIPART3       (pXGI->RelIO+0x12)
 #define XGIPART4       (pXGI->RelIO+0x14)
 #define XGIPART5       (pXGI->RelIO+0x16)
 
-
-/* 3C4 */
-#define BankReg 0x06
-#define ClockReg 0x07
-#define CPUThreshold 0x08
-#define CRTThreshold 0x09
-#define CRTCOff 0x0A
-#define DualBanks 0x0B
-#define MMIOEnable 0x0B
-#define RAMSize 0x0C
-#define Mode64 0x0C
-#define ExtConfStatus1 0x0E
-#define ClockBase 0x13
-#define LinearAdd0 0x20
-#define LinearAdd1 0x21
-#define GraphEng 0x27
-#define MemClock0 0x28
-#define MemClock1 0x29
-#define XR2A 0x2A
-#define XR2B 0x2B
-#define TurboQueueBase 0x2C
-#define FBSize 0x2F
-#define ExtMiscCont5 0x34
-#define ExtMiscCont9 0x3C
-
-/* 3x4 */
-#define Offset 0x13
 
 #define read_xr(num,var) do {outb(0x3c4, num);var=inb(0x3c5);} while (0)
 
@@ -189,141 +167,46 @@
 #define xgiPART1_VERTRETRACE                  0x30
 #define xgiPART1_HORZRETRACE                  0x33
 
-/* Definitions for the XGI engine communication. */
+/* 2005/11/08 added by jjtseng */
+#define Index_CR_GPIO_Reg1 0x48
+#define Index_CR_GPIO_Reg2 0x49
+#define Index_CR_GPIO_Reg3 0x4a
 
-extern int xgiReg32MMIO[];
-#define BR(x) xgiReg32MMIO[x]
+#define GPIOA_EN    (1<<0)
+#define GPIOA_WRITE  (1<<0)
+#define GPIOA_READ (1<<7)
 
-/* These are done using Memory Mapped IO, of the registers */
-/*
- * Modified  by Xavier Ducoin (xavier@rd.lectra.fr)
- */
+#define GPIOA_EN    (1<<0)
+#define GPIOA_WRITE (1<<0)
+#define GPIOA_READ  (1<<7)
 
+#define GPIOB_EN    (1<<1)
+#define GPIOB_WRITE (1<<1)
+#define GPIOB_READ  (1<<6)
 
-#define xgiLEFT2RIGHT           0x10
-#define xgiRIGHT2LEFT           0x00
-#define xgiTOP2BOTTOM           0x20
-#define xgiBOTTOM2TOP           0x00
+#define GPIOC_EN    (1<<2)
+#define GPIOC_WRITE (1<<2)
+#define GPIOC_READ  (1<<5)
 
-#define xgiSRCSYSTEM            0x03
-#define xgiSRCVIDEO        0x02
-#define xgiSRCFG        0x01
-#define xgiSRCBG        0x00
+#define GPIOD_EN    (1<<3)
+#define GPIOD_WRITE (1<<3)
+#define GPIOD_READ  (1<<4)
 
-#define xgiCMDBLT        0x0000
-#define xgiCMDBLTMSK        0x0100
-#define xgiCMDCOLEXP        0x0200
-#define xgiCMDLINE        0x0300
+#define GPIOE_EN    (1<<4)
+#define GPIOE_WRITE (1<<4)
+#define GPIOE_READ  (1<<3)
 
-#define xgiCMDENHCOLEXP        0x2000
+#define GPIOF_EN    (1<<5)
+#define GPIOF_WRITE (1<<5)
+#define GPIOF_READ  (1<<2)
 
-#define xgiXINCREASE        0x10
-#define xgiYINCREASE        0x20
-#define xgiCLIPENABL        0x40
-#define xgiCLIPINTRN        0x80
-#define xgiCLIPEXTRN        0x00
+#define GPIOG_EN    (1<<6)
+#define GPIOG_WRITE (1<<6)
+#define GPIOG_READ  (1<<1)
 
-
-#define xgiPATREG        0x08
-#define xgiPATFG        0x04
-#define xgiPATBG        0x00
-
-#define xgiLASTPIX        0x0800
-#define xgiXMAJOR        0x0400
-
-
-/* Macros to do useful things with the XGI BitBLT engine */
-
-#define xgiBLTSync \
-  while(*(volatile unsigned short *)(pXGI->IOBase + BR(10)+2) & \
-    (0x4000)){}
-
-#define xgiSETPATREG()\
-   ((unsigned char *)(pXGI->IOBase + BR(11)))
-
-#define xgiSETPATREGL()\
-   ((unsigned long *)(pXGI->IOBase + BR(11)))
-
-#define xgiSETCMD(op) \
-  *(volatile unsigned short *)(pXGI->IOBase + BR(10) +2 ) = op
-
-#define xgiSETROPFG(op) \
-  *(volatile unsigned int *)(pXGI->IOBase + BR(4)) = ((*(volatile unsigned int *)(pXGI->IOBase + BR(4)))&0xffffff) | (op<<24)
-
-#define xgiSETROPBG(op) \
-  *(volatile unsigned int *)(pXGI->IOBase + BR(5)) = ((*(volatile unsigned int *)(pXGI->IOBase + BR(5)))&0xffffff) | (op<<24)
-
-#define xgiSETROP(op) \
-   xgiSETROPFG(op);xgiSETROPBG(op);
-
-
-#define xgiSETSRCADDR(srcAddr) \
-  *(volatile unsigned int *)(pXGI->IOBase + BR(0)) = srcAddr&0x3FFFFFL
-
-#define xgiSETDSTADDR(dstAddr) \
-  *(volatile unsigned int *)(pXGI->IOBase + BR(1)) = dstAddr&0x3FFFFFL
-
-#define xgiSETPITCH(srcPitch,dstPitch) \
-  *(volatile unsigned int *)(pXGI->IOBase + BR(2)) = ((dstPitch&0xFFFF)<<16)| \
-      (srcPitch&0xFFFF)
-
-/* according to XGI 2D Engine Programming Guide
- * width -1 independant of Bpp
- */
-#define xgiSETHEIGHTWIDTH(Height,Width)\
-  *(volatile unsigned int *)(pXGI->IOBase + BR(3)) = (((Height)&0xFFFF)<<16)| \
-      ((Width)&0xFFFF)
-
-#define xgiSETCLIPTOP(x,y)\
-  *(volatile unsigned int *)(pXGI->IOBase + BR(8)) = (((y)&0xFFFF)<<16)| \
-      ((x)&0xFFFF)
-
-#define xgiSETCLIPBOTTOM(x,y)\
-  *(volatile unsigned int *)(pXGI->IOBase + BR(9)) = (((y)&0xFFFF)<<16)| \
-      ((x)&0xFFFF)
-
-#define xgiSETBGCOLOR(bgColor)\
-  *(volatile unsigned int *)(pXGI->IOBase + BR(5)) = (bgColor)
-
-#define xgiSETBGCOLOR8(bgColor)\
-  *(volatile unsigned int *)(pXGI->IOBase + BR(5)) = (bgColor&0xFF)
-
-#define xgiSETBGCOLOR16(bgColor)\
-  *(volatile unsigned int *)(pXGI->IOBase + BR(5)) = (bgColor&0xFFFF)
-
-#define xgiSETBGCOLOR24(bgColor)\
-  *(volatile unsigned int *)(pXGI->IOBase + BR(5)) = (bgColor&0xFFFFFF)
-
-
-#define xgiSETFGCOLOR(fgColor)\
-  *(volatile unsigned int *)(pXGI->IOBase + BR(4)) = (fgColor)
-
-#define xgiSETFGCOLOR8(fgColor)\
-  *(volatile unsigned int *)(pXGI->IOBase + BR(4)) = (fgColor&0xFF)
-
-#define xgiSETFGCOLOR16(fgColor)\
-  *(volatile unsigned int *)(pXGI->IOBase + BR(4)) = (fgColor&0xFFFF)
-
-#define xgiSETFGCOLOR24(fgColor)\
-  *(volatile unsigned int *)(pXGI->IOBase + BR(4)) = (fgColor&0xFFFFFF)
-
-/* Line drawing */
-
-#define xgiSETXStart(XStart) \
-  *(volatile unsigned int *)(pXGI->IOBase + BR(0)) = XStart&0xFFFF
-
-#define xgiSETYStart(YStart) \
-  *(volatile unsigned int *)(pXGI->IOBase + BR(1)) = YStart&0xFFFF
-
-#define xgiSETLineMajorCount(MajorAxisCount) \
-  *(volatile unsigned int *)(pXGI->IOBase + BR(3)) = MajorAxisCount&0xFFFF
-
-#define xgiSETLineSteps(K1,K2) \
-  *(volatile unsigned int *)(pXGI->IOBase + BR(6)) = (((K1)&0xFFFF)<<16)| \
-      ((K2)&0xFFFF)
-
-#define xgiSETLineErrorTerm(ErrorTerm) \
-  *(volatile unsigned short *)(pXGI->IOBase + BR(7)) = ErrorTerm
+#define GPIOH_EN    (1<<7)
+#define GPIOH_WRITE (1<<7)
+#define GPIOH_READ  (1<<0)
 
 #define XGIMMIOLONG(offset)  *(volatile unsigned long *)(pXGI->IOBase+(offset))
 #define XGIMMIOSHORT(offset) *(volatile unsigned short *)(pXGI->IOBase+(offset))

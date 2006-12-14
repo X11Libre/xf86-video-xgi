@@ -41,7 +41,6 @@
 #include "misc.h"
 #include "vgaHW.h"
 #include "xgi.h"
-#include "regs.h"
 #include "xgi_cursor.h"
 
 static int currX = 0 , currY = 0 ;

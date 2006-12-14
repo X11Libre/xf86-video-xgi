@@ -48,7 +48,7 @@
 #include "xf86cmap.h"
 
 #include "xgi.h"
-#include "regs.h"
+#include "xgi_regs.h"
 #include "xgi_dac.h"
 /* #include "valid_mode.h" */
 

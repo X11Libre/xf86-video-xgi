@@ -29,36 +29,46 @@ xgi_drv_la_LDFLAGS = -module -avoid-version
 xgi_drv_ladir = @moduledir@/drivers
 
 xgi_drv_la_SOURCES = \
-	vb_ext.c vb_init.c vb_setmode.c vb_util.c\
-	xgi_driver.c xgi_dac.c xgi_cursor.c xgi_accel.c xgi_setup.c\
-	xgi_vga.c xgi_vb.c\
-	xgi_opt.c xgi_dga.c init.c \
-	xgi_video.c xgi_videohw.c \
-	init.h \
+	init.c \
 	initdef.h \
+	init.h \
 	osdef.h \
-	regs.h \
 	valid_mode.h \
 	vb_def.h \
+	vb_ext.c \
 	vb_ext.h \
+	vb_init.c \
 	vb_init.h \
+	vb_setmode.c \
 	vb_setmode.h \
 	vb_struct.h \
 	vb_table.h \
+	vb_util.c \
 	vb_util.h \
 	vgatypes.h \
 	vstruct.h \
-	xgi.h \
+	xgi_accel.c \
 	xgi_accel.h \
 	xgi_common.h \
+	xgi_cursor.c \
 	xgi_cursor.h \
+	xgi_dac.c \
 	xgi_dac.h \
+	xgi_dga.c \
+	xgi_driver.c \
 	xgi_driver.h \
+	xgi.h \
+	xgi_opt.c \
 	xgi_pci.h \
 	xgi_regs.h \
+	xgi_setup.c \
+	xgi_vb.c \
 	xgi_vb.h \
 	xgi_ver.h \
+	xgi_vga.c \
+	xgi_video.c \
 	xgi_video.h \
+	xgi_videohw.c \
 	xgi_videohw.h
 
 if DRI

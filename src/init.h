@@ -63,7 +63,7 @@
 #include "xf86PciInfo.h"
 #include "xf86_OSproc.h"
 #include "xgi.h"
-#include "regs.h"
+#include "xgi_regs.h"
 #endif
 
 #ifdef LINUX_KERNEL

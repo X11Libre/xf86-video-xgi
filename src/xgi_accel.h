@@ -57,9 +57,7 @@
 */
 
 #undef BR
-#undef PBR
 #define BR(x)   (0x8200 | (x) << 2)
-#define PBR(x)  (0x8300 | (x) << 2)
 
 /* Definitions for the engine command */
 #define BITBLT                  0x00000000

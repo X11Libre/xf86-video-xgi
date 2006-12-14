@@ -43,7 +43,7 @@
 #include "xaa.h"
 #include "xaalocal.h"
 #include "xgi.h"
-#include "regs.h"
+#include "xgi_regs.h"
 #include "dgaproc.h"
 
 #ifndef NEW_DGAOPENFRAMEBUFFER

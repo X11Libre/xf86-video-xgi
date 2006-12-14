@@ -54,7 +54,7 @@
 
 #include "xgi.h"
 #include "xgi_dac.h"
-#include "regs.h"
+#include "xgi_regs.h"
 #include "xgi_vb.h"
 
 static void Volari_Save(ScrnInfoPtr pScrn, XGIRegPtr xgiReg) ;
