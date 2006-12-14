@@ -97,9 +97,7 @@ USHORT XGINew_DDRDRAM_TYPE340[4][5]=
 
 void     XGINew_SetDRAMSize_340(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 void     XGINew_SetDRAMSize_XG45(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
-void     XGINew_SetDRAMSize_310(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 void     XGINew_SetMemoryClock(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO );
-void     XGINew_SetDRAMModeRegister(PVB_DEVICE_INFO );
 void     XGINew_SetDRAMModeRegister340( PXGI_HW_DEVICE_INFO HwDeviceExtension );
 void 	 XGINew_SetDRAMDefaultRegister340(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT, PVB_DEVICE_INFO );
 void 	 XGINew_SetDRAMDefaultRegisterXG45(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT, PVB_DEVICE_INFO );
@@ -109,7 +107,6 @@ void     DualChipInit(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO pVBInfo);
 int      XGINew_DDRSizing340( PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO );
 int      XGINew_DDRSizingXG45( PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO );
 void     XGINew_DisableRefresh( PXGI_HW_DEVICE_INFO ,PVB_DEVICE_INFO) ;
-void     XGINew_CheckBusWidth_310( PVB_DEVICE_INFO) ;
 int      XGINew_SDRSizing(PVB_DEVICE_INFO);
 int      XGINew_DDRSizing( PVB_DEVICE_INFO );
 void     XGINew_EnableRefresh( PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
@@ -733,29 +730,6 @@ UCHAR XGINew_Get340DRAMType( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_
     	return( data );
     }
 }
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_Get310DRAMType */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-UCHAR XGINew_Get310DRAMType(PVB_DEVICE_INFO pVBInfo)
-{
-    UCHAR data ;
-
-  /* index = XGINew_GetReg1( pVBInfo->P3c4 , 0x1A ) ; */
-  /* index &= 07 ; */
-
-    if ( *pVBInfo->pSoftSetting & SoftDRAMType )
-        data = *pVBInfo->pSoftSetting & 0x03 ;
-    else
-        data = XGINew_GetReg1( pVBInfo->P3c4 , 0x3a ) & 0x03 ;
-
-    return( data ) ;
-}
-
 
 
 /* --------------------------------------------------------------------- */
@@ -1519,73 +1493,6 @@ void XGINew_SetDRAMSize_XG45( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE
 
 
 /* --------------------------------------------------------------------- */
-/* Function : */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGINew_SetDRAMSize_310( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO pVBInfo)
-{
-#ifndef LINUX_XF86
-    ULONG UMASize = 0 ;
-    UCHAR tempah ;
-#endif
-    USHORT data ;
-    pVBInfo->ROMAddr  = HwDeviceExtension->pjVirtualRomBase ,
-    pVBInfo->FBAddr = HwDeviceExtension->pjVideoMemoryAddress ;
-#ifdef XGI301
-    /* XGINew_SetReg1( pVBInfo->P3d4 , 0x30 , 0x40 ) ; */
-#endif
-
-#ifdef XGI302	/* alan,should change value */
-    XGINew_SetReg1( pVBInfo->P3d4 , 0x30 , 0x4D ) ;
-    XGINew_SetReg1( pVBInfo->P3d4 , 0x31 , 0xc0 ) ;
-    XGINew_SetReg1( pVBInfo->P3d4 , 0x34 , 0x3F ) ;
-#endif
-
-    XGISetModeNew( HwDeviceExtension , 0x2e ) ;
-
-    data = XGINew_GetReg1( pVBInfo->P3c4 , 0x21 ) ;
-    XGINew_SetReg1( pVBInfo->P3c4 , 0x21 , ( USHORT )( data & 0xDF ) ) ;	/* disable read cache */
-
-    data = XGINew_GetReg1( pVBInfo->P3c4 , 0x1 ) ;
-    data |= 0x20 ;
-    XGINew_SetReg1( pVBInfo->P3c4 , 0x01 , data ) ;		/* Turn OFF Display */
-
-    data = XGINew_GetReg1( pVBInfo->P3c4 , 0x16 ) ;
-
-
-    XGINew_SetReg1( pVBInfo->P3c4 , 0x16 , ( USHORT )( data | 0x0F ) ) ;		/* assume lowest speed DRAM */
-
-    XGINew_SetDRAMModeRegister( pVBInfo ) ;
-    XGINew_DisableRefresh( HwDeviceExtension, pVBInfo ) ;
-    XGINew_CheckBusWidth_310( pVBInfo) ;
-    XGINew_VerifyMclk( HwDeviceExtension, pVBInfo ) ;	/* alan 2000/7/3 */
-
-
-
-    if ( XGINew_Get310DRAMType( pVBInfo ) < 2 )
-    {
-        XGINew_SDRSizing( pVBInfo ) ;
-    }
-    else
-    {
-        XGINew_DDRSizing( pVBInfo) ;
-    }
-
-
-
-
-    XGINew_SetReg1( pVBInfo->P3c4 , 0x16 , pVBInfo->SR15[ 1 ][ XGINew_RAMType ] ) ;	/* restore SR16 */
-
-    XGINew_EnableRefresh(  HwDeviceExtension, pVBInfo ) ;
-    data=XGINew_GetReg1( pVBInfo->P3c4 ,0x21 ) ;
-    XGINew_SetReg1( pVBInfo->P3c4 , 0x21 , ( USHORT )( data | 0x20 ) ) ;	/* enable read cache */
-}
-
-
-
-/* --------------------------------------------------------------------- */
 /* Function : XGINew_SetDRAMModeRegister340 */
 /* Input : */
 /* Output : */
@@ -1643,25 +1550,6 @@ void XGINew_SetDRAMModeRegister340( PXGI_HW_DEVICE_INFO HwDeviceExtension )
     }    
 
     XGINew_SetReg1( pVBInfo->P3c4 , 0x1B , 0x03 ) ;
-}
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_SetDRAMModeRegister */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGINew_SetDRAMModeRegister( PVB_DEVICE_INFO pVBInfo)
-{
-    if ( XGINew_Get310DRAMType( pVBInfo ) < 2 )
-    {
-      XGINew_SDR_MRS(pVBInfo ) ;
-    }
-    else
-    {
-      /* SR16 <- 0F,CF,0F,8F */
-      XGINew_DDR_MRS( pVBInfo ) ;
-    }
 }
 
 
@@ -1745,139 +1633,6 @@ void XGINew_SetDRAMSizingType( int index , USHORT DRAMTYPE_TABLE[][ 5 ] ,PVB_DEV
     data = DRAMTYPE_TABLE[ index ][ 4 ] ;
     XGINew_SetRegANDOR( pVBInfo->P3c4 , 0x13 , 0x80 , data ) ;
    /* should delay 50 ns */
-}
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_CheckBusWidth_310 */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGINew_CheckBusWidth_310(  PVB_DEVICE_INFO pVBInfo)
-{
-    USHORT data ;
-    PULONG volatile pVideoMemory ;
-
-    pVideoMemory = (PULONG) pVBInfo->FBAddr;
-
-    if ( XGINew_Get310DRAMType( pVBInfo ) < 2 )
-    {
-        XGINew_SetReg1( pVBInfo->P3c4 , 0x13 , 0x00 ) ;
-        XGINew_SetReg1( pVBInfo->P3c4 , 0x14 , 0x12 ) ;
-        /* should delay */
-        XGINew_SDR_MRS( pVBInfo ) ;
-
-        XGINew_ChannelAB = 0 ;
-        XGINew_DataBusWidth = 128 ;
-        pVideoMemory[ 0 ] = 0x01234567L ;
-        pVideoMemory[ 1 ] = 0x456789ABL ;
-        pVideoMemory[ 2 ] = 0x89ABCDEFL ;
-        pVideoMemory[ 3 ] = 0xCDEF0123L ;
-        pVideoMemory[ 4 ] = 0x55555555L ;
-        pVideoMemory[ 5 ] = 0x55555555L ;
-        pVideoMemory[ 6 ] = 0xFFFFFFFFL ;
-        pVideoMemory[ 7 ] = 0xFFFFFFFFL ;
-
-        if ( ( pVideoMemory[ 3 ] != 0xCDEF0123L ) || ( pVideoMemory[ 2 ] != 0x89ABCDEFL ) )
-        {
-            /* ChannelA64Bit */
-            XGINew_DataBusWidth = 64 ;
-            XGINew_ChannelAB = 0 ;
-            data=XGINew_GetReg1( pVBInfo->P3c4 , 0x14 ) ;
-            XGINew_SetReg1( pVBInfo->P3c4 , 0x14 , ( USHORT )( data & 0xFD ) ) ;
-        }
-
-        if ( ( pVideoMemory[ 1 ] != 0x456789ABL ) || ( pVideoMemory[ 0 ] != 0x01234567L ) )
-        {
-            /* ChannelB64Bit */
-            XGINew_DataBusWidth = 64 ;
-            XGINew_ChannelAB = 1 ;
-            data=XGINew_GetReg1( pVBInfo->P3c4 , 0x14 ) ;
-            XGINew_SetReg1( pVBInfo->P3c4 , 0x14 , ( USHORT )( ( data & 0xFD ) | 0x01 ) ) ;
-        }
-
-        return ;
-    }
-    else
-    {
-        /* DDR Dual channel */
-        XGINew_SetReg1( pVBInfo->P3c4 , 0x13 , 0x00 ) ;
-        XGINew_SetReg1( pVBInfo->P3c4 , 0x14 , 0x02 ) ;	/* Channel A, 64bit */
-        /* should delay */
-        XGINew_DDR_MRS( pVBInfo ) ;
-
-        XGINew_ChannelAB = 0 ;
-        XGINew_DataBusWidth = 64 ;
-        pVideoMemory[ 0 ] = 0x01234567L ;
-        pVideoMemory[ 1 ] = 0x456789ABL ;
-        pVideoMemory[ 2 ] = 0x89ABCDEFL ;
-        pVideoMemory[ 3 ] = 0xCDEF0123L ;
-        pVideoMemory[ 4 ] = 0x55555555L ;
-        pVideoMemory[ 5 ] = 0x55555555L ;
-        pVideoMemory[ 6 ] = 0xAAAAAAAAL ;
-        pVideoMemory[ 7 ] = 0xAAAAAAAAL ;
-
-        if ( pVideoMemory[ 1 ] == 0x456789ABL )
-        {
-            if ( pVideoMemory[ 0 ] == 0x01234567L )
-            {
-                /* Channel A 64bit */
-                return ;
-            }
-        }
-        else
-        {
-            if ( pVideoMemory[ 0 ] == 0x01234567L )
-            {
-                /* Channel A 32bit */
-                XGINew_DataBusWidth = 32 ;
-                XGINew_SetReg1( pVBInfo->P3c4 , 0x14 , 0x00 ) ;
-                return ;
-            }
-        }
-
-        XGINew_SetReg1( pVBInfo->P3c4 , 0x14 , 0x03 ) ;	/* Channel B, 64bit */
-        XGINew_DDR_MRS( pVBInfo);
-
-        XGINew_ChannelAB = 1 ;
-        XGINew_DataBusWidth = 64 ;
-        pVideoMemory[ 0 ] = 0x01234567L ;
-        pVideoMemory[ 1 ] = 0x456789ABL ;
-        pVideoMemory[ 2 ] = 0x89ABCDEFL ;
-        pVideoMemory[ 3 ] = 0xCDEF0123L ;
-        pVideoMemory[ 4 ] = 0x55555555L ;
-        pVideoMemory[ 5 ] = 0x55555555L ;
-        pVideoMemory[ 6 ] = 0xAAAAAAAAL ;
-        pVideoMemory[ 7 ] = 0xAAAAAAAAL ;
-
-        if ( pVideoMemory[ 1 ] == 0x456789ABL )
-        {
-            /* Channel B 64 */
-            if ( pVideoMemory[ 0 ] == 0x01234567L )
-            {
-                /* Channel B 64bit */
-                return ;
-            }
-            else
-            {
-                /* error */
-            }
-        }
-        else
-        {
-            if ( pVideoMemory[ 0 ] == 0x01234567L )
-            {
-                /* Channel B 32 */
-                XGINew_DataBusWidth = 32 ;
-                XGINew_SetReg1( pVBInfo->P3c4 , 0x14 , 0x01 ) ;
-            }
-            else
-            {
-                /* error */
-            }
-        }
-    }
 }
 
 
