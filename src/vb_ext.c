@@ -44,6 +44,8 @@
 #include "vb_util.h"
 #include "vb_setmode.h"
 #include "vb_ext.h"
+#include "vb_init.h"
+
 extern   UCHAR XGI330_SoftSetting;
 extern   UCHAR XGI330_OutputSelect;
 extern   USHORT XGI330_RGBSenseData2;

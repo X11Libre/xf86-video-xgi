@@ -51,7 +51,8 @@
 
 
 
-UCHAR    XGINew_ChannelAB,XGINew_DataBusWidth;
+static UCHAR XGINew_ChannelAB;
+static UCHAR XGINew_DataBusWidth;
 
 USHORT XGINew_DRAMType[17][5]={{0x0C,0x0A,0x02,0x40,0x39},{0x0D,0x0A,0x01,0x40,0x48},
                      {0x0C,0x09,0x02,0x20,0x35},{0x0D,0x09,0x01,0x20,0x44},
@@ -63,63 +64,121 @@ USHORT XGINew_DRAMType[17][5]={{0x0C,0x0A,0x02,0x40,0x39},{0x0D,0x0A,0x01,0x40,0
                      {0x0B,0x08,0x01,0x04,0x20},{0x0A,0x08,0x01,0x02,0x10},
                      {0x09,0x08,0x01,0x01,0x00}};
 
-USHORT XGINew_SDRDRAM_TYPE[13][5]=
+static const USHORT XGINew_SDRDRAM_TYPE[13][5]=
 {
-{ 2,12, 9,64,0x35},
-{ 1,13, 9,64,0x44},
-{ 2,12, 8,32,0x31},
-{ 2,11, 9,32,0x25},
-{ 1,12, 9,32,0x34},
-{ 1,13, 8,32,0x40},
-{ 2,11, 8,16,0x21},
-{ 1,12, 8,16,0x30},
-{ 1,11, 9,16,0x24},
-{ 1,11, 8, 8,0x20},
-{ 2, 9, 8, 4,0x01},
-{ 1,10, 8, 4,0x10},
-{ 1, 9, 8, 2,0x00}
+    { 2,12, 9,64,0x35},
+    { 1,13, 9,64,0x44},
+    { 2,12, 8,32,0x31},
+    { 2,11, 9,32,0x25},
+    { 1,12, 9,32,0x34},
+    { 1,13, 8,32,0x40},
+    { 2,11, 8,16,0x21},
+    { 1,12, 8,16,0x30},
+    { 1,11, 9,16,0x24},
+    { 1,11, 8, 8,0x20},
+    { 2, 9, 8, 4,0x01},
+    { 1,10, 8, 4,0x10},
+    { 1, 9, 8, 2,0x00}
 };
 
-USHORT XGINew_DDRDRAM_TYPE[4][5]=
+static const USHORT XGINew_DDRDRAM_TYPE[4][5]=
 {
-{ 2,12, 9,64,0x35},
-{ 2,12, 8,32,0x31},
-{ 2,11, 8,16,0x21},
-{ 2, 9, 8, 4,0x01}
-};
-USHORT XGINew_DDRDRAM_TYPE340[4][5]=
-{
-{ 2,13, 9,64,0x45},
-{ 2,12, 9,32,0x35},
-{ 2,12, 8,16,0x31},
-{ 2,11, 8, 8,0x21}
+    { 2,12, 9,64,0x35},
+    { 2,12, 8,32,0x31},
+    { 2,11, 8,16,0x21},
+    { 2, 9, 8, 4,0x01}
 };
 
-void     XGINew_SetDRAMSize_340(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
-void     XGINew_SetDRAMSize_XG45(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
-void     XGINew_SetMemoryClock(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO );
-void     XGINew_SetDRAMModeRegister340( PXGI_HW_DEVICE_INFO HwDeviceExtension );
-void 	 XGINew_SetDRAMDefaultRegister340(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT, PVB_DEVICE_INFO );
-void 	 XGINew_SetDRAMDefaultRegisterXG45(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT, PVB_DEVICE_INFO );
-UCHAR    XGINew_Get340DRAMType( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO pVBInfo);
-BOOLEAN  XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension) ;
-void     DualChipInit(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO pVBInfo);
-int      XGINew_DDRSizing340( PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO );
-int      XGINew_DDRSizingXG45( PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO );
-void     XGINew_DisableRefresh( PXGI_HW_DEVICE_INFO ,PVB_DEVICE_INFO) ;
-int      XGINew_SDRSizing(PVB_DEVICE_INFO);
-int      XGINew_DDRSizing( PVB_DEVICE_INFO );
-void     XGINew_EnableRefresh( PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
-int      XGINew_RAMType;                  /*int      ModeIDOffset,StandTable,CRT1Table,ScreenOffset,REFIndex;*/
-ULONG	 UNIROM;			  /* UNIROM */
-BOOLEAN  ChkLFB( PVB_DEVICE_INFO );
-void     XGINew_Delay15us(ULONG);
-void     SetPowerConsume (PXGI_HW_DEVICE_INFO HwDeviceExtension,USHORT XGI_P3d4Port);
-void 	 ReadVBIOSTablData( UCHAR ChipType , PVB_DEVICE_INFO pVBInfo);
-void 	 XGINew_DDR1x_MRS_XG20( USHORT P3c4 , PVB_DEVICE_INFO pVBInfo);
-void     XGINew_SetDRAMModeRegister_XG20( PXGI_HW_DEVICE_INFO HwDeviceExtension );
-void 	 XGINew_ChkSenseStatus ( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO pVBInfo ) ;
-void     XGINew_SetModeScratch ( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO pVBInfo ) ;
+static const USHORT XGINew_DDRDRAM_TYPE340[4][5]=
+{
+    { 2,13, 9,64,0x45},
+    { 2,12, 9,32,0x35},
+    { 2,12, 8,16,0x31},
+    { 2,11, 8, 8,0x21}
+};
+
+static void XGINew_SetDRAMSize_340(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
+static void XGINew_SetDRAMSize_XG45(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
+static void XGINew_SetMemoryClock(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
+static void XGINew_SetDRAMModeRegister340(PXGI_HW_DEVICE_INFO);
+static void XGINew_SetDRAMDefaultRegister340(PXGI_HW_DEVICE_INFO, USHORT,
+    PVB_DEVICE_INFO);
+static void XGINew_SetDRAMDefaultRegisterXG45(PXGI_HW_DEVICE_INFO, USHORT, 
+    PVB_DEVICE_INFO);
+static UCHAR XGINew_Get340DRAMType(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
+
+static int XGINew_SetDDRChannel(int index, UCHAR ChannelNo,
+    UCHAR XGINew_ChannelAB, const USHORT DRAMTYPE_TABLE[][5],
+    PVB_DEVICE_INFO pVBInfo);
+
+static void XGINew_SetDRAMSizingType(int index ,
+    const USHORT DRAMTYPE_TABLE[][5], PVB_DEVICE_INFO pVBInfo);
+static USHORT XGINew_SetDRAMSizeReg(int index,
+    const USHORT DRAMTYPE_TABLE[][5], PVB_DEVICE_INFO pVBInfo);
+
+static int XGINew_SetRank(int index, UCHAR RankNo, UCHAR XGINew_ChannelAB,
+    const USHORT DRAMTYPE_TABLE[][5], PVB_DEVICE_INFO pVBInfo);
+
+static int XGINew_CheckRanks(int RankNo, int index,
+    const USHORT DRAMTYPE_TABLE[][5], PVB_DEVICE_INFO pVBInfo);
+static int XGINew_CheckRank(int RankNo, int index,
+    const USHORT DRAMTYPE_TABLE[][5], PVB_DEVICE_INFO pVBInfo);
+static int XGINew_CheckDDRRank(int RankNo, int index,
+    const USHORT DRAMTYPE_TABLE[][5], PVB_DEVICE_INFO pVBInfo);
+static int XGINew_CheckDDRRanks(int RankNo, int index,
+    const USHORT DRAMTYPE_TABLE[][5], PVB_DEVICE_INFO pVBInfo);
+
+static int XGINew_CheckBanks(int index, const USHORT DRAMTYPE_TABLE[][5],
+    PVB_DEVICE_INFO pVBInfo);
+static int XGINew_CheckColumn(int index, const USHORT DRAMTYPE_TABLE[][5],
+    PVB_DEVICE_INFO pVBInfo);
+
+static int XGINew_DDRSizing340(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
+static int XGINew_DDRSizingXG45(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
+static int XGINew_SDRSizing(PVB_DEVICE_INFO);
+static int XGINew_DDRSizing(PVB_DEVICE_INFO);
+
+static void XGINew_DDR_MRS(PVB_DEVICE_INFO pVBInfo);
+static void XGINew_SDR_MRS(PVB_DEVICE_INFO pVBInfo);
+static void XGINew_DDR1x_MRS_340(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+    USHORT P3c4, PVB_DEVICE_INFO pVBInfo);
+static void XGINew_DDR2x_MRS_340(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+    USHORT P3c4, PVB_DEVICE_INFO pVBInfo);
+static void XGINew_DDR2_MRS_340(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+    USHORT P3c4, PVB_DEVICE_INFO pVBInfo);
+static void XGINew_DDR1x_DefaultRegister(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+    USHORT Port, PVB_DEVICE_INFO pVBInfo);
+static void XGINew_DDR2x_DefaultRegister(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+    USHORT Port, PVB_DEVICE_INFO pVBInfo);
+static void XGINew_DDR2_DefaultRegister(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+    USHORT Port, PVB_DEVICE_INFO pVBInfo);
+
+static void XGINew_DisableChannelInterleaving(int index, 
+    const USHORT XGINew_DDRDRAM_TYPE[][5], PVB_DEVICE_INFO pVBInfo);
+
+static void DualChipInit(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
+
+static void XGINew_DisableRefresh(PXGI_HW_DEVICE_INFO ,PVB_DEVICE_INFO);
+static void XGINew_EnableRefresh(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
+
+static BOOLEAN ChkLFB(PVB_DEVICE_INFO);
+static void XGINew_Delay15us(ULONG);
+static void SetPowerConsume(PXGI_HW_DEVICE_INFO, USHORT);
+static void XGINew_DDR1x_MRS_XG20(USHORT, PVB_DEVICE_INFO);
+static void XGINew_SetDRAMModeRegister_XG20(PXGI_HW_DEVICE_INFO);
+static void XGINew_ChkSenseStatus(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
+
+static int XGINew_ReadWriteRest( USHORT StopAddr, USHORT StartAddr, 
+    PVB_DEVICE_INFO pVBInfo);
+static int XGI45New_ReadWriteRest(USHORT StopAddr, USHORT StartAddr,
+    PVB_DEVICE_INFO pVBInfo);
+static UCHAR XGINew_CheckFrequence(PVB_DEVICE_INFO pVBInfo);
+static void XGINew_CheckChannel(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+				PVB_DEVICE_INFO pVBInfo);
+
+static int XGINew_RAMType;                  /*int      ModeIDOffset,StandTable,CRT1Table,ScreenOffset,REFIndex;*/
+static ULONG UNIROM;			  /* UNIROM */
+
 
 #ifdef LINUX_KERNEL
 void DelayUS(ULONG MicroSeconds)
@@ -751,7 +810,7 @@ void XGINew_Delay15us(ULONG ulMicrsoSec)
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void XGINew_SDR_MRS(  PVB_DEVICE_INFO pVBInfo )
+void XGINew_SDR_MRS(PVB_DEVICE_INFO pVBInfo)
 {
     USHORT data ;
 
@@ -771,7 +830,8 @@ void XGINew_SDR_MRS(  PVB_DEVICE_INFO pVBInfo )
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void XGINew_DDR1x_MRS_340( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT P3c4 , PVB_DEVICE_INFO pVBInfo)
+void XGINew_DDR1x_MRS_340(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT P3c4,
+			  PVB_DEVICE_INFO pVBInfo)
 {
     XGINew_SetReg1( P3c4 , 0x18 , 0x01 ) ;
     if ( HwDeviceExtension->jChipType == XG42 )		/* XG42 BA0 & BA1  layout change */
@@ -820,7 +880,8 @@ void XGINew_DDR1x_MRS_340( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT P3c4 ,
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void XGINew_DDR2x_MRS_340( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT P3c4 , PVB_DEVICE_INFO pVBInfo)
+void XGINew_DDR2x_MRS_340(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT P3c4,
+			  PVB_DEVICE_INFO pVBInfo)
 {
     XGINew_SetReg1( P3c4 , 0x18 , 0x00 ) ;
     if ( HwDeviceExtension->jChipType == XG42 )		/*XG42 BA0 & BA1  layout change*/
@@ -866,7 +927,8 @@ void XGINew_DDR2x_MRS_340( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT P3c4 ,
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void XGINew_DDR2_MRS_340( PXGI_HW_DEVICE_INFO HwDeviceExtension ,  USHORT P3c4 , PVB_DEVICE_INFO pVBInfo)
+void XGINew_DDR2_MRS_340(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT P3c4,
+			 PVB_DEVICE_INFO pVBInfo)
 {
     USHORT P3d4 = P3c4 + 0x10 ;
     UCHAR data ;
@@ -929,7 +991,8 @@ void XGINew_DDR2_MRS_340( PXGI_HW_DEVICE_INFO HwDeviceExtension ,  USHORT P3c4 ,
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void XGINew_DDR1x_DefaultRegister( PXGI_HW_DEVICE_INFO HwDeviceExtension ,  USHORT Port , PVB_DEVICE_INFO pVBInfo)
+void XGINew_DDR1x_DefaultRegister(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+				  USHORT Port, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT P3d4 = Port ,
            P3c4 = Port - 0x10 ;
@@ -991,7 +1054,8 @@ void XGINew_DDR1x_DefaultRegister( PXGI_HW_DEVICE_INFO HwDeviceExtension ,  USHO
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void XGINew_DDR2x_DefaultRegister( PXGI_HW_DEVICE_INFO HwDeviceExtension ,  USHORT Port ,PVB_DEVICE_INFO pVBInfo)
+void XGINew_DDR2x_DefaultRegister(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+				  USHORT Port, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT P3d4 = Port ,
            P3c4 = Port - 0x10 ;
@@ -1046,7 +1110,8 @@ void XGINew_DDR2x_DefaultRegister( PXGI_HW_DEVICE_INFO HwDeviceExtension ,  USHO
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void XGINew_DDR2_DefaultRegister( PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT Port , PVB_DEVICE_INFO pVBInfo)
+void XGINew_DDR2_DefaultRegister(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+				 USHORT Port, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT P3d4 = Port ,
            P3c4 = Port - 0x10 ;
@@ -1592,7 +1657,9 @@ void XGINew_EnableRefresh( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_IN
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void XGINew_DisableChannelInterleaving( int index , USHORT XGINew_DDRDRAM_TYPE[][ 5 ] , PVB_DEVICE_INFO pVBInfo)
+void XGINew_DisableChannelInterleaving(int index, 
+				       const USHORT XGINew_DDRDRAM_TYPE[][5],
+				       PVB_DEVICE_INFO pVBInfo)
 {
     USHORT data ;
 
@@ -1626,7 +1693,8 @@ void XGINew_DisableChannelInterleaving( int index , USHORT XGINew_DDRDRAM_TYPE[]
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void XGINew_SetDRAMSizingType( int index , USHORT DRAMTYPE_TABLE[][ 5 ] ,PVB_DEVICE_INFO pVBInfo)
+void XGINew_SetDRAMSizingType(int index , const USHORT DRAMTYPE_TABLE[][5],
+			      PVB_DEVICE_INFO pVBInfo)
 {
     USHORT data ;
 
@@ -1642,7 +1710,8 @@ void XGINew_SetDRAMSizingType( int index , USHORT DRAMTYPE_TABLE[][ 5 ] ,PVB_DEV
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-int XGINew_SetRank( int index , UCHAR RankNo , UCHAR XGINew_ChannelAB , USHORT DRAMTYPE_TABLE[][ 5 ] , PVB_DEVICE_INFO pVBInfo)
+int XGINew_SetRank(int index, UCHAR RankNo, UCHAR XGINew_ChannelAB,
+		   const USHORT DRAMTYPE_TABLE[][5], PVB_DEVICE_INFO pVBInfo)
 {
     USHORT data ;
     int RankSize ;
@@ -1679,7 +1748,9 @@ int XGINew_SetRank( int index , UCHAR RankNo , UCHAR XGINew_ChannelAB , USHORT D
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-int XGINew_SetDDRChannel( int index , UCHAR ChannelNo , UCHAR XGINew_ChannelAB , USHORT DRAMTYPE_TABLE[][ 5 ] , PVB_DEVICE_INFO pVBInfo)
+int XGINew_SetDDRChannel(int index, UCHAR ChannelNo, UCHAR XGINew_ChannelAB,
+			 const USHORT DRAMTYPE_TABLE[][5],
+			 PVB_DEVICE_INFO pVBInfo)
 {
     USHORT  data ;
     int RankSize ;
@@ -1715,7 +1786,8 @@ int XGINew_SetDDRChannel( int index , UCHAR ChannelNo , UCHAR XGINew_ChannelAB ,
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-int XGINew_CheckColumn( int index , USHORT DRAMTYPE_TABLE[][ 5 ], PVB_DEVICE_INFO pVBInfo)
+int XGINew_CheckColumn(int index, const USHORT DRAMTYPE_TABLE[][5],
+		       PVB_DEVICE_INFO pVBInfo)
 {
     int i ;
     ULONG Increment , Position ;
@@ -1750,7 +1822,8 @@ int XGINew_CheckColumn( int index , USHORT DRAMTYPE_TABLE[][ 5 ], PVB_DEVICE_INF
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-int XGINew_CheckBanks( int index , USHORT DRAMTYPE_TABLE[][ 5 ], PVB_DEVICE_INFO pVBInfo)
+int XGINew_CheckBanks(int index, const USHORT DRAMTYPE_TABLE[][5],
+		      PVB_DEVICE_INFO pVBInfo)
 {
     int i ;
     ULONG Increment , Position ;
@@ -1781,7 +1854,8 @@ int XGINew_CheckBanks( int index , USHORT DRAMTYPE_TABLE[][ 5 ], PVB_DEVICE_INFO
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-int XGINew_CheckRank( int RankNo , int index , USHORT DRAMTYPE_TABLE[][ 5 ], PVB_DEVICE_INFO pVBInfo)
+int XGINew_CheckRank(int RankNo, int index, const USHORT DRAMTYPE_TABLE[][5],
+		     PVB_DEVICE_INFO pVBInfo)
 {
     int i ;
     ULONG Increment , Position ;
@@ -1815,7 +1889,9 @@ int XGINew_CheckRank( int RankNo , int index , USHORT DRAMTYPE_TABLE[][ 5 ], PVB
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-int XGINew_CheckDDRRank( int RankNo , int index , USHORT DRAMTYPE_TABLE[][ 5 ], PVB_DEVICE_INFO pVBInfo)
+int XGINew_CheckDDRRank(int RankNo, int index,
+			const USHORT DRAMTYPE_TABLE[][5],
+			PVB_DEVICE_INFO pVBInfo)
 {
     ULONG Increment , Position ;
     USHORT data ;
@@ -1857,7 +1933,8 @@ int XGINew_CheckDDRRank( int RankNo , int index , USHORT DRAMTYPE_TABLE[][ 5 ], 
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-int XGINew_CheckRanks( int RankNo , int index , USHORT DRAMTYPE_TABLE[][ 5 ], PVB_DEVICE_INFO pVBInfo)
+int XGINew_CheckRanks(int RankNo, int index, const USHORT DRAMTYPE_TABLE[][5],
+		      PVB_DEVICE_INFO pVBInfo)
 {
     int r ;
 
@@ -1883,7 +1960,9 @@ int XGINew_CheckRanks( int RankNo , int index , USHORT DRAMTYPE_TABLE[][ 5 ], PV
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-int XGINew_CheckDDRRanks( int RankNo , int index , USHORT DRAMTYPE_TABLE[][ 5 ], PVB_DEVICE_INFO pVBInfo)
+int XGINew_CheckDDRRanks(int RankNo, int index,
+			 const USHORT DRAMTYPE_TABLE[][5],
+			 PVB_DEVICE_INFO pVBInfo)
 {
     int r ;
 
@@ -1939,7 +2018,8 @@ int XGINew_SDRSizing(PVB_DEVICE_INFO pVBInfo)
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-USHORT XGINew_SetDRAMSizeReg( int index , USHORT DRAMTYPE_TABLE[][ 5 ], PVB_DEVICE_INFO pVBInfo)
+USHORT XGINew_SetDRAMSizeReg(int index, const USHORT DRAMTYPE_TABLE[][5],
+			     PVB_DEVICE_INFO pVBInfo)
 {
     USHORT data = 0 , memsize = 0 ;
     int RankSize ;
@@ -1988,7 +2068,8 @@ USHORT XGINew_SetDRAMSizeReg( int index , USHORT DRAMTYPE_TABLE[][ 5 ], PVB_DEVI
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-int XGINew_ReadWriteRest( USHORT StopAddr , USHORT StartAddr, PVB_DEVICE_INFO pVBInfo)
+int XGINew_ReadWriteRest( USHORT StopAddr, USHORT StartAddr, 
+			  PVB_DEVICE_INFO pVBInfo)
 {
     int i ;
     ULONG Position = 0 ;
@@ -2024,7 +2105,8 @@ int XGINew_ReadWriteRest( USHORT StopAddr , USHORT StartAddr, PVB_DEVICE_INFO pV
 /* Output      : */
 /* Description : return 0 : fail, 1 : pass */
 /*--------------------------------------------------------------------- */
-int XGI45New_ReadWriteRest( USHORT StopAddr , USHORT StartAddr, PVB_DEVICE_INFO pVBInfo)
+int XGI45New_ReadWriteRest(USHORT StopAddr, USHORT StartAddr,
+			   PVB_DEVICE_INFO pVBInfo)
 {
     int i ;
     ULONG Position = 0 ;
@@ -2073,7 +2155,7 @@ int XGI45New_ReadWriteRest( USHORT StopAddr , USHORT StartAddr, PVB_DEVICE_INFO 
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-UCHAR XGINew_CheckFrequence( PVB_DEVICE_INFO pVBInfo )
+UCHAR XGINew_CheckFrequence(PVB_DEVICE_INFO pVBInfo)
 {
     UCHAR data ;
 
@@ -2096,7 +2178,8 @@ UCHAR XGINew_CheckFrequence( PVB_DEVICE_INFO pVBInfo )
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void XGINew_CheckChannel( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo)
+void XGINew_CheckChannel(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+			 PVB_DEVICE_INFO pVBInfo)
 {
     UCHAR i, data ;
 
