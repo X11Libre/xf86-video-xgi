@@ -82,6 +82,8 @@ static Bool bAccessNBridgePCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo,
     ULONG ulOffset, ULONG ulSet, ULONG *pulValue);
 static Bool XGI_IsXG21(ScrnInfoPtr pScrn);
 
+static void XGI_InitHwDevInfo(ScrnInfoPtr pScrn);
+
 static void
 xgiXG40_Setup(ScrnInfoPtr pScrn)
 {
@@ -338,7 +340,7 @@ XGI_IsXG21(ScrnInfoPtr pScrn)
     return is_XG21;
 }
 
-Bool
+void
 XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
 {
     XGIPtr pXGI  ;
@@ -426,7 +428,6 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
     PDEBUG(ErrorF("pHwDevInfo->jChipType = %08lX done\n",pHwDevInfo->jChipType)) ;
 //    XGINew_InitVBIOSData(pHwDevInfo,pXGI->pVBInfo) ;
 //    PDEBUG(ErrorF("XGINew_InitVBIOSData(pHwDevInfo) done\n")) ;
-    return TRUE ;
 }
 
 Bool

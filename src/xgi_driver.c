@@ -2895,7 +2895,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     /* Do basic configuration */
 
     XGISetup(pScrn);
-    XGI_InitHwDevInfo(pScrn);
 
     from = X_PROBED;
     if(pXGI->pEnt->device->MemBase != 0) 
@@ -4901,7 +4900,6 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
     /* Save the current state */
     XGISave(pScrn);
 
-    /* XGI_InitHwDevInfo(pScrn); */
 
     PDEBUG(ErrorF("--- ScreenInit ---  \n")) ;
     PDEBUG(XGIDumpRegs(pScrn)) ;
