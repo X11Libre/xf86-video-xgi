@@ -161,7 +161,6 @@ static void DualChipInit(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static void XGINew_DisableRefresh(PXGI_HW_DEVICE_INFO ,PVB_DEVICE_INFO);
 static void XGINew_EnableRefresh(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 
-static BOOLEAN ChkLFB(PVB_DEVICE_INFO);
 static void XGINew_Delay15us(ULONG);
 static void SetPowerConsume(PXGI_HW_DEVICE_INFO, USHORT);
 static void XGINew_DDR1x_MRS_XG20(USHORT, PVB_DEVICE_INFO);
@@ -1451,56 +1450,6 @@ void XGINew_DDR_MRS(PVB_DEVICE_INFO pVBInfo)
 }
 
 
-/* check if read cache pointer is correct */
-
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_VerifyMclk */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGINew_VerifyMclk( PXGI_HW_DEVICE_INFO  HwDeviceExtension , PVB_DEVICE_INFO pVBInfo)
-{
-    PUCHAR pVideoMemory = pVBInfo->FBAddr ;
-    UCHAR i , j ;
-    USHORT Temp , SR21 ;
-
-    pVideoMemory[ 0 ] = 0xaa ; 		/* alan */
-    pVideoMemory[ 16 ] = 0x55 ; 	/* note: PCI read cache is off */
-
-    if ( ( pVideoMemory[ 0 ] != 0xaa ) || ( pVideoMemory[ 16 ] != 0x55 ) )
-    {
-        for( i = 0 , j = 16 ; i < 2 ; i++ , j += 16 )
-        {
-            SR21 = XGINew_GetReg1( pVBInfo->P3c4 , 0x21 ) ;
-            Temp = SR21 & 0xFB ;	/* disable PCI post write buffer empty gating */
-            XGINew_SetReg1( pVBInfo->P3c4 , 0x21 , Temp ) ;
-
-            Temp = XGINew_GetReg1( pVBInfo->P3c4 , 0x3C ) ;
-            Temp |= 0x01 ;		/* MCLK reset */
-
-
-            Temp = XGINew_GetReg1( pVBInfo->P3c4 , 0x3C ) ;
-            Temp &= 0xFE ;		/* MCLK normal operation */
-
-            XGINew_SetReg1( pVBInfo->P3c4 , 0x21 , SR21 ) ;
-
-            pVideoMemory[ 16 + j ] = j ;
-            if ( pVideoMemory[ 16 + j ] == j )
-            {
-                pVideoMemory[ j ] = j ;
-                break ;
-            }
-        }
-    }
-}
-
-
-
-
-
 /* --------------------------------------------------------------------- */
 /* Function : XGINew_SetDRAMSize_340 */
 /* Input : */
@@ -2606,21 +2555,6 @@ void XGINew_SetMemoryClock( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_IN
       	XGINew_SetReg1( pVBInfo->P3c4 , 0x32 , ( ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x32 ) & 0xFC ) | 0x02 ) ;
       }
     }
-}
-
-
-/* --------------------------------------------------------------------- */
-/* Function : ChkLFB */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-BOOLEAN ChkLFB( PVB_DEVICE_INFO pVBInfo )
-{
-    if ( LFBDRAMTrap & XGINew_GetReg1( pVBInfo->P3d4 , 0x78 ) )
-        return( TRUE ) ;
-    else
-        return( FALSE );
 }
 
 
