@@ -61,20 +61,6 @@
 
 #include "initdef.h"   //yilin
 extern  int  FbDevExist;
-/*
-static const char *dramTypeStr[] = {
-        "Fast Page DRAM",
-        "2 cycle EDO RAM",
-        "1 cycle EDO RAM",
-        "SDRAM/SGRAM",
-        "SDR SDRAM",
-        "SGRAM",
-        "ESDRAM",
-	"DDR SDRAM",  
-	"DDR SDRAM",  
-	"VCM"	      
-        "" };
-*/
 
 static Bool bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset,
     ULONG ulSet, ULONG *pulValue);
@@ -87,6 +73,16 @@ static void XGI_InitHwDevInfo(ScrnInfoPtr pScrn);
 static void
 xgiXG40_Setup(ScrnInfoPtr pScrn)
 {
+    static const char *const dramChannelStr[5] = {
+	"<invalid>", "Single", "Dual", "<invalid>", "Quad"
+    };
+
+    static const char *const dramTypeStr[4] = {
+	"DDR SDRAM",
+	"DDR2 SDRAM",
+	"DDR2x SDRAM",
+	""
+    };
 
 /*********************************************************************
  * Setup
@@ -108,7 +104,6 @@ xgiXG40_Setup(ScrnInfoPtr pScrn)
     unsigned mem_per_channel;
     unsigned mem_channels = 1;
     unsigned long ulDramType  = 0;
-    const char *dramTypeStr = "";
 
     PDEBUG4(ErrorF("xgiXG40_Setup()\n")) ;
 
@@ -142,6 +137,10 @@ xgiXG40_Setup(ScrnInfoPtr pScrn)
 
     outXGIIDXREG(XGISR, 0x5, 0x86) ;
     inXGIIDXREG(XGISR, 0x14, ulMemConfig) ;
+
+    /* FIXME: Is this correct?  The SiS driver detects this differently
+     * FIXME: for XG20.
+     */
     inXGIIDXREG(XGISR, 0x3A, ulDramType) ;
 
     PDEBUG(ErrorF("xg40_Setup(): ulMemConfig = %02X\n",ulMemConfig)) ;
@@ -254,7 +253,9 @@ xgiXG40_Setup(ScrnInfoPtr pScrn)
     /* Dual Chip support put here
      */
     xf86DrvMsg(pScrn->scrnIndex, X_PROBED,
-            "Detected DRAM type : %s\n", dramTypeStr);
+	       "Detected DRAM type : %s channel %s\n", 
+	       dramChannelStr[mem_channels],
+	       dramTypeStr[(ulDramType & 0x02) >> 1]);
     xf86DrvMsg(pScrn->scrnIndex, X_PROBED,
             "Detected memory clock : %3.3fMHz\n",
             pXGI->MemClock/1000.0);
