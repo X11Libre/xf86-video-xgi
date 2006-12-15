@@ -40,7 +40,6 @@ int  XG40_MemBandWidth(ScrnInfoPtr pScrn);
 int  XGIMclk(XGIPtr pXGI);
 void XGIRestoreBridge(ScrnInfoPtr pScrn, XGIRegPtr xgiReg);
 
-extern int      XGICalcVRate(DisplayModePtr mode);
 
 /* Functions from init.c and init301.c */
 

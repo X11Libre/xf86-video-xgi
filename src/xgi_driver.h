@@ -744,7 +744,6 @@ static void    XGIBuildVesaModeList(ScrnInfoPtr pScrn, vbeInfoPtr pVbe, VbeInfoB
 static UShort  XGICalcVESAModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode);
 static void    XGIVESASaveRestore(ScrnInfoPtr pScrn, vbeSaveRestoreFunction function);
 static void    XGIBridgeRestore(ScrnInfoPtr pScrn);
-unsigned char  XGISearchCRT1Rate(ScrnInfoPtr pScrn, DisplayModePtr mode);
 static void    XGIWaitVBRetrace(ScrnInfoPtr pScrn);
 void           XGIWaitRetraceCRT1(ScrnInfoPtr pScrn);
 void           XGIWaitRetraceCRT2(ScrnInfoPtr pScrn);
@@ -752,10 +751,7 @@ void           XGIWaitRetraceCRT2(ScrnInfoPtr pScrn);
 /* #ifdef XGIMERGED
 static void    XGIMergePointerMoved(int scrnIndex, int x, int y);
 #endif */
-BOOLEAN        XGIBridgeIsInSlaveMode(ScrnInfoPtr pScrn);
 USHORT 	       XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode,
-				 unsigned long VBFlags, BOOLEAN hcm);
-USHORT         XGI_CheckCalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode,
 				 unsigned long VBFlags, BOOLEAN hcm);
 unsigned char  XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned char value);
 #ifdef DEBUG

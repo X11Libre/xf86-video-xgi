@@ -898,8 +898,6 @@ typedef struct _region {
 } region;
 
 
-extern void  xgiSaveUnlockExtRegisterLock(XGIPtr pXGI, unsigned char *reg1, unsigned char *reg2);
-extern void  xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1, unsigned char reg2);
 extern void  xgiOptions(ScrnInfoPtr pScrn);
 extern const OptionInfoRec * XGIAvailableOptions(int chipid, int busid);
 extern void  XGISetup(ScrnInfoPtr pScrn);
@@ -909,9 +907,6 @@ extern Bool  XGIHWCursorInit(ScreenPtr pScreen);
 extern Bool  XGIDGAInit(ScreenPtr pScreen);
 extern void  XGIInitVideo(ScreenPtr pScreen);
 
-extern Bool  XGISwitchCRT2Type(ScrnInfoPtr pScrn, unsigned long newvbflags);
-
-extern Bool  XGISwitchCRT1Status(ScrnInfoPtr pScrn, int onoff);
 extern int   XGI_GetCHTVlumabandwidthcvbs(ScrnInfoPtr pScrn);
 
 int    XG40Mclk(XGIPtr pXGI);
@@ -939,13 +934,5 @@ Bool Volari_AccelInit(ScreenPtr pScreen) ;
 #endif
 
 #ifdef DEBUG
-void XGIDumpRegs(ScrnInfoPtr pScrn) ;
-void XGIDumpSR(ScrnInfoPtr pScrn);
-void XGIDumpCR(ScrnInfoPtr pScrn);
-void XGIDumpGR(ScrnInfoPtr pScrn);
-void XGIDumpPart1(ScrnInfoPtr pScrn);
-void XGIDumpPart2(ScrnInfoPtr pScrn);
-void XGIDumpPart3(ScrnInfoPtr pScrn);
-void XGIDumpPart4(ScrnInfoPtr pScrn);
-void XGIDumpMMIO(ScrnInfoPtr pScrn);
+void XGIDumpRegs(ScrnInfoPtr pScrn);
 #endif

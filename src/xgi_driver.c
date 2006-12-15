@@ -333,7 +333,7 @@ typedef struct {
 		float VRefresh,HSync,DCLK ;
 } ModeTiming ;
 
-ModeTiming establish_timing[] = {
+static const ModeTiming establish_timing[] = {
 	{800,600,60,37.9,40},/* t1 D[0] */
 	{800,600,56,35.1,36},/* t1 D[1] */
 	{640,480,75,37.5,31.5},/* t1 D[2] */
@@ -352,7 +352,7 @@ ModeTiming establish_timing[] = {
 	{800,600,72,48.1,50}/* t2 D[7] */
 } ;
 
-ModeTiming StdTiming[] = {
+static const ModeTiming StdTiming[] = {
     {640,480,60,31.5,25.175},
     {640,480,72,37.9,31.5},
     {640,480,75,37.5,31.5},
@@ -397,8 +397,29 @@ ModeTiming StdTiming[] = {
 
 
 static void XGIDumpPalette(ScrnInfoPtr pScrn);
+static void XGIDumpSR(ScrnInfoPtr pScrn);
+static void XGIDumpCR(ScrnInfoPtr pScrn);
+static void XGIDumpGR(ScrnInfoPtr pScrn);
+static void XGIDumpPart1(ScrnInfoPtr pScrn);
+static void XGIDumpPart2(ScrnInfoPtr pScrn);
+static void XGIDumpPart3(ScrnInfoPtr pScrn);
+static void XGIDumpPart4(ScrnInfoPtr pScrn);
+static void XGIDumpMMIO(ScrnInfoPtr pScrn);
 
-pointer
+static Bool XGISwitchCRT2Type(ScrnInfoPtr pScrn, unsigned long newvbflags);
+static Bool XGISwitchCRT1Status(ScrnInfoPtr pScrn, int onoff);
+static BOOLEAN XGIBridgeIsInSlaveMode(ScrnInfoPtr pScrn);
+static USHORT XGI_CheckCalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode,
+    unsigned long VBFlags, BOOLEAN hcm);
+static int XGICalcVRate(DisplayModePtr mode);
+static unsigned char XGISearchCRT1Rate(ScrnInfoPtr pScrn,
+    DisplayModePtr mode);
+static void xgiSaveUnlockExtRegisterLock(XGIPtr pXGI, unsigned char *reg1,
+    unsigned char *reg2);
+static void xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1,
+    unsigned char reg2);
+
+static pointer
 xgiSetup(pointer module, pointer opts, int *errmaj, int *errmin)
 {
     static Bool setupDone = FALSE;
@@ -7497,4 +7518,3 @@ XGIDumpPalette(ScrnInfoPtr pScrn)
     ErrorF( "\n" ) ;
 #endif
 }
-
