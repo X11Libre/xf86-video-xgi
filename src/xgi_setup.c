@@ -323,29 +323,19 @@ XGISetup(ScrnInfoPtr pScrn)
 Bool
 XGI_IsXG21(ScrnInfoPtr pScrn)
 {
-    XGIPtr pXGI  ;
-    PXGI_HW_DEVICE_INFO pHwDevInfo ;
-    Bool bIsXG21 = FALSE ;
-    int temp ;
+    XGIPtr pXGI = XGIPTR(pScrn);
+    Bool is_XG21 = FALSE;
 
-    pXGI = XGIPTR(pScrn ) ;
+    if (pXGI->Chipset == PCI_CHIP_XGIXG20) {
+	int temp;
 
-    if(pXGI->Chipset == PCI_CHIP_XGIXG20)
-    {
-        orXGIIDXREG(XGICR, Index_CR_GPIO_Reg3, GPIOG_EN) ;
-        inXGIIDXREG(XGICR, Index_CR_GPIO_Reg1, temp) ;
-        if( temp & GPIOG_READ)
-        {
-            bIsXG21 = TRUE ;
-        }
-        else
-        {
-            bIsXG21 = FALSE ;
-        }
+        orXGIIDXREG(XGICR, Index_CR_GPIO_Reg3, GPIOG_EN);
+        inXGIIDXREG(XGICR, Index_CR_GPIO_Reg1, temp);
+
+	is_XG21 = ((temp & GPIOG_READ) != 0);
     }
     
-    return bIsXG21 ;
-    
+    return is_XG21;
 }
 
 Bool
