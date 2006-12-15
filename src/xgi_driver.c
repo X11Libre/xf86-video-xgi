@@ -7163,41 +7163,6 @@ xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1, unsigned char reg2)
 #endif
 }
 
-#if 0
-/* The select system call can not be used under X driver, don't know why. */
-void
-DelayS(int sec)
-{
-    /* delay seconds */
-    struct timeval delay ;
-    
-    delay.tv_sec = sec ;
-    delay.tv_usec = 0 ;
-    select(0, NULL, NULL, NULL, &delay);
-}
-
-void
-DelayMS(int ms)
-{
-    /* delay milliseconds */
-    struct timeval delay ;
-    
-    delay.tv_sec = ms / 1000 ;
-    delay.tv_usec = (ms % 1000)*1000 ;
-    select(0, NULL, NULL, NULL, &delay);
-}
-
-void
-DelayUS(int us)
-{
-    /* delay microseconds */
-    struct timeval delay ;
-    
-    delay.tv_sec = us / 1000000 ;
-    delay.tv_usec = us % 1000000 ;
-    select(0, NULL, NULL, NULL, &delay);
-}
-#endif
 
 void
 XGIDumpSR(ScrnInfoPtr pScrn)
