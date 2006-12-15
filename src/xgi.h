@@ -912,8 +912,6 @@ extern int   XGI_GetCHTVlumabandwidthcvbs(ScrnInfoPtr pScrn);
 int    XG40Mclk(XGIPtr pXGI);
 
 Bool XGI_InitHwDevInfo(ScrnInfoPtr pScrn) ;
-BOOLEAN bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset, ULONG ulSet, ULONG *pulValue) ;
-BOOLEAN bAccessNBridgePCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset, ULONG ulSet, ULONG *pulValue) ;
 
 void XGINew_InitVBIOSData(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo) ;
 int compute_vclk(int Clock, int *out_n, int *out_dn, int *out_div,

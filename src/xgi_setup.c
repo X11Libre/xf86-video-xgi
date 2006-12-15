@@ -75,6 +75,13 @@ static const char *dramTypeStr[] = {
 	"VCM"	      
         "" };
 */
+
+static Bool bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset,
+    ULONG ulSet, ULONG *pulValue);
+static Bool bAccessNBridgePCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo,
+    ULONG ulOffset, ULONG ulSet, ULONG *pulValue);
+static Bool XGI_IsXG21(ScrnInfoPtr pScrn);
+
 static void
 xgiXG40_Setup(ScrnInfoPtr pScrn)
 {
@@ -411,8 +418,8 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
 
     pHwDevInfo->pSR = pXGI->SRList ;
     pHwDevInfo->pCR = pXGI->CRList ;
-    pHwDevInfo->pQueryVGAConfigSpace = bAccessVGAPCIInfo ;
-    pHwDevInfo->pQueryNorthBridgeSpace = bAccessNBridgePCIInfo ;
+    pHwDevInfo->pQueryVGAConfigSpace = (PXGI_QUERYSPACE) bAccessVGAPCIInfo;
+    pHwDevInfo->pQueryNorthBridgeSpace = (PXGI_QUERYSPACE) bAccessNBridgePCIInfo;
 
     for( i = 0 ; i < ExtRegSize ; i++ ){
         pHwDevInfo->pSR[i].jIdx = 0xFF ;
@@ -432,7 +439,7 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
     return TRUE ;
 }
 
-BOOLEAN
+Bool
 bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset, ULONG ulSet, ULONG *pulValue)
 {
     XGIPtr pXGI ;
@@ -459,7 +466,7 @@ bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset, ULONG ulSet, U
 }
 
 
-BOOLEAN
+Bool
 bAccessNBridgePCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset, ULONG ulSet, ULONG *pulValue)
 {
     PCITAG pciDev = pciTag(0,0,0);
