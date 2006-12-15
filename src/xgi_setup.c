@@ -105,18 +105,16 @@ xgiXG40_Setup(ScrnInfoPtr pScrn)
 
     XGIPtr        pXGI = XGIPTR(pScrn);
     unsigned int  ulMemConfig = 0;
-    unsigned long ulMemSize   = 0;
+    unsigned mem_per_channel;
+    unsigned mem_channels = 1;
     unsigned long ulDramType  = 0;
-    char *dramTypeStr ;
+    const char *dramTypeStr = "";
 
     PDEBUG4(ErrorF("xgiXG40_Setup()\n")) ;
 
-    dramTypeStr = "" ;
-
     pXGI->MemClock = XG40Mclk(pXGI);
 
-    /*********************************************************************************************************
-     * SR14 DRAM Size Register
+    /* SR14 DRAM Size Register
      *     Default value: XXh
      *     D[7:4]    Memory size per channel {BChMemSize}
      *         0011: 8 MB
@@ -129,7 +127,7 @@ xgiXG40_Setup(ScrnInfoPtr pScrn)
      *     D[3:2]    Number of  dram channels [1:0] {BChNum}
      *         00: uni-channel
      *         01: reserved
-     *         10: dual-channel.
+     *         10: dual-channel
      *         11: quad-channel
      *     D1  Data width per channel selection {BDataWidth}
      *         0: 32-bits
@@ -138,9 +136,9 @@ xgiXG40_Setup(ScrnInfoPtr pScrn)
      *         0: Normal mapping
      *         1: Reversal mapping
      *             Dual-channel: Logical channel A/B to physical channel B/A
-     *             Quad-channel: Logical  channel A/B/C/D to physical channel C/D/A/B
-     *
-     *********************************************************************************************************/
+     *             Quad-channel: Logical channel A/B/C/D to physical channel
+     *                           C/D/A/B
+     */
 
     outXGIIDXREG(XGISR, 0x5, 0x86) ;
     inXGIIDXREG(XGISR, 0x14, ulMemConfig) ;
@@ -149,68 +147,49 @@ xgiXG40_Setup(ScrnInfoPtr pScrn)
     PDEBUG(ErrorF("xg40_Setup(): ulMemConfig = %02X\n",ulMemConfig)) ;
     PDEBUG(ErrorF("xg40_Setup(): ulDramType = %02X\n",ulDramType)) ;
 
-    pXGI->BusWidth = (ulMemConfig & (1<<1) )?64:32 ;
+    /* FIXME: Is this correct?  The SiS driver detects this differently
+     * FIXME: for XG20.
+     */
+    pXGI->BusWidth = (ulMemConfig & 0x02) ? 64 : 32;
 
-    switch(ulMemConfig>>4)
-    {
-    case 8:
-        ulMemSize = 256*1024 ;
-        break ;
-    case 7:
-        ulMemSize = 128*1024 ;
-        break ;
-    case 6:
-        ulMemSize = 64*1024 ;
-        break ;
-    case 5:
-        ulMemSize = 32*1024 ;
-        break ;
-    case 4:
-        ulMemSize = 16*1024 ;
-        break ;
-    case 3:
-        ulMemSize = 8*1024 ;
-        break ;
-    default:
-        ulMemSize = 8*1024 ;
-    }
+    mem_per_channel = ((ulMemConfig >> 4) >= 3)
+        ? (1 << (ulMemConfig >> 4)) * 1024
+        : 8 * 1024;
 
-    if( pXGI->Chipset == PCI_CHIP_XGIXG40)
-    {
-        if ( (pciReadLong(pXGI->PciTag, 0x08) & 0xFF ) == 2 )
-        {
-            switch((ulMemConfig>>2)&0x1)
-            {
-            case 0:
-                /* Uni channel */
-                ulMemSize *= 1 ;
-       	        break ;
+
+    /* All XG20 family chips are single channel, so only test the channel
+     * count field on XG40 family chips.
+     */
+    if (pXGI->Chipset == PCI_CHIP_XGIXG40) {
+        /* Check the PCI revision field.  For whatever reason, rev. 2 XG40
+         * chips encode the DRAM channel count differently than other
+         * revisions.
+         */
+        if ((pciReadLong(pXGI->PciTag, 0x08) & 0xFF) == 2) {
+            switch ((ulMemConfig >> 2) & 0x1) {
             case 1:
                 /* Dual channel */
-                ulMemSize *= 2 ;
-    	        break ;
+                mem_channels = 2;
+                break ;
             }
         }
-        else
-        {
-            switch((ulMemConfig>>2)&0x3)
-            {
+        else {
+            switch ((ulMemConfig >> 2) & 0x3) {
             case 2:
                 /* Dual channel */
-                ulMemSize *= 2 ;
-        	break ;
+                mem_channels = 2;
+                break ;
             case 3:
                 /* Quad channel */
-                ulMemSize *= 4 ;
-    	        break ;
-           }
+                mem_channels = 4;
+                break ;
+            }
         }
     }
 
-    pScrn->videoRam = ulMemSize ;
+    pScrn->videoRam = mem_per_channel * mem_channels;
 
-    /*********************************************************************************************************
-     * SR15 DRAM Address Mapping Register
+    /* SR15 DRAM Address Mapping Register
      * Default value: XXh
      *     D7  Channel  interleaving configuration { BChConfig }
      *         0: Divide the whole memory  into 2/4 equal-sized regions , each mapped to one channel
@@ -232,52 +211,37 @@ xgiXG40_Setup(ScrnInfoPtr pScrn)
      *         10: 4KB
      *         11: 1MB
      *     D[1:0] reserved
-     *********************************************************************************************************/
+     */
 
     /* Accelerator parameter Initialization */
-    if( pXGI->Chipset == PCI_CHIP_XGIXG20 )
-    {
-        pXGI->cmdQueueSize = VOLARI_CQSIZEXG20;
-  /*      XgiMode = XG20_Mode ;   */
-        PDEBUG(ErrorF(" ---XG20_Mode \n"));
-    }
-    else
-    {
-        pXGI->cmdQueueSize = VOLARI_CQSIZE;
-  /*      XgiMode = XGI_Mode ;  */
-        PDEBUG(ErrorF(" ---XGI_Mode \n"));
-    }
-
+    
+    pXGI->cmdQueueSize = (pXGI->Chipset == PCI_CHIP_XGIXG20)
+	? VOLARI_CQSIZEXG20 : VOLARI_CQSIZE;
     pXGI->cmdQueueSizeMask = pXGI->cmdQueueSize - 1 ;
     pXGI->pCQ_shareWritePort = &(pXGI->cmdQueue_shareWP_only2D);
 
 
-    /*
-     If FbDevExist, XFree86 driver use the 8MB only. The rest
-     frame buffer is used by other AP.
+    /* If FbDevExist, X.org driver uses 8MB only. The rest of the framebuffer
+     * is used by the fbdev driver.
      */
-
-    if( FbDevExist )
-    {
-        if( pScrn->videoRam < 8*1024 )
-        {
-            pXGI->cmdQueueOffset = 4*1024*1024 - pXGI->cmdQueueSize ;
+    if (FbDevExist) {
+	/* FIXME: Is it even possible to have less than 8Mb of video memory?
+	 */
+        if (pScrn->videoRam < 8*1024) {
+            pXGI->cmdQueueOffset = 4*1024*1024 - pXGI->cmdQueueSize;
         }
-	else if( pScrn->videoRam < 16*1024 )
-	{
-	    pXGI->cmdQueueOffset = 8*1024*1024 - pXGI->cmdQueueSize ;
+	else if (pScrn->videoRam < 16*1024) {
+	    pXGI->cmdQueueOffset = 8*1024*1024 - pXGI->cmdQueueSize;
 	}
-        else
-        {
-            pXGI->cmdQueueOffset = 13*1024*1024 - pXGI->cmdQueueSize ;
+        else {
+            pXGI->cmdQueueOffset = 13*1024*1024 - pXGI->cmdQueueSize;
         }
     }
-    else
-    {
-        pXGI->cmdQueueOffset = (pScrn->videoRam)*1024 - pXGI->cmdQueueSize ;
+    else {
+        pXGI->cmdQueueOffset = (pScrn->videoRam)*1024 - pXGI->cmdQueueSize;
     }
 
-    pXGI->CursorOffset = pXGI->cmdQueueOffset - 64*1024 ;
+    pXGI->CursorOffset = pXGI->cmdQueueOffset - 64*1024;
     PDEBUG4(ErrorF("pScrn->videoRam = %08lX pXGI->cmdQueueSize = %08lX\n",
 			pScrn->videoRam, pXGI->cmdQueueSize)) ;
     PDEBUG4(ErrorF("pXGI->cmdQueueOffset = %08lX pXGI->CursorOffset = %08lX\n",
@@ -287,9 +251,8 @@ xgiXG40_Setup(ScrnInfoPtr pScrn)
     pXGI->cmdQueueLenMin = 0x200 ;
     pXGI->cmdQueueLenMax = pXGI->cmdQueueSize -  pXGI->cmdQueueLenMin ;
 
-    /*****************************************************************
-     * Dual Chip support put here                                    *
-     *****************************************************************/
+    /* Dual Chip support put here
+     */
     xf86DrvMsg(pScrn->scrnIndex, X_PROBED,
             "Detected DRAM type : %s\n", dramTypeStr);
     xf86DrvMsg(pScrn->scrnIndex, X_PROBED,
@@ -312,13 +275,12 @@ XGISetup(ScrnInfoPtr pScrn)
     pXGI->Flags = 0;
     pXGI->VBFlags = 0;
 
-    switch  (XGIPTR(pScrn)->Chipset)  {
-
-    case    PCI_CHIP_XGIXG40:
-    case    PCI_CHIP_XGIXG20:
-      default:
-        xgiXG40_Setup(pScrn) ;
-        break ;
+    switch (pXGI->Chipset) {
+    case PCI_CHIP_XGIXG40:
+    case PCI_CHIP_XGIXG20:
+    default:
+        xgiXG40_Setup(pScrn);
+        break;
     }
 }
 
