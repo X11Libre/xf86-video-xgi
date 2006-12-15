@@ -396,6 +396,8 @@ ModeTiming StdTiming[] = {
 } ;
 
 
+static void XGIDumpPalette(ScrnInfoPtr pScrn);
+
 pointer
 xgiSetup(pointer module, pointer opts, int *errmaj, int *errmin)
 {
