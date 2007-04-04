@@ -36,11 +36,6 @@
 #include <linux/types.h>
 #include <linux/delay.h> /* udelay */
 #include "XGIfb.h"
-/*#if LINUX_VERSxION_CODE >= KERNEL_VERSION(2,5,0)
-#include <video/XGIfb.h>
-#else
-#include <linux/XGIfb.h>
-#endif */
 #endif
 
 #include "vb_def.h"
