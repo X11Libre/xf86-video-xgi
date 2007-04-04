@@ -199,12 +199,6 @@ XGI301C_Tap4TimingStruct* XGI_GetTap4Ptr(USHORT tempcx, PVB_DEVICE_INFO pVBInfo)
 
 
 
-/* USHORT XGINew_flag_clearbuffer; 0: no clear frame buffer 1:clear frame buffer */
-
-
-
-
-
 USHORT XGINew_MDA_DAC[]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
                0x15,0x15,0x15,0x15,0x15,0x15,0x15,0x15,
                0x15,0x15,0x15,0x15,0x15,0x15,0x15,0x15,
@@ -459,13 +453,8 @@ PDEBUG(ErrorF("InitTo330Pointer \n"));
     if ( ModeNo & 0x80 )
     {
         ModeNo = ModeNo & 0x7F ;
-/* XGINew_flag_clearbuffer = 0 ; */
     }
-/*    else
-    {
-        XGINew_flag_clearbuffer = 1 ;
-    }
-*/
+
     XGINew_SetReg1( pVBInfo->P3c4 , 0x05 , 0x86 ) ;
 
     if ( HwDeviceExtension->jChipType != XG20 )			/* kuku 2004/06/25 1.Openkey */
@@ -603,17 +592,12 @@ void XGI_SetCRT1Group( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo , U
 
     /* XGINew_CRT1Mode = ModeNo ; // SaveModeID */
     StandTableIndex = XGI_GetModePtr( ModeNo , ModeIdIndex, pVBInfo ) ;
-    /* XGI_SetBIOSData(ModeNo , ModeIdIndex ) ; */
-    /* XGI_ClearBankRegs( ModeNo , ModeIdIndex ) ; */
     XGI_SetSeqRegs( ModeNo , StandTableIndex , ModeIdIndex, pVBInfo ) ;
     XGI_SetMiscRegs( StandTableIndex,  pVBInfo ) ;
     XGI_SetCRTCRegs( HwDeviceExtension , StandTableIndex,  pVBInfo) ;
     XGI_SetATTRegs( ModeNo , StandTableIndex , ModeIdIndex, pVBInfo ) ;
     XGI_SetGRCRegs(  StandTableIndex, pVBInfo ) ;
     XGI_ClearExt1Regs(pVBInfo) ;
-
-/* if ( pVBInfo->IF_DEF_ExpLink ) */
-/* XGI_SetDefaultVCLK() ; */
 
     temp = ~ProgrammingCRT2 ;
     pVBInfo->SetFlag &= temp ;
@@ -697,30 +681,6 @@ UCHAR XGI_GetModePtr( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInf
     return( index ) ;		/* Get pVBInfo->StandTable index */
 }
 
-
-/* --------------------------------------------------------------------- */
-/* Function : XGI_SetBIOSData */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-/*UCHAR XGI_SetBIOSData( USHORT ModeNo , USHORT ModeIdIndex )
-{
-    return( 0 ) ;
-}
-*/
-
-/* --------------------------------------------------------------------- */
-/* Function : XGI_ClearBankRegs */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-/*UCHAR XGI_ClearBankRegs( USHORT ModeNo , USHORT ModeIdIndex )
-{
-    return( 0 ) ;
-}
-*/
 
 /* --------------------------------------------------------------------- */
 /* Function : XGI_SetSeqRegs */
@@ -814,18 +774,6 @@ void XGI_SetCRTCRegs( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT StandTableI
         CRTCdata = pVBInfo->StandTable[ StandTableIndex ].CRTC[ i ] ;	/* Get CRTC from file */
         XGINew_SetReg1( pVBInfo->P3d4 , i , CRTCdata ) ;				/* Set CRTC( 3d4 ) */
     }
-/*
-    if ( ( HwDeviceExtension->jChipType == XGI_630 )&& ( HwDeviceExtension->jChipRevision == 0x30 ) )
-    {
-        if ( pVBInfo->VBInfo & SetInSlaveMode )
-        {
-            if ( pVBInfo->VBInfo & ( SetCRT2ToLCD | SetCRT2ToTV ) )
-            {
-                XGINew_SetReg1( pVBInfo->P3d4 , 0x18 , 0xFE ) ;
-            }
-        }
-    }
-*/
 }
 
 
@@ -918,18 +866,6 @@ void XGI_ClearExt1Regs(PVB_DEVICE_INFO pVBInfo)
     for( i = 0x0A ; i <= 0x0E ; i++ )
         XGINew_SetReg1( pVBInfo->P3c4 , i , 0x00 ) ;	/* Clear SR0A-SR0E */
 }
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGI_SetDefaultVCLK */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-/*UCHAR XGI_SetDefaultVCLK( void )
-{
-    return( 0 ) ;
-}*/
 
 
 /* --------------------------------------------------------------------- */
@@ -1817,10 +1753,6 @@ void XGI_SetCRT1ModeRegs( PXGI_HW_DEVICE_INFO HwDeviceExtension ,
 
     XGI_SetVCLKState( HwDeviceExtension , ModeNo , RefreshRateTableIndex, pVBInfo) ;
 
-    /* if(modeflag&HalfDCLK)//030305 fix lowresolution bug */
-    /* if(XGINew_IF_DEF_NEW_LOWRES) */
-    /* XGI_VesaLowResolution(ModeNo,ModeIdIndex);//030305 fix lowresolution bug */
-
     data=XGINew_GetReg1( pVBInfo->P3d4 , 0x31 ) ;
 
     if (HwDeviceExtension->jChipType == XG20 )
@@ -1898,49 +1830,6 @@ void XGI_SetVCLKState(  PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo , 
     XGINew_SetRegANDOR( pVBInfo->P3c4 , 0x07 , 0xFC , data2 ) ;
 }
 
-
-/* --------------------------------------------------------------------- */
-/* Function : XGI_VesaLowResolution */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-/*void XGI_VesaLowResolution( USHORT ModeNo , USHORT ModeIdIndex ,PVB_DEVICE_INFO pVBInfo)
-{
-    USHORT modeflag;
-
-    if ( ModeNo > 0x13 )
-        modeflag = pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_ModeFlag ;
-    else
-        modeflag = pVBInfo->SModeIDTable[ ModeIdIndex ].St_ModeFlag ;
-
-    if ( ModeNo > 0x13 )
-    {
-        if ( modeflag & DoubleScanMode )
-        {
-            if ( modeflag & HalfDCLK )
-            {
-                if ( pVBInfo->VBType & ( VB_XGI301B | VB_XGI302B | VB_XGI301LV | VB_XGI302LV | VB_XGI301C ) )
-                {
-                    if ( !( pVBInfo->VBInfo & SetCRT2ToRAMDAC ) )
-                    {
-                        if ( pVBInfo->VBInfo & SetInSlaveMode )
-                        {
-                            XGINew_SetRegANDOR( pVBInfo->P3c4 , 0x01 , 0xf7 , 0x00 ) ;
-                            XGINew_SetRegANDOR( pVBInfo->P3c4 , 0x0f , 0x7f , 0x00 ) ;
-                            return ;
-                        }
-                    }
-                }
-                XGINew_SetRegANDOR( pVBInfo->P3c4 , 0x0f , 0xff , 0x80 ) ;
-                XGINew_SetRegANDOR( pVBInfo->P3c4 , 0x01 , 0xf7 , 0x00 ) ;
-                return ;
-            }
-        }
-    }
-    XGINew_SetRegANDOR( pVBInfo->P3c4 , 0x0f , 0x7f , 0x00 ) ;
-}
-*/
 
 /* --------------------------------------------------------------------- */
 /* Function : XGI_LoadDAC */
@@ -2111,26 +2000,11 @@ void XGI_ClearBuffer( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo, PVB
             /* GetDRAMSize( HwDeviceExtension ) ; */
             XGI_SetMemory( VideoMemoryAddress , AdapterMemorySize , 0 ) ;
         }
-        else
-        {
-/*
-            pBuffer = VideoMemoryAddress ;
-            for( i = 0 ; i < 0x4000 ; i++ )
-                pBuffer[ i ] = 0x0000 ;
-*/
-        }
     }
     else
     {
         pBuffer = VideoMemoryAddress ;
-        if ( pVBInfo->ModeType < ModeCGA )
-        {
-/*
-            for ( i = 0 ; i < 0x4000 ; i++ )
-                pBuffer[ i ] = 0x0720 ;
-*/
-        }
-        else
+        if (pVBInfo->ModeType >= ModeCGA)
             XGI_SetMemory( VideoMemoryAddress , 0x8000 , 0 ) ;
     }
 }
@@ -3583,12 +3457,6 @@ BOOLEAN XGINew_CheckMemorySize(PXGI_HW_DEVICE_INFO HwDeviceExtension,USHORT Mode
            temp1 ,
            tmp ;
 
-/*  if ( ( HwDeviceExtension->jChipType == XGI_650 ) ||
-         ( HwDeviceExtension->jChipType == XGI_650M ) )
-    {
-        return( TRUE ) ;
-    } */
-
     if ( ModeNo <= 0x13 )
     {
         modeflag = pVBInfo->SModeIDTable[ ModeIdIndex ].St_ModeFlag ;
@@ -3650,38 +3518,6 @@ BOOLEAN XGINew_CheckMemorySize(PXGI_HW_DEVICE_INFO HwDeviceExtension,USHORT Mode
         return( TRUE ) ;
 }
 
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_IsLowResolution */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-/*void XGINew_IsLowResolution( USHORT ModeNo , USHORT ModeIdIndex, BOOLEAN XGINew_CheckMemorySize(PXGI_HW_DEVICE_INFO HwDeviceExtension,USHORT ModeNo,USHORT ModeIdIndex,PVB_DEVICE_INFO pVBInfo)
-{
-    USHORT data ;
-    USHORT ModeFlag ;
-
-    data = XGINew_GetReg1( pVBInfo->P3c4 , 0x0F ) ;
-    data &= 0x7F ;
-    XGINew_SetReg1( pVBInfo->P3c4 , 0x0F , data ) ;
-
-    if ( ModeNo > 0x13 )
-    {
-        ModeFlag = pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_ModeFlag ;
-        if ( ( ModeFlag & HalfDCLK ) && ( ModeFlag & DoubleScanMode ) )
-        {
-            data = XGINew_GetReg1( pVBInfo->P3c4 , 0x0F ) ;
-            data |= 0x80 ;
-            XGINew_SetReg1( pVBInfo->P3c4 , 0x0F , data ) ;
-            data = XGINew_GetReg1( pVBInfo->P3c4 , 0x01 ) ;
-            data &= 0xF7 ;
-            XGINew_SetReg1( pVBInfo->P3c4 , 0x01 , data ) ;
-        }
-    }
-}
-
-*/
 
 /* --------------------------------------------------------------------- */
 /* Function : XGI_DisplayOn */
@@ -9037,10 +8873,7 @@ void XGI_UnLockCRT2( PXGI_HW_DEVICE_INFO HwDeviceExtension,  PVB_DEVICE_INFO pVB
 /* --------------------------------------------------------------------- */
 void XGI_LockCRT2( PXGI_HW_DEVICE_INFO HwDeviceExtension,  PVB_DEVICE_INFO pVBInfo )
 {
-    
     XGINew_SetRegANDOR( pVBInfo->Part1Port , 0x2F , 0xFE , 0x00 ) ;
-    
-    
 }
 
 
@@ -9425,4 +9258,3 @@ USHORT XGI_GetVCLK2Ptr( USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRateT
 
     return( VCLKIndex ) ;
 }
-
