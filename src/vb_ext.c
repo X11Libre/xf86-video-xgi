@@ -489,7 +489,6 @@ VOID XGISetDPMS( PXGI_HW_DEVICE_INFO pXGIHWDE , ULONG VESA_POWER_STATE )
     if ( ( pXGIHWDE->ujVBChipID == VB_CHIP_301 ) || ( pXGIHWDE->ujVBChipID == VB_CHIP_302 ) )
     {
         pVBInfo->IF_DEF_LVDS = 0 ;
-        pVBInfo->IF_DEF_CH7005 = 0 ;
         pVBInfo->IF_DEF_HiVision = 1 ;
         pVBInfo->IF_DEF_LCDA = 1 ;
         pVBInfo->IF_DEF_CH7017 = 0 ;

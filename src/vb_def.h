@@ -182,7 +182,6 @@
 #define LCDRGB18Bit             0x01
 
 #define ExtChipTrumpion         0x06
-#define ExtChipCH7005           0x08
 #define ExtChipMitacTV          0x0a
 #define LCDNonExpanding         0x10
 #define LCDNonExpandingShift    4

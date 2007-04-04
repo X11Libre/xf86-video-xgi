@@ -247,7 +247,6 @@ BOOLEAN XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension )
     pVideoMemory = ( PUCHAR )pVBInfo->ROMAddr;
     
     pVBInfo->IF_DEF_LVDS = 0 ;
-    pVBInfo->IF_DEF_CH7005 = 0 ;
     pVBInfo->IF_DEF_LCDA = 1 ;
     pVBInfo->IF_DEF_CH7017 = 0 ;
     pVBInfo->IF_DEF_VideoCapture = 0 ;

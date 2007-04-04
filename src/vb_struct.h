@@ -397,7 +397,7 @@ struct _VB_DEVICE_INFO
     USHORT   IF_DEF_CRT2Monitor,IF_DEF_VideoCapture;
     USHORT   IF_DEF_LCDA,IF_DEF_CH7017,IF_DEF_YPbPr,IF_DEF_ScaleLCD,IF_DEF_OEMUtil,IF_DEF_PWD;
     USHORT   IF_DEF_ExpLink;
-    USHORT   IF_DEF_CH7005,IF_DEF_HiVision;
+    USHORT   IF_DEF_HiVision;
     USHORT   LCDResInfo,LCDTypeInfo, VBType;/*301b*/
     USHORT   VBInfo,TVInfo,LCDInfo, Set_VGAType;
     USHORT   VBExtInfo;/*301lv*/
