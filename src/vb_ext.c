@@ -78,22 +78,12 @@ BOOLEAN XGI_Is301C(PVB_DEVICE_INFO);
 BOOLEAN XGI_Is301LV(PVB_DEVICE_INFO);
 
 
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_Is301B */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-BOOLEAN XGINew_Is301B( PVB_DEVICE_INFO pVBInfo )
+/**
+ * Determine if the CRTC is a 301B.
+ */
+static int XGINew_Is301B(PVB_DEVICE_INFO pVBInfo)
 {
-    USHORT flag ;
-
-    flag = XGINew_GetReg1( pVBInfo->Part4Port , 0x01 ) ;
-
-    if ( flag > 0x0B0 )
-        return( 0 ) ;	/* 301b */
-    else
-        return( 1 ) ;
+    return !(XGINew_GetReg1(pVBInfo->Part4Port, 0x01) > 0x0B0);
 }
 
 /* --------------------------------------------------------------------- */
