@@ -74,8 +74,6 @@ BOOLEAN  XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_IN
 *************************************************************/
 
 void XGI_WaitDisplay(void);
-BOOLEAN XGI_Is301C(PVB_DEVICE_INFO);
-BOOLEAN XGI_Is301LV(PVB_DEVICE_INFO);
 
 
 /**
@@ -84,45 +82,6 @@ BOOLEAN XGI_Is301LV(PVB_DEVICE_INFO);
 static int XGINew_Is301B(PVB_DEVICE_INFO pVBInfo)
 {
     return !(XGINew_GetReg1(pVBInfo->Part4Port, 0x01) > 0x0B0);
-}
-
-/* --------------------------------------------------------------------- */
-/* Function : XGI_Is301C */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-BOOLEAN XGI_Is301C( PVB_DEVICE_INFO pVBInfo )
-{
-    if ( ( XGINew_GetReg1( pVBInfo->Part4Port , 0x01 ) & 0xF0 ) == 0xC0 )
-        return( 1 ) ;
-
-    if ( XGINew_GetReg1( pVBInfo->Part4Port , 0x01 ) >= 0xD0 )
-    {
-        if ( XGINew_GetReg1( pVBInfo->Part4Port , 0x39 ) == 0xE0 )
-            return( 1 ) ;
-    }
-
-    return( 0 ) ;
-}
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGI_Is301LV */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-BOOLEAN XGI_Is301LV( PVB_DEVICE_INFO pVBInfo )
-{
-    if ( XGINew_GetReg1( pVBInfo->Part4Port , 0x01 ) >= 0xD0 )
-    {
-        if ( XGINew_GetReg1( pVBInfo->Part4Port , 0x39 ) == 0xFF )
-        {
-            return( 1 ) ;
-        }
-    }
-    return( 0 ) ;
 }
 
 
