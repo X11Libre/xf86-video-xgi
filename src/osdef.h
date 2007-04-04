@@ -68,8 +68,6 @@
 #endif
 
 /**********************************************************************/
-#ifdef TC
-#endif
 #ifdef WIN2000
 #endif
 #ifdef WINCE_HEADER
@@ -82,9 +80,6 @@
 #endif
 
 /**********************************************************************/
-#ifdef TC
-#define XGI_SetMemory(MemoryAddress,MemorySize,value) memset(MemoryAddress, value, MemorySize);
-#endif
 #ifdef WIN2000
 #define XGI_SetMemory(MemoryAddress,MemorySize,value) MemFill((PVOID) MemoryAddress,(ULONG) MemorySize,(UCHAR) value);
 #endif
@@ -101,9 +96,6 @@
 
 /**********************************************************************/
 
-#ifdef TC
-#define XGI_MemoryCopy(Destination,Soruce,Length) memmove(Destination, Soruce, Length);
-#endif
 #ifdef WIN2000
 #define XGI_MemoryCopy(Destination,Soruce,Length)  /*VideoPortMoveMemory((PUCHAR)Destination , Soruce,length);*/
 #endif

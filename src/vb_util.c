@@ -37,13 +37,6 @@
 #include <linux/types.h>
 #endif
 
-#ifdef TC
-#include <stdio.h>
-#include <string.h>
-#include <conio.h>
-#include <dos.h>
-#endif
-
 #ifdef WIN2000
 #include <dderror.h>
 #include <devioctl.h>
@@ -279,10 +272,6 @@ void NewDelaySeconds( int seconds )
 
     for( i = 0 ; i < seconds ; i++ )
     {
-#ifdef TC
-        delay( 1000 ) ;
-#endif
-
 #ifdef WIN2000
 
         for ( j = 0 ; j < 20000 ; j++ )
