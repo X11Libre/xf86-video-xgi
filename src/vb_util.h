@@ -26,7 +26,6 @@
  
 #ifndef _VBUTIL_
 #define _VBUTIL_
-extern   void     NewDelaySeconds( int );
 extern   void     Newdebugcode( UCHAR );
 extern   void     XGINew_SetReg1(USHORT, USHORT, USHORT);
 extern   void     XGINew_SetReg3(USHORT, USHORT);

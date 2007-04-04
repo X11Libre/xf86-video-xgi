@@ -246,27 +246,6 @@ void XGINew_ClearDAC( PUCHAR port )
 
 
 /* --------------------------------------------------------------------- */
-/* Function : NewDelaySecond */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void NewDelaySeconds( int seconds )
-{
-    int i ;
-#ifndef LINUX_XF86
-    int j ;
-#endif
-
-    for( i = 0 ; i < seconds ; i++ )
-    {
-#ifdef LINUX_KERNEL
-#endif
-    }
-}
-
-
-/* --------------------------------------------------------------------- */
 /* Function : Newdebugcode */
 /* Input : */
 /* Output : */
@@ -279,7 +258,6 @@ void Newdebugcode( UCHAR code )
 #endif
     OutPortByte ( 0x80 , code ) ;
     /* OutPortByte ( 0x300 , code ) ; */
-    /* NewDelaySeconds( 0x3 ) ; */
 }
 
 
