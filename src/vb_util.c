@@ -245,20 +245,14 @@ void XGINew_ClearDAC( PUCHAR port )
 }
 
 
-/* --------------------------------------------------------------------- */
-/* Function : Newdebugcode */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void Newdebugcode( UCHAR code )
+/**
+ * Write value to the PC's 0x80 debug port.
+ * 
+ * \bug
+ * I'm pretty sure the debug 0x80 only exists on PCs.  Should this routine
+ * be a no-op on non-x86 and non-x86-64 architectures?
+ */
+void Newdebugcode(unsigned char code)
 {
-#ifndef LINUX_XF86
-    ULONG ultemp ;
-#endif
-    OutPortByte ( 0x80 , code ) ;
-    /* OutPortByte ( 0x300 , code ) ; */
+    OutPortByte(0x80, code);
 }
-
-
-
