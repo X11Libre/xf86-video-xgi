@@ -189,7 +189,6 @@ VOID XGISetDPMS( PXGI_HW_DEVICE_INFO pXGIHWDE , ULONG VESA_POWER_STATE )
 
     if ( ( pXGIHWDE->ujVBChipID == VB_CHIP_301 ) || ( pXGIHWDE->ujVBChipID == VB_CHIP_302 ) )
     {
-        pVBInfo->IF_DEF_LVDS = 0 ;
         pVBInfo->IF_DEF_HiVision = 1 ;
         pVBInfo->IF_DEF_LCDA = 1 ;
         pVBInfo->IF_DEF_YPbPr = 1 ;
@@ -296,35 +295,6 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
            ModeIdIndex , i ;
     pVBInfo->BaseAddr = ( USHORT )HwDeviceExtension->pjIOAddress ;
 
-    if ( pVBInfo->IF_DEF_LVDS == 1 )
-    {
-        tempax = XGINew_GetReg1( pVBInfo->P3c4 , 0x1A ) ;	/* ynlai 02/27/2002 */
-        tempbx = XGINew_GetReg1( pVBInfo->P3c4 , 0x1B ) ;
-        tempax = ( ( tempax & 0xFE ) >> 1 ) | ( tempbx << 8 ) ;
-        if ( tempax == 0x00 )
-        {		/* Get Panel id from DDC */
-            temp = XGINew_GetLCDDDCInfo( HwDeviceExtension, pVBInfo ) ;
-            if ( temp == 1 )
-            {		/* LCD connect */
-                XGINew_SetRegANDOR( pVBInfo->P3d4 , 0x39 , 0xFF , 0x01 ) ;	/* set CR39 bit0="1" */
-                XGINew_SetRegANDOR( pVBInfo->P3d4 , 0x37 , 0xEF , 0x00 ) ;	/* clean CR37 bit4="0" */
-                temp = LCDSense ;
-            }
-            else
-            {		/* LCD don't connect */
-                temp = 0 ;
-            }
-        }
-        else
-        {
-            XGINew_GetPanelID(pVBInfo) ;
-            temp = LCDSense ;
-        }
-
-        tempbx = ~( LCDSense | AVIDEOSense | SVIDEOSense ) ;
-        XGINew_SetRegANDOR( pVBInfo->P3d4 , 0x32 , tempbx , temp ) ;
-    }
-    else
     {		/* for 301 */
         if ( pVBInfo->VBInfo & SetCRT2ToHiVisionTV )
         {	/* for HiVision */
@@ -598,22 +568,6 @@ BOOLEAN XGINew_GetPanelID(PVB_DEVICE_INFO pVBInfo )
 /*
         if ( !( tempax & 0x10 ) )
         {
-            if ( pVBInfo->IF_DEF_LVDS == 1 )
-            {
-                tempbx = 0 ;
-                temp = XGINew_GetReg1( pVBInfo->P3c4 , 0x38 ) ;
-                if ( temp & 0x40 )
-                    tempbx |= 0x08 ;
-                if ( temp & 0x20 )
-                    tempbx |= 0x02 ;
-                if ( temp & 0x01 )
-                    tempbx |= 0x01 ;
-
-                temp = XGINew_GetReg1( pVBInfo->P3c4 , 0x39 ) ;
-                if ( temp & 0x80 )
-                    tempbx |= 0x04 ;
-            }
-            else
             {
                 return( 0 ) ;
             }

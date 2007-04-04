@@ -235,7 +235,6 @@ BOOLEAN XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension )
     pVBInfo->BaseAddr = ( USHORT )HwDeviceExtension->pjIOAddress ;
     pVideoMemory = ( PUCHAR )pVBInfo->ROMAddr;
     
-    pVBInfo->IF_DEF_LVDS = 0 ;
     pVBInfo->IF_DEF_LCDA = 1 ;
     pVBInfo->IF_DEF_VideoCapture = 0 ;
     pVBInfo->IF_DEF_ScaleLCD = 0 ;
@@ -519,7 +518,6 @@ BOOLEAN XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension )
     {
     if ( XGI_BridgeIsOn( pVBInfo ) == 1 )
     {
-        if ( pVBInfo->IF_DEF_LVDS == 0 )
         {
             XGINew_SetReg1( pVBInfo->Part2Port , 0x00 , 0x1C ) ;
             XGINew_SetReg1( pVBInfo->Part4Port , 0x0D , *pVBInfo->pCRT2Data_4_D ) ;

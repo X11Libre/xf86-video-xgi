@@ -450,7 +450,7 @@ XGI_New_GetVBType(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
 
   XGI_Pr->XGI_VBType = 0;
 
-  if((XGI_Pr->XGI_IF_DEF_LVDS) || (XGI_Pr->XGI_IF_DEF_CONEX))
+  if(XGI_Pr->XGI_IF_DEF_CONEX)
      return;
 
   flag = XGI_GetReg(XGI_Pr->XGI_Part4Port,0x00);
@@ -747,21 +747,6 @@ XGI_New_SetSeqRegs(XGI_Private *XGI_Pr, USHORT StandTableIndex, PXGI_HW_DEVICE_I
       }
    }
 
-   if(XGI_Pr->XGI_IF_DEF_LVDS == 1) {
-      if(XGI_Pr->XGI_IF_DEF_CH70xx != 0) {
-         if(XGI_Pr->XGI_VBInfo & SetCRT2ToTV) {
-            if(XGI_Pr->XGI_VBInfo & SetInSlaveMode) {
-               SRdata |= 0x01;        			/* 8 dot clock  */
-            }
-         }
-      }
-      if(XGI_Pr->XGI_VBInfo & SetCRT2ToLCD) {
-         if(XGI_Pr->XGI_VBInfo & SetInSlaveMode) {
-            SRdata |= 0x01;          			/* 8 dot clock  */
-         }
-      }
-   }
-
    SRdata |= 0x20;                			/* screen off  */
 
    XGI_SetReg(XGI_Pr->XGI_P3c4,0x01,SRdata);
@@ -835,13 +820,6 @@ XGI_New_SetATTRegs(XGI_Private *XGI_Pr, USHORT StandTableIndex,
          if(XGI_Pr->XGI_VBType & VB_XGI301BLV302BLV) {
             if(XGI_Pr->XGI_VBInfo & SetCRT2ToLCDA)  ARdata=0;
          }
-         if(XGI_Pr->XGI_IF_DEF_LVDS == 1) {
-            if(XGI_Pr->XGI_IF_DEF_CH70xx != 0) {
-               if(XGI_Pr->XGI_VBInfo & SetCRT2ToTV) {
-                  if(XGI_Pr->XGI_VBInfo & SetInSlaveMode) ARdata=0;
-               }
-            }
-         }
       }
       XGI_GetRegByte(XGI_Pr->XGI_P3da);                         /* reset 3da  */
       XGI_SetRegByte(XGI_Pr->XGI_P3c0,i);                       /* set index  */
@@ -909,11 +887,10 @@ XGI_ResetCRT1VCLK(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
 {
    if(HwInfo->jChipType >= XGI_315H) {
       if(HwInfo->jChipType < XGI_661) {
-         if(XGI_Pr->XGI_IF_DEF_LVDS == 0) return;
+         return;
       }
    } else {
-      if((XGI_Pr->XGI_IF_DEF_LVDS == 0) &&
-         (!(XGI_Pr->XGI_VBType & VB_XGI301BLV302BLV)) ) {
+      if(!(XGI_Pr->XGI_VBType & VB_XGI301BLV302BLV)) {
 	 return;
       }
    }
