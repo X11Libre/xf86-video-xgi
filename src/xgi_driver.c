@@ -443,7 +443,7 @@ xgiSetup(pointer module, pointer opts, int *errmaj, int *errmin)
 }
 
 
-static Bool
+static XGIPtr
 XGIGetRec(ScrnInfoPtr pScrn)
 {
     /*
@@ -451,14 +451,17 @@ XGIGetRec(ScrnInfoPtr pScrn)
      * pScrn->driverPrivate is initialised to NULL, so we can check if
      * the allocation has already been done.
      */
-    if(pScrn->driverPrivate != NULL) return TRUE;
+    if (pScrn->driverPrivate == NULL) {
+	XGIPtr pXGI = xnfcalloc(sizeof(XGIRec), 1);
 
-    pScrn->driverPrivate = xnfcalloc(sizeof(XGIRec), 1);
+	/* Initialise it to 0 */
+	memset(pXGI, 0, sizeof(XGIRec));
 
-    /* Initialise it to 0 */
-    memset(pScrn->driverPrivate, 0, sizeof(XGIRec));
+	pScrn->driverPrivate = pXGI;
+	pXGI->pScrn = pScrn;
+    }
 
-    return TRUE;
+    return (XGIPtr) pScrn->driverPrivate;
 }
 
 static void
@@ -2361,13 +2364,11 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 
     /* Allocate the XGIRec driverPrivate */
-    if(!XGIGetRec(pScrn)) 
-    {
-       XGIErrorLog(pScrn, "Could not allocate memory for pXGI private\n");
-       return FALSE;
+    pXGI = XGIGetRec(pScrn);
+    if (pXGI == NULL) {
+	XGIErrorLog(pScrn, "Could not allocate memory for pXGI private\n");
+	return FALSE;
     }
-    pXGI = XGIPTR(pScrn);
-    pXGI->pScrn = pScrn;
 
     pXGI->IODBase = pScrn->domainIOBase;
 
