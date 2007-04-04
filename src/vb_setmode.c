@@ -150,7 +150,6 @@ void     XGI_SetVCLKState(PXGI_HW_DEVICE_INFO HwDeviceExtension,USHORT ModeNo,US
 
 void     XGI_LoadDAC(USHORT ModeNo,USHORT ModeIdIndex,PVB_DEVICE_INFO pVBInfo);
 void     XGI_WriteDAC(USHORT dl, USHORT ah, USHORT al, USHORT dh, PVB_DEVICE_INFO pVBInfo);
-void     XGI_ClearBuffer(PXGI_HW_DEVICE_INFO HwDeviceExtension,USHORT ModeNo,PVB_DEVICE_INFO pVBInfo);
 void     XGI_SetLCDAGroup(USHORT ModeNo,USHORT ModeIdIndex,PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO  pVBInfo);
 void     XGI_GetLVDSResInfo( USHORT ModeNo,USHORT ModeIdIndex,PVB_DEVICE_INFO  pVBInfo);
 void     XGI_GetLVDSData(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTableIndex,PVB_DEVICE_INFO  pVBInfo);
@@ -658,9 +657,6 @@ void XGI_SetCRT1Group( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo , U
     /* XGI_LoadCharacter(); //dif ifdef TVFont */
 
     XGI_LoadDAC( ModeNo , ModeIdIndex, pVBInfo ) ;
-/*
-    XGI_ClearBuffer( HwDeviceExtension , ModeNo, pVBInfo ) ;
-*/
 }
 
 
@@ -1979,39 +1975,6 @@ void XGI_WriteDAC( USHORT dl , USHORT ah , USHORT al , USHORT dh,PVB_DEVICE_INFO
     XGINew_SetReg3( pVBInfo->P3c9 , ( USHORT )dh ) ;
     XGINew_SetReg3( pVBInfo->P3c9 , ( USHORT )bh ) ;
     XGINew_SetReg3( pVBInfo->P3c9 , ( USHORT )bl ) ;
-}
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGI_ClearBuffer */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGI_ClearBuffer( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo, PVB_DEVICE_INFO  pVBInfo)
-{
-    PVOID VideoMemoryAddress = ( PVOID )HwDeviceExtension->pjVideoMemoryAddress ;
-    ULONG AdapterMemorySize  = ( ULONG )HwDeviceExtension->ulVideoMemorySize ;
-    PUSHORT pBuffer ;
-#ifndef LINUX_XF86
-    int i ;
-#endif
-
-    if ( pVBInfo->ModeType >= ModeEGA )
-    {
-        if ( ModeNo > 0x13 )
-        {
-            AdapterMemorySize = 0x40000 ;	/* clear 256k */
-            /* GetDRAMSize( HwDeviceExtension ) ; */
-            XGI_SetMemory( VideoMemoryAddress , AdapterMemorySize , 0 ) ;
-        }
-    }
-    else
-    {
-        pBuffer = VideoMemoryAddress ;
-        if (pVBInfo->ModeType >= ModeCGA)
-            XGI_SetMemory( VideoMemoryAddress , 0x8000 , 0 ) ;
-    }
 }
 
 
