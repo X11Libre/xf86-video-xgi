@@ -491,7 +491,6 @@ VOID XGISetDPMS( PXGI_HW_DEVICE_INFO pXGIHWDE , ULONG VESA_POWER_STATE )
         pVBInfo->IF_DEF_LVDS = 0 ;
         pVBInfo->IF_DEF_HiVision = 1 ;
         pVBInfo->IF_DEF_LCDA = 1 ;
-        pVBInfo->IF_DEF_CH7017 = 0 ;
         pVBInfo->IF_DEF_YPbPr = 1 ;
         pVBInfo->IF_DEF_CRT2Monitor = 0 ;
         pVBInfo->IF_DEF_VideoCapture = 0 ;

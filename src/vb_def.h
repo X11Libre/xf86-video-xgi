@@ -471,7 +471,6 @@
 #define		VB_XGI301LV                  0x0008
 #define		VB_XGI302LV                  0x0010
 #define		VB_LVDS_NS                   0x0001       /* 3rd party chip */
-#define		VB_CH7017                    0x0002
 /* #define VB_LVDS_SI 0x0004 */
 
 #define		ModeInfoFlag                 0x0007

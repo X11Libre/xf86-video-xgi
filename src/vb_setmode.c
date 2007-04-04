@@ -393,7 +393,6 @@ BOOLEAN XGISetModeNew( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo )
     pVBInfo->BaseAddr = ( USHORT )HwDeviceExtension->pjIOAddress ;
     pVBInfo->IF_DEF_LVDS = 0 ;
     pVBInfo->IF_DEF_LCDA = 1 ;
-    pVBInfo->IF_DEF_CH7017 = 0 ;
     pVBInfo->IF_DEF_VideoCapture = 1 ;
     pVBInfo->IF_DEF_ScaleLCD = 1 ;
     pVBInfo->IF_DEF_OEMUtil = 0 ;
@@ -2060,17 +2059,6 @@ void XGI_GetLVDSData(  USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRateTa
         pVBInfo->HT = LCDPtr->LCDHT ;
         pVBInfo->VT = LCDPtr->LCDVT ;
     }
-    if ( pVBInfo->IF_DEF_CH7017 == 1 )
-    {
-        if ( pVBInfo->VBInfo & SetCRT2ToTV )
-        {
-            TVPtr = ( XGI330_CHTVDataStruct * )XGI_GetTVPtr( tempbx , ModeNo , ModeIdIndex , RefreshRateTableIndex, pVBInfo ) ;
-            pVBInfo->VGAHT = TVPtr->VGAHT ;
-            pVBInfo->VGAVT = TVPtr->VGAVT ;
-            pVBInfo->HT = TVPtr->LCDHT ;
-            pVBInfo->VT = TVPtr->LCDVT ;
-        }
-    }
 
     if ( pVBInfo->VBInfo & ( SetCRT2ToLCD | SetCRT2ToLCDA ) )
     {
@@ -2135,12 +2123,6 @@ void XGI_ModCRT1Regs( USHORT ModeNo , USHORT ModeIdIndex ,
                 pVBInfo->TimingH[ 0 ].data[ i ] = LCDPtr[ 0 ].Reg[ i ] ;
         }
 
-        /* if ( pVBInfo->IF_DEF_CH7017 == 1 )
-        {
-            if ( pVBInfo->VBInfo & SetCRT2ToTV )
-                TVPtr = ( XGI330_CHTVDataStruct *)XGI_GetTVPtr( tempbx , ModeNo , ModeIdIndex , RefreshRateTableIndex, pVBInfo ) ;
-        } */
-
         XGI_SetCRT1Timing_H(pVBInfo,HwDeviceExtension) ;
 
         tempbx = 1 ;
@@ -2151,12 +2133,6 @@ void XGI_ModCRT1Regs( USHORT ModeNo , USHORT ModeIdIndex ,
             for( i = 0 ; i < 7 ; i++ )
                 pVBInfo->TimingV[ 0 ].data[ i ] = LCDPtr1[ 0 ].Reg[ i ] ;
         }
-
-        /* if ( pVBInfo->IF_DEF_CH7017 == 1 )
-        {
-            if ( pVBInfo->VBInfo & SetCRT2ToTV )
-                TVPtr = ( XGI330_CHTVDataStruct *)XGI_GetTVPtr( tempbx , ModeNo , ModeIdIndex , RefreshRateTableIndex, pVBInfo ) ;
-        } */
 
         XGI_SetCRT1Timing_V( ModeIdIndex , ModeNo , pVBInfo) ;
     }
@@ -2184,8 +2160,6 @@ void XGI_SetLVDSRegs( USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRateTab
 
     if ( !( pVBInfo->SetFlag & Win9xDOSMode ) )
     {
-        if ( ( pVBInfo->IF_DEF_CH7017 == 0 ) || ( pVBInfo->VBInfo & ( SetCRT2ToLCD | SetCRT2ToLCDA ) ) )
-        {
             if ( pVBInfo->IF_DEF_OEMUtil == 1 )
             {
     	        tempbx = 8 ;
@@ -2425,7 +2399,6 @@ void XGI_SetLVDSRegs( USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRateTab
 
             XGINew_SetReg1(pVBInfo->Part1Port , 0x22 , ( USHORT )( ( temp3 >> 8 ) & 0xff ) ) ;
             XGINew_SetReg1(pVBInfo->Part1Port , 0x23 , ( USHORT )( temp3 & 0xff ) ) ;
-        }
     }
 }
 
@@ -2644,12 +2617,6 @@ void XGI_GetVBType(PVB_DEVICE_INFO  pVBInfo)
         }
         pVBInfo->VBType = tempbx ;
     }
-/*
-    else if ( pVBInfo->IF_DEF_CH7017 == 1 )
-        pVBInfo->VBType = VB_CH7017 ;
-    else  //LVDS
-        pVBInfo->VBType = VB_LVDS_NS ;
-*/
 }
 
 
@@ -2717,26 +2684,15 @@ void XGI_GetVBInfo( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO HwD
                         }
                     }
                 }
-                else if ( pVBInfo->IF_DEF_CH7017 == 1 )
-                {
-                    if ( pVBInfo->VBType & VB_CH7017 )
-                    {
-                        if ( temp & EnableDualEdge )
-                        {
-                            tempbx |= SetCRT2ToDualEdge ;
-
-                            if ( temp & SetToLCDA )
-                                tempbx |= SetCRT2ToLCDA ;
-                        }
-                    }
-                }
             }
         }
 
         if ( pVBInfo->IF_DEF_YPbPr == 1 )
         {
-            if ( ( ( pVBInfo->IF_DEF_LVDS == 0 ) && ( ( pVBInfo->VBType & VB_XGI301LV ) || ( pVBInfo->VBType & VB_XGI302LV ) || ( pVBInfo->VBType & VB_XGI301C ) ) )
-            || ( ( pVBInfo->IF_DEF_CH7017 == 1 ) && ( pVBInfo->VBType&VB_CH7017 ) ) )
+            if ((pVBInfo->IF_DEF_LVDS == 0) 
+		&& ((pVBInfo->VBType & VB_XGI301LV) 
+		    || (pVBInfo->VBType & VB_XGI302LV)
+		    || (pVBInfo->VBType & VB_XGI301C)))
             {
                 if ( temp & SetYPbPr )	/* temp = CR38 */
                 {
@@ -2777,9 +2733,6 @@ void XGI_GetVBInfo( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO HwD
         }
         else	/* 3nd party chip */
         {
-            if ( pVBInfo->IF_DEF_CH7017 == 1 )
-                temp = ( SetCRT2ToTV | SetCRT2ToLCD | SetCRT2ToLCDA ) ;
-            else
                 temp = SetCRT2ToLCD ;
         }
 
@@ -2951,14 +2904,6 @@ void XGI_GetTVInfo( USHORT ModeNo , USHORT ModeIdIndex ,PVB_DEVICE_INFO  pVBInfo
 */
         }
 
-        if ( pVBInfo->IF_DEF_CH7017 == 1 )
-        {
-            tempbx = XGINew_GetReg1( pVBInfo->P3d4 , 0x35 ) ;
-
-            if ( tempbx & TVOverScan )
-                tempbx |= SetCHTVOverScan ;
-        }
-
         if ( pVBInfo->IF_DEF_LVDS == 0 )
         {
             if ( pVBInfo->VBInfo & SetCRT2ToSCART )
@@ -3112,14 +3057,6 @@ BOOLEAN XGI_GetLCDInfo( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBI
     if ( pVBInfo->IF_DEF_LVDS == 0 )	/* shampoo */
     {
         if ( ( ( pVBInfo->VBType & VB_XGI302LV ) || ( pVBInfo->VBType & VB_XGI301C ) ) && ( tempax & LCDDualLink ) )
-        {
-            tempbx |= SetLCDDualLink ;
-        }
-    }
-
-    if ( pVBInfo->IF_DEF_CH7017 == 1 )
-    {
-        if ( tempax & LCDDualLink )
         {
             tempbx |= SetLCDDualLink ;
         }
@@ -4394,22 +4331,6 @@ UCHAR XGI_GetVCLKPtr(USHORT RefreshRateTableIndex,USHORT ModeNo,USHORT ModeIdInd
             if ( pVBInfo->VBInfo & SetCRT2ToTV )
                 return tempal ;
         }
-        /*else
-        if((pVBInfo->IF_DEF_CH7017==1)&&(pVBInfo->VBType&VB_CH7017))
-        {
-            if(ModeNo<=0x13)
-                *tempal = pVBInfo->SModeIDTable[ModeIdIndex].St_CRT2CRTC;
-            else
-                *tempal = pVBInfo->RefIndex[RefreshRateTableIndex].Ext_CRT2CRTC;
-            *tempal = *tempal & 0x1F;
-
-            tempbx = 0;
-            if(pVBInfo->TVInfo & SetPALTV)
-                tempbx = tempbx + 2;
-            if(pVBInfo->TVInfo & SetCHTVOverScan)
-                tempbx++;
-            tempbx = tempbx << 1;
-        }  */
     }	/* {End of VB} */
 
     tempal = ( UCHAR )XGINew_GetReg2( ( USHORT )( pVBInfo->P3ca + 0x02 ) ) ;
