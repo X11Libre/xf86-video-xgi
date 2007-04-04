@@ -37,18 +37,6 @@
 #include <linux/types.h>
 #endif
 
-#ifdef WIN2000
-#include <dderror.h>
-#include <devioctl.h>
-#include <miniport.h>
-#include <ntddvdeo.h>
-#include <video.h>
-
-#include "xgiv.h"
-#include "dd_i2c.h"
-#include "tools.h"
-#endif
-
 #ifdef LINUX_XF86
 #include "xf86.h"
 #include "xf86PciInfo.h"
@@ -272,15 +260,6 @@ void NewDelaySeconds( int seconds )
 
     for( i = 0 ; i < seconds ; i++ )
     {
-#ifdef WIN2000
-
-        for ( j = 0 ; j < 20000 ; j++ )
-            VideoPortStallExecution( 50 ) ;
-#endif
-
-#ifdef WINCE_HEADER
-#endif
-
 #ifdef LINUX_KERNEL
 #endif
     }

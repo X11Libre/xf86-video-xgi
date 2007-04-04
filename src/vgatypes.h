@@ -140,8 +140,6 @@ typedef IOADDRESS XGIIOADDRESS;
 #define VBIOS_VER_MAX_LENGTH    4
 #endif
 
-#ifndef WIN2000
-
 #ifndef LINUX_KERNEL   /* For the linux kernel, this is defined in xgifb.h */
 #ifndef XGI_CHIP_TYPE
 typedef enum _XGI_CHIP_TYPE {
@@ -219,8 +217,6 @@ typedef enum _XGI_LCD_TYPE {
 } XGI_LCD_TYPE;
 #endif
 
-#endif   /* not WIN2000 */
-
 #ifndef PXGI_DSReg
 typedef struct _XGI_DSReg
 {
@@ -262,9 +258,6 @@ struct _XGI_HW_DEVICE_INFO
     ULONG  ul2ndVideoMemorySize;
 
     PUCHAR pj2ndIOAddress;
-/*#ifndef WIN2000
-    XGIIOADDRESS pjIOAddress;   //  base I/O address of VGA ports (0x3B0)
-#endif */
     UCHAR  jChipType;            /* Used to Identify Graphics Chip */
                                  /* defined in the data structure type  */
                                  /* "XGI_CHIP_TYPE" */

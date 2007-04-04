@@ -408,9 +408,7 @@ struct _VB_DEVICE_INFO
     PUCHAR ROMAddr;
     PUCHAR FBAddr;
     USHORT BaseAddr;
-#ifndef WIN2000
     XGIIOADDRESS RelIO;
-#endif 
 
     DRAM4Type  *CR6B;
     UCHAR  *XG45CR6E;

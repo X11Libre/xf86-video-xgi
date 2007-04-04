@@ -43,17 +43,6 @@
 #endif */
 #endif
 
-#ifdef WIN2000
-#include <dderror.h>
-#include <devioctl.h>
-#include <miniport.h>
-#include <ntddvdeo.h>
-#include <video.h>
-#include "xgiv.h"
-#include "dd_i2c.h"
-#include "tools.h"
-#endif
-
 #include "vb_def.h"
 #include "vb_struct.h"
 #include "vb_util.h"
@@ -1772,10 +1761,6 @@ int XGINew_CheckColumn(int index, const USHORT DRAMTYPE_TABLE[][5],
         *( ( PULONG )( pVBInfo->FBAddr + Position ) ) = Position ;
         Position += Increment ;
     }
-
-#ifdef WIN2000  /* chiawen for linux solution */
-    DelayUS( 100 ) ;
-#endif
 
     for( i = 0 , Position = 0 ; i < 2 ; i++ )
     {

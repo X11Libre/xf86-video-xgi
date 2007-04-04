@@ -43,18 +43,6 @@
 #include "XGIfb.h"
 #endif
 
-#ifdef WIN2000
-#include <dderror.h>
-#include <devioctl.h>
-#include <miniport.h>
-#include <ntddvdeo.h>
-#include <video.h>
-
-#include "xgiv.h"
-#include "dd_i2c.h"
-#include "tools.h"
-#endif
-
 #include "vb_def.h"
 #include "vgatypes.h"
 #include "vb_struct.h"
@@ -3178,44 +3166,7 @@ BOOLEAN XGI_SearchModeID( USHORT ModeNo , USHORT *ModeIdIndex, PVB_DEVICE_INFO p
 #endif
 
 
-#ifdef WIN2000
-
-    if ( ModeNo <= 5 )
-        ModeNo |= 1 ;
-    if ( ModeNo <= 0x13 )
-    {
-        /* for (*ModeIdIndex=0;*ModeIdIndex<sizeof(pVBInfo->SModeIDTable)/sizeof(XGI_StStruct);(*ModeIdIndex)++) */
-        for( *ModeIdIndex = 0 ; ; ( *ModeIdIndex )++ )
-        {
-            if ( pVBInfo->SModeIDTable[ *ModeIdIndex ].St_ModeID == ModeNo )
-                break ;
-            if ( pVBInfo->SModeIDTable[ *ModeIdIndex ].St_ModeID == 0xFF )
-                return( FALSE ) ;
-        }
-
-        if ( ModeNo == 0x07 )
-            ( *ModeIdIndex )++ ; /* 400 lines */
-
-        if ( ModeNo <=3 )
-            ( *ModeIdIndex ) += 2 ; /* 400 lines */
-        /* else 350 lines */
-    }
-    else
-    {
-        /* for (*ModeIdIndex=0;*ModeIdIndex<sizeof(pVBInfo->EModeIDTable)/sizeof(XGI_ExtStruct);(*ModeIdIndex)++) */
-        for( *ModeIdIndex = 0 ; ; ( *ModeIdIndex )++ )
-        {
-            if ( pVBInfo->EModeIDTable[ *ModeIdIndex ].Ext_ModeID == ModeNo )
-                break ;
-            if ( pVBInfo->EModeIDTable[ *ModeIdIndex ].Ext_ModeID == 0xFF )
-                return( FALSE ) ;
-        }
-    }
-
-#endif
-
 #ifdef LINUX /* chiawen for linux solution */
-
     if ( ModeNo <= 5 )
         ModeNo |= 1 ;
     if ( ModeNo <= 0x13 )
@@ -3247,16 +3198,11 @@ BOOLEAN XGI_SearchModeID( USHORT ModeNo , USHORT *ModeIdIndex, PVB_DEVICE_INFO p
                 return( FALSE ) ;
         }
     }
-
 #endif
 
     return( TRUE ) ;
 }
 
-
-
-
-/* win2000 MM adapter not support standard mode! */
 
 /* --------------------------------------------------------------------- */
 /* Function : */
