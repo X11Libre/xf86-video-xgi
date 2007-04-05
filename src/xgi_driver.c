@@ -7385,26 +7385,21 @@ XGIDumpPalette(ScrnInfoPtr pScrn)
 {
 #ifdef DEBUG
     XGIPtr pXGI = XGIPTR(pScrn);
-
-    int i,j ;
-    unsigned long temp ;
+    unsigned temp[3];
+    int i, j;
 
     ErrorF("----------------------------------------------------------------------\n") ;
     ErrorF("Palette \n") ;
     ErrorF("----------------------------------------------------------------------\n") ;
-    for( i = 0 ; i < 0xFF ; i+=0x04 )
-    {
+    for (i = 0; i < 0xFF; i += 0x04) {
+	for (j = 0; j < 16; j++) {
+	    outb(0x3c7, i + j);
+	    temp[0] = inb(0x3c9);	
+	    temp[1] = inb(0x3c9);
+	    temp[2] = inb(0x3c9);
 
-	for(j =0 ; j < 16 ; j++)
-	{
-	     ErrorF("PA[%02X]:",i+j) ;	
-	     outb(0x3c7,i+j); 
-	     temp=inb(0x3c9);	
-	     ErrorF(" %02lX",temp) ;
-             temp=inb(0x3c9);
-	     ErrorF(" %02lX",temp) ;
-             temp=inb(0x3c9);
-             ErrorF(" %02lX",temp) ;
+	    ErrorF("PA[%02X]: %02X %02X %02X", i + j,
+		   temp[0], temp[1], temp[2]);
 	}
 	ErrorF("\n") ;
     }
