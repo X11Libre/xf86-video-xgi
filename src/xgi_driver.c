@@ -5683,29 +5683,26 @@ XGIEnterVT(int scrnIndex, int flags)
 
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
 
-    if(!XGIModeInit(pScrn, pScrn->currentMode)) 
-    {
-       XGIErrorLog(pScrn, "XGIEnterVT: XGIModeInit() failed\n");
-       return FALSE;
+    if (!XGIModeInit(pScrn, pScrn->currentMode)) {
+	XGIErrorLog(pScrn, "XGIEnterVT: XGIModeInit() failed\n");
+	return FALSE;
     }
 
     XGIAdjustFrame(scrnIndex, pScrn->frameX0, pScrn->frameY0, 0);
 
 #ifdef XF86DRI
-/*    ScreenPtr pScreen; */
-    if(pXGI->directRenderingEnabled) 
-    {
-       DRIUnlock(screenInfo.screens[scrnIndex]);
+    if (pXGI->directRenderingEnabled) {
+	DRIUnlock(screenInfo.screens[scrnIndex]);
     }
 #endif
 
+    if (
 #ifdef XGIDUALHEAD
-    if((!pXGI->DualHeadMode) || (!pXGI->SecondHead))
+	((!pXGI->DualHeadMode) || (!pXGI->SecondHead)) &&
 #endif
-       if(pXGI->ResetXv) 
-       {
-          (pXGI->ResetXv)(pScrn);
-       }
+	(pXGI->ResetXv)) {
+	(pXGI->ResetXv)(pScrn);
+    }
 
     return TRUE;
 }
@@ -5724,70 +5721,61 @@ XGILeaveVT(int scrnIndex, int flags)
 #ifdef XF86DRI
     ScreenPtr pScreen;
 
-	PDEBUG(ErrorF("XGILeaveVT()\n")) ;
-    if(pXGI->directRenderingEnabled) 
-    {
-       pScreen = screenInfo.screens[scrnIndex];
-       DRILock(pScreen, 0);
+    PDEBUG(ErrorF("XGILeaveVT()\n")) ;
+    if (pXGI->directRenderingEnabled) {
+	pScreen = screenInfo.screens[scrnIndex];
+	DRILock(pScreen, 0);
     }
 #endif
 
 #ifdef XGIDUALHEAD
-    if(pXGI->DualHeadMode && pXGI->SecondHead) return;
+    if (pXGI->DualHeadMode && pXGI->SecondHead) return;
 #endif
 
-    if(pXGI->CursorInfoPtr) 
-    {
+    if (pXGI->CursorInfoPtr) {
 #ifdef XGIDUALHEAD
-       if(pXGI->DualHeadMode) 
-       {
-          if(!pXGI->SecondHead) 
-          {
-         pXGI->ForceCursorOff = TRUE;
-         pXGI->CursorInfoPtr->HideCursor(pScrn);
-         XGIWaitVBRetrace(pScrn);
-         pXGI->ForceCursorOff = FALSE;
-      }
-       }
-       else 
-       {
+	if (pXGI->DualHeadMode) {
+	    /* Because of the test and return above, we know that this is not
+	     * the second head.
+	     */
+	    pXGI->ForceCursorOff = TRUE;
+	    pXGI->CursorInfoPtr->HideCursor(pScrn);
+	    XGIWaitVBRetrace(pScrn);
+	    pXGI->ForceCursorOff = FALSE;
+	}
+	else {
 #endif
-          pXGI->CursorInfoPtr->HideCursor(pScrn);
-          XGIWaitVBRetrace(pScrn);
+	    pXGI->CursorInfoPtr->HideCursor(pScrn);
+	    XGIWaitVBRetrace(pScrn);
 #ifdef XGIDUALHEAD
-       }
+	}
 #endif
     }
 
     XGIBridgeRestore(pScrn);
 
-    if(pXGI->UseVESA) 
-    {
+    if (pXGI->UseVESA) {
+	/* This is a q&d work-around for a BIOS bug. In case we disabled CRT2,
+	 * VBESaveRestore() does not restore CRT1. So we set any mode now,
+	 * because VBESetVBEMode correctly restores CRT1. Afterwards, we
+	 * can call VBESaveRestore to restore original mode.
+	 */
+	if ((pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) 
+	    && (!(pXGI->VBFlags & DISPTYPE_DISP2))) {
+	    VBESetVBEMode(pXGI->pVbe, (pXGI->XGIVESAModeList->n) | 0xc000, NULL);
+	}
 
-       /* This is a q&d work-around for a BIOS bug. In case we disabled CRT2,
-    	* VBESaveRestore() does not restore CRT1. So we set any mode now,
-    * because VBESetVBEMode correctly restores CRT1. Afterwards, we
-    * can call VBESaveRestore to restore original mode.
-    */
-       if((pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) && (!(pXGI->VBFlags & DISPTYPE_DISP2)))
-      VBESetVBEMode(pXGI->pVbe, (pXGI->XGIVESAModeList->n) | 0xc000, NULL);
-
-       XGIVESARestore(pScrn);
-
+	XGIVESARestore(pScrn);
     }
-    else 
-    {
-
-       XGIRestore(pScrn);
-
+    else {
+	XGIRestore(pScrn);
     }
 
-    /* We use (otherwise unused) bit 7 to indicate that we are running
-     * to keep xgifb to change the displaymode (this would result in
-     * lethal display corruption upon quitting X or changing to a VT
-     * until a reboot)
+
+    /* We use (otherwise unused) bit 7 to indicate that we are running to keep
+     * xgifb to change the displaymode (this would result in lethal display
+     * corruption upon quitting X or changing to a VT until a reboot).
      */
-
     vgaHWLock(hwp);
 }
 
