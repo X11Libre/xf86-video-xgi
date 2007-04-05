@@ -781,11 +781,6 @@ typedef struct {
     unsigned long	ForceYPbPrType, ForceYPbPrAR;
     unsigned long       lockcalls;		/* Count unlock calls for debug */
 
-    /**
-     * \bug This field is set but never used.
-     */
-    BOOLEAN		ForceCursorOff;
-
     BOOLEAN		HaveCustomModes;
     BOOLEAN		IsCustom;
     Atom                xvBrightness, xvContrast, xvColorKey, xvHue, xvSaturation;

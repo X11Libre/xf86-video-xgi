@@ -2636,8 +2636,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 #endif
 
-    pXGI->ForceCursorOff = FALSE;
-
     /* Allocate XGI_Private (for mode switching code) and initialize it */
     pXGI->XGI_Pr = NULL;
 #ifdef XGIDUALHEAD
@@ -5734,22 +5732,12 @@ XGILeaveVT(int scrnIndex, int flags)
 
     if (pXGI->CursorInfoPtr) {
 #ifdef XGIDUALHEAD
-	if (pXGI->DualHeadMode) {
-	    /* Because of the test and return above, we know that this is not
-	     * the second head.
-	     */
-	    pXGI->ForceCursorOff = TRUE;
-	    pXGI->CursorInfoPtr->HideCursor(pScrn);
-	    XGIWaitVBRetrace(pScrn);
-	    pXGI->ForceCursorOff = FALSE;
-	}
-	else {
+	/* Because of the test and return above, we know that this is not
+	 * the second head.
+	 */
 #endif
-	    pXGI->CursorInfoPtr->HideCursor(pScrn);
-	    XGIWaitVBRetrace(pScrn);
-#ifdef XGIDUALHEAD
-	}
-#endif
+	pXGI->CursorInfoPtr->HideCursor(pScrn);
+	XGIWaitVBRetrace(pScrn);
     }
 
     XGIBridgeRestore(pScrn);
@@ -5803,31 +5791,15 @@ XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
     }
 #endif
 
-    if(pScrn->vtSema) 
-    {
-
-        if(pXGI->CursorInfoPtr) 
-        {
+    if (pScrn->vtSema) {
+        if (pXGI->CursorInfoPtr
 #ifdef XGIDUALHEAD
-           if(pXGI->DualHeadMode) 
-           {
-              if(!pXGI->SecondHead) 
-              {
-             pXGI->ForceCursorOff = TRUE;
-             pXGI->CursorInfoPtr->HideCursor(pScrn);
-             XGIWaitVBRetrace(pScrn);
-             pXGI->ForceCursorOff = FALSE;
-          }
-           }
-           else 
-           {
+	    && (!pXGI->DualHeadMode || !pXGI->SecondHead)
 #endif
-             pXGI->CursorInfoPtr->HideCursor(pScrn);
-             XGIWaitVBRetrace(pScrn);
-#ifdef XGIDUALHEAD
-           }
-#endif
-    }
+	    ) {
+	    pXGI->CursorInfoPtr->HideCursor(pScrn);
+	    XGIWaitVBRetrace(pScrn);
+	}
 
         XGIBridgeRestore(pScrn);
 
