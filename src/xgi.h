@@ -32,8 +32,6 @@
 #ifndef _XGI_H_
 #define _XGI_H_
 
-#define DUMPDDI 
-
 /***************
 
 #define DEBUG2

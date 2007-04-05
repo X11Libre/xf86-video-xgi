@@ -326,7 +326,6 @@ static const char *notsuitablestr = "Not using mode \"%s\" (not suitable for %s 
 static void XGISavePrevMode(ScrnInfoPtr pScrn) ;
 static void XGIRestorePrevMode(ScrnInfoPtr pScrn) ;
 /*~jjtseng 2005/11/09 */
-int DumpDDIName(const char *fmt, ...)  ;
 
 typedef struct {
 		int width, height ;
@@ -2285,7 +2284,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
 	/****************** Code Start ***********************/
 
-	DumpDDIName("XGIPreInit\n") ;
+    ErrorF("XGIPreInit\n");
 
 //inXGIIDXREG(XGICR, 0x4D, tmpval);
 //tmpval = tmpval | 0x05;
@@ -4817,7 +4816,7 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 #ifdef XGIDUALHEAD
     XGIEntPtr pXGIEnt = NULL;
 #endif
-	DumpDDIName("XGIScreenInit\n") ;
+    ErrorF("XGIScreenInit\n");
     pScrn = xf86Screens[pScreen->myNum];
 
     hwp = VGAHWPTR(pScrn);
@@ -5225,7 +5224,7 @@ XGISwitchMode(int scrnIndex, DisplayModePtr mode, int flags)
     ScrnInfoPtr pScrn = xf86Screens[scrnIndex];
     XGIPtr pXGI = XGIPTR(pScrn);
 
-	DumpDDIName("XGISwitchMode\n") ;
+    ErrorF("XGISwitchMode\n");
 
     if(!pXGI->NoAccel) 
     {
@@ -5254,7 +5253,7 @@ XGISwitchCRT1Status(ScrnInfoPtr pScrn, int onoff)
     int crt1off;
 
 
-	DumpDDIName("XGISwitchCRT1Status\n") ;
+    ErrorF("XGISwitchCRT1Status\n");
 
     /* onoff: 0=OFF, 1=ON(VGA), 2=ON(LCDA) */
     /* Switching to LCDA will disable CRT2 if previously LCD */
@@ -5629,7 +5628,7 @@ XGIAdjustFrame(int scrnIndex, int x, int y, int flags)
     unsigned long base ;
     unsigned char ucSR5Stat, ucTemp ;
 
-	DumpDDIName("AdjustFrame %d\n",scrnIndex) ;
+    ErrorF("AdjustFrame %d\n", scrnIndex);
     inXGIIDXREG(XGISR, 0x05, ucSR5Stat ) ;
     if( ucSR5Stat == 0xA1 ) ucSR5Stat = 0x86 ;
     outXGIIDXREG(XGISR, 0x05, 0x86) ;
@@ -7378,20 +7377,6 @@ XGIDumpRegs(ScrnInfoPtr pScrn)
 	}
 
 #endif /* DEBUG */
-}
-
-int
-DumpDDIName(const char *fmt, ...) 
-{
-#ifdef DUMPDDI
-	static char buff[0x1000] ;
-	va_list argptr ;
-	va_start(argptr, fmt) ;
-	vsprintf(buff,fmt,argptr) ;
-	va_end(argptr) ;
-
-	ErrorF(buff) ;
-#endif
 }
 
 
