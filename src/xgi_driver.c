@@ -2216,47 +2216,45 @@ XGIDumpModePtr(DisplayModePtr mode)
 static void
 XGIDumpMonPtr(MonPtr pMonitor)
 {
-	int i, j ;
-    DisplayModePtr	mode;
-
 #ifdef DEBUG5
-	ErrorF("XGIDumpMonPtr() ... \n") ;
-	if( pMonitor == NULL )
-	{
-		ErrorF("pMonitor is NULL\n") ;
-	}
+    int i;
+# if 0
+    DisplayModePtr mode;
+#endif
 
-	ErrorF("id = %s, vendor = %s model = %s\n",pMonitor->id,pMonitor->vendor,pMonitor->model) ;
-	ErrorF("nHsync = %d\n",pMonitor->nHsync) ;
-	ErrorF("nVrefresh = %d\n",pMonitor->nVrefresh) ;
-	for( i = 0 ; i < MAX_HSYNC ; i++ )
-	{
-		ErrorF("hsync[%d] = (%8.3f,%8.3f)\n",i,pMonitor->hsync[i].lo,pMonitor->hsync[i].hi) ;
+    ErrorF("XGIDumpMonPtr() ... \n") ;
+    if (pMonitor == NULL) {
+	ErrorF("pMonitor is NULL\n") ;
+    }
+
+    ErrorF("id = %s, vendor = %s model = %s\n",
+	   pMonitor->id, pMonitor->vendor, pMonitor->model);
+    ErrorF("nHsync = %d\n",pMonitor->nHsync);
+    ErrorF("nVrefresh = %d\n",pMonitor->nVrefresh);
+
+    for (i = 0; i < MAX_HSYNC; i++) {
+	ErrorF("hsync[%d] = (%8.3f,%8.3f)\n", i, pMonitor->hsync[i].lo,
+	       pMonitor->hsync[i].hi);
+    }
+
+    for (i = 0; i < MAX_VREFRESH; i++) {
+	ErrorF("vrefresh[%d] = (%8.3f,%8.3f)\n", i, pMonitor->vrefresh[i].lo,
+	       pMonitor->vrefresh[i].hi);
+    }
+
+    ErrorF("widthmm = %d, heightmm = %d\n",
+	   pMonitor->widthmm, pMonitor->heightmm);
+    ErrorF("options = %p, DDC = %p\n", pMonitor->options, pMonitor->DDC);
+# if 0
+    mode = pMonitor->Modes;
+    while (1) {
+	XGIDumpModePtr(mode);
+	if (mode == pMonitor->Last) {
+	    break;
 	}
-	for( i = 0 ; i < MAX_VREFRESH ; i++ )
-	{
-		ErrorF("vrefresh[%d] = (%8.3f,%8.3f)\n",i,pMonitor->vrefresh[i].lo,pMonitor->vrefresh[i].hi) ;
-	}
-	/*
-    DisplayModePtr	Modes;
-    DisplayModePtr	Last;	
-    Gamma		gamma;	
-	*/
-	ErrorF("widthmm = %d, heightmm = %d\n",
-		pMonitor->widthmm, pMonitor->heightmm ) ;
-	ErrorF("options = %p, DDC = %p\n",pMonitor->options,pMonitor->DDC) ;
-	mode = pMonitor->Modes ;
-	#if 0
-	while(1)
-	{
-		XGIDumpModePtr(mode) ; 
-		if( mode == pMonitor->Last) 
-		{
-			break ;
-		}
-		mode = mode->next ;
-	}
-	#endif /* 0 */
+	mode = mode->next;
+    }
+# endif
 #endif /* DEBUG5 */
 }
 
@@ -2266,9 +2264,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 {
     XGIPtr pXGI;
     MessageType from;
-/*    unsigned char usScratchCR17, CR5F;
-    unsigned char usScratchCR32, usScratchCR63;
-    unsigned char usScratchSR1F;  */
     unsigned char tmpval;
     unsigned long int i;
     int temp;
@@ -2285,8 +2280,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     DisplayModePtr first, p, n;
 #endif
     unsigned char srlockReg,crlockReg;
-/*    unsigned char tempreg;  */
-
     vbeInfoPtr pVbe;
     VbeInfoBlock *vbe;
 
