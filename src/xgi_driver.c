@@ -2679,8 +2679,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
        pXGI->XGI_Pr->HaveEMI = FALSE;
        pXGI->XGI_Pr->HaveEMILCD = FALSE;
        pXGI->XGI_Pr->OverruleEMI = FALSE;
-       pXGI->XGI_Pr->XGI_SensibleSR11 = TRUE;
-       pXGI->XGI_Pr->XGI_MyCR63 = pXGI->myCR63;
     }
 
     /* Get our relocated IO registers */

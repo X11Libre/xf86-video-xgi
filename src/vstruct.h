@@ -259,7 +259,6 @@ typedef struct _XGI_Private
 	USHORT XGI_IF_DEF_TRUMPION;
 	USHORT XGI_IF_DEF_DSTN;
 	USHORT XGI_IF_DEF_FSTN;
-	USHORT XGI_SysFlags;
 	UCHAR  XGI_VGAINFO;
 #ifndef LINUX_KERNEL
         USHORT XGI_CP1, XGI_CP2, XGI_CP3, XGI_CP4;
@@ -277,7 +276,6 @@ typedef struct _XGI_Private
 	BOOLEAN OverruleEMI;
 	UCHAR  EMI_30,EMI_31,EMI_32,EMI_33;
 	SHORT  PDC, PDCA;
-	UCHAR  XGI_MyCR63;
 	USHORT XGI_CRT1Mode;
 	USHORT XGI_flag_clearbuffer;
 	int    XGI_RAMType;
@@ -323,7 +321,6 @@ typedef struct _XGI_Private
 	USHORT XGI_DDC_ReadAddr;
 	USHORT XGI_DDC_SecAddr;
 	USHORT XGI_ChrontelInit;
-	BOOLEAN XGI_SensibleSR11;
 	
 
 	USHORT XGI_PanelMinLVDS;

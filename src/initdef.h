@@ -173,17 +173,6 @@
 #define YPbPrHiVision           0x0008
 #define YPbPrModeMask           (YPbPr750p | YPbPr525p | YPbPr525i | YPbPrHiVision)
 
-/* SysFlags (to identify special versions) */
-#define SF_Is651                0x0001
-#define SF_IsM650               0x0002
-#define SF_Is652		0x0004
-#define SF_IsM652		0x0008
-#define SF_IsM653		0x0010
-#define SF_IsM661		0x0020
-#define SF_IsM741		0x0040
-#define SF_IsM760		0x0080
-#define SF_760UMA		0x8000
-
 /* CR32 (Newer 630, and 315 series)
 
    [0]   VB connected with CVBS

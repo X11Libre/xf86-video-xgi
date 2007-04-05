@@ -316,25 +316,6 @@ XGIRegInit(XGI_Private *XGI_Pr, XGIIOADDRESS BaseAddr)
 }
 
 /*********************************************/
-/*             HELPER: GetSysFlags           */
-/*********************************************/
-
-static void
-XGI_GetSysFlags(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
-{
-/*   unsigned char cr5f, temp1, temp2; */
-
-   /* 661 and newer: NEVER write non-zero to SR11[7:4] */
-   /* (SR11 is used for DDC and in enable/disablebridge) */
-    XGI_Pr->XGI_SensibleSR11 = TRUE;
-    XGI_Pr->XGI_MyCR63 = 0x53;
-
-   /* You should use the macros, not these flags directly */
-
-   XGI_Pr->XGI_SysFlags = 0;
-}
-
-/*********************************************/
 /*         HELPER: Init PCI & Engines        */
 /*********************************************/
 
@@ -643,7 +624,7 @@ XGI_SetLowModeTest(XGI_Private *XGI_Pr, USHORT ModeNo, PXGI_HW_DEVICE_INFO HwInf
 static void
 XGI_HandleCRT1(XGI_Private *XGI_Pr)
 {
-  XGI_SetRegAND(XGI_Pr->XGI_P3d4,XGI_Pr->XGI_MyCR63,0xbf);
+    XGI_SetRegAND(XGI_Pr->XGI_P3d4, 0x53, 0xbf);
 }
 
 /*********************************************/
@@ -1410,7 +1391,6 @@ XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,USHORT ModeNo)
    }
 
    XGIRegInit(XGI_Pr, BaseAddr);
-   XGI_GetSysFlags(XGI_Pr, HwInfo);
 
 #if defined(LINUX_XF86) && (defined(i386) || defined(__i386) || defined(__i386__) || defined(__AMD64__))
    if(pScrn) XGI_Pr->XGI_VGAINFO = XGI_GetSetBIOSScratch(pScrn, 0x489, 0xff);
@@ -1655,7 +1635,6 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr 
    }
 
    XGIRegInit(XGI_Pr, BaseAddr);
-   XGI_GetSysFlags(XGI_Pr, HwInfo);
 #if (defined(i386) || defined(__i386) || defined(__i386__) || defined(__AMD64__))
    XGI_Pr->XGI_VGAINFO = XGI_GetSetBIOSScratch(pScrn, 0x489, 0xff);
 #else
