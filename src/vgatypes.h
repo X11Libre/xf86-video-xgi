@@ -144,24 +144,6 @@ typedef IOADDRESS XGIIOADDRESS;
 #ifndef XGI_CHIP_TYPE
 typedef enum _XGI_CHIP_TYPE {
     XGI_VGALegacy = 0,
-#ifdef LINUX_XF86
-    XGI_530,
-    XGI_OLD,
-#endif
-    XGI_300,
-    XGI_630,
-    XGI_640,
-    XGI_315H,
-    XGI_315,
-    XGI_315PRO,
-    XGI_550,
-    XGI_650,
-    XGI_650M,
-    XGI_740,
-    XGI_330,
-    XGI_661,
-    XGI_660,
-    XGI_760,
     XG40 = 32,
     XG41,
     XG42,

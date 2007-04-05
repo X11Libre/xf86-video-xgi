@@ -326,12 +326,8 @@ XGI_GetSysFlags(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
 
    /* 661 and newer: NEVER write non-zero to SR11[7:4] */
    /* (SR11 is used for DDC and in enable/disablebridge) */
-   XGI_Pr->XGI_SensibleSR11 = FALSE;
-   XGI_Pr->XGI_MyCR63 = 0x63;
-   if(HwInfo->jChipType >= XGI_661) {
-      XGI_Pr->XGI_SensibleSR11 = TRUE;
-      XGI_Pr->XGI_MyCR63 = 0x53;
-   }
+    XGI_Pr->XGI_SensibleSR11 = TRUE;
+    XGI_Pr->XGI_MyCR63 = 0x53;
 
    /* You should use the macros, not these flags directly */
 
@@ -630,17 +626,10 @@ XGI_DoLowModeTest(XGI_Private *XGI_Pr, USHORT ModeNo, PXGI_HW_DEVICE_INFO HwInfo
     temp2 = XGI_GetReg(XGI_Pr->XGI_P3d4,0x00);
     XGI_SetReg(XGI_Pr->XGI_P3d4,0x00,temp1);
     XGI_SetReg(XGI_Pr->XGI_P3d4,0x11,temp);
-    if((HwInfo->jChipType >= XGI_315H) ||
-       (HwInfo->jChipType == XGI_300)) {
-       if(temp2 == 0x55) return(0);
-       else return(1);
-    } else {
-       if(temp2 != 0x55) return(1);
-       else {
-          XGI_SetRegOR(XGI_Pr->XGI_P3d4,0x35,0x01);
-          return(0);
-       }
-    }
+    if (temp2 == 0x55)
+	return(0);
+    else 
+	return(1);
 }
 
 static void
@@ -732,19 +721,12 @@ XGI_New_SetSeqRegs(XGI_Private *XGI_Pr, USHORT StandTableIndex, PXGI_HW_DEVICE_I
       if(XGI_Pr->XGI_VBInfo & SetCRT2ToLCDA) {
          SRdata |= 0x01;
       }
-      if(HwInfo->jChipType >= XGI_661) {
-         if(XGI_Pr->XGI_VBInfo & (SetCRT2ToLCD | SetCRT2ToTV)) {
-	    if(XGI_Pr->XGI_VBInfo & SetInSlaveMode) {
+
+       if(XGI_Pr->XGI_VBInfo & (SetCRT2ToLCD | SetCRT2ToTV)) {
+	   if(XGI_Pr->XGI_VBInfo & SetInSlaveMode) {
                SRdata |= 0x01;          		/* 8 dot clock  */
-            }
-	 }
-      } else if(XGI_Pr->XGI_VBInfo & SetCRT2ToLCD) {
-         if(XGI_Pr->XGI_VBType & VB_NoLCD) {
-	    if(XGI_Pr->XGI_VBInfo & SetInSlaveMode) {
-               SRdata |= 0x01;          		/* 8 dot clock  */
-            }
-	 }
-      }
+	   }
+       }
    }
 
    SRdata |= 0x20;                			/* screen off  */
@@ -767,14 +749,6 @@ XGI_New_SetMiscRegs(XGI_Private *XGI_Pr, USHORT StandTableIndex, PXGI_HW_DEVICE_
    UCHAR Miscdata;
 
    Miscdata = XGI_Pr->XGI_StandTable[StandTableIndex].MISC;
-
-   if(HwInfo->jChipType < XGI_661) {
-      if(XGI_Pr->XGI_VBType & VB_XGI301BLV302BLV) {
-         if(XGI_Pr->XGI_VBInfo & SetCRT2ToLCDA) {
-            Miscdata |= 0x0C;
-         }
-      }
-   }
 
    XGI_SetRegByte(XGI_Pr->XGI_P3c2,Miscdata);
 }
@@ -868,14 +842,12 @@ XGI_New_ClearExt1Regs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, USHORT Mo
      XGI_SetReg(XGI_Pr->XGI_P3c4,i,0x00);
   }
 
-  if(HwInfo->jChipType >= XGI_315H) {
-     XGI_SetRegAND(XGI_Pr->XGI_P3c4,0x37,0xFE);
-     if(ModeNo <= 0x13) {
+    XGI_SetRegAND(XGI_Pr->XGI_P3c4,0x37,0xFE);
+    if(ModeNo <= 0x13) {
         if(ModeNo == 0x06 || ModeNo >= 0x0e) {
-	   XGI_SetReg(XGI_Pr->XGI_P3c4,0x0e,0x20);
+	    XGI_SetReg(XGI_Pr->XGI_P3c4,0x0e,0x20);
 	}
-     }
-  }
+    }
 }
 
 /*********************************************/
@@ -885,32 +857,14 @@ XGI_New_ClearExt1Regs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, USHORT Mo
 static void
 XGI_ResetCRT1VCLK(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
 {
-   if(HwInfo->jChipType >= XGI_315H) {
-      if(HwInfo->jChipType < XGI_661) {
-         return;
-      }
-   } else {
-      if(!(XGI_Pr->XGI_VBType & VB_XGI301BLV302BLV)) {
-	 return;
-      }
-   }
-
-   if(HwInfo->jChipType >= XGI_315H) {
-      XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x31,0xCF,0x20);
-   } else {
-      XGI_SetReg(XGI_Pr->XGI_P3c4,0x31,0x20);
-   }
-   XGI_SetReg(XGI_Pr->XGI_P3c4,0x2B,XGI_Pr->XGI_VCLKData[1].SR2B);
-   XGI_SetReg(XGI_Pr->XGI_P3c4,0x2C,XGI_Pr->XGI_VCLKData[1].SR2C);
-   XGI_SetReg(XGI_Pr->XGI_P3c4,0x2D,0x80);
-   if(HwInfo->jChipType >= XGI_315H) {
-      XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x31,0xcf,0x10);
-   } else {
-      XGI_SetReg(XGI_Pr->XGI_P3c4,0x31,0x10);
-   }
-   XGI_SetReg(XGI_Pr->XGI_P3c4,0x2B,XGI_Pr->XGI_VCLKData[0].SR2B);
-   XGI_SetReg(XGI_Pr->XGI_P3c4,0x2C,XGI_Pr->XGI_VCLKData[0].SR2C);
-   XGI_SetReg(XGI_Pr->XGI_P3c4,0x2D,0x80);
+    XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x31,0xCF,0x20);
+    XGI_SetReg(XGI_Pr->XGI_P3c4,0x2B,XGI_Pr->XGI_VCLKData[1].SR2B);
+    XGI_SetReg(XGI_Pr->XGI_P3c4,0x2C,XGI_Pr->XGI_VCLKData[1].SR2C);
+    XGI_SetReg(XGI_Pr->XGI_P3c4,0x2D,0x80);
+    XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x31,0xcf,0x10);
+    XGI_SetReg(XGI_Pr->XGI_P3c4,0x2B,XGI_Pr->XGI_VCLKData[0].SR2B);
+    XGI_SetReg(XGI_Pr->XGI_P3c4,0x2C,XGI_Pr->XGI_VCLKData[0].SR2C);
+    XGI_SetReg(XGI_Pr->XGI_P3c4,0x2D,0x80);
 }
 
 /*********************************************/
@@ -1066,20 +1020,10 @@ XGI_New_SetCRT1VCLK(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
      }
   }
 
-  if(HwInfo->jChipType >= XGI_315H) {
-     XGI_SetRegAND(XGI_Pr->XGI_P3c4,0x31,0xCF);
-  } else {
-     XGI_SetReg(XGI_Pr->XGI_P3c4,0x31,0x00);
-  }
-
-  XGI_SetReg(XGI_Pr->XGI_P3c4,0x2B,clka);
-  XGI_SetReg(XGI_Pr->XGI_P3c4,0x2C,clkb);
-
-  if(HwInfo->jChipType >= XGI_315H) {
-     XGI_SetReg(XGI_Pr->XGI_P3c4,0x2D,0x01);
-  } else {
-     XGI_SetReg(XGI_Pr->XGI_P3c4,0x2D,0x80);
-  }
+    XGI_SetRegAND(XGI_Pr->XGI_P3c4,0x31,0xCF);
+    XGI_SetReg(XGI_Pr->XGI_P3c4,0x2B,clka);
+    XGI_SetReg(XGI_Pr->XGI_P3c4,0x2C,clkb);
+    XGI_SetReg(XGI_Pr->XGI_P3c4,0x2D,0x01);
 }
 
 /*********************************************/
@@ -1101,44 +1045,17 @@ XGI_New_SetVCLKState(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
      }
   }
 
-  if(HwInfo->jChipType < XGI_315H) {
+    if(VCLK >= 166)
+	data |= 0x0c;
 
-     if(VCLK > 150) data |= 0x80;
-     XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x07,0x7B,data);
+    XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x32,0xf3,data);
 
-     data = 0x00;
-     if(VCLK >= 150) data |= 0x08;
-     XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x32,0xF7,data);
+    if(VCLK >= 166) {
+	XGI_SetRegAND(XGI_Pr->XGI_P3c4,0x1f,0xe7);
+    }
 
-  } else {
-
-     if(VCLK >= 166) data |= 0x0c;
-     XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x32,0xf3,data);
-
-     if(VCLK >= 166) {
-        XGI_SetRegAND(XGI_Pr->XGI_P3c4,0x1f,0xe7);
-     }
-  }
-
-  /* DAC speed */
-  if(HwInfo->jChipType >= XGI_661) {
-
-     XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x07,0xE8,0x10);
-
-  } else {
-
-     data = 0x03;
-     if((VCLK >= 135) && (VCLK < 160))      data = 0x02;
-     else if((VCLK >= 160) && (VCLK < 260)) data = 0x01;
-     else if(VCLK >= 260)                   data = 0x00;
-
-     if(HwInfo->jChipType < XGI_315H) {
-        XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x07,0xFC,data);
-     } else {
-        XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x07,0xF8,data);
-     }
-
-  }
+    /* DAC speed */
+    XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x07,0xE8,0x10);
 }
 
 static void
@@ -1176,16 +1093,14 @@ XGI_New_SetCRT1ModeRegs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
   }
   XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x06,0xC0,data);
 
-  if(HwInfo->jChipType != XGI_300) {
-     data = 0;
-     if(infoflag & InterlaceMode) {
+    data = 0;
+    if(infoflag & InterlaceMode) {
         if(xres <= 800)       data = 0x0020;
         else if(xres <= 1024) data = 0x0035;
         else                  data = 0x0048;
-     }
-     XGI_SetReg(XGI_Pr->XGI_P3d4,0x19,(data & 0xFF));
-     XGI_SetRegANDOR(XGI_Pr->XGI_P3d4,0x1a,0xFC,(data >> 8));
-  }
+    }
+    XGI_SetReg(XGI_Pr->XGI_P3d4,0x19,(data & 0xFF));
+    XGI_SetRegANDOR(XGI_Pr->XGI_P3d4,0x1a,0xFC,(data >> 8));
 
   if(modeflag & HalfDCLK) {
      XGI_SetRegOR(XGI_Pr->XGI_P3c4,0x01,0x08);
@@ -1201,9 +1116,7 @@ XGI_New_SetCRT1ModeRegs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
         }
      }
 
-  if(HwInfo->jChipType >= XGI_661) {
-     XGI_SetRegAND(XGI_Pr->XGI_P3c4,0x31,0xfb);
-  }
+    XGI_SetRegAND(XGI_Pr->XGI_P3c4,0x31,0xfb);
 
   data = 0x60;
   if(XGI_Pr->XGI_ModeType != ModeText) {
@@ -1430,22 +1343,13 @@ XGI_New_SetCRT1Group(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 static void
 XGI_ResetVB(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
 {
-   UCHAR  *ROMAddr  = HwInfo->pjVirtualRomBase;
-   USHORT temp;
+    if (XGI_Pr->XGI_UseROM) {
+	UCHAR *const ROMAddr = HwInfo->pjVirtualRomBase;
+	const USHORT temp = 0x40 | (XGI_Pr->XGI_ROMNew)
+	    ? ROMAddr[0x80] : ROMAddr[0x7e];
 
-   if(XGI_Pr->XGI_UseROM) {
-      if(HwInfo->jChipType < XGI_330) {
-         temp = ROMAddr[VB310Data_1_2_Offset] | 0x40;
-	 if(XGI_Pr->XGI_ROMNew) temp = ROMAddr[0x80] | 0x40;
-         XGI_SetReg(XGI_Pr->XGI_Part1Port,0x02,temp);
-      } else if(HwInfo->jChipType >= XGI_661) {
-         temp = ROMAddr[0x7e];
-         if(XGI_Pr->XGI_ROMNew) temp = ROMAddr[0x80];
-         if(HwInfo->jChipType >= XGI_660)                  temp |= 0x40;
-         else if(XGI_GetReg(XGI_Pr->XGI_P3d4,0x7b) >= 100) temp |= 0x40;
-         XGI_SetReg(XGI_Pr->XGI_Part1Port,0x02,temp);
-      }
-   }
+	XGI_SetReg(XGI_Pr->XGI_Part1Port, 0x02, temp);
+    }
 }
 
 /*********************************************/
@@ -1540,16 +1444,12 @@ XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,USHORT ModeNo)
 
    /* Init/restore some VB registers */
 
-   if(XGI_Pr->XGI_VBType & VB_XGI301BLV302BLV) {
-      if(HwInfo->jChipType >= XGI_315H) {
-         XGI_ResetVB(XGI_Pr, HwInfo);
-	 XGI_SetRegOR(XGI_Pr->XGI_P3c4,0x32,0x10);
-	 XGI_SetRegOR(XGI_Pr->XGI_Part2Port,0x00,0x0c);
-         backupreg = XGI_GetReg(XGI_Pr->XGI_P3d4,0x38);
-      } else {
-         backupreg = XGI_GetReg(XGI_Pr->XGI_P3d4,0x35);
-      }
-   }
+    if(XGI_Pr->XGI_VBType & VB_XGI301BLV302BLV) {
+	XGI_ResetVB(XGI_Pr, HwInfo);
+	XGI_SetRegOR(XGI_Pr->XGI_P3c4,0x32,0x10);
+	XGI_SetRegOR(XGI_Pr->XGI_Part2Port,0x00,0x0c);
+	backupreg = XGI_GetReg(XGI_Pr->XGI_P3d4,0x38);
+    }
 
    /* Get VB information (connectors, connected devices) */
    XGI_SetLowModeTest(XGI_Pr, ModeNo, HwInfo);
@@ -1777,13 +1677,9 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr 
    /* Determine VBType */
    XGI_New_GetVBType(XGI_Pr, HwInfo);
 
-   if(XGI_Pr->XGI_VBType & VB_XGI301BLV302BLV) {
-      if(HwInfo->jChipType >= XGI_315H) {
-         backupreg = XGI_GetReg(XGI_Pr->XGI_P3d4,0x38);
-      } else {
-         backupreg = XGI_GetReg(XGI_Pr->XGI_P3d4,0x35);
-      }
-   }
+    if (XGI_Pr->XGI_VBType & VB_XGI301BLV302BLV) {
+	backupreg = XGI_GetReg(XGI_Pr->XGI_P3d4,0x38);
+    }
 
    /* Get VB information (connectors, connected devices) */
    /* (We don't care if the current mode is a CRT2 mode) */

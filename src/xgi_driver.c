@@ -2679,11 +2679,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
        pXGI->XGI_Pr->HaveEMI = FALSE;
        pXGI->XGI_Pr->HaveEMILCD = FALSE;
        pXGI->XGI_Pr->OverruleEMI = FALSE;
-       pXGI->XGI_Pr->XGI_SensibleSR11 = FALSE;
-       if(pXGI->xgi_HwDevExt.jChipType >= XGI_661) 
-       {
-          pXGI->XGI_Pr->XGI_SensibleSR11 = TRUE;
-       }
+       pXGI->XGI_Pr->XGI_SensibleSR11 = TRUE;
        pXGI->XGI_Pr->XGI_MyCR63 = pXGI->myCR63;
     }
 
@@ -3060,19 +3056,18 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     /* LCDA only supported under these conditions: */
     if(pXGI->ForceCRT1Type == CRT1_LCDA) 
     {
-       if( ((pXGI->xgi_HwDevExt.jChipType != XGI_650) &&
-            (pXGI->xgi_HwDevExt.jChipType < XGI_661))     ||
-       (!(pXGI->XGI_Pr->XGI_VBType & (VB_XGI301C | VB_XGI302B | VB_XGI301LV | VB_XGI302LV))) ) 
+       if (!(pXGI->XGI_Pr->XGI_VBType & (VB_XGI301C | VB_XGI302B | VB_XGI301LV | VB_XGI302LV)))
        {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-      	"Chipset/Video bridge does not support LCD-via-CRT1\n");
-      pXGI->ForceCRT1Type = CRT1_VGA;
+	   xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
+		      "Chipset/Video bridge does not support LCD-via-CRT1\n");
+	   pXGI->ForceCRT1Type = CRT1_VGA;
        }
        else if(!(pXGI->VBFlags & CRT2_LCD)) 
        {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-      	"No digitally connected LCD panel found, LCD-via-CRT1 disabled\n");
-      pXGI->ForceCRT1Type = CRT1_VGA;
+		     "No digitally connected LCD panel found, LCD-via-CRT1 "
+		     "disabled\n");
+	   pXGI->ForceCRT1Type = CRT1_VGA;
        }
     }
 
@@ -3134,11 +3129,9 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
        pXGI->XGI_SD_Flags |= (XGI_SD_SUPPORTSCART | XGI_SD_SUPPORTVGA2);
     }
 
-    if( ((pXGI->xgi_HwDevExt.jChipType == XGI_650) ||
-         (pXGI->xgi_HwDevExt.jChipType >= XGI_661)) &&
-        (pXGI->XGI_Pr->XGI_VBType& (VB_XGI301C | VB_XGI302B | VB_XGI301LV | VB_XGI302LV)) &&
-        (pXGI->VBFlags & CRT2_LCD)&&
-    (pXGI->VESA != 1) ) 
+    if ((pXGI->XGI_Pr->XGI_VBType& (VB_XGI301C | VB_XGI302B | VB_XGI301LV | VB_XGI302LV)) 
+	&& (pXGI->VBFlags & CRT2_LCD)
+	&& (pXGI->VESA != 1))
     {
        pXGI->XGI_SD_Flags |= XGI_SD_SUPPORTLCDA;
     }
