@@ -69,7 +69,6 @@ BOOLEAN  XGI_AjustCRT2Rate(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTa
 BOOLEAN  XGI_GetLCDInfo(USHORT ModeNo,USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
 BOOLEAN  XGISetModeNew( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo ) ;
 BOOLEAN  XGI_BridgeIsOn(PVB_DEVICE_INFO pVBInfo);
-UCHAR    XGI_GetModePtr( USHORT ModeNo,USHORT ModeIdIndex,PVB_DEVICE_INFO pVBInfo);
 USHORT   XGI_GetOffset(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTableIndex,PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO pVBInfo);
 USHORT   XGI_GetRatePtrCRT2( USHORT ModeNo,USHORT ModeIdIndex,PVB_DEVICE_INFO pVBInfo );
 USHORT   XGI_GetResInfo(USHORT ModeNo,USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
@@ -559,10 +558,12 @@ ErrorF("Part2 0 = %x ", XGINew_GetReg1( pVBInfo->Part2Port , 0x0 ));
 /* --------------------------------------------------------------------- */
 void XGI_SetCRT1Group( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo )
 {
-    USHORT StandTableIndex ,
-           RefreshRateTableIndex ,
-           b3CC ,
-           temp ;
+    const USHORT StandTableIndex = XGI_GetModePtr(pVBInfo->SModeIDTable,
+						  pVBInfo->ModeType,
+						  ModeNo, ModeIdIndex);
+    USHORT RefreshRateTableIndex;
+    USHORT b3CC;
+    USHORT temp;
 
     USHORT XGINew_P3cc =  pVBInfo->P3cc;
 #ifndef LINUX_XF86
@@ -570,7 +571,6 @@ void XGI_SetCRT1Group( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo , U
 #endif
 
     /* XGINew_CRT1Mode = ModeNo ; // SaveModeID */
-    StandTableIndex = XGI_GetModePtr( ModeNo , ModeIdIndex, pVBInfo ) ;
     XGI_SetSeqRegs( ModeNo , StandTableIndex , ModeIdIndex, pVBInfo ) ;
     XGI_SetMiscRegs( StandTableIndex,  pVBInfo ) ;
     XGI_SetCRTCRegs( HwDeviceExtension , StandTableIndex,  pVBInfo) ;
@@ -632,29 +632,6 @@ void XGI_SetCRT1Group( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo , U
     /* XGI_LoadCharacter(); //dif ifdef TVFont */
 
     XGI_LoadDAC( ModeNo , ModeIdIndex, pVBInfo ) ;
-}
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGI_GetModePtr */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-UCHAR XGI_GetModePtr( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo )
-{
-    UCHAR index ;
-
-    if ( ModeNo <= 0x13 )
-        index = pVBInfo->SModeIDTable[ ModeIdIndex ].St_StTableIndex ;
-    else
-    {
-        if ( pVBInfo->ModeType <= 0x02 )
-            index = 0x1B ;	/* 02 -> ModeEGA */
-        else
-            index = 0x0F ;
-    }
-    return( index ) ;		/* Get pVBInfo->StandTable index */
 }
 
 
@@ -8211,7 +8188,6 @@ void XGI_GetRAMDAC2DATA(USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRateT
            temp2 ,
            modeflag = 0 ,
            tempcx ,
-           StandTableIndex ,
            CRT1Index ; 
 #ifndef LINUX_XF86
     USHORT temp ,
@@ -8222,16 +8198,17 @@ void XGI_GetRAMDAC2DATA(USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRateT
     pVBInfo->RVBHCMAX = 1 ;
     pVBInfo->RVBHCFACT = 1 ;
 
-    if ( ModeNo <= 0x13 )
-    {
-        modeflag = pVBInfo->SModeIDTable[ ModeIdIndex ].St_ModeFlag ;
-        StandTableIndex = XGI_GetModePtr( ModeNo , ModeIdIndex, pVBInfo ) ;
-        tempax = pVBInfo->StandTable[ StandTableIndex ].CRTC[ 0 ] ;
-        tempbx = pVBInfo->StandTable[StandTableIndex ].CRTC[ 6 ] ;
-        temp1 = pVBInfo->StandTable[ StandTableIndex ].CRTC[ 7 ] ;
+    if (ModeNo <= 0x13) {
+	const USHORT StandTableIndex = XGI_GetModePtr(pVBInfo->SModeIDTable,
+						      pVBInfo->ModeType, 
+						      ModeNo, ModeIdIndex);
+
+        modeflag = pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag;
+        tempax = pVBInfo->StandTable[StandTableIndex].CRTC[0];
+        tempbx = pVBInfo->StandTable[StandTableIndex].CRTC[6];
+        temp1 = pVBInfo->StandTable[StandTableIndex].CRTC[7];
     }
-    else
-    {
+    else {
         modeflag = pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_ModeFlag ;
         CRT1Index = pVBInfo->RefIndex[ RefreshRateTableIndex ].Ext_CRT1CRTC ;
         CRT1Index &= IndexMask ;

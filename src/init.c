@@ -587,18 +587,14 @@ XGI_SearchModeID(const XGI_StStruct *SModeIDTable,
 /*********************************************/
 
 UCHAR
-XGI_New_GetModePtr(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex)
+XGI_GetModePtr(const XGI_StStruct *SModeIDTable, unsigned ModeType, 
+	       USHORT ModeNo, USHORT ModeIdIndex)
 {
-   UCHAR index;
-
-   if(ModeNo <= 0x13) {
-     	index = XGI_Pr->XGI_SModeIDTable[ModeIdIndex].St_StTableIndex;
-   } else {
-     	if(XGI_Pr->XGI_ModeType <= 0x02) index = 0x1B;    /* 02 -> ModeEGA  */
-     	else index = 0x0F;
-   }
-   return index;
+    return (ModeNo <= 0x13) 
+	? SModeIDTable[ModeIdIndex].St_StTableIndex
+	: ((ModeType <= 0x02) ? 0x1B /* 02 -> ModeEGA  */ : 0x0F);
 }
+
 
 /*********************************************/
 /*           HELPER: LowModeTests            */
@@ -1261,10 +1257,13 @@ static void
 XGI_New_SetCRT1Group(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
                  USHORT ModeNo, USHORT ModeIdIndex)
 {
-  USHORT  StandTableIndex,RefreshRateTableIndex = 0 ;
+    const USHORT StandTableIndex = XGI_GetModePtr(XGI_Pr->XGI_SModeIDTable,
+						  XGI_Pr->XGI_ModeType,
+						  ModeNo, ModeIdIndex);
+    USHORT RefreshRateTableIndex = 0;
 
-  XGI_Pr->XGI_CRT1Mode = ModeNo;
-  StandTableIndex = XGI_New_GetModePtr(XGI_Pr, ModeNo, ModeIdIndex);
+    XGI_Pr->XGI_CRT1Mode = ModeNo;
+
 /*
   if(XGI_Pr->XGI_SetFlag & LowModeTests) {
      if(XGI_Pr->XGI_VBInfo & (SetSimuScanMode | SwitchCRT2)) {

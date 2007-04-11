@@ -927,6 +927,8 @@ Bool Volari_AccelInit(ScreenPtr pScreen) ;
 extern BOOLEAN XGI_SearchModeID(const XGI_StStruct *SModeIDTable, 
     const XGI_ExtStruct *EModeIDTable, unsigned char VGAINFO,
     USHORT *ModeNo, USHORT *ModeIdIndex);
+extern UCHAR XGI_GetModePtr(const XGI_StStruct *SModeIDTable,
+    unsigned ModeType, USHORT ModeNo, USHORT ModeIdIndex);
 
 #ifdef DEBUG
 void XGIDumpRegs(ScrnInfoPtr pScrn);
