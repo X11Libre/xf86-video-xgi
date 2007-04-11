@@ -744,9 +744,6 @@ static void    XGIBuildVesaModeList(ScrnInfoPtr pScrn, vbeInfoPtr pVbe, VbeInfoB
 static UShort  XGICalcVESAModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode);
 static void    XGIVESASaveRestore(ScrnInfoPtr pScrn, vbeSaveRestoreFunction function);
 static void    XGIBridgeRestore(ScrnInfoPtr pScrn);
-static void    XGIWaitVBRetrace(ScrnInfoPtr pScrn);
-void           XGIWaitRetraceCRT1(ScrnInfoPtr pScrn);
-void           XGIWaitRetraceCRT2(ScrnInfoPtr pScrn);
 /* static Bool    InRegion(int x, int y, region r); */
 /* #ifdef XGIMERGED
 static void    XGIMergePointerMoved(int scrnIndex, int x, int y);

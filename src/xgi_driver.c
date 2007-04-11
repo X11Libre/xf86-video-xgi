@@ -418,6 +418,7 @@ static void xgiSaveUnlockExtRegisterLock(XGIPtr pXGI, unsigned char *reg1,
 static void xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1,
     unsigned char reg2);
 
+
 static pointer
 xgiSetup(pointer module, pointer opts, int *errmaj, int *errmin)
 {
@@ -5736,7 +5737,7 @@ XGILeaveVT(int scrnIndex, int flags)
 	 */
 #endif
 	pXGI->CursorInfoPtr->HideCursor(pScrn);
-	XGIWaitVBRetrace(pScrn);
+	XGIWaitRetraceCRT1(pScrn);
     }
 
     XGIBridgeRestore(pScrn);
@@ -5797,7 +5798,7 @@ XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
 #endif
 	    ) {
 	    pXGI->CursorInfoPtr->HideCursor(pScrn);
-	    XGIWaitVBRetrace(pScrn);
+	    XGIWaitRetraceCRT1(pScrn);
 	}
 
         XGIBridgeRestore(pScrn);
@@ -6989,32 +6990,38 @@ XGISearchCRT1Rate(ScrnInfoPtr pScrn, DisplayModePtr mode)
    }
 }
 
+
+/**
+ * Wait for vertical retrace.
+ * 
+ * \bugs
+ * The functions \c XGIWaitRetraceCRT1 and \c vWaitCRT1VerticalRetrace are
+ * nearly identical.  Are both \b really necessary?
+ */
 void
 XGIWaitRetraceCRT1(ScrnInfoPtr pScrn)
 {
-   XGIPtr        pXGI = XGIPTR(pScrn);
-   int           watchdog;
-   unsigned char temp;
+    XGIPtr        pXGI = XGIPTR(pScrn);
+    int           watchdog;
+    unsigned char temp;
 
-   inXGIIDXREG(XGICR,0x17,temp);
-   if(!(temp & 0x80)) return;
+    inXGIIDXREG(XGICR, 0x17, temp);
+    if (!(temp & 0x80)) 
+	return;
 
-   inXGIIDXREG(XGISR,0x1f,temp);
-   if(temp & 0xc0) return;
+    inXGIIDXREG(XGISR, 0x1f, temp);
+    if(temp & 0xc0) 
+	return;
 
-   watchdog = 65536;
-   while((inXGIREG(XGIINPSTAT) & 0x08) && --watchdog);
-   watchdog = 65536;
-   while((!(inXGIREG(XGIINPSTAT) & 0x08)) && --watchdog);
+    watchdog = 65536;
+    while ((inXGIREG(XGIINPSTAT) & IS_BIT_VERT_ACTIVE) && --watchdog)
+	/* empty */ ;
+
+    watchdog = 65536;
+    while ((!(inXGIREG(XGIINPSTAT) & IS_BIT_VERT_ACTIVE)) && --watchdog)
+	/* empty */ ;
 }
 
-static void
-XGIWaitVBRetrace(ScrnInfoPtr pScrn)
-{
-/*   XGIPtr  pXGI = XGIPTR(pScrn);  */
-
-      XGIWaitRetraceCRT1(pScrn);
-}
 
 #define MODEID_OFF 0x449
 

@@ -42,7 +42,7 @@
 #include "xgi_vb.h"
 #include "xgi_dac.h"
 #include "initdef.h"
-extern void    	     XGIWaitRetraceCRT1(ScrnInfoPtr pScrn);
+
 extern unsigned char XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned char value);
 
 static Bool

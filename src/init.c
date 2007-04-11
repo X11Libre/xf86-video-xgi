@@ -1307,12 +1307,6 @@ XGI_New_SetCRT1Group(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
      XGI_ClearBuffer(XGI_Pr,HwInfo,ModeNo);
   }
 #endif
-/*
-  if(!(XGI_Pr->XGI_VBInfo & (SetSimuScanMode | SwitchCRT2 | SetCRT2ToLCDA))) {
-     XGI_WaitRetrace1(XGI_Pr);
-     XGI_New_DisplayOn(XGI_Pr);
-  }
-*/
 }
 
 

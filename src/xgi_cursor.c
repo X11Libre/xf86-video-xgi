@@ -45,8 +45,6 @@
 
 static int currX = 0 , currY = 0 ;
 
-extern void    XGIWaitRetraceCRT1(ScrnInfoPtr pScrn);
-extern void    XGIWaitRetraceCRT2(ScrnInfoPtr pScrn);
 static void XGIG1_SetCursorPosition(ScrnInfoPtr pScrn, int x, int y) ;
 
 #if X_BYTE_ORDER == X_BIG_ENDIAN

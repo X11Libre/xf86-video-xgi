@@ -709,28 +709,27 @@ XG40Mclk(XGIPtr pXGI)
     return(mclk);
 }
 
+
+/**
+ * Wait for vertical retrace.
+ * 
+ * \bugs
+ * The functions \c XGIWaitRetraceCRT1 and \c vWaitCRT1VerticalRetrace are
+ * nearly identical.  Are both \b really necessary?
+ */
 void
 vWaitCRT1VerticalRetrace(ScrnInfoPtr pScrn)
 {
-        XGIPtr  pXGI = XGIPTR(pScrn);
-	CARD8 v ;
-	signed long count = 0x10000 ;
+    XGIPtr  pXGI = XGIPTR(pScrn);
+    int           watchdog;
+    unsigned char temp;
 
-	do {
-		count -- ;
-		if ( count <= 0 )
-		{
-			break ;
-		}
-		v = inXGIREG(XGI_IS1) ;
-	}while(!(v & IS_BIT_VERT_ACTIVE)) ;
 
-	do {
-		count -- ;
-		if ( count <= 0 )
-		{
-			break ;
-		}
-		v = inXGIREG(XGI_IS1) ;
-	}while(v & IS_BIT_VERT_ACTIVE) ;
+    watchdog = 65536;
+    while ((!(inXGIREG(XGI_IS1) & IS_BIT_VERT_ACTIVE)) && --watchdog)
+	/* empty */ ;
+
+    watchdog = 65536;
+    while ((inXGIREG(XGI_IS1) & IS_BIT_VERT_ACTIVE) && --watchdog)
+	/* empty */ ;
 }
