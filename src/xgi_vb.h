@@ -45,6 +45,3 @@ void XGICRT1PreInit(ScrnInfoPtr pScrn);
 void XGICRT2PreInit(ScrnInfoPtr pScrn);
 void XGILCDPreInit(ScrnInfoPtr pScrn);
 void XGITVPreInit(ScrnInfoPtr pScrn);
-
-extern USHORT XGI_SenseLCDDDC(XGI_Private *XGI_Pr, XGIPtr pXGI);
-extern USHORT XGI_SenseVGA2DDC(XGI_Private *XGI_Pr, XGIPtr pXGI);

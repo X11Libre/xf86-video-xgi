@@ -61,8 +61,6 @@ extern   USHORT XGI330_YCSenseData2;
 extern   USHORT XGI330_VideoSenseData2;
 
 void     XGI_GetSenseStatus(PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO pVBInfo);
-static int XGINew_GetPanelID(PVB_DEVICE_INFO pVBInfo);
-static unsigned XGINew_SenseLCD(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO pVBInfo);
 static int XGINew_GetLCDDDCInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension,
     PVB_DEVICE_INFO pVBInfo);
 void XGISetDPMS(PXGI_HW_DEVICE_INFO pXGIHWDE , ULONG VESA_POWER_STATE) ;
@@ -381,9 +379,8 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
     	    } /* end */
             if ( !( tempax & Monitor2Sense ) )
             {
-                if ( XGINew_SenseLCD( HwDeviceExtension, pVBInfo ) )
-                {
-                    tempax |= LCDSense ;
+                if (XGINew_GetLCDDDCInfo(HwDeviceExtension, pVBInfo)) {
+                    tempax |= LCDSense;
                 }
             }
             tempbx = 0 ;
@@ -403,25 +400,6 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
     XGI_DisableBridge( HwDeviceExtension, pVBInfo ) ;		/* shampoo 0226 */
 }
 
-
-
-/**
- * Detect LCD information
- *
- * \bugs
- * It seems like \c XGINew_GetPanelID can never actually be called.
- */
-unsigned
-XGINew_SenseLCD(PXGI_HW_DEVICE_INFO HwDeviceExtension,
-		PVB_DEVICE_INFO pVBInfo)
-{
-    const unsigned temp = ((HwDeviceExtension->jChipType == XG20) 
-			   || (HwDeviceExtension->jChipType >= XG40))
-	? 0 : XGINew_GetPanelID(pVBInfo);
-
-    return (temp != 0) 
-	? temp : XGINew_GetLCDDDCInfo(HwDeviceExtension, pVBInfo);
-}
 
 
 /* --------------------------------------------------------------------- */
@@ -471,60 +449,6 @@ XGINew_GetLCDDDCInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 
     XGINew_SetRegANDOR(pVBInfo->P3d4, 0x36, 0xF0, temp);
     return 1 ;
-}
-
-
-/* --------------------------------------------------------------------- */
-/* Function : */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-int XGINew_GetPanelID(PVB_DEVICE_INFO pVBInfo)
-{
-    static const USHORT PanelTypeTable[16] = {
-	SyncNN | PanelRGB18Bit | Panel800x600  | _PanelType00,
-	SyncNN | PanelRGB18Bit | Panel1024x768 | _PanelType01,
-	SyncNN | PanelRGB18Bit | Panel800x600  | _PanelType02,
-	SyncNN | PanelRGB18Bit | Panel640x480  | _PanelType03,
-	SyncNN | PanelRGB18Bit | Panel1024x768 | _PanelType04,
-	SyncNN | PanelRGB18Bit | Panel1024x768 | _PanelType05,
-	SyncNN | PanelRGB18Bit | Panel1024x768 | _PanelType06,
-	SyncNN | PanelRGB24Bit | Panel1024x768 | _PanelType07,
-	SyncNN | PanelRGB18Bit | Panel800x600  | _PanelType08,
-	SyncNN | PanelRGB18Bit | Panel1024x768 | _PanelType09,
-	SyncNN | PanelRGB18Bit | Panel800x600  | _PanelType0A,
-	SyncNN | PanelRGB18Bit | Panel1024x768 | _PanelType0B,
-	SyncNN | PanelRGB18Bit | Panel1024x768 | _PanelType0C,
-	SyncNN | PanelRGB24Bit | Panel1024x768 | _PanelType0D,
-	SyncNN | PanelRGB18Bit | Panel1024x768 | _PanelType0E,
-	SyncNN | PanelRGB18Bit | Panel1024x768 | _PanelType0F
-    };
-    USHORT tempax, tempbx, temp;
-
-    tempax = XGINew_GetReg1(pVBInfo->P3c4, 0x1A);
-    tempbx = tempax & 0x1E ;
-
-    if (tempax != 0) {
-/*
-        if (!(tempax & 0x10)) {
-            return( 0 ) ;
-        }
-*/
-
-        tempbx = tempbx >> 1;
-        temp = tempbx & 0x00F;
-        XGINew_SetReg1(pVBInfo->P3d4, 0x36, temp);
-        tempbx--;
-        tempbx = PanelTypeTable[tempbx];
-
-        temp = (tempbx & 0xFF00) >> 8;
-        XGINew_SetRegANDOR(pVBInfo->P3d4, 0x37,
-			   ~(LCDSyncBit | LCDRGB18Bit), temp);
-        return 1;
-    }
-
-    return 0;
 }
 
 
