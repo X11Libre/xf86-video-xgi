@@ -1351,6 +1351,38 @@ USHORT XGI_GetResInfo(USHORT ModeNo, USHORT ModeIdIndex,
 }
 
 
+static void
+get_mode_xres_yres(USHORT ModeNo, USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo,
+		   unsigned *width, unsigned *height)
+{
+    const USHORT resindex = XGI_GetResInfo(ModeNo, ModeIdIndex, pVBInfo);
+    unsigned xres;
+    unsigned yres;
+
+
+    if (ModeNo <= 0x13) {
+        xres = pVBInfo->StResInfo[resindex].HTotal;
+        yres = pVBInfo->StResInfo[resindex].VTotal;
+    }
+    else {
+        const unsigned modeflag = 
+	    pVBInfo->EModeIDTable[ModeIdIndex].Ext_ModeFlag;
+
+        xres = pVBInfo->ModeResInfo[resindex].HTotal;
+        yres = pVBInfo->ModeResInfo[resindex].VTotal;
+
+	if (modeflag & HalfDCLK)
+	    xres *= 2;
+
+	if (modeflag & DoubleScanMode)
+	    yres *= 2;
+    }
+
+    *width = xres;
+    *height = yres;
+}
+
+
 /* --------------------------------------------------------------------- */
 /* Function : XGI_SetCRT1Offset */
 /* Input : */
@@ -1880,51 +1912,18 @@ void XGI_SetLCDAGroup( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO 
 
 /**
  * Get LVDS resolution information.
- * 
- * \bugs
- * The code that sets \c modeflag seems terribly wrong.
  */
 void XGI_GetLVDSResInfo(USHORT ModeNo, USHORT ModeIdIndex,
 			PVB_DEVICE_INFO pVBInfo)
 {
-    USHORT xres, yres, modeflag;
-    const USHORT resindex = XGI_GetResInfo(ModeNo, ModeIdIndex, pVBInfo);
-
-    if (ModeNo <= 0x13) {
-        modeflag = pVBInfo->SModeIDTable[ ModeIdIndex ].St_ResInfo ;	/* si+St_ResInfo */
-    }
-    else {
-        modeflag = pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_RESINFO ;	/* si+Ext_ResInfo */
-    }
-
-    /* if ( ModeNo > 0x13 ) */
-    /* modeflag = pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_ModeFlag ; */
-    /* else */
-    /* modeflag = pVBInfo->SModeIDTable[ ModeIdIndex ].St_ModeFlag ; */
+    unsigned xres;
+    unsigned yres;
 
 
-    if (ModeNo <= 0x13) {
-        xres = pVBInfo->StResInfo[ resindex ].HTotal;
-        yres = pVBInfo->StResInfo[ resindex ].VTotal;
-    }
-    else {
-        xres = pVBInfo->ModeResInfo[ resindex ].HTotal;
-        yres = pVBInfo->ModeResInfo[ resindex ].VTotal;
+    get_mode_xres_yres(ModeNo, ModeIdIndex, pVBInfo, & xres, & yres);
 
-        if (modeflag & HalfDCLK)
-            xres <<= 1;
-
-        if (modeflag & DoubleScanMode)
-            yres <<= 1;
-    }
-
-    /* if ( modeflag & Charx8Dot ) */
-    /* { */
-
-    if ( xres == 720 )
-        xres = 640 ;
-
-    /* } */
+    if (xres == 720)
+        xres = 640;
 
     pVBInfo->VGAHDE = xres;
     pVBInfo->HDE = xres;
@@ -3398,91 +3397,60 @@ void XGI_SaveCRT2Info( USHORT ModeNo , PVB_DEVICE_INFO pVBInfo)
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void XGI_GetCRT2ResInfo( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo )
+void XGI_GetCRT2ResInfo(USHORT ModeNo, USHORT ModeIdIndex,
+			PVB_DEVICE_INFO pVBInfo)
 {
-    USHORT xres,
-           yres,
-           modeflag;
-    const USHORT resindex = XGI_GetResInfo(ModeNo, ModeIdIndex, pVBInfo);
+    unsigned xres;
+    unsigned yres;
 
 
-    if (ModeNo <= 0x13) {
-        xres = pVBInfo->StResInfo[ resindex ].HTotal;
-        yres = pVBInfo->StResInfo[ resindex ].VTotal;
-	/* modeflag = pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag; si+St_ResInfo */
-    }
-    else {
-        xres = pVBInfo->ModeResInfo[ resindex ].HTotal;
-        yres = pVBInfo->ModeResInfo[ resindex ].VTotal;
-        modeflag = pVBInfo->EModeIDTable[ ModeIdIndex].Ext_ModeFlag;
+    get_mode_xres_yres(ModeNo, ModeIdIndex, pVBInfo, & xres, & yres);
 
-/*        if ( pVBInfo->IF_DEF_FSTN )
-        {
-            xres *= 2 ;
-            yres *= 2 ;
-        }
-        else
-        {
-*/
-            if ( modeflag & HalfDCLK )
-                xres *= 2;
+    if ((pVBInfo->VBInfo & SetCRT2ToLCD) 
+	&& !(pVBInfo->LCDInfo & (EnableScalingLCD | LCDNonExpanding))) {
+	switch (pVBInfo->LCDResInfo) {
+	case Panel1600x1200:
+	    if (!(pVBInfo->LCDInfo & LCDVESATiming) && (yres == 1024)) {
+		yres = 1056;
+	    }
+	    break;
 
-            if ( modeflag & DoubleScanMode )
-                yres *= 2 ;
-/* } */
-    }
 
-    if ( ( pVBInfo->VBInfo & SetCRT2ToLCD ) && !( pVBInfo->LCDInfo & ( EnableScalingLCD + LCDNonExpanding ) ) )
-    {
-        {
-            if ( pVBInfo->LCDResInfo == Panel1600x1200 )
-            {
-                if ( !( pVBInfo->LCDInfo & LCDVESATiming ) )
-                {
-                    if ( yres == 1024 )
-                        yres = 1056 ;
-	        }
-            }
+	case Panel1280x1024:
+	    if (yres == 400)
+		yres = 405;
+	    else if (yres == 350)
+		yres = 360;
+	    else if ((pVBInfo->LCDInfo & LCDVESATiming) && (yres == 360)) {
+		yres = 375;
+	    }
+	    break;
 
-            if ( pVBInfo->LCDResInfo == Panel1280x1024 )
-            {
-	        if ( yres == 400 )
-	            yres = 405 ;
-	        else if ( yres == 350 )
-	            yres = 360 ;
+	    
+	case Panel1024x768:
+	    if (! (pVBInfo->LCDInfo & (LCDVESATiming | LCDNonExpanding))) {
+		if (yres == 350) {
+		    yres = 357;
+		}
+		else if (yres == 400) {
+		    yres = 420;
+		}
+		else if (yres == 480) {
+		    yres = 525;
+		}
+	    }
 
-	        if ( pVBInfo->LCDInfo & LCDVESATiming )
-	        {
-	            if ( yres == 360 )
-	                yres = 375 ;
-	        }
-            }
+	    break;
+	}
 
-            if ( pVBInfo->LCDResInfo == Panel1024x768 )
-            {
-	        if ( !( pVBInfo->LCDInfo & LCDVESATiming ) )
-	        {
-	            if ( !( pVBInfo->LCDInfo & LCDNonExpanding ) )
-	            {
-	                if ( yres == 350 )
-	                    yres = 357 ;
-	                else if ( yres == 400 )
-	                    yres = 420 ;
-	                else if ( yres == 480 )
-	                    yres = 525 ;
-	            }
-                }
-            }
-        }
-
-        if ( xres == 720 )
-            xres = 640 ;
+	if (xres == 720)
+            xres = 640;
     }
 
-    pVBInfo->VGAHDE = xres ;
-    pVBInfo->HDE = xres ;
-    pVBInfo->VGAVDE = yres ;
-    pVBInfo->VDE = yres ;
+    pVBInfo->VGAHDE = xres;
+    pVBInfo->HDE = xres;
+    pVBInfo->VGAVDE = yres;
+    pVBInfo->VDE = yres;
 }
 
 
