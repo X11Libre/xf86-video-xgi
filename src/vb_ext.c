@@ -125,6 +125,7 @@ BOOLEAN XGINew_Sense(  USHORT tempbx , USHORT tempcx, PVB_DEVICE_INFO pVBInfo )
 VOID XGISetDPMS( PXGI_HW_DEVICE_INFO pXGIHWDE , ULONG VESA_POWER_STATE )
 {
     USHORT ModeNo, ModeIdIndex ;
+    USHORT temp_mode_no;
     UCHAR  temp ;
     VB_DEVICE_INFO VBINF;
     PVB_DEVICE_INFO pVBInfo = &VBINF;
@@ -168,7 +169,11 @@ VOID XGISetDPMS( PXGI_HW_DEVICE_INFO pXGIHWDE , ULONG VESA_POWER_STATE )
         XGINew_SetReg1( pVBInfo->P3c4 , 0x05 , 0x86 ) ;	/* 1.Openkey */
         XGI_UnLockCRT2( pXGIHWDE , pVBInfo) ;
         ModeNo = XGINew_GetReg1( pVBInfo->P3d4 , 0x34 ) ;
-        XGI_SearchModeID( ModeNo , &ModeIdIndex, pVBInfo ) ;
+
+	temp_mode_no = ModeNo;
+	XGI_SearchModeID(pVBInfo->SModeIDTable, pVBInfo->EModeIDTable, 0x11,
+			 &temp_mode_no, &ModeIdIndex);
+
         XGI_GetVGAType( pXGIHWDE , pVBInfo ) ;
         XGI_GetVBType( pVBInfo ) ;
         XGI_GetVBInfo( ModeNo , ModeIdIndex , pXGIHWDE, pVBInfo ) ;
@@ -255,11 +260,17 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
                 P2reg0 = XGINew_GetReg1( pVBInfo->Part2Port , 0x00 ) ;
                 if ( !XGINew_BridgeIsEnable( HwDeviceExtension, pVBInfo ) )
                 {
+		    USHORT temp_mode_no;
+
                     SenseModeNo = 0x2e ;
                     /* XGINew_SetReg1( pVBInfo->P3d4 , 0x30 , 0x41 ) ; */
                     /* XGISetModeNew( HwDeviceExtension , 0x2e ) ; // ynlai InitMode */
 
-                    temp = XGI_SearchModeID( SenseModeNo , &ModeIdIndex, pVBInfo ) ;
+		    temp_mode_no = SenseModeNo;
+		    XGI_SearchModeID(pVBInfo->SModeIDTable,
+				     pVBInfo->EModeIDTable, 0x11,
+				     &temp_mode_no, &ModeIdIndex);
+
                     XGI_GetVGAType( HwDeviceExtension , pVBInfo) ;
                     XGI_GetVBType( pVBInfo ) ;
                     pVBInfo->SetFlag = 0x00 ;
