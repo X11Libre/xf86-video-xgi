@@ -102,7 +102,7 @@ void 	 SetDualChipRegs(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO pVBInfo);
 void     XGI_DisplayOn(PVB_DEVICE_INFO pVBInfo);
 void     XGI_DisplayOff( PVB_DEVICE_INFO pVBInfo );
 void     XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension,USHORT ModeNo,USHORT ModeIdIndex,PVB_DEVICE_INFO pVBInfo);
-void     XGI_WaitDisply(PVB_DEVICE_INFO pVBInfo);
+static void XGI_WaitDisplay(PVB_DEVICE_INFO pVBInfo);
 void     XGI_SenseCRT1(PVB_DEVICE_INFO pVBInfo);
 void     XGI_SetSeqRegs(USHORT ModeNo,USHORT StandTableIndex,USHORT ModeIdIndex,PVB_DEVICE_INFO pVBInfo);
 void     XGI_SetMiscRegs(USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo);
@@ -3150,20 +3150,22 @@ void XGI_DisplayOff( PVB_DEVICE_INFO pVBInfo )
 }
 
 
-/* --------------------------------------------------------------------- */
-/* Function : XGI_WaitDisply */
-/* Input : */
-/* Output : */
-/* Description : chiawen for sensecrt1 */
-/* --------------------------------------------------------------------- */
-void XGI_WaitDisply( PVB_DEVICE_INFO pVBInfo )
+/**
+ * Wait for vertical refresh (?)
+ *
+ * \bugs
+ * This function seems very similar to \c XGIWaitRetraceCRT1 and
+ * \c vWaitCRT1VerticalRetrace.  Is some sort of refactoring possible?
+ */
+void XGI_WaitDisplay(PVB_DEVICE_INFO pVBInfo)
 {
-    while( ( XGINew_GetReg2( pVBInfo->P3da ) & 0x01 ) )
-        break ;
+    while ((XGINew_GetReg2(pVBInfo->P3da) & 0x01))
+        break;
 
-    while( !( XGINew_GetReg2( pVBInfo->P3da ) & 0x01 ) )
-        break ;
+    while (!(XGINew_GetReg2(pVBInfo->P3da) & 0x01))
+        break;
 }
+
 
 /* --------------------------------------------------------------------- */
 /* Function : XGI_SenseCRT1 */
@@ -3246,7 +3248,7 @@ void XGI_SenseCRT1( PVB_DEVICE_INFO pVBInfo )
     XGI_VBLongWait( pVBInfo ) ;
 
     XGINew_LCD_Wait_Time( 0x01 , pVBInfo ) ;
-    XGI_WaitDisply( pVBInfo ) ;
+    XGI_WaitDisplay(pVBInfo);
 
     temp = XGINew_GetReg2( pVBInfo->P3c2 ) ;
     if ( temp & 0x10 )
@@ -3275,23 +3277,6 @@ void XGI_SenseCRT1( PVB_DEVICE_INFO pVBInfo )
     /* [2004/05/11] Vicent */
     XGINew_SetReg1( pVBInfo->P3d4 , 0x53 , ( UCHAR )( XGINew_GetReg1( pVBInfo->P3d4 , 0x53 ) & 0xFD ) ) ;
 }
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGI_WaitDisplay */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGI_WaitDisplay( PVB_DEVICE_INFO pVBInfo )
-{
-    while( !( XGINew_GetReg2( pVBInfo->P3da ) & 0x01 ) ) ;
-
-    while( XGINew_GetReg2( pVBInfo->P3da ) & 0x01 ) ;
-}
-
-
-
 
 
 /* --------------------------------------------------------------------- */

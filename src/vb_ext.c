@@ -73,8 +73,6 @@ BOOLEAN  XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_IN
 	Dynamic Sense
 *************************************************************/
 
-void XGI_WaitDisplay(void);
-
 
 /**
  * Determine if the CRTC is a 301B.
