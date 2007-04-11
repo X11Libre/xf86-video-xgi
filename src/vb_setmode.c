@@ -152,8 +152,6 @@ void     XGI_SetYFilter(USHORT ModeNo,USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInf
 void     XGI_GetTVPtrIndex2(USHORT* tempbx,UCHAR* tempcl,UCHAR* tempch, PVB_DEVICE_INFO pVBInfo);
 USHORT   XGI_GetTVPtrIndex(  PVB_DEVICE_INFO pVBInfo );
 void     XGI_SetCRT2ModeRegs(USHORT ModeNo,PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO pVBInfo );
-void     XGI_CloseCRTC(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO pVBInfo);
-void     XGI_OpenCRTC(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO pVBInfo);
 void     XGI_GetRAMDAC2DATA(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo);
 void     XGI_UnLockCRT2(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO pVBInfo);
 void     XGI_LockCRT2(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO pVBInfo);
@@ -454,7 +452,6 @@ PDEBUG(ErrorF("XGI_GetLCDInfo \n"));
 PDEBUG(ErrorF("XGI_DisableBridge \n"));    
     XGI_DisableBridge( HwDeviceExtension,pVBInfo ) ;
     
-/*    XGI_OpenCRTC( HwDeviceExtension, pVBInfo ) ; */
 
     if ( pVBInfo->VBInfo & ( SetSimuScanMode | SetCRT2ToLCDA ) )
     {
@@ -498,7 +495,6 @@ PDEBUG(ErrorF("XGI_DisableBridge \n"));
 ErrorF("492 Part2 0 = %x ", XGINew_GetReg1( pVBInfo->Part2Port , 0x0 ));
     XGI_SetCRT2ModeRegs( ModeNo, HwDeviceExtension,pVBInfo ) ;
     XGI_OEM310Setting( ModeNo, ModeIdIndex,pVBInfo ) ; /*0212*/
-    XGI_CloseCRTC( HwDeviceExtension, pVBInfo ) ;
     XGI_EnableBridge( HwDeviceExtension ,pVBInfo) ;
 ErrorF("497 Part2 0 = %x ", XGINew_GetReg1( pVBInfo->Part2Port , 0x0 ));
     }	/* !XG20 */
@@ -8131,46 +8127,6 @@ void XGI_SetCRT2ModeRegs(USHORT ModeNo,PXGI_HW_DEVICE_INFO HwDeviceExtension, PV
             XGINew_SetRegOR( pVBInfo->Part4Port , 0x34 , 0x10 ) ;
         }
     }
-}
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGI_CloseCRTC */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGI_CloseCRTC( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo )
-{
-    USHORT tempbx ;
-#ifndef LINUX_XF86
-    USHORT temp ;
-#endif
-    tempbx = 0 ;
-
-    if ( pVBInfo->VBInfo & SetCRT2ToLCDA )
-        tempbx = 0x08A0 ;
-
-
-}
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGI_OpenCRTC */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGI_OpenCRTC( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo )
-{
-    USHORT tempbx ;
-#ifndef LINUX_XF86
-    USHORT temp ;
-#endif
-
-    tempbx = 0 ;
-
-
 }
 
 
