@@ -44,8 +44,6 @@
 #define MASK_OUTPUTSTATE_CRT2LCD 0x02
 #endif
 
-
-
 #include "vb_def.h"
 #include "vgatypes.h"
 #include "vb_struct.h"
@@ -53,12 +51,6 @@
 #include "vb_setmode.h"
 #include "vb_ext.h"
 #include "vb_init.h"
-
-extern   UCHAR XGI330_SoftSetting;
-extern   UCHAR XGI330_OutputSelect;
-extern   USHORT XGI330_RGBSenseData2;
-extern   USHORT XGI330_YCSenseData2;
-extern   USHORT XGI330_VideoSenseData2;
 
 void     XGI_GetSenseStatus(PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO pVBInfo);
 static int XGINew_GetLCDDDCInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension,
