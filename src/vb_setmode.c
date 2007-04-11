@@ -71,7 +71,8 @@ BOOLEAN  XGISetModeNew( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo ) 
 BOOLEAN  XGI_BridgeIsOn(PVB_DEVICE_INFO pVBInfo);
 USHORT   XGI_GetOffset(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTableIndex,PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO pVBInfo);
 USHORT   XGI_GetRatePtrCRT2( USHORT ModeNo,USHORT ModeIdIndex,PVB_DEVICE_INFO pVBInfo );
-USHORT   XGI_GetResInfo(USHORT ModeNo,USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
+static USHORT XGI_GetResInfo(USHORT ModeNo, USHORT ModeIdIndex,
+    PVB_DEVICE_INFO pVBInfo);
 USHORT   XGI_GetColorDepth(USHORT ModeNo,USHORT ModeIdIndex,PVB_DEVICE_INFO pVBInfo);
 USHORT   XGI_GetVGAHT2(PVB_DEVICE_INFO pVBInfo);
 USHORT   XGI_GetVCLK2Ptr(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTableIndex,PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO pVBInfo);
@@ -1260,28 +1261,24 @@ void XGI_SetCRT1Timing_V( USHORT ModeIdIndex , USHORT ModeNo,PVB_DEVICE_INFO pVB
 /* --------------------------------------------------------------------- */
 void XGI_SetCRT1DE( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo,USHORT ModeIdIndex , USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo )
 {
-    USHORT resindex ,
-           tempax ,
+    USHORT tempax ,
            tempbx ,
            tempcx ,
            temp ,
            modeflag ;
-
     UCHAR data ;
+    const USHORT resindex = XGI_GetResInfo(ModeNo, ModeIdIndex, pVBInfo);
 
-    resindex = XGI_GetResInfo( ModeNo , ModeIdIndex, pVBInfo ) ;
 
-    if ( ModeNo <= 0x13 )
-    {
-        modeflag = pVBInfo->SModeIDTable[ ModeIdIndex ].St_ModeFlag ;
-        tempax = pVBInfo->StResInfo[ resindex ].HTotal ;
-        tempbx = pVBInfo->StResInfo[ resindex ].VTotal ;
+    if (ModeNo <= 0x13) {
+        modeflag = pVBInfo->SModeIDTable[ ModeIdIndex ].St_ModeFlag;
+        tempax = pVBInfo->StResInfo[ resindex ].HTotal;
+        tempbx = pVBInfo->StResInfo[ resindex ].VTotal;
     }
-    else
-    {
-        modeflag = pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_ModeFlag ;
-        tempax = pVBInfo->ModeResInfo[ resindex ].HTotal ;
-        tempbx = pVBInfo->ModeResInfo[ resindex ].VTotal ;
+    else {
+        modeflag = pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_ModeFlag;
+        tempax = pVBInfo->ModeResInfo[ resindex ].HTotal;
+        tempbx = pVBInfo->ModeResInfo[ resindex ].VTotal;
     }
 
     if ( modeflag & HalfDCLK )
@@ -1345,19 +1342,12 @@ void XGI_SetCRT1DE( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo,USHORT
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-USHORT 	XGI_GetResInfo(USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo )
+USHORT XGI_GetResInfo(USHORT ModeNo, USHORT ModeIdIndex,
+		      PVB_DEVICE_INFO pVBInfo)
 {
-    USHORT resindex ;
-
-    if ( ModeNo <= 0x13 )
-    {
-        resindex = pVBInfo->SModeIDTable[ ModeIdIndex ].St_ResInfo ; 	/* si+St_ResInfo */
-    }
-    else
-    {
-        resindex = pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_RESINFO ;	/* si+Ext_ResInfo */
-    }
-    return( resindex ) ;
+    return (ModeNo <= 0x13)
+        ? pVBInfo->SModeIDTable[ModeIdIndex].St_ResInfo
+	: pVBInfo->EModeIDTable[ModeIdIndex].Ext_RESINFO;
 }
 
 
@@ -1888,60 +1878,46 @@ void XGI_SetLCDAGroup( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO 
 }
 
 
-/* --------------------------------------------------------------------- */
-/* Function : XGI_GetLVDSResInfo */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGI_GetLVDSResInfo( USHORT ModeNo , USHORT ModeIdIndex,PVB_DEVICE_INFO  pVBInfo )
+/**
+ * Get LVDS resolution information.
+ * 
+ * \bugs
+ * The code that sets \c modeflag seems terribly wrong.
+ */
+void XGI_GetLVDSResInfo(USHORT ModeNo, USHORT ModeIdIndex,
+			PVB_DEVICE_INFO pVBInfo)
 {
-    USHORT resindex , xres , yres , modeflag ;
+    USHORT xres, yres, modeflag;
+    const USHORT resindex = XGI_GetResInfo(ModeNo, ModeIdIndex, pVBInfo);
 
-    if ( ModeNo <= 0x13 )
-    {
+    if (ModeNo <= 0x13) {
         modeflag = pVBInfo->SModeIDTable[ ModeIdIndex ].St_ResInfo ;	/* si+St_ResInfo */
     }
-    else
-    {
+    else {
         modeflag = pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_RESINFO ;	/* si+Ext_ResInfo */
     }
-
 
     /* if ( ModeNo > 0x13 ) */
     /* modeflag = pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_ModeFlag ; */
     /* else */
     /* modeflag = pVBInfo->SModeIDTable[ ModeIdIndex ].St_ModeFlag ; */
 
-    if ( ModeNo <= 0x13 )
-    {
-        resindex = pVBInfo->SModeIDTable[ ModeIdIndex ].St_ResInfo ;	/* si+St_ResInfo */
+
+    if (ModeNo <= 0x13) {
+        xres = pVBInfo->StResInfo[ resindex ].HTotal;
+        yres = pVBInfo->StResInfo[ resindex ].VTotal;
     }
-    else
-    {
-        resindex = pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_RESINFO ;	/* si+Ext_ResInfo */
+    else {
+        xres = pVBInfo->ModeResInfo[ resindex ].HTotal;
+        yres = pVBInfo->ModeResInfo[ resindex ].VTotal;
+
+        if (modeflag & HalfDCLK)
+            xres <<= 1;
+
+        if (modeflag & DoubleScanMode)
+            yres <<= 1;
     }
 
-    /* resindex = XGI_GetResInfo( ModeNo , ModeIdIndex, pVBInfo ) ; */
-
-    if ( ModeNo <= 0x13 )
-    {
-        xres = pVBInfo->StResInfo[ resindex ].HTotal ;
-        yres = pVBInfo->StResInfo[ resindex ].VTotal ;
-    }
-    else
-    {
-        xres = pVBInfo->ModeResInfo[ resindex ].HTotal ;
-        yres = pVBInfo->ModeResInfo[ resindex ].VTotal ;
-    }
-    if ( ModeNo > 0x13 )
-    {
-        if ( modeflag & HalfDCLK )
-            xres = xres << 1 ;
-
-        if ( modeflag & DoubleScanMode )
-            yres = yres << 1 ;
-    }
     /* if ( modeflag & Charx8Dot ) */
     /* { */
 
@@ -1949,10 +1925,11 @@ void XGI_GetLVDSResInfo( USHORT ModeNo , USHORT ModeIdIndex,PVB_DEVICE_INFO  pVB
         xres = 640 ;
 
     /* } */
-    pVBInfo->VGAHDE = xres ;
-    pVBInfo->HDE = xres ;
-    pVBInfo->VGAVDE = yres ;
-    pVBInfo->VDE = yres ;
+
+    pVBInfo->VGAHDE = xres;
+    pVBInfo->HDE = xres;
+    pVBInfo->VGAVDE = yres;
+    pVBInfo->VDE = yres;
 }
 
 
@@ -3423,23 +3400,21 @@ void XGI_SaveCRT2Info( USHORT ModeNo , PVB_DEVICE_INFO pVBInfo)
 /* --------------------------------------------------------------------- */
 void XGI_GetCRT2ResInfo( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo )
 {
-    USHORT xres ,
-           yres ,
-           modeflag ,
-           resindex ;
+    USHORT xres,
+           yres,
+           modeflag;
+    const USHORT resindex = XGI_GetResInfo(ModeNo, ModeIdIndex, pVBInfo);
 
-    resindex = XGI_GetResInfo( ModeNo , ModeIdIndex, pVBInfo) ;
-    if ( ModeNo <= 0x13 )
-    {
-        xres = pVBInfo->StResInfo[ resindex ].HTotal ;
-        yres = pVBInfo->StResInfo[ resindex ].VTotal ;
-     /* modeflag = pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag; si+St_ResInfo */
+
+    if (ModeNo <= 0x13) {
+        xres = pVBInfo->StResInfo[ resindex ].HTotal;
+        yres = pVBInfo->StResInfo[ resindex ].VTotal;
+	/* modeflag = pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag; si+St_ResInfo */
     }
-    else
-    {
-        xres = pVBInfo->ModeResInfo[ resindex ].HTotal ;			/* xres->ax */
-        yres = pVBInfo->ModeResInfo[ resindex ].VTotal ;			/* yres->bx */
-        modeflag = pVBInfo->EModeIDTable[ ModeIdIndex].Ext_ModeFlag ;		/* si+St_ModeFlag */
+    else {
+        xres = pVBInfo->ModeResInfo[ resindex ].HTotal;
+        yres = pVBInfo->ModeResInfo[ resindex ].VTotal;
+        modeflag = pVBInfo->EModeIDTable[ ModeIdIndex].Ext_ModeFlag;
 
 /*        if ( pVBInfo->IF_DEF_FSTN )
         {
