@@ -52,13 +52,19 @@
 #include "vb_ext.h"
 #include "vb_init.h"
 
-void     XGI_GetSenseStatus(PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO pVBInfo);
 static int XGINew_GetLCDDDCInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension,
     PVB_DEVICE_INFO pVBInfo);
-void XGISetDPMS(PXGI_HW_DEVICE_INFO pXGIHWDE , ULONG VESA_POWER_STATE) ;
-BOOLEAN  XGINew_BridgeIsEnable(PXGI_HW_DEVICE_INFO,PVB_DEVICE_INFO pVBInfo);
-BOOLEAN  XGINew_Sense(USHORT tempbx,USHORT tempcx, PVB_DEVICE_INFO pVBInfo);
-BOOLEAN  XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO pVBInfo ) ;
+
+static void XGISetDPMS(PXGI_HW_DEVICE_INFO pXGIHWDE, ULONG VESA_POWER_STATE);
+
+static BOOLEAN XGINew_BridgeIsEnable(PXGI_HW_DEVICE_INFO,
+    PVB_DEVICE_INFO pVBInfo);
+
+static BOOLEAN XGINew_Sense(USHORT tempbx, USHORT tempcx,
+			    PVB_DEVICE_INFO pVBInfo);
+
+static BOOLEAN XGINew_SenseHiTV(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+				PVB_DEVICE_INFO pVBInfo);
 
 /**************************************************************
 	Dynamic Sense

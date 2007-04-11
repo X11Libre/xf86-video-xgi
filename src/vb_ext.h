@@ -27,7 +27,7 @@
 #ifndef  _VBEXT_
 #define  _VBEXT_
 
-extern   void     XGISetDPMS( PXGI_HW_DEVICE_INFO pXGIHWDE , ULONG VESA_POWER_STATE ) ;
-extern   void     XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO pVBInfo );
+extern void XGI_GetSenseStatus(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+    PVB_DEVICE_INFO pVBInfo);
 
 #endif
