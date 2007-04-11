@@ -55,8 +55,6 @@
 static int XGINew_GetLCDDDCInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension,
     PVB_DEVICE_INFO pVBInfo);
 
-static void XGISetDPMS(PXGI_HW_DEVICE_INFO pXGIHWDE, ULONG VESA_POWER_STATE);
-
 static BOOLEAN XGINew_BridgeIsEnable(PXGI_HW_DEVICE_INFO,
     PVB_DEVICE_INFO pVBInfo);
 
@@ -109,121 +107,6 @@ BOOLEAN XGINew_Sense(  USHORT tempbx , USHORT tempcx, PVB_DEVICE_INFO pVBInfo )
     else
         return( 0 ) ;
 }
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGISetDPMS */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-VOID XGISetDPMS( PXGI_HW_DEVICE_INFO pXGIHWDE , ULONG VESA_POWER_STATE )
-{
-    USHORT ModeNo, ModeIdIndex ;
-    USHORT temp_mode_no;
-    UCHAR  temp ;
-    VB_DEVICE_INFO VBINF;
-    PVB_DEVICE_INFO pVBInfo = &VBINF;
-    pVBInfo->BaseAddr = ( USHORT )pXGIHWDE->pjIOAddress ;
-    pVBInfo->ROMAddr  = pXGIHWDE->pjVirtualRomBase ;
-
-    if ( ( pXGIHWDE->ujVBChipID == VB_CHIP_301 ) || ( pXGIHWDE->ujVBChipID == VB_CHIP_302 ) )
-    {
-        pVBInfo->IF_DEF_HiVision = 1 ;
-        pVBInfo->IF_DEF_LCDA = 1 ;
-        pVBInfo->IF_DEF_YPbPr = 1 ;
-        pVBInfo->IF_DEF_CRT2Monitor = 0 ;
-        pVBInfo->IF_DEF_VideoCapture = 0 ;
-        pVBInfo->IF_DEF_ScaleLCD = 0 ;
-        pVBInfo->IF_DEF_OEMUtil = 0 ;
-        pVBInfo->IF_DEF_PWD = 0 ;
-
-        InitTo330Pointer( pXGIHWDE->jChipType,  pVBInfo ) ;
-   	ReadVBIOSTablData( pXGIHWDE->jChipType , pVBInfo) ;
-
-        pVBInfo->P3c4 = pVBInfo->BaseAddr + 0x14 ;
-        pVBInfo->P3d4 = pVBInfo->BaseAddr + 0x24 ;
-        pVBInfo->P3c0 = pVBInfo->BaseAddr + 0x10 ;
-        pVBInfo->P3ce = pVBInfo->BaseAddr + 0x1e ;
-        pVBInfo->P3c2 = pVBInfo->BaseAddr + 0x12 ;
-        pVBInfo->P3ca = pVBInfo->BaseAddr + 0x1a ;
-        pVBInfo->P3c6 = pVBInfo->BaseAddr + 0x16 ;
-        pVBInfo->P3c7 = pVBInfo->BaseAddr + 0x17 ;
-        pVBInfo->P3c8 = pVBInfo->BaseAddr + 0x18 ;
-        pVBInfo->P3c9 = pVBInfo->BaseAddr + 0x19 ;
-        pVBInfo->P3da = pVBInfo->BaseAddr + 0x2A ;
-        pVBInfo->Part0Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_00 ;
-        pVBInfo->Part1Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_04 ;
-        pVBInfo->Part2Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_10 ;
-        pVBInfo->Part3Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_12 ;
-        pVBInfo->Part4Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_14 ;
-        pVBInfo->Part5Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_14 + 2 ;
-
-        XGINew_SetModeScratch ( pXGIHWDE , pVBInfo ) ;
-
-        XGINew_SetReg1( pVBInfo->P3c4 , 0x05 , 0x86 ) ;	/* 1.Openkey */
-        XGI_UnLockCRT2( pXGIHWDE , pVBInfo) ;
-        ModeNo = XGINew_GetReg1( pVBInfo->P3d4 , 0x34 ) ;
-
-	temp_mode_no = ModeNo;
-	XGI_SearchModeID(pVBInfo->SModeIDTable, pVBInfo->EModeIDTable, 0x11,
-			 &temp_mode_no, &ModeIdIndex);
-
-        XGI_GetVGAType( pXGIHWDE , pVBInfo ) ;
-        XGI_GetVBType( pVBInfo ) ;
-        XGI_GetVBInfo( ModeNo , ModeIdIndex , pXGIHWDE, pVBInfo ) ;
-        XGI_GetTVInfo( ModeNo , ModeIdIndex, pVBInfo ) ;
-        XGI_GetLCDInfo( ModeNo , ModeIdIndex, pVBInfo ) ;
-    }
-
-    if ( VESA_POWER_STATE == 0x00000400 )
-      XGINew_SetReg1( pVBInfo->Part4Port , 0x31 , ( UCHAR )( XGINew_GetReg1( pVBInfo->Part4Port , 0x31 ) & 0xFE ) ) ;
-    else
-      XGINew_SetReg1( pVBInfo->Part4Port , 0x31 , ( UCHAR )( XGINew_GetReg1( pVBInfo->Part4Port , 0x31 ) | 0x01 ) ) ;
-
-    temp = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x1f ) ;
-    temp &= 0x3f ;
-    switch ( VESA_POWER_STATE )
-    {
-        case 0x00000000:
-            if ( ( pXGIHWDE->ujVBChipID == VB_CHIP_301 ) || ( pXGIHWDE->ujVBChipID == VB_CHIP_302 ) )
-            {
-                XGINew_SetReg1( pVBInfo->P3c4 , 0x1f , ( UCHAR )( temp | 0x00 ) ) ;
-                XGI_EnableBridge( pXGIHWDE, pVBInfo ) ;
-            }
-            else
-            {
-                temp =  ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x01 ) ;
-                temp &= 0xbf ;
-                XGINew_SetReg1( pVBInfo->P3c4 , 0x1f , temp | 0x00 ) ;
-            }
-            break ;
-        case 0x00000100:
-            XGINew_SetReg1( pVBInfo->P3c4 , 0x1f , ( UCHAR )( temp | 0x40 ) ) ;
-            break ;
-        case 0x00000200:
-            XGINew_SetReg1( pVBInfo->P3c4 , 0x1f , ( UCHAR )( temp | 0x80 ) ) ;
-            break ;
-        case 0x00000400:
-            if ( (pXGIHWDE->ujVBChipID == VB_CHIP_301 ) || ( pXGIHWDE->ujVBChipID == VB_CHIP_302 ) )
-            {
-                XGINew_SetReg1( pVBInfo->P3c4 , 0x1f , ( UCHAR )( temp | 0xc0 ) ) ;
-                XGI_DisableBridge( pXGIHWDE, pVBInfo ) ;
-            }
-            else
-            {
-                temp = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x01 ) ;
-                temp &= 0xbf ;
-                XGINew_SetReg1( pVBInfo->P3c4 , 0x1f , temp | 0x20 ) ;
-            }
-            break ;
-
-        default:
-            break ;
-    }
-    XGI_LockCRT2( pXGIHWDE , pVBInfo ) ;
-}
-
 
 
 /* --------------------------------------------------------------------- */
