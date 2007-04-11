@@ -62,8 +62,9 @@ extern   USHORT XGI330_VideoSenseData2;
 
 void     XGI_GetSenseStatus(PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO pVBInfo);
 static int XGINew_GetPanelID(PVB_DEVICE_INFO pVBInfo);
-USHORT   XGINew_SenseLCD(PXGI_HW_DEVICE_INFO,PVB_DEVICE_INFO pVBInfo);
-BOOLEAN  XGINew_GetLCDDDCInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO pVBInfo);
+static unsigned XGINew_SenseLCD(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO pVBInfo);
+static int XGINew_GetLCDDDCInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+    PVB_DEVICE_INFO pVBInfo);
 void XGISetDPMS(PXGI_HW_DEVICE_INFO pXGIHWDE , ULONG VESA_POWER_STATE) ;
 BOOLEAN  XGINew_BridgeIsEnable(PXGI_HW_DEVICE_INFO,PVB_DEVICE_INFO pVBInfo);
 BOOLEAN  XGINew_Sense(USHORT tempbx,USHORT tempcx, PVB_DEVICE_INFO pVBInfo);
@@ -404,26 +405,22 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
 
 
 
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_SenseLCD */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-USHORT XGINew_SenseLCD( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo)
+/**
+ * Detect LCD information
+ *
+ * \bugs
+ * It seems like \c XGINew_GetPanelID can never actually be called.
+ */
+unsigned
+XGINew_SenseLCD(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+		PVB_DEVICE_INFO pVBInfo)
 {
-    /* USHORT SoftSetting ; */
-    USHORT temp ;
+    const unsigned temp = ((HwDeviceExtension->jChipType == XG20) 
+			   || (HwDeviceExtension->jChipType >= XG40))
+	? 0 : XGINew_GetPanelID(pVBInfo);
 
-    if ( ( HwDeviceExtension->jChipType==XG20 ) || ( HwDeviceExtension->jChipType >= XG40 ) )
-        temp = 0 ;
-    else
-        temp=XGINew_GetPanelID(pVBInfo) ;
-
-    if( !temp )
-        temp = XGINew_GetLCDDDCInfo( HwDeviceExtension, pVBInfo ) ;
-
-    return( temp ) ;
+    return (temp != 0) 
+	? temp : XGINew_GetLCDDDCInfo(HwDeviceExtension, pVBInfo);
 }
 
 
@@ -433,54 +430,47 @@ USHORT XGINew_SenseLCD( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO p
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-BOOLEAN XGINew_GetLCDDDCInfo( PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO pVBInfo)
+int
+XGINew_GetLCDDDCInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+		     PVB_DEVICE_INFO pVBInfo)
 {
-    USHORT  i, temp ;
-    UCHAR   ucData ;
-    ULONG   ulBufferSize = 256, ulPixelClock ;
-    UCHAR   pjEDIDBuf[256] ;
-    PUCHAR  pEDIDBuf ;
+    unsigned temp = HwDeviceExtension->ulCRT2LCDType;
 
+    switch (HwDeviceExtension->ulCRT2LCDType) {
     /* add lcd sense */
-    if ( HwDeviceExtension->ulCRT2LCDType == LCD_UNKNOWN )
-    {
-        return( 0 ) ;
+    case LCD_UNKNOWN:
+	return 0;
+
+    case LCD_INVALID:
+    case LCD_800x600:
+    case LCD_1024x768:
+    case LCD_1280x1024:
+	break;
+
+    case LCD_640x480:
+    case LCD_1024x600:
+    case LCD_1152x864:
+    case LCD_1280x960:
+    case LCD_1152x768:
+	temp = 0;
+	break;
+
+    case LCD_1400x1050:
+    case LCD_1280x768:
+    case LCD_1600x1200:
+	break;
+
+    case LCD_1920x1440:
+    case LCD_2048x1536:
+	temp = 0;
+	break;
+
+    default:
+	break;
     }
-    else
-    {
-        temp = ( USHORT )HwDeviceExtension->ulCRT2LCDType ;
-        switch( HwDeviceExtension->ulCRT2LCDType )
-        {
-            case LCD_INVALID:
-            case LCD_800x600:
-            case LCD_1024x768:
-            case LCD_1280x1024:
-                break ;
 
-            case LCD_640x480:
-            case LCD_1024x600:
-            case LCD_1152x864:
-            case LCD_1280x960:
-            case LCD_1152x768:
-                temp = 0 ;
-                break ;
-
-            case LCD_1400x1050:
-            case LCD_1280x768:
-            case LCD_1600x1200:
-                break ;
-
-            case LCD_1920x1440:
-            case LCD_2048x1536:
-                temp = 0 ;
-                break ;
-
-            default:
-                break ;
-        }
-        XGINew_SetRegANDOR( pVBInfo->P3d4 , 0x36 , 0xF0 , temp ) ;
-        return( 1 ) ;
-    }
+    XGINew_SetRegANDOR(pVBInfo->P3d4, 0x36, 0xF0, temp);
+    return 1 ;
 }
 
 
