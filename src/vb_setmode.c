@@ -58,7 +58,7 @@
 
 
 BOOLEAN  CheckDualChip( PVB_DEVICE_INFO pVBInfo );
-BOOLEAN  XGI_IsLCDDualLink(PVB_DEVICE_INFO pVBInfo);
+static BOOLEAN XGI_IsLCDDualLink(PVB_DEVICE_INFO pVBInfo);
 BOOLEAN  XGI_SetCRT2Group301(USHORT ModeNo, PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO pVBInfo);
 BOOLEAN  XGI_BacklightByDrv(PVB_DEVICE_INFO pVBInfo);
 
@@ -3460,16 +3460,10 @@ void XGI_GetCRT2ResInfo(USHORT ModeNo, USHORT ModeIdIndex,
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-BOOLEAN XGI_IsLCDDualLink( PVB_DEVICE_INFO pVBInfo )
+BOOLEAN XGI_IsLCDDualLink(PVB_DEVICE_INFO pVBInfo)
 {
-#ifndef LINUX_XF86
-    USHORT flag ;
-#endif
-
-    if ( ( ( (pVBInfo->VBInfo & SetCRT2ToLCD) | SetCRT2ToLCDA ) ) && ( pVBInfo->LCDInfo & SetLCDDualLink ) ) /* shampoo0129 */
-        return ( 1 ) ;
-
-    return( 0 ) ;
+    return (((pVBInfo->VBInfo & (SetCRT2ToLCD | SetCRT2ToLCDA)) != 0)
+	    && ((pVBInfo->LCDInfo & SetLCDDualLink) != 0));
 }
 
 
