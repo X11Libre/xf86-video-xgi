@@ -66,7 +66,6 @@ BOOLEAN  XGI_IsLCDON(PVB_DEVICE_INFO pVBInfo);
 BOOLEAN  XGI_DisableChISLCD(PVB_DEVICE_INFO pVBInfo);
 BOOLEAN  XGI_EnableChISLCD(PVB_DEVICE_INFO pVBInfo);
 BOOLEAN  XGI_AjustCRT2Rate(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTableIndex,USHORT *i, PVB_DEVICE_INFO pVBInfo);
-BOOLEAN  XGI_SearchModeID( USHORT ModeNo,USHORT  *ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
 BOOLEAN  XGI_GetLCDInfo(USHORT ModeNo,USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
 BOOLEAN  XGISetModeNew( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo ) ;
 BOOLEAN  XGI_BridgeIsOn(PVB_DEVICE_INFO pVBInfo);
@@ -369,6 +368,8 @@ BOOLEAN XGISetModeNew( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo )
         /* PUCHAR pVBInfo->FBAddr = HwDeviceExtension->pjVideoMemoryAddress ; */
     VB_DEVICE_INFO VBINF;
     PVB_DEVICE_INFO pVBInfo = &VBINF;
+    USHORT temp_mode_no;
+
     pVBInfo->ROMAddr = HwDeviceExtension->pjVirtualRomBase ;
     pVBInfo->BaseAddr = ( USHORT )HwDeviceExtension->pjIOAddress ;
     pVBInfo->IF_DEF_LCDA = 1 ;
@@ -436,7 +437,9 @@ PDEBUG(ErrorF("InitTo330Pointer \n"));
     if ( HwDeviceExtension->jChipType != XG20 )			/* kuku 2004/06/25 1.Openkey */
     XGI_UnLockCRT2( HwDeviceExtension , pVBInfo ) ;
 
-    XGI_SearchModeID( ModeNo , &ModeIdIndex, pVBInfo ) ;
+    temp_mode_no = ModeNo;
+    XGI_SearchModeID(pVBInfo->SModeIDTable, pVBInfo->EModeIDTable, 0x11,
+		     &temp_mode_no, &ModeIdIndex);
 
 PDEBUG(ErrorF("XGI_GetVGAType \n"));
     
@@ -3075,57 +3078,6 @@ BOOLEAN XGI_GetLCDInfo( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBI
 
 
 /* --------------------------------------------------------------------- */
-/* Function : XGI_SearchModeID */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-BOOLEAN XGI_SearchModeID( USHORT ModeNo , USHORT *ModeIdIndex, PVB_DEVICE_INFO pVBInfo )
-{
-#ifndef LINUX_XF86
-    PUCHAR VGA_INFO = "\0x11" ;
-#endif
-
-
-#ifdef LINUX /* chiawen for linux solution */
-    if ( ModeNo <= 5 )
-        ModeNo |= 1 ;
-    if ( ModeNo <= 0x13 )
-    {
-        /* for (*ModeIdIndex=0;*ModeIdIndex<sizeof(pVBInfo->SModeIDTable)/sizeof(XGI_StStruct);(*ModeIdIndex)++) */
-        for( *ModeIdIndex = 0 ; ; ( *ModeIdIndex )++ )
-        {
-            if ( pVBInfo->SModeIDTable[ *ModeIdIndex ].St_ModeID == ModeNo )
-                break ;
-            if ( pVBInfo->SModeIDTable[ *ModeIdIndex ].St_ModeID == 0xFF )
-                return( FALSE ) ;
-        }
-
-        if ( ModeNo == 0x07 )
-            ( *ModeIdIndex )++ ; /* 400 lines */
-
-        if ( ModeNo <= 3 )
-            ( *ModeIdIndex ) += 2 ; /* 400 lines */
-        /* else 350 lines */
-    }
-    else
-    {
-        /* for (*ModeIdIndex=0;*ModeIdIndex<sizeof(pVBInfo->EModeIDTable)/sizeof(XGI_ExtStruct);(*ModeIdIndex)++) */
-        for( *ModeIdIndex = 0 ; ; ( *ModeIdIndex )++ )
-        {
-            if ( pVBInfo->EModeIDTable[ *ModeIdIndex ].Ext_ModeID == ModeNo )
-                break ;
-            if ( pVBInfo->EModeIDTable[ *ModeIdIndex ].Ext_ModeID == 0xFF )
-                return( FALSE ) ;
-        }
-    }
-#endif
-
-    return( TRUE ) ;
-}
-
-
-/* --------------------------------------------------------------------- */
 /* Function : */
 /* Input : */
 /* Output : */
@@ -3444,10 +3396,16 @@ BOOLEAN XGI_SetCRT2Group301( USHORT ModeNo , PXGI_HW_DEVICE_INFO HwDeviceExtensi
     USHORT tempbx ,
            ModeIdIndex ,
            RefreshRateTableIndex ;
+    USHORT temp_mode_no;
 
     tempbx=pVBInfo->VBInfo ;
     pVBInfo->SetFlag |= ProgrammingCRT2 ;
-    XGI_SearchModeID( ModeNo , &ModeIdIndex,  pVBInfo ) ;
+
+    temp_mode_no = ModeNo;
+    XGI_SearchModeID(pVBInfo->SModeIDTable, pVBInfo->EModeIDTable, 0x11,
+		     &temp_mode_no, &ModeIdIndex);
+
+
     pVBInfo->SelectCRT2Rate = 4 ;
     RefreshRateTableIndex = XGI_GetRatePtrCRT2( ModeNo , ModeIdIndex, pVBInfo ) ;
     XGI_SaveCRT2Info( ModeNo, pVBInfo ) ;

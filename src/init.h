@@ -1768,7 +1768,6 @@ void	XGI_SetEnableDstn(XGI_Private *XGI_Pr, int enable);
 void	XGI_SetEnableFstn(XGI_Private *XGI_Pr, int enable);
 void	XGI_New_GetVBType(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo);
 USHORT	XGI_GetMCLK(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo);
-BOOLEAN	XGI_New_SearchModeID(XGI_Private *XGI_Pr, USHORT *ModeNo, USHORT *ModeIdIndex);
 UCHAR	XGI_New_GetModePtr(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex);
 USHORT	XGI_New_GetColorDepth(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex);
 USHORT	XGI_New_GetOffset(XGI_Private *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,

@@ -47,7 +47,6 @@ extern   void     XGI_WaitDisply( PVB_DEVICE_INFO );
 
 extern   BOOLEAN  XGISetModeNew( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo ) ;
 extern   BOOLEAN  CheckDualChip(PVB_DEVICE_INFO );
-extern   BOOLEAN  XGI_SearchModeID( USHORT ModeNo,USHORT  *ModeIdIndex, PVB_DEVICE_INFO );
 extern   BOOLEAN  XGI_GetLCDInfo(USHORT ModeNo,USHORT ModeIdIndex,PVB_DEVICE_INFO );
 extern   BOOLEAN  XGI_BridgeIsOn( PVB_DEVICE_INFO );
 extern   BOOLEAN  XGI_SetCRT2Group301(USHORT ModeNo, PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO);

@@ -536,39 +536,50 @@ XGI_ClearBuffer(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, USHORT ModeNo)
 /*********************************************/
 
 BOOLEAN
-XGI_New_SearchModeID(XGI_Private *XGI_Pr, USHORT *ModeNo, USHORT *ModeIdIndex)
+XGI_SearchModeID(const XGI_StStruct *SModeIDTable, 
+		 const XGI_ExtStruct *EModeIDTable,
+		 unsigned char VGAINFO, USHORT *ModeNo, USHORT *ModeIdIndex)
 {
-   UCHAR VGAINFO = XGI_Pr->XGI_VGAINFO;
+    if (*ModeNo <= 0x13) {
+	if ((*ModeNo) <= 0x05)
+	    (*ModeNo) |= 0x01;
 
-   if(*ModeNo <= 0x13) {
+	for (*ModeIdIndex = 0; /* emtpy */; (*ModeIdIndex)++) {
+	    if (SModeIDTable[*ModeIdIndex].St_ModeID == (*ModeNo))
+		break;
 
-      if((*ModeNo) <= 0x05) (*ModeNo) |= 0x01;
+	    if (SModeIDTable[*ModeIdIndex].St_ModeID == 0xFF)
+		return FALSE;
+	}
 
-      for(*ModeIdIndex = 0; ;(*ModeIdIndex)++) {
-         if(XGI_Pr->XGI_SModeIDTable[*ModeIdIndex].St_ModeID == (*ModeNo)) break;
-         if(XGI_Pr->XGI_SModeIDTable[*ModeIdIndex].St_ModeID == 0xFF)   return FALSE;
-      }
+	if (*ModeNo == 0x07) {
+	    if (VGAINFO & 0x10) 
+		(*ModeIdIndex)++;   /* 400 lines */
+	    /* else 350 lines */
+	}
 
-      if(*ModeNo == 0x07) {
-          if(VGAINFO & 0x10) (*ModeIdIndex)++;   /* 400 lines */
-          /* else 350 lines */
-      }
-      if(*ModeNo <= 0x03) {
-         if(!(VGAINFO & 0x80)) (*ModeIdIndex)++;
-         if(VGAINFO & 0x10)    (*ModeIdIndex)++; /* 400 lines  */
-         /* else 350 lines  */
-      }
-      /* else 200 lines  */
+	if (*ModeNo <= 0x03) {
+	    if (!(VGAINFO & 0x80))
+		(*ModeIdIndex)++;
 
-   } else {
+	    if (VGAINFO & 0x10)
+		(*ModeIdIndex)++; /* 400 lines  */
+	    /* else 350 lines  */
+	}
+	/* else 200 lines  */
+    }
+    else {
 
-      for(*ModeIdIndex = 0; ;(*ModeIdIndex)++) {
-         if(XGI_Pr->XGI_EModeIDTable[*ModeIdIndex].Ext_ModeID == (*ModeNo)) break;
-         if(XGI_Pr->XGI_EModeIDTable[*ModeIdIndex].Ext_ModeID == 0xFF)      return FALSE;
-      }
+	for (*ModeIdIndex = 0; /* emtpy */; (*ModeIdIndex)++) {
+	    if (EModeIDTable[*ModeIdIndex].Ext_ModeID == (*ModeNo))
+		break;
 
-   }
-   return TRUE;
+	    if (EModeIDTable[*ModeIdIndex].Ext_ModeID == 0xFF)
+		return FALSE;
+	}
+    }
+
+    return TRUE;
 }
 
 /*********************************************/
@@ -1408,11 +1419,16 @@ XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,USHORT ModeNo)
 #endif
    XGI_SetReg(XGI_Pr->XGI_P3c4,0x05,0x86);
 
-   if(!XGI_Pr->UseCustomMode) {
-      if(!(XGI_New_SearchModeID(XGI_Pr, &ModeNo, &ModeIdIndex))) return FALSE;
-   } else {
-      ModeIdIndex = 0;
-   }
+    if (!XGI_Pr->UseCustomMode) {
+	if (!XGI_SearchModeID(XGI_Pr->XGI_SModeIDTable,
+			      XGI_Pr->XGI_EModeIDTable,
+			      XGI_Pr->XGI_VGAINFO, &ModeNo, &ModeIdIndex)) {
+	    return FALSE;
+	}
+    }
+    else {
+	ModeIdIndex = 0;
+    }
 
    XGI_New_GetVBType(XGI_Pr, HwInfo);
 
@@ -1641,11 +1657,16 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr 
 
    XGI_SetReg(XGI_Pr->XGI_P3c4,0x05,0x86);
 
-   if(!XGI_Pr->UseCustomMode) {
-      if(!(XGI_New_SearchModeID(XGI_Pr, &ModeNo, &ModeIdIndex))) return FALSE;
-   } else {
-      ModeIdIndex = 0;
-   }
+    if (!XGI_Pr->UseCustomMode) {
+	if (!XGI_SearchModeID(XGI_Pr->XGI_SModeIDTable,
+			      XGI_Pr->XGI_EModeIDTable,
+			      XGI_Pr->XGI_VGAINFO, &ModeNo, &ModeIdIndex)) {
+	    return FALSE;
+	}
+    }
+    else {
+	ModeIdIndex = 0;
+    }
 
    /* Determine VBType */
    XGI_New_GetVBType(XGI_Pr, HwInfo);

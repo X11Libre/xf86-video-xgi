@@ -924,6 +924,10 @@ Bool Volari_AccelInit(ScreenPtr pScreen) ;
 /* void XGI_EnableBridge(PXGI_HW_DEVICE_INFO,USHORT BaseAddr); */
 #endif
 
+extern BOOLEAN XGI_SearchModeID(const XGI_StStruct *SModeIDTable, 
+    const XGI_ExtStruct *EModeIDTable, unsigned char VGAINFO,
+    USHORT *ModeNo, USHORT *ModeIdIndex);
+
 #ifdef DEBUG
 void XGIDumpRegs(ScrnInfoPtr pScrn);
 #endif
