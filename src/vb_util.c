@@ -45,25 +45,8 @@
 #endif
 
 
-void     XGINew_SetRegANDOR(USHORT Port,USHORT Index,USHORT DataAND,USHORT DataOR);
 void     XGINew_SetRegOR(USHORT Port,USHORT Index,USHORT DataOR);
 void     XGINew_SetRegAND(USHORT Port,USHORT Index,USHORT DataAND);
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_SetRegANDOR */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGINew_SetRegANDOR( USHORT Port , USHORT Index , USHORT DataAND , USHORT DataOR )
-{
-    USHORT temp ;
-
-    temp = XGI_GetReg((XGIIOADDRESS) Port , Index ) ;		/* XGINew_Part1Port index 02 */
-    temp = ( temp & ( DataAND ) ) | DataOR ;
-    XGI_SetReg((XGIIOADDRESS) Port , Index , temp ) ;
-}
 
 
 /* --------------------------------------------------------------------- */

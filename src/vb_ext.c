@@ -92,7 +92,7 @@ BOOLEAN XGINew_Sense(USHORT tempbx, USHORT tempcx, PVB_DEVICE_INFO pVBInfo)
 
     XGI_SetReg((XGIIOADDRESS)pVBInfo->Part4Port, 0x11, (tempbx & 0x0FF));
 
-    XGINew_SetRegANDOR(pVBInfo->Part4Port, 0x10, ~0x1F, 
+    XGI_SetRegANDOR((XGIIOADDRESS)pVBInfo->Part4Port, 0x10, ~0x1F, 
 		       ((tempbx & 0xFF00) >> 8) | (tempcx & 0x00FF));
 
     for (i = 0; i < 10; i++)
@@ -125,7 +125,7 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
             temp = tempax & 0x01 ;
             tempax = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x3A ) ;
             temp = temp | ( tempax & 0x02 ) ;
-            XGINew_SetRegANDOR( pVBInfo->P3d4 , 0x32 , 0xA0 , temp ) ;
+            XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3d4 , 0x32 , 0xA0 , temp ) ;
         }
         else
         {
@@ -156,7 +156,7 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
                     XGI_SetCRT2Group301( SenseModeNo , HwDeviceExtension, pVBInfo ) ;
                     XGI_SetCRT2ModeRegs( 0x2e , HwDeviceExtension, pVBInfo ) ;
                     /* XGI_DisableBridge( HwDeviceExtension, pVBInfo ) ; */
-                    XGINew_SetRegANDOR( pVBInfo->P3c4 , 0x01 , 0xDF , 0x20 ) ;	/* Display Off 0212 */
+                    XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3c4 , 0x01 , 0xDF , 0x20 ) ;	/* Display Off 0212 */
                     for( i = 0 ; i < 20 ; i++ )
                     {
                         XGI_LongWait(pVBInfo) ;
@@ -256,7 +256,7 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
             tempcx = 0 ;
             XGINew_Sense(tempbx, tempcx, pVBInfo);
 
-            XGINew_SetRegANDOR( pVBInfo->P3d4 , 0x32 , ~0xDF , tempax ) ;
+            XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3d4 , 0x32 , ~0xDF , tempax ) ;
             XGI_SetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x00 , P2reg0 ) ;
 
             if ( !( P2reg0 & 0x20 ) )
@@ -316,7 +316,7 @@ XGINew_GetLCDDDCInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 	break;
     }
 
-    XGINew_SetRegANDOR(pVBInfo->P3d4, 0x36, 0xF0, temp);
+    XGI_SetRegANDOR((XGIIOADDRESS)pVBInfo->P3d4, 0x36, 0xF0, temp);
     return 1 ;
 }
 
@@ -369,7 +369,7 @@ BOOLEAN XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INF
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x11 , temp ) ;
     temp = ( tempbx & 0xFF00 ) >> 8 ;
     temp |= ( tempcx & 0x00FF ) ;
-    XGINew_SetRegANDOR( pVBInfo->Part4Port , 0x10 , ~0x1F , temp ) ;
+    XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->Part4Port , 0x10 , ~0x1F , temp ) ;
 
     for( i = 0 ; i < 10 ; i++ )
         XGI_LongWait(pVBInfo) ;
@@ -389,7 +389,7 @@ BOOLEAN XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INF
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x11 , temp ) ;
     temp = ( tempbx & 0xFF00 ) >> 8 ;
     temp |= ( tempcx & 0x00FF ) ;
-    XGINew_SetRegANDOR( pVBInfo->Part4Port , 0x10 , ~0x1F , temp ) ;
+    XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->Part4Port , 0x10 , ~0x1F , temp ) ;
 
     for( i = 0 ; i < 10 ; i++ )
         XGI_LongWait(pVBInfo) ;
@@ -409,7 +409,7 @@ BOOLEAN XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INF
       XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x11 , temp ) ;
       temp = ( tempbx & 0xFF00 ) >> 8 ;
       temp |= ( tempcx & 0x00FF ) ;
-      XGINew_SetRegANDOR( pVBInfo->Part4Port , 0x10 , ~0x1F , temp ) ;
+      XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->Part4Port , 0x10 , ~0x1F , temp ) ;
 
       for( i = 0 ; i < 10 ; i++ )
           XGI_LongWait(pVBInfo) ;

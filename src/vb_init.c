@@ -477,7 +477,7 @@ BOOLEAN XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension )
     {
     /* Set VB */
     XGI_UnLockCRT2( HwDeviceExtension, pVBInfo) ;
-    XGINew_SetRegANDOR( pVBInfo->Part0Port , 0x3F , 0xEF , 0x00 ) ;	/* alan, disable VideoCapture */
+    XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->Part0Port , 0x3F , 0xEF , 0x00 ) ;	/* alan, disable VideoCapture */
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x00 , 0x00 ) ;
     temp1 = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x7B ) ;		/* chk if BCLK>=100MHz */
     temp = ( UCHAR )( ( temp1 >> 4 ) & 0x0F ) ;
@@ -656,7 +656,7 @@ void DualChipInit( PXGI_HW_DEVICE_INFO HwDeviceExtension ,PVB_DEVICE_INFO pVBInf
     pVBInfo->BaseAddr    = (USHORT)HwDeviceExtension->pjIOAddress ;
     /* Programming Congiguration Space in Secondary Chip */
     /* set CRA1 D[6] = 1 */
-    XGINew_SetRegANDOR( pVBInfo->P3d4 , 0xA1 , 0xBF , 0x40 ) ;
+    XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3d4 , 0xA1 , 0xBF , 0x40 ) ;
 
     /* Write 2nd Chip Configuration Info into Configuration Space */
     /* Command CNFG04 */
@@ -1193,7 +1193,7 @@ void XGINew_SetDRAMDefaultRegister340( PXGI_HW_DEVICE_INFO HwDeviceExtension ,  
     temp3 = 0 ;
     for( k = 0 ; k < 4 ; k++ )
     {
-        XGINew_SetRegANDOR( P3d4 , 0x6E , 0xFC , temp3 ) ;		/* CR6E_D[1:0] select channel */
+        XGI_SetRegANDOR((XGIIOADDRESS) P3d4 , 0x6E , 0xFC , temp3 ) ;		/* CR6E_D[1:0] select channel */
         temp2 = 0 ;
         for( i = 0 ; i < 8 ; i++ )
         {
@@ -1341,12 +1341,12 @@ void XGINew_SetDRAMDefaultRegisterXG45( PXGI_HW_DEVICE_INFO HwDeviceExtension , 
     
     for ( k = 0 ; k < 2 ; k ++ )
     {            
-        XGINew_SetRegANDOR( P3d4 , 0x43 , ~0x04 , k * 0x04 );
+        XGI_SetRegANDOR((XGIIOADDRESS) P3d4 , 0x43 , ~0x04 , k * 0x04 );
         
         for ( i = 0 ; i < 3 ; i ++ )
         {
 
-    	    XGINew_SetRegANDOR( P3d4 , 0x43 , ~0x03 , i * 0x01 );
+    	    XGI_SetRegANDOR((XGIIOADDRESS) P3d4 , 0x43 , ~0x03 , i * 0x01 );
     	    
             for ( j = 0 ; j < 32 ; j ++ )
                 XGI_SetReg((XGIIOADDRESS) P3d4 , 0x44 , j * 0x08 );
@@ -1653,7 +1653,7 @@ void XGINew_SetDRAMSizingType(int index , const USHORT DRAMTYPE_TABLE[][5],
     USHORT data ;
 
     data = DRAMTYPE_TABLE[ index ][ 4 ] ;
-    XGINew_SetRegANDOR( pVBInfo->P3c4 , 0x13 , 0x80 , data ) ;
+    XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3c4 , 0x13 , 0x80 , data ) ;
    /* should delay 50 ns */
 }
 
@@ -2582,11 +2582,11 @@ void SetPowerConsume ( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT XGI_P3d4Po
     	{
             if (!(bTemp&0x10))
             {
-            	XGINew_SetRegANDOR( XGI_P3d4Port , 0x58 , 0xD7 , 0x20 ) ; /* CR58 D[5]=1 D[3]=0 */
+            	XGI_SetRegANDOR((XGIIOADDRESS) XGI_P3d4Port , 0x58 , 0xD7 , 0x20 ) ; /* CR58 D[5]=1 D[3]=0 */
             }
             else
             {
-            	XGINew_SetRegANDOR( XGI_P3d4Port , 0x58 , 0xD7 , 0x08 ) ; /* CR58 D[5]=0 D[3]=1 */
+            	XGI_SetRegANDOR((XGIIOADDRESS) XGI_P3d4Port , 0x58 , 0xD7 , 0x08 ) ; /* CR58 D[5]=0 D[3]=1 */
             }
 
     	}
