@@ -3126,11 +3126,7 @@ void XGI_DisplayOff( PVB_DEVICE_INFO pVBInfo )
 
 
 /**
- * Wait for vertical refresh (?)
- *
- * \bugs
- * This function seems very similar to \c XGIWaitRetraceCRT1 and
- * \c vWaitCRT1VerticalRetrace.  Is some sort of refactoring possible?
+ * Wait for vertical or horizontal blanking period.
  */
 void XGI_WaitDisplay(PVB_DEVICE_INFO pVBInfo)
 {

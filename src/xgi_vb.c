@@ -84,7 +84,7 @@ XGI_XGIDetectCRT1(ScrnInfoPtr pScrn)
     }
 
     if(mustwait) {
-       for(i=0; i < 10; i++) XGIWaitRetraceCRT1(pScrn);
+       for(i=0; i < 10; i++) XGI_WaitBeginRetrace(pScrn);
     }
 
     if((temp == 0) || (temp == 0xffff)) {

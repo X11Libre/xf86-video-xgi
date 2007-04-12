@@ -710,26 +710,79 @@ XG40Mclk(XGIPtr pXGI)
 }
 
 
+static int
+retrace_signals_active(XGIPtr pXGI)
+{
+    unsigned char temp;
+
+    /* Make sure the vertical retrace signal is enabled.
+     */
+    inXGIIDXREG(XGICR, 0x17, temp);
+    if (!(temp & 0x80)) 
+	return 0;
+
+    /* FIXME: Magic offset, what are you?
+     */
+    inXGIIDXREG(XGISR, 0x1f, temp);
+    if(temp & 0xc0) 
+	return 0;
+
+    return 1;
+}
+
+
 /**
- * Wait for vertical retrace.
+ * Wait for beginning of next vertical retrace.
  * 
  * \bugs
- * The functions \c XGIWaitRetraceCRT1 and \c vWaitCRT1VerticalRetrace are
+ * The functions \c XGI_WaitBeginRetrace and \c XGI_WaitEndRetrace are
  * nearly identical.  Are both \b really necessary?
  */
 void
-vWaitCRT1VerticalRetrace(ScrnInfoPtr pScrn)
+XGI_WaitBeginRetrace(ScrnInfoPtr pScrn)
+{
+    XGIPtr        pXGI = XGIPTR(pScrn);
+    int           watchdog;
+
+    if (retrace_signals_active(pXGI)) {
+	/* Wait for the CRTC to leave then re-enter the vertical retrace
+	 * period.
+	 */
+	watchdog = 65536;
+	while ((inXGIREG(XGIINPSTAT) & IS_BIT_VERT_ACTIVE) && --watchdog)
+	    /* empty */ ;
+
+	watchdog = 65536;
+	while ((!(inXGIREG(XGIINPSTAT) & IS_BIT_VERT_ACTIVE)) && --watchdog)
+	    /* empty */ ;
+    }
+}
+
+
+/**
+ * Wait for end of next vertical retrace.
+ * 
+ * \bugs
+ * The functions \c XGI_WaitBeginRetrace and \c XGI_WaitEndRetrace are
+ * nearly identical.  Are both \b really necessary?
+ */
+void
+XGI_WaitEndRetrace(ScrnInfoPtr pScrn)
 {
     XGIPtr  pXGI = XGIPTR(pScrn);
     int           watchdog;
-    unsigned char temp;
 
 
-    watchdog = 65536;
-    while ((!(inXGIREG(XGI_IS1) & IS_BIT_VERT_ACTIVE)) && --watchdog)
-	/* empty */ ;
+    if (retrace_signals_active(pXGI)) {
+	/* Wait for the CRTC to enter then leave the vertical retrace
+	 * period.
+	 */
+	watchdog = 65536;
+	while ((!(inXGIREG(XGIINPSTAT) & IS_BIT_VERT_ACTIVE)) && --watchdog)
+	    /* empty */ ;
 
-    watchdog = 65536;
-    while ((inXGIREG(XGI_IS1) & IS_BIT_VERT_ACTIVE) && --watchdog)
-	/* empty */ ;
+	watchdog = 65536;
+	while ((inXGIREG(XGIINPSTAT) & IS_BIT_VERT_ACTIVE) && --watchdog)
+	    /* empty */ ;
+    }
 }

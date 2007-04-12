@@ -5737,7 +5737,7 @@ XGILeaveVT(int scrnIndex, int flags)
 	 */
 #endif
 	pXGI->CursorInfoPtr->HideCursor(pScrn);
-	XGIWaitRetraceCRT1(pScrn);
+	XGI_WaitBeginRetrace(pScrn);
     }
 
     XGIBridgeRestore(pScrn);
@@ -5798,7 +5798,7 @@ XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
 #endif
 	    ) {
 	    pXGI->CursorInfoPtr->HideCursor(pScrn);
-	    XGIWaitRetraceCRT1(pScrn);
+	    XGI_WaitBeginRetrace(pScrn);
 	}
 
         XGIBridgeRestore(pScrn);
@@ -6988,38 +6988,6 @@ XGISearchCRT1Rate(ScrnInfoPtr pScrn, DisplayModePtr mode)
         if(xres == 800 || xres == 1024 || xres == 1280) return 0x02;
    	else return 0x01;
    }
-}
-
-
-/**
- * Wait for vertical retrace.
- * 
- * \bugs
- * The functions \c XGIWaitRetraceCRT1 and \c vWaitCRT1VerticalRetrace are
- * nearly identical.  Are both \b really necessary?
- */
-void
-XGIWaitRetraceCRT1(ScrnInfoPtr pScrn)
-{
-    XGIPtr        pXGI = XGIPTR(pScrn);
-    int           watchdog;
-    unsigned char temp;
-
-    inXGIIDXREG(XGICR, 0x17, temp);
-    if (!(temp & 0x80)) 
-	return;
-
-    inXGIIDXREG(XGISR, 0x1f, temp);
-    if(temp & 0xc0) 
-	return;
-
-    watchdog = 65536;
-    while ((inXGIREG(XGIINPSTAT) & IS_BIT_VERT_ACTIVE) && --watchdog)
-	/* empty */ ;
-
-    watchdog = 65536;
-    while ((!(inXGIREG(XGIINPSTAT) & IS_BIT_VERT_ACTIVE)) && --watchdog)
-	/* empty */ ;
 }
 
 
