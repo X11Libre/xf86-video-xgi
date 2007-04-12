@@ -179,7 +179,7 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
 
                 if ( pVBInfo->VBType & VB_XGI301C)
                 {
-                    XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part4Port , 0x0d , 0x04 ) ;
+                    XGI_SetRegOR((XGIIOADDRESS) pVBInfo->Part4Port , 0x0d , 0x04 ) ;
                 }
 
 		if ( XGINew_SenseHiTV( HwDeviceExtension , pVBInfo) )		/* add by kuku for Multi-adapter sense HiTV */
