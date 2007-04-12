@@ -411,12 +411,12 @@ BOOLEAN XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension )
     if ( temp1 == 0x02 )
     {
         XGI_SetRegLong((XGIIOADDRESS) 0xcf8 , 0x80000000 ) ;
-        ChipsetID = XGINew_GetReg3( 0x0cfc ) ;
+        ChipsetID = XGI_GetRegLong((XGIIOADDRESS) 0x0cfc ) ;
         XGI_SetRegLong((XGIIOADDRESS) 0xcf8 , 0x8000002C ) ;
-        VendorID = XGINew_GetReg3( 0x0cfc ) ;
+        VendorID = XGI_GetRegLong((XGIIOADDRESS) 0x0cfc ) ;
         VendorID &= 0x0000FFFF ;
         XGI_SetRegLong((XGIIOADDRESS) 0xcf8 , 0x8001002C ) ;
-        GraphicVendorID = XGINew_GetReg3( 0x0cfc ) ;
+        GraphicVendorID = XGI_GetRegLong((XGIIOADDRESS) 0x0cfc ) ;
         GraphicVendorID &= 0x0000FFFF;
 
         if ( ChipsetID == 0x7301039 )
@@ -452,7 +452,7 @@ BOOLEAN XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension )
         /* Set AGP customize registers (in SetDefAGPRegs) End */
         /*[Hsuan]2004/12/14 AGP Input Delay Adjustment on 850 */
         XGI_SetRegLong((XGIIOADDRESS) 0xcf8 , 0x80000000 ) ;		
-        ChipsetID = XGINew_GetReg3( 0x0cfc ) ;
+        ChipsetID = XGI_GetRegLong((XGIIOADDRESS) 0x0cfc ) ;
         if ( ChipsetID == 0x25308086 )
             XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x77 , 0xF0 ) ;
             

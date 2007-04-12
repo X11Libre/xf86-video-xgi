@@ -45,27 +45,9 @@
 #endif
 
 
-ULONG XGINew_GetReg3( USHORT ) ;
 void     XGINew_SetRegANDOR(USHORT Port,USHORT Index,USHORT DataAND,USHORT DataOR);
 void     XGINew_SetRegOR(USHORT Port,USHORT Index,USHORT DataOR);
 void     XGINew_SetRegAND(USHORT Port,USHORT Index,USHORT DataAND);
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_GetReg3 */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-ULONG XGINew_GetReg3( USHORT port )
-{
-    ULONG data ;
-
-    data = InPortLong( port ) ;
-
-    return( data ) ;
-}
-
 
 
 /* --------------------------------------------------------------------- */
@@ -78,7 +60,7 @@ void XGINew_SetRegANDOR( USHORT Port , USHORT Index , USHORT DataAND , USHORT Da
 {
     USHORT temp ;
 
-    temp = XGINew_GetReg1( Port , Index ) ;		/* XGINew_Part1Port index 02 */
+    temp = XGI_GetReg((XGIIOADDRESS) Port , Index ) ;		/* XGINew_Part1Port index 02 */
     temp = ( temp & ( DataAND ) ) | DataOR ;
     XGI_SetReg((XGIIOADDRESS) Port , Index , temp ) ;
 }
@@ -94,7 +76,7 @@ void XGINew_SetRegAND(USHORT Port,USHORT Index,USHORT DataAND)
 {
     USHORT temp ;
 
-    temp = XGINew_GetReg1( Port , Index ) ;	/* XGINew_Part1Port index 02 */
+    temp = XGI_GetReg((XGIIOADDRESS) Port , Index ) ;	/* XGINew_Part1Port index 02 */
     temp &= DataAND ;
     XGI_SetReg((XGIIOADDRESS) Port , Index , temp ) ;
 }
@@ -110,7 +92,7 @@ void XGINew_SetRegOR( USHORT Port , USHORT Index , USHORT DataOR )
 {
     USHORT temp ;
 
-    temp = XGINew_GetReg1( Port , Index ) ;	/* XGINew_Part1Port index 02 */
+    temp = XGI_GetReg((XGIIOADDRESS) Port , Index ) ;	/* XGINew_Part1Port index 02 */
     temp |= DataOR ;
     XGI_SetReg((XGIIOADDRESS) Port , Index , temp ) ;
 }

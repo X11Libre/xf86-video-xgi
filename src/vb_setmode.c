@@ -8212,7 +8212,7 @@ void XGINew_LCD_Wait_Time(UCHAR DelayTime, PVB_DEVICE_INFO pVBInfo)
     {
         for( j = 0 ; j < 66 ; j++ )
         {
-            temp = XGINew_GetReg3( 0x61 ) ;
+            temp = XGI_GetRegLong((XGIIOADDRESS) 0x61 ) ;
             temp &= 0x10;
 
             if ( temp == flag )
