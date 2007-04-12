@@ -2576,7 +2576,7 @@ void SetPowerConsume ( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT XGI_P3d4Po
     if ((lTemp&0xFF)==0)
     {
         /* set CR58 D[5]=0 D[3]=0 */
-        XGINew_SetRegAND( XGI_P3d4Port , 0x58 , 0xD7 ) ;
+        XGI_SetRegAND((XGIIOADDRESS) XGI_P3d4Port , 0x58 , 0xD7 ) ;
         bTemp = (UCHAR) XGI_GetReg((XGIIOADDRESS) XGI_P3d4Port , 0xCB ) ;
     	if (bTemp&0x20)
     	{
