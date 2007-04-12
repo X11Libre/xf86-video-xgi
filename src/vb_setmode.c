@@ -605,14 +605,14 @@ void XGI_SetCRT1Group( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo , U
     	    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2B , 0x4E) ;
     	    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2C , 0xE9) ;
     	    b3CC =(UCHAR) XGINew_GetReg2(XGINew_P3cc) ;
-    	    XGINew_SetReg3(XGINew_P3cc ,  (b3CC |= 0x0C) ) ;
+    	    XGI_SetRegByte((XGIIOADDRESS)XGINew_P3cc ,  (b3CC |= 0x0C) ) ;
     	}
     	else if ( ( ModeNo == 0x04) | ( ModeNo == 0x05) | ( ModeNo == 0x0D) )
     	{
     	    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2B , 0x1B) ;
     	    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2C , 0xE3) ;
     	    b3CC = (UCHAR)XGINew_GetReg2(XGINew_P3cc) ;
-    	    XGINew_SetReg3(XGINew_P3cc ,  (b3CC |= 0x0C) ) ;
+    	    XGI_SetRegByte((XGIIOADDRESS)XGINew_P3cc ,  (b3CC |= 0x0C) ) ;
     	}
     }
 
@@ -700,7 +700,7 @@ void XGI_SetMiscRegs( USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo )
     }
 */
 
-    XGINew_SetReg3( pVBInfo->P3c2 , Miscdata ) ;		/* Set Misc(3c2) */
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c2 , Miscdata ) ;		/* Set Misc(3c2) */
 }
 
 
@@ -765,15 +765,15 @@ void XGI_SetATTRegs( USHORT ModeNo , USHORT StandTableIndex , USHORT ModeIdIndex
         }
 
         XGINew_GetReg2( pVBInfo->P3da ) ;			/* reset 3da */
-        XGINew_SetReg3( pVBInfo->P3c0 , i ) ;		/* set index */
-        XGINew_SetReg3( pVBInfo->P3c0 , ARdata ) ;	/* set data */
+        XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0 , i ) ;		/* set index */
+        XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0 , ARdata ) ;	/* set data */
     }
 
     XGINew_GetReg2( pVBInfo->P3da ) ;			/* reset 3da */
-    XGINew_SetReg3( pVBInfo->P3c0 , 0x14 ) ;		/* set index */
-    XGINew_SetReg3( pVBInfo->P3c0 , 0x00 ) ;		/* set data */
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0 , 0x14 ) ;		/* set index */
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0 , 0x00 ) ;		/* set data */
     XGINew_GetReg2( pVBInfo->P3da ) ;			/* Enable Attribute */
-    XGINew_SetReg3( pVBInfo->P3c0 , 0x20 ) ;
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0 , 0x20 ) ;
 }
 
 
@@ -1072,7 +1072,7 @@ void XGI_SetSync(USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo )
     sync &= 0xC0 ;
     temp = 0x2F ;
     temp |= sync ;
-    XGINew_SetReg3( pVBInfo->P3c2 , temp ) ;				/* Set Misc(3c2) */
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c2 , temp ) ;				/* Set Misc(3c2) */
 }
 
 
@@ -1779,8 +1779,8 @@ void XGI_LoadDAC( USHORT ModeNo , USHORT ModeIdIndex,PVB_DEVICE_INFO pVBInfo )
     else
         j = time ;
 
-    XGINew_SetReg3( pVBInfo->P3c6 , 0xFF ) ;
-    XGINew_SetReg3( pVBInfo->P3c8 , 0x00 ) ;
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c6 , 0xFF ) ;
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c8 , 0x00 ) ;
 
     for( i = 0 ; i < j ; i++ )
     {
@@ -1796,7 +1796,7 @@ void XGI_LoadDAC( USHORT ModeNo , USHORT ModeIdIndex,PVB_DEVICE_INFO pVBInfo )
             if ( data & 0x02 )
                 data2 += 0x15 ;
 
-            XGINew_SetReg3( pVBInfo->P3c9 , data2 ) ;
+            XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c9 , data2 ) ;
             data = data >> 2 ;
         }
     }
@@ -1808,7 +1808,7 @@ void XGI_LoadDAC( USHORT ModeNo , USHORT ModeIdIndex,PVB_DEVICE_INFO pVBInfo )
             data = table[ i ] ;
 
             for( k = 0 ; k < 3 ; k++ )
-                XGINew_SetReg3( pVBInfo->P3c9 , data ) ;
+                XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c9 , data ) ;
         }
 
         si = 32 ;
@@ -1881,9 +1881,9 @@ void XGI_WriteDAC( USHORT dl , USHORT ah , USHORT al , USHORT dh,PVB_DEVICE_INFO
             bh = temp ;
         }
     }
-    XGINew_SetReg3( pVBInfo->P3c9 , ( USHORT )dh ) ;
-    XGINew_SetReg3( pVBInfo->P3c9 , ( USHORT )bh ) ;
-    XGINew_SetReg3( pVBInfo->P3c9 , ( USHORT )bl ) ;
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c9 , ( USHORT )dh ) ;
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c9 , ( USHORT )bh ) ;
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c9 , ( USHORT )bl ) ;
 }
 
 
@@ -3211,12 +3211,12 @@ void XGI_SenseCRT1( PVB_DEVICE_INFO pVBInfo )
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2B , 0x1B ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2C , 0xE1 ) ;
 
-    XGINew_SetReg3( pVBInfo->P3c8 , 0x00 ) ;
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c8 , 0x00 ) ;
     for( i = 0 ; i < 256 ; i++ )
     {
-        XGINew_SetReg3( ( USHORT )( pVBInfo->P3c8 + 1 ) , ( UCHAR )DAC_TEST_PARMS[ 0 ] ) ;
-        XGINew_SetReg3( ( USHORT )( pVBInfo->P3c8 + 1 ) , ( UCHAR )DAC_TEST_PARMS[ 1 ] ) ;
-        XGINew_SetReg3( ( USHORT )( pVBInfo->P3c8 + 1 ) , ( UCHAR )DAC_TEST_PARMS[ 2 ] ) ;
+        XGI_SetRegByte((XGIIOADDRESS) ( USHORT )( pVBInfo->P3c8 + 1 ) , ( UCHAR )DAC_TEST_PARMS[ 0 ] ) ;
+        XGI_SetRegByte((XGIIOADDRESS) ( USHORT )( pVBInfo->P3c8 + 1 ) , ( UCHAR )DAC_TEST_PARMS[ 1 ] ) ;
+        XGI_SetRegByte((XGIIOADDRESS) ( USHORT )( pVBInfo->P3c8 + 1 ) , ( UCHAR )DAC_TEST_PARMS[ 2 ] ) ;
     }
 
     XGI_VBLongWait( pVBInfo ) ;
@@ -3237,13 +3237,13 @@ void XGI_SenseCRT1( PVB_DEVICE_INFO pVBInfo )
     }
 
     /* alan, avoid display something, set BLACK DAC if not restore DAC */
-    XGINew_SetReg3( pVBInfo->P3c8 , 0x00 ) ;
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c8 , 0x00 ) ;
 
     for( i = 0 ; i < 256 ; i++ )
     {
-      XGINew_SetReg3( ( USHORT )( pVBInfo->P3c8 + 1 ) , 0 ) ;
-      XGINew_SetReg3( ( USHORT )( pVBInfo->P3c8 + 1 ) , 0 ) ;
-      XGINew_SetReg3( ( USHORT )( pVBInfo->P3c8 + 1 ) , 0 ) ;
+      XGI_SetRegByte((XGIIOADDRESS) ( USHORT )( pVBInfo->P3c8 + 1 ) , 0 ) ;
+      XGI_SetRegByte((XGIIOADDRESS) ( USHORT )( pVBInfo->P3c8 + 1 ) , 0 ) ;
+      XGI_SetRegByte((XGIIOADDRESS) ( USHORT )( pVBInfo->P3c8 + 1 ) , 0 ) ;
     }
 
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x01 , SR01 ) ;
@@ -3312,7 +3312,7 @@ void SetDualChipRegs( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVB
 
     /* Miscellaneous reg(input port 3cch,output port 3c2h) */
     tempal = ( UCHAR )XGINew_GetReg2( XGINew_P3CC ) ;  /* 3cc */
-    XGINew_SetReg3( XGINew_2ndP3C2 , tempal ) ;
+    XGI_SetRegByte((XGIIOADDRESS) XGINew_2ndP3C2 , tempal ) ;
 
     /* Close key in 2nd chip */
     XGI_SetReg((XGIIOADDRESS) XGINew_2ndP3C4 , 0x05 , 0x00 ) ;

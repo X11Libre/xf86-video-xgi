@@ -27,7 +27,6 @@
 #ifndef _VBUTIL_
 #define _VBUTIL_
 extern void Newdebugcode(unsigned char code);
-extern   void     XGINew_SetReg3(USHORT, USHORT);
 extern   UCHAR    XGINew_GetReg1(USHORT, USHORT);
 extern   UCHAR    XGINew_GetReg2(USHORT);
 extern   void     XGINew_SetReg4(USHORT, ULONG);

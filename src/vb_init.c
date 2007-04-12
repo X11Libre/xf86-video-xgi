@@ -268,7 +268,7 @@ BOOLEAN XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension )
     if ( pVBInfo->BaseAddr == 0 )
         return( FALSE ) ;
 
-    XGINew_SetReg3( ( USHORT )( pVBInfo->BaseAddr + 0x12 ) , 0x67 ) ;	/* 3c2 <- 67 ,ynlai */
+    XGI_SetRegByte((XGIIOADDRESS) ( USHORT )( pVBInfo->BaseAddr + 0x12 ) , 0x67 ) ;	/* 3c2 <- 67 ,ynlai */
 
     pVBInfo->ISXPDOS = 0 ;
 
@@ -678,10 +678,10 @@ void DualChipInit( PXGI_HW_DEVICE_INFO HwDeviceExtension ,PVB_DEVICE_INFO pVBInf
     HwDeviceExtension->pQueryVGAConfigSpace( HwDeviceExtension , 0x18 + 0x80 , 1 , &Temp ) ; /* Set */
     /* Miscellaneous reg(input port 3cch,output port 3c2h) */
     tempal = ( UCHAR )XGINew_GetReg2( XGINew_P3CC ) ;	/* 3cc */
-    XGINew_SetReg3( XGINew_2ndP3C2 , tempal ) ;
+    XGI_SetRegByte((XGIIOADDRESS) XGINew_2ndP3C2 , tempal ) ;
     /* VGA enable reg(port 3C3h) */
     tempal = ( UCHAR )XGINew_GetReg2( XGINew_P3C3 ) ;	/* 3c3 */
-    XGINew_SetReg3( XGINew_2ndP3C3 , tempal ) ;
+    XGI_SetRegByte((XGIIOADDRESS) XGINew_2ndP3C3 , tempal ) ;
     SetPowerConsume ( HwDeviceExtension , XGINew_2ndP3D4);
     /* ----- CRA0=42, CRA1=81, CRA2=60, CRA3=20, CRA4=50, CRA5=40, CRA8=88 -----// */
     /* ----- CRA9=10, CRAA=80, CRAB=01, CRAC=F1, CRAE=80, CRAF=45, CRB7=24 -----// */
