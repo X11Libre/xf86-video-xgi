@@ -493,11 +493,11 @@ PDEBUG(ErrorF("XGI_DisableBridge \n"));
                 break ;
         }
     }
-ErrorF("492 Part2 0 = %x ", XGINew_GetReg1( pVBInfo->Part2Port , 0x0 ));
+ErrorF("492 Part2 0 = %x ", XGI_GetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x0 ));
     XGI_SetCRT2ModeRegs( ModeNo, HwDeviceExtension,pVBInfo ) ;
     XGI_OEM310Setting( ModeNo, ModeIdIndex,pVBInfo ) ; /*0212*/
     XGI_EnableBridge( HwDeviceExtension ,pVBInfo) ;
-ErrorF("497 Part2 0 = %x ", XGINew_GetReg1( pVBInfo->Part2Port , 0x0 ));
+ErrorF("497 Part2 0 = %x ", XGI_GetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x0 ));
     }	/* !XG20 */
     else
     {
@@ -537,7 +537,7 @@ ErrorF("497 Part2 0 = %x ", XGINew_GetReg1( pVBInfo->Part2Port , 0x0 ));
     XGI_SetCRT1Group( HwDeviceExtension , ModeNo , ModeIdIndex, pVBInfo ) ;
     XGI_DisplayOn( pVBInfo) ;
 */
-ErrorF("Part2 0 = %x ", XGINew_GetReg1( pVBInfo->Part2Port , 0x0 ));
+ErrorF("Part2 0 = %x ", XGI_GetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x0 ));
     XGI_UpdateModeInfo( HwDeviceExtension, pVBInfo ) ;
 
     if ( HwDeviceExtension->jChipType != XG20 )			/* kuku 2004/06/25 */
@@ -715,7 +715,7 @@ void XGI_SetCRTCRegs( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT StandTableI
     UCHAR CRTCdata ;
     USHORT i ;
 
-    CRTCdata = ( UCHAR )XGINew_GetReg1( pVBInfo->P3d4 , 0x11 ) ;
+    CRTCdata = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x11 ) ;
     CRTCdata &= 0x7f ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x11 , CRTCdata ) ;		/* Unlock CRTC */
 
@@ -796,7 +796,7 @@ void XGI_SetGRCRegs( USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo )
 
     if ( pVBInfo->ModeType > ModeVGA )
     {
-        GRdata = ( UCHAR )XGINew_GetReg1( pVBInfo->P3ce , 0x05 ) ;
+        GRdata = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3ce , 0x05 ) ;
         GRdata &= 0xBF ;						/* 256 color disable */
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3ce , 0x05 , GRdata ) ;
     }
@@ -844,7 +844,7 @@ USHORT XGI_GetRatePtrCRT2( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO p
     if ( ModeNo < 0x14 )
         return( 0xFFFF ) ;
 
-    index = XGINew_GetReg1( pVBInfo->P3d4 , 0x33 ) ;
+    index = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x33 ) ;
     index = index >> pVBInfo->SelectCRT2Rate ;
     index &= 0x0F ;
 
@@ -1099,7 +1099,7 @@ void XGI_SetCRT1CRTC( USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRateTab
     index = pVBInfo->RefIndex[ RefreshRateTableIndex ].Ext_CRT1CRTC ;	/* Get index */
     index = index&IndexMask ;
 
-    data =( UCHAR )XGINew_GetReg1( pVBInfo->P3d4 , 0x11 ) ;
+    data =( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x11 ) ;
     data &= 0x7F ;
     XGI_SetReg((XGIIOADDRESS)pVBInfo->P3d4,0x11,data);				/* Unlock CRTC */
 
@@ -1136,7 +1136,7 @@ void XGI_SetCRT1Timing_H( PVB_DEVICE_INFO pVBInfo, PXGI_HW_DEVICE_INFO HwDeviceE
     /* XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x56 , 0 ) ; */
     /* XGINew_SetRegANDOR( pVBInfo->P3d4 ,0x11 , 0x7f , 0x00 ) ; */
 
-    data = ( UCHAR )XGINew_GetReg1( pVBInfo->P3d4 , 0x11 ) ;		/* unlock cr0-7 */
+    data = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x11 ) ;		/* unlock cr0-7 */
     data &= 0x7F ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x11 , data ) ;
 
@@ -1155,7 +1155,7 @@ void XGI_SetCRT1Timing_H( PVB_DEVICE_INFO pVBInfo, PXGI_HW_DEVICE_INFO HwDeviceE
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 ,( USHORT )( i + 6 ) , data ) ;
     }
 
-    j = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x0e ) ;
+    j = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x0e ) ;
     j &= 0x1F ;
     data = pVBInfo->TimingH[ 0 ].data[ 7 ] ;
     data &= 0xE0 ;
@@ -1164,17 +1164,17 @@ void XGI_SetCRT1Timing_H( PVB_DEVICE_INFO pVBInfo, PXGI_HW_DEVICE_INFO HwDeviceE
 
     if ( HwDeviceExtension->jChipType == XG20 )
     {
-    	data = ( UCHAR )XGINew_GetReg1( pVBInfo->P3d4 , 0x04 ) ;
+    	data = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x04 ) ;
     	data = data - 1 ;
     	XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x04 , data ) ;
-    	data = ( UCHAR )XGINew_GetReg1( pVBInfo->P3d4 , 0x05 ) ;
+    	data = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x05 ) ;
     	data1 = data ;
     	data1 &= 0xE0 ;
     	data &= 0x1F ;
     	if ( data == 0 )
     	{
     	    pushax = data ;
-    	    data = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x0c ) ;
+    	    data = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x0c ) ;
     	    data &= 0xFB ;
     	    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x0c , data ) ;
     	    data = pushax ;
@@ -1182,7 +1182,7 @@ void XGI_SetCRT1Timing_H( PVB_DEVICE_INFO pVBInfo, PXGI_HW_DEVICE_INFO HwDeviceE
     	data = data - 1 ;
     	data |= data1 ;
     	XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x05 , data ) ;
-    	data = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x0e ) ;
+    	data = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x0e ) ;
     	data = data >> 5 ;
     	data = data + 3 ;
     	if ( data > 7 )
@@ -1226,7 +1226,7 @@ void XGI_SetCRT1Timing_V( USHORT ModeIdIndex , USHORT ModeNo,PVB_DEVICE_INFO pVB
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , ( USHORT )( i + 0x11 ) , data ) ;
     }
 
-    j = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x0a ) ;
+    j = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x0a ) ;
     j &= 0xC0 ;
     data = pVBInfo->TimingV[ 0 ].data[ 6 ] ;
     data &= 0x3F ;
@@ -1246,7 +1246,7 @@ void XGI_SetCRT1Timing_V( USHORT ModeIdIndex , USHORT ModeNo,PVB_DEVICE_INFO pVB
     if ( i )
         data |= 0x80 ;
 
-    j = ( UCHAR )XGINew_GetReg1( pVBInfo->P3d4 , 0x09 ) ;
+    j = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x09 ) ;
     j &= 0x5F ;
     data |= j ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x09 , data ) ;
@@ -1307,8 +1307,8 @@ void XGI_SetCRT1DE( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo,USHORT
     tempax -= 1 ;
     tempbx -= 1 ;
     tempcx = tempax ;
-    temp = ( UCHAR )XGINew_GetReg1( pVBInfo->P3d4 , 0x11 ) ;
-    data = ( UCHAR )XGINew_GetReg1( pVBInfo->P3d4 , 0x11 ) ;
+    temp = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x11 ) ;
+    data = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x11 ) ;
     data &= 0x7F ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x11 , data ) ;		/* Unlock CRTC */
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x01 , ( USHORT )( tempcx & 0xff ) ) ;
@@ -1324,7 +1324,7 @@ void XGI_SetCRT1DE( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo,USHORT
         tempax |= 0x40 ;
 
     XGINew_SetRegANDOR( pVBInfo->P3d4 , 0x07 , ~0x42 , tempax ) ;
-    data =( UCHAR )XGINew_GetReg1( pVBInfo->P3d4 , 0x07 ) ;
+    data =( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x07 ) ;
     data &= 0xFF ;
     tempax = 0 ;
 
@@ -1445,7 +1445,7 @@ void XGI_SetCRT1Offset(  USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRate
     temp2 = temp ;
     temp = temp >> 8 ;		/* ah */
     temp &= 0x0F ;
-    i = XGINew_GetReg1( pVBInfo->P3c4 , 0x0E ) ;
+    i = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x0E ) ;
     i &= 0xF0 ;
     i |= temp ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x0E , i ) ;
@@ -1491,7 +1491,7 @@ void XGI_SetCRT1VCLK( USHORT ModeNo , USHORT ModeIdIndex ,
     if ( ( pVBInfo->VBType & ( VB_XGI301B | VB_XGI302B | VB_XGI301LV | VB_XGI302LV | VB_XGI301C ) ) && ( pVBInfo->VBInfo & SetCRT2ToLCDA ) )
     {
         vclkindex = XGI_GetVCLK2Ptr( ModeNo , ModeIdIndex , RefreshRateTableIndex , HwDeviceExtension, pVBInfo ) ;
-        data = XGINew_GetReg1( pVBInfo->P3c4 , 0x31 ) & 0xCF ;
+        data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x31 ) & 0xCF ;
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x31 , data ) ;
         data = pVBInfo->VBVCLKData[ vclkindex ].Part4_A ;
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2B , data ) ;
@@ -1502,7 +1502,7 @@ void XGI_SetCRT1VCLK( USHORT ModeNo , USHORT ModeIdIndex ,
     else
     {
         index = pVBInfo->RefIndex[ RefreshRateTableIndex ].Ext_CRTVCLK ;
-        data = XGINew_GetReg1( pVBInfo->P3c4 , 0x31 ) & 0xCF ;
+        data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x31 ) & 0xCF ;
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x31 , data ) ;
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2B , pVBInfo->VCLKData[ index ].SR2B ) ;
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2C , pVBInfo->VCLKData[ index ].SR2C ) ;
@@ -1513,9 +1513,9 @@ void XGI_SetCRT1VCLK( USHORT ModeNo , USHORT ModeIdIndex ,
     {
     	if ( pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_ModeFlag & HalfDCLK )
     	{
-    	data = XGINew_GetReg1( pVBInfo->P3c4 , 0x2B ) ;
+    	data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2B ) ;
     	XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2B , data ) ;
-    	data = XGINew_GetReg1( pVBInfo->P3c4 , 0x2C ) ;
+    	data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2C ) ;
     	index = data ;
     	index &= 0xE0 ;
     	data &= 0x1F ;
@@ -1538,24 +1538,24 @@ void XGI_SetCRT1FIFO( USHORT ModeNo , PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_
 {
     USHORT data ;
 
-    data = XGINew_GetReg1( pVBInfo->P3c4 , 0x3D ) ;
+    data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x3D ) ;
     data &= 0xfe ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x3D , data ) ;	/* diable auto-threshold */
 
     if ( ModeNo > 0x13 )
     {
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x08 , 0x34 ) ;
-        data = XGINew_GetReg1( pVBInfo->P3c4 , 0x09 ) ;
+        data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x09 ) ;
         data &= 0xF0 ;
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x09 , data ) ;
-        data = XGINew_GetReg1( pVBInfo->P3c4 , 0x3D ) ;
+        data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x3D ) ;
         data |= 0x01 ;
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x3D , data ) ;
     }
     else
     {
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x08 , 0xAE ) ;
-        data = XGINew_GetReg1( pVBInfo->P3c4 , 0x09 ) ;
+        data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x09 ) ;
         data &= 0xF0 ;
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x09 , data ) ;
     }
@@ -1587,7 +1587,7 @@ void XGI_SetCRT1ModeRegs( PXGI_HW_DEVICE_INFO HwDeviceExtension ,
     else
         modeflag = pVBInfo->SModeIDTable[ ModeIdIndex ].St_ModeFlag ;    /* si+St_ModeFlag */
 
-    if ( XGINew_GetReg1( pVBInfo->P3d4 , 0x31 ) & 0x01 )
+    if ( XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x31 ) & 0x01 )
       XGINew_SetRegANDOR( pVBInfo->P3c4 , 0x1F , 0x3F , 0x00 ) ;
 
     if ( ModeNo > 0x13 )
@@ -1663,7 +1663,7 @@ void XGI_SetCRT1ModeRegs( PXGI_HW_DEVICE_INFO HwDeviceExtension ,
 
     XGI_SetVCLKState( HwDeviceExtension , ModeNo , RefreshRateTableIndex, pVBInfo) ;
 
-    data=XGINew_GetReg1( pVBInfo->P3d4 , 0x31 ) ;
+    data=XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x31 ) ;
 
     if (HwDeviceExtension->jChipType == XG20 )
     {
@@ -1709,7 +1709,7 @@ void XGI_SetVCLKState(  PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo , 
         VCLK = pVBInfo->VCLKData[ index ].CLOCK ;
     }
 
-    data = XGINew_GetReg1( pVBInfo->P3c4 , 0x32 ) ;
+    data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x32 ) ;
     data &= 0xf3 ;
     if ( VCLK >= 200 )
         data |= 0x0c ;	/* VCLK > 200 */
@@ -1721,7 +1721,7 @@ void XGI_SetVCLKState(  PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo , 
 
     if ( HwDeviceExtension->jChipType != XG20 )
     {
-    data = XGINew_GetReg1( pVBInfo->P3c4 , 0x1F ) ;
+    data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x1F ) ;
     data &= 0xE7 ;
     if ( VCLK < 200 )
         data |= 0x10 ;
@@ -2348,29 +2348,29 @@ void XGI_UpdateModeInfo( PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO  
     {
         tempcl = 0 ;
         tempch = 0 ;
-        temp = XGINew_GetReg1( pVBInfo->P3c4 , 0x01 ) ;
+        temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x01 ) ;
 
         if ( !( temp & 0x20 ) )
         {
-            temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x17 ) ;
+            temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x17 ) ;
             if ( temp & 0x80 )
             {
                 if ( ( HwDeviceExtension->jChipType == XG20 ) || ( HwDeviceExtension->jChipType >= XG40 ) )
-                    temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x53 ) ;
+                    temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x53 ) ;
                 else
-                    temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x63 ) ;
+                    temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x63 ) ;
 
                 if ( !( temp & 0x40 ) )
                     tempcl |= ActiveCRT1 ;
             }
         }
 
-        temp = XGINew_GetReg1( pVBInfo->Part1Port , 0x2e ) ;
+        temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x2e ) ;
         temp &= 0x0f ;
 
         if ( !( temp == 0x08 ) )
         {
-            tempax = XGINew_GetReg1( pVBInfo->Part1Port , 0x13 ) ;	/* Check ChannelA by Part1_13 [2003/10/03] */
+            tempax = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x13 ) ;	/* Check ChannelA by Part1_13 [2003/10/03] */
             if ( tempax & 0x04 )
                	tempcl = tempcl | ActiveLCD ;
 
@@ -2385,7 +2385,7 @@ void XGI_UpdateModeInfo( PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO  
 
             if ( temp == 0x05 )
             {
-                temp = XGINew_GetReg1( pVBInfo->Part2Port , 0x00 ) ;
+                temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x00 ) ;
 
                 if( !( temp & 0x08 ) )
                     tempch |= ActiveAVideo ;
@@ -2404,7 +2404,7 @@ void XGI_UpdateModeInfo( PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO  
 
                 if ( pVBInfo->VBInfo & SetCRT2ToYPbPr )
                 {
-                    temp = XGINew_GetReg1( pVBInfo->Part2Port , 0x4d ) ;
+                    temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x4d ) ;
 
                     if ( temp & 0x10 )
                         tempch |= ActiveYPbPr ;
@@ -2415,7 +2415,7 @@ void XGI_UpdateModeInfo( PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO  
             }
         }
 
-        temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x3d ) ;
+        temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x3d ) ;
         if ( tempcl & ActiveLCD )
         {
             if ( ( pVBInfo->SetFlag & ReserveTVOption ) )
@@ -2476,11 +2476,11 @@ void XGI_GetVBType(PVB_DEVICE_INFO  pVBInfo)
 
     {
         tempbx = VB_XGI302B ;
-        flag = XGINew_GetReg1( pVBInfo->Part4Port , 0x00 ) ;
+        flag = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x00 ) ;
         if ( flag != 0x02 )
         {
             tempbx = VB_XGI301 ;
-            flag = XGINew_GetReg1( pVBInfo->Part4Port , 0x01 ) ;
+            flag = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x01 ) ;
             if ( flag >= 0xB0 )
             {
                 tempbx = VB_XGI301B ;
@@ -2493,7 +2493,7 @@ void XGI_GetVBType(PVB_DEVICE_INFO  pVBInfo)
                         if ( flag >= 0xE0 )
                         {
                             tempbx = VB_XGI302LV ;
-                            tempah = XGINew_GetReg1( pVBInfo->Part4Port , 0x39 ) ;
+                            tempah = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x39 ) ;
                             if ( tempah != 0xFF )
                                 tempbx = VB_XGI301C ;
                         }
@@ -2502,7 +2502,7 @@ void XGI_GetVBType(PVB_DEVICE_INFO  pVBInfo)
 
                 if ( tempbx & ( VB_XGI301B | VB_XGI302B ) )
                 {
-                    flag = XGINew_GetReg1( pVBInfo->Part4Port , 0x23 ) ;
+                    flag = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x23 ) ;
 
                     if ( !( flag & 0x02 ) )
                         tempbx = tempbx | VB_NoLCD ;
@@ -2546,9 +2546,9 @@ void XGI_GetVBInfo( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO HwD
 
     if ( pVBInfo->VBType & 0xFFFF )
     {
-        temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x30 ) ;           /* Check Display Device */
+        temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x30 ) ;           /* Check Display Device */
         tempbx = tempbx | temp ;
-        temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x31 ) ;
+        temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x31 ) ;
         push = temp ;
         push = push << 8 ;
         tempax = temp << 8 ;
@@ -2557,7 +2557,7 @@ void XGI_GetVBInfo( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO HwD
         temp = 0xFFFF ^ temp ;
         tempbx &= temp ;
 
-        temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x38 ) ;
+        temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x38 ) ;
 
         if ( pVBInfo->IF_DEF_LCDA == 1 )
         {
@@ -2590,7 +2590,7 @@ void XGI_GetVBInfo( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO HwD
                 {
                     if ( pVBInfo->IF_DEF_HiVision == 1 )
                     {
-                        temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x35 ) ;  /* shampoo add for new scratch */
+                        temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x35 ) ;  /* shampoo add for new scratch */
                         temp &= YPbPrMode ;
                         tempbx |= SetCRT2ToHiVisionTV ;
 
@@ -2769,7 +2769,7 @@ void XGI_GetTVInfo( USHORT ModeNo , USHORT ModeIdIndex ,PVB_DEVICE_INFO  pVBInfo
 
         if ( pVBInfo->VBInfo & SetCRT2ToTV )
         {
-            temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x35 ) ;
+            temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x35 ) ;
             tempbx = temp;
             if ( tempbx & SetPALTV )
             {
@@ -2790,7 +2790,7 @@ void XGI_GetTVInfo( USHORT ModeNo , USHORT ModeIdIndex ,PVB_DEVICE_INFO  pVBInfo
         {
             if ( pVBInfo->VBInfo & SetCRT2ToYPbPr )
             {
-                index1 = XGINew_GetReg1( pVBInfo->P3d4 , 0x35 ) ;
+                index1 = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x35 ) ;
                 index1 &= YPbPrMode ;
 
                 if ( index1 == YPbPrMode525i )
@@ -2870,7 +2870,7 @@ BOOLEAN XGI_GetLCDInfo( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBI
         resinfo = pVBInfo->EModeIDTable[ ModeIdIndex ].Ext_RESINFO ; /* si+Ext_ResInfo// */
     }
 
-    temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x36 ) ; /* Get LCD Res.Info */
+    temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x36 ) ; /* Get LCD Res.Info */
     tempbx = temp & 0x0F ;
 
     if ( tempbx == 0 )
@@ -2881,7 +2881,7 @@ BOOLEAN XGI_GetLCDInfo( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBI
     {
         if ( pVBInfo->VBInfo & DriverMode )
         {
-            tempax = XGINew_GetReg1( pVBInfo->P3d4 , 0x33 ) ;
+            tempax = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x33 ) ;
             if ( pVBInfo->VBInfo & SetCRT2ToLCDA )
                 tempax &= 0x0F ;
             else
@@ -2916,7 +2916,7 @@ BOOLEAN XGI_GetLCDInfo( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBI
 
     tempbx = 0 ;
 
-    temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x37 ) ;
+    temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x37 ) ;
 
     temp &= ( ScalingLCD | LCDNonExpanding | LCDSyncBit | SetPWDEnable ) ;
 
@@ -2983,7 +2983,7 @@ BOOLEAN XGI_GetLCDInfo( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBI
         tempbx |= LCDVESATiming ;
     }
 
-    temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x39 ) ; 
+    temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x39 ) ; 
     if ( temp & ReduceTiming )
     {    
         tempbx |= EnableReduceTiming ;
@@ -3054,7 +3054,7 @@ BOOLEAN XGINew_CheckMemorySize(PXGI_HW_DEVICE_INFO HwDeviceExtension,USHORT Mode
     memorysize = memorysize > MemorySizeShift ;
     memorysize++ ;					/* Get memory size */
 
-    temp = XGINew_GetReg1( pVBInfo->P3c4 , 0x14 ) ;	/* Get DRAM Size */
+    temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x14 ) ;	/* Get DRAM Size */
     tmp = temp ;
 
     if ( HwDeviceExtension->jChipType == XG40 )
@@ -3171,24 +3171,24 @@ void XGI_SenseCRT1( PVB_DEVICE_INFO pVBInfo )
 
     /* [2004/05/06] Vicent to fix XG42 single LCD sense to CRT+LCD */
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x57 , 0x4A ) ;
-    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x53 , ( UCHAR )( XGINew_GetReg1( pVBInfo->P3d4 , 0x53 ) | 0x02 ) ) ;
+    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x53 , ( UCHAR )( XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x53 ) | 0x02 ) ) ;
 
-    SR31 = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x31 ) ;
-    CR63 = ( UCHAR )XGINew_GetReg1( pVBInfo->P3d4 , 0x63 ) ;
-    SR01 = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x01 ) ;
+    SR31 = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x31 ) ;
+    CR63 = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x63 ) ;
+    SR01 = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x01 ) ;
 
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x01 , ( UCHAR )( SR01 & 0xDF ) ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x63 , ( UCHAR )( CR63 & 0xBF ) ) ;
 
-    CR17 = ( UCHAR )XGINew_GetReg1( pVBInfo->P3d4 , 0x17 ) ;
+    CR17 = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x17 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x17 , ( UCHAR )( CR17 | 0x80 ) ) ;
 
-    SR1F = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x1F ) ;
+    SR1F = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x1F ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x1F , ( UCHAR )( SR1F | 0x04 ) ) ;
 
-    SR07 = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x07 ) ;
+    SR07 = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x07 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x07 , ( UCHAR )( SR07 & 0xFB ) ) ;
-    SR06 = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x06 ) ;
+    SR06 = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x06 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x06 , ( UCHAR )( SR06 & 0xC3 ) ) ;
 
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x11 , 0x00 ) ;
@@ -3251,7 +3251,7 @@ void XGI_SenseCRT1( PVB_DEVICE_INFO pVBInfo )
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x31 , SR31 ) ;
 
     /* [2004/05/11] Vicent */
-    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x53 , ( UCHAR )( XGINew_GetReg1( pVBInfo->P3d4 , 0x53 ) & 0xFD ) ) ;
+    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x53 , ( UCHAR )( XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x53 ) & 0xFD ) ) ;
 }
 
 
@@ -3264,7 +3264,7 @@ void XGI_SenseCRT1( PVB_DEVICE_INFO pVBInfo )
 BOOLEAN CheckDualChip(  PVB_DEVICE_INFO pVBInfo )
 {
     /* Check H/W trap that 2nd chip is present or not. */
-    return( ( BOOLEAN )(XGINew_GetReg1( pVBInfo->P3c4 , 0x3A ) & XGI_MASK_DUAL_CHIP ) ) ;
+    return( ( BOOLEAN )(XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x3A ) & XGI_MASK_DUAL_CHIP ) ) ;
 }
 
 
@@ -3291,23 +3291,23 @@ void SetDualChipRegs( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVB
     pVBInfo->BaseAddr    = (USHORT)HwDeviceExtension->pjIOAddress ;
     for( i = 0x00 ; i <= 0x04 ; i++ )
     {			/* SR0 - SR4 */
-      tempal = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , i ) ;
+      tempal = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , i ) ;
       XGI_SetReg((XGIIOADDRESS) XGINew_2ndP3C4 , i , tempal ) ;
     }
     for( i = 0x00 ; i <= 0x08 ; i++ )
     {			/* GR0 - GR8 */
-      tempal = ( UCHAR )XGINew_GetReg1( pVBInfo->P3ce , i ) ;
+      tempal = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3ce , i ) ;
       XGI_SetReg((XGIIOADDRESS) XGINew_2ndP3CE , i , tempal ) ;
     }
     /* OpenKey in 2nd chip */
     XGI_SetReg((XGIIOADDRESS) XGINew_2ndP3C4 , 0x05 , 0x86 ) ;
 
     /* Copy SR06 to 2nd chip */
-    tempal = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x06 ) ;
+    tempal = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x06 ) ;
     XGI_SetReg((XGIIOADDRESS) XGINew_2ndP3C4 , 0x06 , tempal ) ;
 
     /* Copy SR21 to 2nd chip */
-    tempal = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x21 ) ;
+    tempal = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x21 ) ;
     XGI_SetReg((XGIIOADDRESS) XGINew_2ndP3C4 , 0x21 , tempal ) ;
 
     /* Miscellaneous reg(input port 3cch,output port 3c2h) */
@@ -4721,7 +4721,7 @@ void XGI_SetGroup2( USHORT ModeNo, USHORT ModeIdIndex, USHORT RefreshRateTableIn
     if ( pVBInfo->TVInfo & ( SetYPbPrMode525p | SetYPbPrMode750p ) )
         tempax &= 0xfe00 ;
 
-   ErrorF("Part2 0 = %x ", XGINew_GetReg1( pVBInfo->Part2Port , 0x0 )); 
+   ErrorF("Part2 0 = %x ", XGI_GetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x0 )); 
     ErrorF(" pVBInfo->VBInfo =%x",pVBInfo->VBInfo);
 
     tempax = ( tempax & 0xff00 ) >> 8 ;
@@ -5134,7 +5134,7 @@ void XGI_SetGroup2( USHORT ModeNo, USHORT ModeIdIndex, USHORT RefreshRateTableIn
     }
 
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x4d , temp ) ;
-    temp=XGINew_GetReg1( pVBInfo->Part2Port , 0x43 ) ;		/* 301b change */
+    temp=XGI_GetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x43 ) ;		/* 301b change */
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x43 , ( USHORT )( temp - 3 ) ) ;
 
     if ( !( pVBInfo->TVInfo & ( SetYPbPrMode525p | SetYPbPrMode750p ) ) )
@@ -5159,7 +5159,7 @@ void XGI_SetGroup2( USHORT ModeNo, USHORT ModeIdIndex, USHORT RefreshRateTableIn
 
     if ( pVBInfo->TVInfo & SetPALMTV )
     {
-        tempax = ( UCHAR )XGINew_GetReg1( pVBInfo->Part2Port , 0x01 ) ;
+        tempax = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x01 ) ;
         tempax-- ;
         XGINew_SetRegAND( pVBInfo->Part2Port , 0x01 , tempax ) ;
 
@@ -5179,7 +5179,7 @@ void XGI_SetGroup2( USHORT ModeNo, USHORT ModeIdIndex, USHORT RefreshRateTableIn
     {
         return ;
     }
-    ErrorF("5935 Part2 0 = %x ", XGINew_GetReg1( pVBInfo->Part2Port , 0x0 ));
+    ErrorF("5935 Part2 0 = %x ", XGI_GetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x0 ));
 }
 
 
@@ -6622,7 +6622,7 @@ BOOLEAN XGI_BacklightByDrv( PVB_DEVICE_INFO pVBInfo )
 {
     UCHAR tempah ;
 
-    tempah = ( UCHAR )XGINew_GetReg1( pVBInfo->P3d4 , 0x3A ) ;
+    tempah = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x3A ) ;
     if ( tempah & BacklightControlBit )
         return TRUE ;
     else
@@ -6799,7 +6799,7 @@ BOOLEAN XGI_DisableChISLCD(PVB_DEVICE_INFO pVBInfo)
            tempah ;
 
     tempbx = pVBInfo->SetFlag & ( DisableChA | DisableChB ) ;
-    tempah = ~( ( USHORT )XGINew_GetReg1( pVBInfo->Part1Port  , 0x2E ) ) ;
+    tempah = ~( ( USHORT )XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port  , 0x2E ) ) ;
 
     if ( tempbx & ( EnableChA | DisableChA ) )
     {
@@ -6830,7 +6830,7 @@ BOOLEAN XGI_EnableChISLCD(PVB_DEVICE_INFO pVBInfo)
 
 
     tempbx = pVBInfo->SetFlag & ( EnableChA | EnableChB ) ;
-    tempah = ~( ( USHORT )XGINew_GetReg1( pVBInfo->Part1Port , 0x2E ) ) ;
+    tempah = ~( ( USHORT )XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x2E ) ) ;
 
     if ( tempbx & ( EnableChA | DisableChA ) )
     {
@@ -6861,7 +6861,7 @@ USHORT XGI_GetLCDCapPtr(  PVB_DEVICE_INFO pVBInfo )
           tempbl ,
           i ;
 
-    tempah = XGINew_GetReg1( pVBInfo->P3d4 , 0x36 ) ;
+    tempah = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x36 ) ;
     tempal = tempah & 0x0F ;
     tempah = tempah & 0xF0 ;
     i = 0 ;
@@ -7031,7 +7031,7 @@ void XGI_EnableBridge( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO p
         {
             if ( ( pVBInfo->SetFlag & EnableChB ) || ( pVBInfo->VBInfo & ( SetCRT2ToLCD | SetCRT2ToTV | SetCRT2ToRAMDAC ) ) )
             {
-                tempah = ( UCHAR )XGINew_GetReg1( pVBInfo->P3c4 , 0x32 ) ;
+                tempah = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x32 ) ;
                 tempah &= 0xDF;
                 if ( pVBInfo->VBInfo & SetInSlaveMode )
                 {
@@ -7042,7 +7042,7 @@ void XGI_EnableBridge( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO p
                 XGINew_SetRegOR( pVBInfo->P3c4 , 0x1E , 0x20 ) ;
 
 
-                tempah = ( UCHAR )XGINew_GetReg1( pVBInfo->Part1Port , 0x2E ) ;
+                tempah = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x2E ) ;
 
                 if ( !( tempah & 0x80 ) )
                     XGINew_SetRegOR( pVBInfo->Part1Port , 0x2E , 0x80 ) ;   	/* BVBDOENABLE = 1 */
@@ -7123,7 +7123,7 @@ void XGI_EnableBridge( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO p
 
   
 
-        tempah = ( UCHAR )XGINew_GetReg1( pVBInfo->Part1Port , 0x2E ) ;
+        tempah = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x2E ) ;
         if ( !( tempah & 0x80 ) )
             XGINew_SetRegOR( pVBInfo->Part1Port , 0x2E , 0x80 ) ;	/* BVBDOENABLE = 1 */
 
@@ -7270,7 +7270,7 @@ void XGI_DisableBridge(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pV
         if ( ( pVBInfo->SetFlag & DisableChB ) || ( pVBInfo->VBInfo & ( DisableCRT2Display | SetSimuScanMode ) )
         || ( !( pVBInfo->VBInfo & SetCRT2ToLCDA ) ) || ( pVBInfo->VBInfo & ( SetCRT2ToRAMDAC | SetCRT2ToLCD | SetCRT2ToTV ) ) )
         {
-            tempah= XGINew_GetReg1( pVBInfo->Part1Port , 0x00 ) ;   	/* save Part1 index 0 */
+            tempah= XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x00 ) ;   	/* save Part1 index 0 */
             XGINew_SetRegOR( pVBInfo->Part1Port , 0x00 , 0x10 ) ; 	/* BTDAC = 1, avoid VB reset */
             XGINew_SetRegAND( pVBInfo->Part1Port , 0x1E , 0xDF ) ;	/* disable CRT2 */
             XGI_SetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x00 , tempah ) ;	/* restore Part1 index 0 */
@@ -7439,7 +7439,7 @@ void XGI_SetDelayComp( PVB_DEVICE_INFO pVBInfo )
 
             tempbl  &= 0x0F ;
             tempbh  &= 0xF0 ;
-            tempah = XGINew_GetReg1( pVBInfo->Part1Port , 0x2D ) ;
+            tempah = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x2D ) ;
 
             if ( pVBInfo->VBInfo & ( SetCRT2ToRAMDAC | SetCRT2ToLCD | SetCRT2ToTV ) )  /* Channel B */
             {
@@ -7509,7 +7509,7 @@ void XGI_SetLCDCap_A(USHORT tempcx,PVB_DEVICE_INFO pVBInfo)
 {
     USHORT temp ;
 
-    temp = XGINew_GetReg1( pVBInfo->P3d4 , 0x37 ) ;
+    temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x37 ) ;
 
     if ( temp & LCDRGB18Bit )
     {
@@ -7840,7 +7840,7 @@ void XGI_SetCRT2ModeRegs(USHORT ModeNo,PXGI_HW_DEVICE_INFO HwDeviceExtension, PV
     tempah=0;
     if ( !( pVBInfo->VBInfo & DisableCRT2Display ) )
     {
-        tempah=XGINew_GetReg1( pVBInfo->Part1Port , 0x00 ) ;
+        tempah=XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x00 ) ;
         tempah &= ~0x10 ;	/* BTRAMDAC */
         tempah |=  0x40 ;	/* BTRAM */
 
@@ -8237,7 +8237,7 @@ BOOLEAN XGI_BridgeIsOn( PVB_DEVICE_INFO pVBInfo )
     USHORT flag ;
 
     {
-        flag = XGINew_GetReg1( pVBInfo->Part4Port , 0x00 ) ;
+        flag = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x00 ) ;
         if ( ( flag == 1 ) || ( flag == 2 ) )
             return( 1 ) ;	/* 301b */
         else
@@ -8257,7 +8257,7 @@ void XGI_LongWait(PVB_DEVICE_INFO pVBInfo)
 {
     USHORT i ;
 
-    i = XGINew_GetReg1( pVBInfo->P3c4 , 0x1F ) ;
+    i = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x1F ) ;
 
     if ( !( i & 0xC0 ) )
     {

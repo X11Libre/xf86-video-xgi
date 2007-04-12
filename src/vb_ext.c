@@ -74,7 +74,7 @@ static BOOLEAN XGINew_SenseHiTV(PXGI_HW_DEVICE_INFO HwDeviceExtension,
  */
 static int XGINew_Is301B(PVB_DEVICE_INFO pVBInfo)
 {
-    return !(XGINew_GetReg1(pVBInfo->Part4Port, 0x01) > 0x0B0);
+    return !(XGI_GetReg((XGIIOADDRESS)pVBInfo->Part4Port, 0x01) > 0x0B0);
 }
 
 
@@ -98,7 +98,7 @@ BOOLEAN XGINew_Sense(USHORT tempbx, USHORT tempcx, PVB_DEVICE_INFO pVBInfo)
     for (i = 0; i < 10; i++)
         XGI_LongWait(pVBInfo);
 
-    temp = XGINew_GetReg1( pVBInfo->Part4Port, 0x03);
+    temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x03);
     temp = (temp ^ 0x0E) & ((tempcx & 0x7F00) >> 8);
 
     return (temp > 0);
@@ -121,9 +121,9 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
     {		/* for 301 */
         if ( pVBInfo->VBInfo & SetCRT2ToHiVisionTV )
         {	/* for HiVision */
-            tempax = XGINew_GetReg1( pVBInfo->P3c4 , 0x38 ) ;
+            tempax = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x38 ) ;
             temp = tempax & 0x01 ;
-            tempax = XGINew_GetReg1( pVBInfo->P3c4 , 0x3A ) ;
+            tempax = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x3A ) ;
             temp = temp | ( tempax & 0x02 ) ;
             XGINew_SetRegANDOR( pVBInfo->P3d4 , 0x32 , 0xA0 , temp ) ;
         }
@@ -131,7 +131,7 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
         {
             if ( XGI_BridgeIsOn( pVBInfo ) )
             {
-                P2reg0 = XGINew_GetReg1( pVBInfo->Part2Port , 0x00 ) ;
+                P2reg0 = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x00 ) ;
                 if ( !XGINew_BridgeIsEnable( HwDeviceExtension, pVBInfo ) )
                 {
 		    USHORT temp_mode_no;
@@ -333,7 +333,7 @@ BOOLEAN XGINew_BridgeIsEnable( PXGI_HW_DEVICE_INFO HwDeviceExtension ,PVB_DEVICE
 
     if ( XGI_BridgeIsOn( pVBInfo ) == 0 )
     {
-        flag = XGINew_GetReg1( pVBInfo->Part1Port , 0x0 ) ;
+        flag = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x0 ) ;
 
         if ( flag & 0x050 )
         {
@@ -375,7 +375,7 @@ BOOLEAN XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INF
         XGI_LongWait(pVBInfo) ;
 
     tempch = ( tempcx & 0xFF00 ) >> 8;
-    temp = XGINew_GetReg1( pVBInfo->Part4Port , 0x03 ) ;
+    temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x03 ) ;
     temp = temp ^ ( 0x0E ) ;
     temp &= tempch ;
 
@@ -395,7 +395,7 @@ BOOLEAN XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INF
         XGI_LongWait(pVBInfo) ;
 
     tempch = ( tempcx & 0xFF00 ) >> 8;
-    temp = XGINew_GetReg1( pVBInfo->Part4Port , 0x03 ) ;
+    temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x03 ) ;
     temp = temp ^ ( 0x0E ) ;
     temp &= tempch ;
 
@@ -415,7 +415,7 @@ BOOLEAN XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INF
           XGI_LongWait(pVBInfo) ;
 
       tempch = ( tempcx & 0xFF00 ) >> 8;
-      temp = XGINew_GetReg1( pVBInfo->Part4Port , 0x03 ) ;
+      temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x03 ) ;
       temp = temp ^ ( 0x0E ) ;
       temp &= tempch ;
 

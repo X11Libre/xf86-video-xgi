@@ -45,36 +45,11 @@
 #endif
 
 
-UCHAR XGINew_GetReg1( USHORT , USHORT) ;
 UCHAR XGINew_GetReg2( USHORT ) ;
 ULONG XGINew_GetReg3( USHORT ) ;
 void     XGINew_SetRegANDOR(USHORT Port,USHORT Index,USHORT DataAND,USHORT DataOR);
 void     XGINew_SetRegOR(USHORT Port,USHORT Index,USHORT DataOR);
 void     XGINew_SetRegAND(USHORT Port,USHORT Index,USHORT DataAND);
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_GetReg1 */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-UCHAR XGINew_GetReg1( USHORT port , USHORT index )
-{
-    UCHAR data ;
-
-#ifdef LINUX_XF86
-    OutPortByte( ( PUCHAR )(ULONG)port , index ) ;
-//udelay(1);
-    data = InPortByte( ( PUCHAR )(ULONG)port + 1 ) ;
-#else
-    OutPortByte( ( PUCHAR )port , index ) ;
-//udelay(1);	
-    data = InPortByte( ( PUCHAR )port + 1 ) ;
-#endif
-
-    return( data ) ;
-}
 
 
 /* --------------------------------------------------------------------- */
