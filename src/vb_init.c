@@ -40,7 +40,6 @@
 
 #include "vb_def.h"
 #include "vb_struct.h"
-#include "vb_util.h"
 #include "vb_setmode.h"
 #include "vb_init.h"
 #include "vb_ext.h"

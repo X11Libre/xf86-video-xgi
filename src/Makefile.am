@@ -43,8 +43,6 @@ xgi_drv_la_SOURCES = \
 	vb_setmode.h \
 	vb_struct.h \
 	vb_table.h \
-	vb_util.c \
-	vb_util.h \
 	vgatypes.h \
 	vstruct.h \
 	xgi_accel.c \

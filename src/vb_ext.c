@@ -47,7 +47,6 @@
 #include "vb_def.h"
 #include "vgatypes.h"
 #include "vb_struct.h"
-#include "vb_util.h"
 #include "vb_setmode.h"
 #include "vb_ext.h"
 #include "vb_init.h"
