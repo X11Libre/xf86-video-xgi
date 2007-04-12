@@ -604,14 +604,14 @@ void XGI_SetCRT1Group( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo , U
     	{
     	    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2B , 0x4E) ;
     	    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2C , 0xE9) ;
-    	    b3CC =(UCHAR) XGINew_GetReg2(XGINew_P3cc) ;
+    	    b3CC =(UCHAR) XGI_GetRegByte((XGIIOADDRESS)XGINew_P3cc) ;
     	    XGI_SetRegByte((XGIIOADDRESS)XGINew_P3cc ,  (b3CC |= 0x0C) ) ;
     	}
     	else if ( ( ModeNo == 0x04) | ( ModeNo == 0x05) | ( ModeNo == 0x0D) )
     	{
     	    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2B , 0x1B) ;
     	    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2C , 0xE3) ;
-    	    b3CC = (UCHAR)XGINew_GetReg2(XGINew_P3cc) ;
+    	    b3CC = (UCHAR)XGI_GetRegByte((XGIIOADDRESS)XGINew_P3cc) ;
     	    XGI_SetRegByte((XGIIOADDRESS)XGINew_P3cc ,  (b3CC |= 0x0C) ) ;
     	}
     }
@@ -764,15 +764,15 @@ void XGI_SetATTRegs( USHORT ModeNo , USHORT StandTableIndex , USHORT ModeIdIndex
             }
         }
 
-        XGINew_GetReg2( pVBInfo->P3da ) ;			/* reset 3da */
+        XGI_GetRegByte((XGIIOADDRESS) pVBInfo->P3da ) ;			/* reset 3da */
         XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0 , i ) ;		/* set index */
         XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0 , ARdata ) ;	/* set data */
     }
 
-    XGINew_GetReg2( pVBInfo->P3da ) ;			/* reset 3da */
+    XGI_GetRegByte((XGIIOADDRESS) pVBInfo->P3da ) ;			/* reset 3da */
     XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0 , 0x14 ) ;		/* set index */
     XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0 , 0x00 ) ;		/* set data */
-    XGINew_GetReg2( pVBInfo->P3da ) ;			/* Enable Attribute */
+    XGI_GetRegByte((XGIIOADDRESS) pVBInfo->P3da ) ;			/* Enable Attribute */
     XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0 , 0x20 ) ;
 }
 
@@ -3135,10 +3135,10 @@ void XGI_DisplayOff( PVB_DEVICE_INFO pVBInfo )
  */
 void XGI_WaitDisplay(PVB_DEVICE_INFO pVBInfo)
 {
-    while ((XGINew_GetReg2(pVBInfo->P3da) & 0x01))
+    while ((XGI_GetRegByte((XGIIOADDRESS)pVBInfo->P3da) & 0x01))
         break;
 
-    while (!(XGINew_GetReg2(pVBInfo->P3da) & 0x01))
+    while (!(XGI_GetRegByte((XGIIOADDRESS)pVBInfo->P3da) & 0x01))
         break;
 }
 
@@ -3226,7 +3226,7 @@ void XGI_SenseCRT1( PVB_DEVICE_INFO pVBInfo )
     XGINew_LCD_Wait_Time( 0x01 , pVBInfo ) ;
     XGI_WaitDisplay(pVBInfo);
 
-    temp = XGINew_GetReg2( pVBInfo->P3c2 ) ;
+    temp = XGI_GetRegByte((XGIIOADDRESS) pVBInfo->P3c2 ) ;
     if ( temp & 0x10 )
     {
         XGINew_SetRegANDOR( pVBInfo->P3d4 , 0x32 , 0xDF , 0x20 ) ;
@@ -3311,7 +3311,7 @@ void SetDualChipRegs( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVB
     XGI_SetReg((XGIIOADDRESS) XGINew_2ndP3C4 , 0x21 , tempal ) ;
 
     /* Miscellaneous reg(input port 3cch,output port 3c2h) */
-    tempal = ( UCHAR )XGINew_GetReg2( XGINew_P3CC ) ;  /* 3cc */
+    tempal = ( UCHAR )XGI_GetRegByte((XGIIOADDRESS) XGINew_P3CC ) ;  /* 3cc */
     XGI_SetRegByte((XGIIOADDRESS) XGINew_2ndP3C2 , tempal ) ;
 
     /* Close key in 2nd chip */
@@ -3854,7 +3854,7 @@ UCHAR XGI_GetVCLKPtr(USHORT RefreshRateTableIndex,USHORT ModeNo,USHORT ModeIdInd
         }
     }	/* {End of VB} */
 
-    tempal = ( UCHAR )XGINew_GetReg2( ( USHORT )( pVBInfo->P3ca + 0x02 ) ) ;
+    tempal = ( UCHAR )XGI_GetRegByte((XGIIOADDRESS) ( USHORT )( pVBInfo->P3ca + 0x02 ) ) ;
     tempal = tempal >> 2 ;
     tempal &= 0x03 ;
 
@@ -8263,13 +8263,13 @@ void XGI_LongWait(PVB_DEVICE_INFO pVBInfo)
     {
         for( i = 0 ; i < 0xFFFF ; i++ )
         {
-            if ( !( XGINew_GetReg2( pVBInfo->P3da ) & 0x08 ) )
+            if ( !( XGI_GetRegByte((XGIIOADDRESS) pVBInfo->P3da ) & 0x08 ) )
                 break ;
         }
 
         for( i = 0 ; i < 0xFFFF ; i++ )
         {
-            if ( ( XGINew_GetReg2( pVBInfo->P3da ) & 0x08 ) )
+            if ( ( XGI_GetRegByte((XGIIOADDRESS) pVBInfo->P3da ) & 0x08 ) )
                 break ;
 	}
     }
@@ -8296,7 +8296,7 @@ void XGI_VBLongWait( PVB_DEVICE_INFO pVBInfo )
         {
             for( j = 0 ; j < 100 ; j++ )
             {
-                tempal = XGINew_GetReg2( pVBInfo->P3da ) ;
+                tempal = XGI_GetRegByte((XGIIOADDRESS) pVBInfo->P3da ) ;
                 if ( temp & 0x01 )
                 {			/* VBWaitMode2 */
                     if ( ( tempal & 0x08 ) )
@@ -8486,7 +8486,7 @@ USHORT XGI_GetVCLK2Ptr( USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRateT
             }
             else
             {	/* for CRT2 */
-                VCLKIndex = ( UCHAR )XGINew_GetReg2( ( USHORT )( pVBInfo->P3ca + 0x02 ) ) ;	/* Port 3cch */
+                VCLKIndex = XGI_GetRegByte((XGIIOADDRESS) ( USHORT )( pVBInfo->P3ca + 0x02 ) ) ;	/* Port 3cch */
 		VCLKIndex = ( ( VCLKIndex >> 2 ) & 0x03 ) ;
                 if ( ModeNo > 0x13 )
                 {

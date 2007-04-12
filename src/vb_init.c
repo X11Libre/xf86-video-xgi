@@ -677,10 +677,10 @@ void DualChipInit( PXGI_HW_DEVICE_INFO HwDeviceExtension ,PVB_DEVICE_INFO pVBInf
     Temp += 0x80;
     HwDeviceExtension->pQueryVGAConfigSpace( HwDeviceExtension , 0x18 + 0x80 , 1 , &Temp ) ; /* Set */
     /* Miscellaneous reg(input port 3cch,output port 3c2h) */
-    tempal = ( UCHAR )XGINew_GetReg2( XGINew_P3CC ) ;	/* 3cc */
+    tempal = XGI_GetRegByte((XGIIOADDRESS) XGINew_P3CC ) ;	/* 3cc */
     XGI_SetRegByte((XGIIOADDRESS) XGINew_2ndP3C2 , tempal ) ;
     /* VGA enable reg(port 3C3h) */
-    tempal = ( UCHAR )XGINew_GetReg2( XGINew_P3C3 ) ;	/* 3c3 */
+    tempal = XGI_GetRegByte((XGIIOADDRESS) XGINew_P3C3 ) ;	/* 3c3 */
     XGI_SetRegByte((XGIIOADDRESS) XGINew_2ndP3C3 , tempal ) ;
     SetPowerConsume ( HwDeviceExtension , XGINew_2ndP3D4);
     /* ----- CRA0=42, CRA1=81, CRA2=60, CRA3=20, CRA4=50, CRA5=40, CRA8=88 -----// */

@@ -45,27 +45,10 @@
 #endif
 
 
-UCHAR XGINew_GetReg2( USHORT ) ;
 ULONG XGINew_GetReg3( USHORT ) ;
 void     XGINew_SetRegANDOR(USHORT Port,USHORT Index,USHORT DataAND,USHORT DataOR);
 void     XGINew_SetRegOR(USHORT Port,USHORT Index,USHORT DataOR);
 void     XGINew_SetRegAND(USHORT Port,USHORT Index,USHORT DataAND);
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_GetReg2 */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-UCHAR XGINew_GetReg2( USHORT port )
-{
-    UCHAR data ;
-
-    data = InPortByte( port ) ;
-
-    return( data ) ;
-}
 
 
 /* --------------------------------------------------------------------- */
