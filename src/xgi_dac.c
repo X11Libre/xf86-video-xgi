@@ -711,19 +711,19 @@ XG40Mclk(XGIPtr pXGI)
 
 
 static int
-retrace_signals_active(XGIPtr pXGI)
+retrace_signals_active(XGIIOADDRESS RelIO)
 {
     unsigned char temp;
 
     /* Make sure the vertical retrace signal is enabled.
      */
-    inXGIIDXREG(XGICR, 0x17, temp);
+    inXGIIDXREG(RelIO + CROFFSET, 0x17, temp);
     if (!(temp & 0x80)) 
 	return 0;
 
     /* FIXME: Magic offset, what are you?
      */
-    inXGIIDXREG(XGISR, 0x1f, temp);
+    inXGIIDXREG(RelIO + SROFFSET, 0x1f, temp);
     if(temp & 0xc0) 
 	return 0;
 
@@ -739,21 +739,20 @@ retrace_signals_active(XGIPtr pXGI)
  * nearly identical.  Are both \b really necessary?
  */
 void
-XGI_WaitBeginRetrace(ScrnInfoPtr pScrn)
+XGI_WaitBeginRetrace(XGIIOADDRESS RelIO)
 {
-    XGIPtr        pXGI = XGIPTR(pScrn);
     int           watchdog;
 
-    if (retrace_signals_active(pXGI)) {
+    if (retrace_signals_active(RelIO)) {
 	/* Wait for the CRTC to leave then re-enter the vertical retrace
 	 * period.
 	 */
 	watchdog = 65536;
-	while ((inXGIREG(XGIINPSTAT) & IS_BIT_VERT_ACTIVE) && --watchdog)
+	while ((inXGIREG(RelIO + INPUTSTATOFFSET) & IS_BIT_VERT_ACTIVE) && --watchdog)
 	    /* empty */ ;
 
 	watchdog = 65536;
-	while ((!(inXGIREG(XGIINPSTAT) & IS_BIT_VERT_ACTIVE)) && --watchdog)
+	while ((!(inXGIREG(RelIO + INPUTSTATOFFSET) & IS_BIT_VERT_ACTIVE)) && --watchdog)
 	    /* empty */ ;
     }
 }
@@ -767,22 +766,20 @@ XGI_WaitBeginRetrace(ScrnInfoPtr pScrn)
  * nearly identical.  Are both \b really necessary?
  */
 void
-XGI_WaitEndRetrace(ScrnInfoPtr pScrn)
+XGI_WaitEndRetrace(XGIIOADDRESS RelIO)
 {
-    XGIPtr  pXGI = XGIPTR(pScrn);
     int           watchdog;
 
-
-    if (retrace_signals_active(pXGI)) {
+    if (retrace_signals_active(RelIO)) {
 	/* Wait for the CRTC to enter then leave the vertical retrace
 	 * period.
 	 */
 	watchdog = 65536;
-	while ((!(inXGIREG(XGIINPSTAT) & IS_BIT_VERT_ACTIVE)) && --watchdog)
+	while ((!(inXGIREG(RelIO + INPUTSTATOFFSET) & IS_BIT_VERT_ACTIVE)) && --watchdog)
 	    /* empty */ ;
 
 	watchdog = 65536;
-	while ((inXGIREG(XGIINPSTAT) & IS_BIT_VERT_ACTIVE) && --watchdog)
+	while ((inXGIREG(RelIO + INPUTSTATOFFSET) & IS_BIT_VERT_ACTIVE) && --watchdog)
 	    /* empty */ ;
     }
 }

@@ -5737,7 +5737,7 @@ XGILeaveVT(int scrnIndex, int flags)
 	 */
 #endif
 	pXGI->CursorInfoPtr->HideCursor(pScrn);
-	XGI_WaitBeginRetrace(pScrn);
+	XGI_WaitBeginRetrace(pXGI->RelIO);
     }
 
     XGIBridgeRestore(pScrn);
@@ -5798,7 +5798,7 @@ XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
 #endif
 	    ) {
 	    pXGI->CursorInfoPtr->HideCursor(pScrn);
-	    XGI_WaitBeginRetrace(pScrn);
+	    XGI_WaitBeginRetrace(pXGI->RelIO);
 	}
 
         XGIBridgeRestore(pScrn);

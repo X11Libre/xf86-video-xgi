@@ -72,7 +72,7 @@ Volari_ShowCursor(ScrnInfoPtr pScrn)
     	xgiG2CRT2_EnableHWCursor(cursor_base, 0);
     }
     XGIG1_SetCursorPosition(pScrn, currX, currY) ;
-    XGI_WaitEndRetrace(pScrn);
+    XGI_WaitEndRetrace(pXGI->RelIO);
 }
 
 static void
@@ -86,7 +86,7 @@ Volari_HideCursor(ScrnInfoPtr pScrn)
         xgiG1CRT2_DisableHWCursor() ;
     }
     XGIG1_SetCursorPosition(pScrn, currX, currY) ;
-    XGI_WaitEndRetrace(pScrn);
+    XGI_WaitEndRetrace(pXGI->RelIO);
 }
 
 static void
