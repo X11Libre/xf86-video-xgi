@@ -3369,7 +3369,7 @@ BOOLEAN XGI_SetCRT2Group301( USHORT ModeNo , PXGI_HW_DEVICE_INFO HwDeviceExtensi
 void XGI_AutoThreshold(  PVB_DEVICE_INFO pVBInfo )
 {
     if ( !( pVBInfo->SetFlag & Win9xDOSMode ) )
-      XGINew_SetRegOR( pVBInfo->Part1Port , 0x01 , 0x40 ) ;
+      XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part1Port , 0x01 , 0x40 ) ;
 }
 
 
@@ -3737,9 +3737,9 @@ void XGI_SetCRT2VCLK( USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRateTab
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x00 , 0x12 ) ;
 
     if ( pVBInfo->VBInfo & SetCRT2ToRAMDAC )
-        XGINew_SetRegOR( pVBInfo->Part4Port , 0x12 , 0x28 ) ;
+        XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part4Port , 0x12 , 0x28 ) ;
     else
-        XGINew_SetRegOR( pVBInfo->Part4Port , 0x12 , 0x08 ) ;
+        XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part4Port , 0x12 , 0x08 ) ;
 }
 
 
@@ -5693,7 +5693,7 @@ void XGI_SetGroup4(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTableIndex
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x17 , temp ) ;
     temp = temp2 | ( ( tempcx & 0xFF00 ) >> 8 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x15 , temp ) ;
-    XGINew_SetRegOR( pVBInfo->Part4Port , 0x0D , 0x08 ) ;
+    XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part4Port , 0x0D , 0x08 ) ;
     tempcx = pVBInfo->VBInfo ;
     tempbx = pVBInfo->VGAHDE ;
 
@@ -5859,7 +5859,7 @@ void XGI_SetGroup4(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTableIndex
         {
             if ( pVBInfo->VGAHDE > 800 )
             {
-                XGINew_SetRegOR( pVBInfo->Part4Port , 0x1E , 0x08 ) ;
+                XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part4Port , 0x1E , 0x08 ) ;
             }
         }
         temp = 0x0036 ;
@@ -6771,7 +6771,7 @@ void XGI_EnablePWD(  PVB_DEVICE_INFO pVBInfo )
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x2D , pVBInfo->LCDCapList[ index ].PWD_2D ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x2E , pVBInfo->LCDCapList[ index ].PWD_2E ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x2F , pVBInfo->LCDCapList[ index ].PWD_2F ) ;
-    XGINew_SetRegOR( pVBInfo->Part4Port , 0x27 , 0x80 ) ; 	/* enable PWD */
+    XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part4Port , 0x27 , 0x80 ) ; 	/* enable PWD */
 }
 
 
@@ -7039,13 +7039,13 @@ void XGI_EnableBridge( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO p
                         tempah |= 0x20 ;
                 }
                 XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x32 , tempah ) ;
-                XGINew_SetRegOR( pVBInfo->P3c4 , 0x1E , 0x20 ) ;
+                XGI_SetReg0R((XGIIOADDRESS) pVBInfo->P3c4 , 0x1E , 0x20 ) ;
 
 
                 tempah = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x2E ) ;
 
                 if ( !( tempah & 0x80 ) )
-                    XGINew_SetRegOR( pVBInfo->Part1Port , 0x2E , 0x80 ) ;   	/* BVBDOENABLE = 1 */
+                    XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part1Port , 0x2E , 0x80 ) ;   	/* BVBDOENABLE = 1 */
 
                 XGI_SetRegAND((XGIIOADDRESS) pVBInfo->Part1Port , 0x00 , 0x7F ) ;     	/* BScreenOFF = 0 */
             }
@@ -7097,7 +7097,7 @@ void XGI_EnableBridge( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO p
             }
         }
 
-        XGINew_SetRegOR( pVBInfo->Part4Port , 0x1F , tempah ) ;          /* EnablePart4_1F */
+        XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part4Port , 0x1F , tempah ) ;          /* EnablePart4_1F */
 
         if ( pVBInfo->SetFlag & Win9xDOSMode )
         {
@@ -7119,13 +7119,13 @@ void XGI_EnableBridge( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO p
     else 	/* LVDS */
     {
         if ( pVBInfo->VBInfo & ( SetCRT2ToTV | SetCRT2ToLCD | SetCRT2ToLCDA ) )
-            XGINew_SetRegOR( pVBInfo->Part1Port , 0x1E , 0x20 ) ;      	/* enable CRT2 */
+            XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part1Port , 0x1E , 0x20 ) ;      	/* enable CRT2 */
 
   
 
         tempah = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x2E ) ;
         if ( !( tempah & 0x80 ) )
-            XGINew_SetRegOR( pVBInfo->Part1Port , 0x2E , 0x80 ) ;	/* BVBDOENABLE = 1 */
+            XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part1Port , 0x2E , 0x80 ) ;	/* BVBDOENABLE = 1 */
 
         XGI_SetRegAND((XGIIOADDRESS)pVBInfo->Part1Port,0x00,0x7F);
         XGI_DisplayOn( pVBInfo);
@@ -7242,7 +7242,7 @@ void XGI_DisableBridge(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pV
         if ( pVBInfo->VBType & ( VB_XGI302LV | VB_XGI301C ) )
         {
             if ( ( ( pVBInfo->VBInfo & ( SetCRT2ToLCD | SetCRT2ToLCDA ) ) ) || ( XGI_DisableChISLCD(pVBInfo) ) || ( XGI_IsLCDON(pVBInfo) ) )
-                XGINew_SetRegOR( pVBInfo->Part4Port , 0x30 , 0x80 ) ;  /* LVDS Driver power down */
+                XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part4Port , 0x30 , 0x80 ) ;  /* LVDS Driver power down */
         }
 
         if ( ( pVBInfo->SetFlag & DisableChA ) || ( pVBInfo->VBInfo & ( DisableCRT2Display | SetCRT2ToLCDA | SetSimuScanMode ) ) )
@@ -7265,13 +7265,13 @@ void XGI_DisableBridge(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pV
 
         if ( ( pVBInfo->SetFlag & DisableChB ) || ( pVBInfo->VBInfo & ( DisableCRT2Display | SetSimuScanMode ) )
         || ( ( !( pVBInfo->VBInfo & SetCRT2ToLCDA ) ) && ( pVBInfo->VBInfo & ( SetCRT2ToRAMDAC | SetCRT2ToLCD | SetCRT2ToTV ) ) ) )
-            XGINew_SetRegOR( pVBInfo->Part1Port , 0x00 , 0x80 ) ; 	/* BScreenOff=1 */
+            XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part1Port , 0x00 , 0x80 ) ; 	/* BScreenOff=1 */
 
         if ( ( pVBInfo->SetFlag & DisableChB ) || ( pVBInfo->VBInfo & ( DisableCRT2Display | SetSimuScanMode ) )
         || ( !( pVBInfo->VBInfo & SetCRT2ToLCDA ) ) || ( pVBInfo->VBInfo & ( SetCRT2ToRAMDAC | SetCRT2ToLCD | SetCRT2ToTV ) ) )
         {
             tempah= XGI_GetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x00 ) ;   	/* save Part1 index 0 */
-            XGINew_SetRegOR( pVBInfo->Part1Port , 0x00 , 0x10 ) ; 	/* BTDAC = 1, avoid VB reset */
+            XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part1Port , 0x00 , 0x10 ) ; 	/* BTDAC = 1, avoid VB reset */
             XGI_SetRegAND((XGIIOADDRESS) pVBInfo->Part1Port , 0x1E , 0xDF ) ;	/* disable CRT2 */
             XGI_SetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x00 , tempah ) ;	/* restore Part1 index 0 */
         }
@@ -7280,7 +7280,7 @@ void XGI_DisableBridge(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pV
     {
         if ( pVBInfo->VBInfo & ( SetCRT2ToLCD | SetCRT2ToTV ) )
         {
-            XGINew_SetRegOR( pVBInfo->Part1Port , 0x00 , 0x80 ) ; 	/* BScreenOff=1 */
+            XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part1Port , 0x00 , 0x80 ) ; 	/* BScreenOff=1 */
             XGI_SetRegAND((XGIIOADDRESS) pVBInfo->Part1Port , 0x1E , 0xDF ) ;	/* Disable CRT2 */
             XGI_SetRegAND((XGIIOADDRESS) pVBInfo->P3c4 , 0x32 , 0xDF ) ;	/* Disable TV asPrimary VGA swap */
         }
@@ -7566,7 +7566,7 @@ void SetSpectrum( PVB_DEVICE_INFO pVBInfo )
 
     XGI_SetRegAND((XGIIOADDRESS) pVBInfo->Part4Port , 0x30 , 0x8F ) ;   /* disable down spectrum D[4] */
     XGI_LongWait(pVBInfo) ;
-    XGINew_SetRegOR( pVBInfo->Part4Port , 0x30 , 0x20 ) ;	 /* reset spectrum */
+    XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part4Port , 0x30 , 0x20 ) ;	 /* reset spectrum */
     XGI_LongWait(pVBInfo) ;
 
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x31 , pVBInfo->LCDCapList[ index ].Spectrum_31 ) ;
@@ -7574,7 +7574,7 @@ void SetSpectrum( PVB_DEVICE_INFO pVBInfo )
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x33 , pVBInfo->LCDCapList[ index ].Spectrum_33 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x34 , pVBInfo->LCDCapList[ index ].Spectrum_34 ) ;
     XGI_LongWait(pVBInfo) ;
-    XGINew_SetRegOR( pVBInfo->Part4Port , 0x30 , 0x40 ) ; /* enable spectrum */
+    XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part4Port , 0x30 , 0x40 ) ; /* enable spectrum */
 }
 
 
@@ -8045,8 +8045,8 @@ void XGI_SetCRT2ModeRegs(USHORT ModeNo,PXGI_HW_DEVICE_INFO HwDeviceExtension, PV
     {
         if ( pVBInfo->LCDInfo & SetLCDDualLink )
         {
-            XGINew_SetRegOR( pVBInfo->Part4Port , 0x27 , 0x20 ) ;
-            XGINew_SetRegOR( pVBInfo->Part4Port , 0x34 , 0x10 ) ;
+            XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part4Port , 0x27 , 0x20 ) ;
+            XGI_SetReg0R((XGIIOADDRESS) pVBInfo->Part4Port , 0x34 , 0x10 ) ;
         }
     }
 }

@@ -45,25 +45,6 @@
 #endif
 
 
-void     XGINew_SetRegOR(USHORT Port,USHORT Index,USHORT DataOR);
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_SetRegOR */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGINew_SetRegOR( USHORT Port , USHORT Index , USHORT DataOR )
-{
-    USHORT temp ;
-
-    temp = XGI_GetReg((XGIIOADDRESS) Port , Index ) ;	/* XGINew_Part1Port index 02 */
-    temp |= DataOR ;
-    XGI_SetReg((XGIIOADDRESS) Port , Index , temp ) ;
-}
-
-
 /**
  * Write value to the PC's 0x80 debug port.
  * 

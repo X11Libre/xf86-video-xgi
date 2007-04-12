@@ -1237,7 +1237,7 @@ void XGINew_SetDRAMDefaultRegister340( PXGI_HW_DEVICE_INFO HwDeviceExtension ,  
     temp3 = temp & 0x80 ;
     XGI_SetReg((XGIIOADDRESS) P3d4 , 0x45 , temp1 ) ;	/* CR45 */
     XGI_SetReg((XGIIOADDRESS) P3d4 , 0x99 , temp2 ) ;	/* CR99 */
-    XGINew_SetRegOR( P3d4 , 0x40 , temp3 ) ;	/* CR40_D[7] */
+    XGI_SetReg0R((XGIIOADDRESS) P3d4 , 0x40 , temp3 ) ;	/* CR40_D[7] */
     XGI_SetReg((XGIIOADDRESS) P3d4 , 0x41 , pVBInfo->CR40[ 0 ][ XGINew_RAMType ] ) ;	/* CR41 */
 
     for( j = 0 ; j <= 6 ; j++ )

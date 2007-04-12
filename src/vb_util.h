@@ -27,6 +27,5 @@
 #ifndef _VBUTIL_
 #define _VBUTIL_
 extern void Newdebugcode(unsigned char code);
-extern   void     XGINew_SetRegOR(USHORT Port,USHORT Index,USHORT DataOR);
 #endif
 
