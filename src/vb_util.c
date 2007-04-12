@@ -45,9 +45,6 @@
 #endif
 
 
-
-
-void XGINew_SetReg1( USHORT , USHORT , USHORT ) ;
 void XGINew_SetReg2( USHORT , USHORT , USHORT ) ;
 void XGINew_SetReg3( USHORT , USHORT ) ;
 void XGINew_SetReg4( USHORT , ULONG ) ;
@@ -57,27 +54,6 @@ ULONG XGINew_GetReg3( USHORT ) ;
 void     XGINew_SetRegANDOR(USHORT Port,USHORT Index,USHORT DataAND,USHORT DataOR);
 void     XGINew_SetRegOR(USHORT Port,USHORT Index,USHORT DataOR);
 void     XGINew_SetRegAND(USHORT Port,USHORT Index,USHORT DataAND);
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_SetReg1 */
-/* Input : */
-/* Output : */
-/* Description : SR CRTC GR */
-/* --------------------------------------------------------------------- */
-void XGINew_SetReg1( USHORT port , USHORT index , USHORT data )
-{
-#ifdef LINUX_XF86
-    OutPortByte( ( PUCHAR )(ULONG)port , index ) ;
-//udelay(1);
-    OutPortByte( ( PUCHAR )(ULONG)port + 1 , data ) ;
-DelayUS(1);
-#else
-    OutPortByte( ( PUCHAR )port , index ) ;
-//udelay(1);
-    OutPortByte( ( PUCHAR )port + 1 , data ) ;
-#endif
-}
 
 
 /* --------------------------------------------------------------------- */
@@ -188,7 +164,7 @@ void XGINew_SetRegANDOR( USHORT Port , USHORT Index , USHORT DataAND , USHORT Da
 
     temp = XGINew_GetReg1( Port , Index ) ;		/* XGINew_Part1Port index 02 */
     temp = ( temp & ( DataAND ) ) | DataOR ;
-    XGINew_SetReg1( Port , Index , temp ) ;
+    XGI_SetReg((XGIIOADDRESS) Port , Index , temp ) ;
 }
 
 
@@ -204,7 +180,7 @@ void XGINew_SetRegAND(USHORT Port,USHORT Index,USHORT DataAND)
 
     temp = XGINew_GetReg1( Port , Index ) ;	/* XGINew_Part1Port index 02 */
     temp &= DataAND ;
-    XGINew_SetReg1( Port , Index , temp ) ;
+    XGI_SetReg((XGIIOADDRESS) Port , Index , temp ) ;
 }
 
 
@@ -220,7 +196,7 @@ void XGINew_SetRegOR( USHORT Port , USHORT Index , USHORT DataOR )
 
     temp = XGINew_GetReg1( Port , Index ) ;	/* XGINew_Part1Port index 02 */
     temp |= DataOR ;
-    XGINew_SetReg1( Port , Index , temp ) ;
+    XGI_SetReg((XGIIOADDRESS) Port , Index , temp ) ;
 }
 
 
