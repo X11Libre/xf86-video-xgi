@@ -84,28 +84,24 @@ static int XGINew_Is301B(PVB_DEVICE_INFO pVBInfo)
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-BOOLEAN XGINew_Sense(  USHORT tempbx , USHORT tempcx, PVB_DEVICE_INFO pVBInfo )
+BOOLEAN XGINew_Sense(USHORT tempbx, USHORT tempcx, PVB_DEVICE_INFO pVBInfo)
 {
-    USHORT temp , i , tempch ;
+    unsigned temp;
+    unsigned i;
 
-    temp = tempbx & 0xFF ;
-    XGINew_SetReg1( pVBInfo->Part4Port , 0x11 , temp ) ;
-    temp = ( tempbx & 0xFF00 ) >> 8 ;
-    temp |= ( tempcx & 0x00FF ) ;
-    XGINew_SetRegANDOR( pVBInfo->Part4Port , 0x10 , ~0x1F , temp ) ;
 
-    for( i = 0 ; i < 10 ; i++ )
-        XGI_LongWait( pVBInfo) ;
+    XGINew_SetReg1(pVBInfo->Part4Port, 0x11, (tempbx & 0x0FF));
 
-    tempch = ( tempcx & 0x7F00 ) >> 8 ;
-    temp = XGINew_GetReg1( pVBInfo->Part4Port , 0x03 ) ;
-    temp = temp ^ ( 0x0E ) ;
-    temp &= tempch ;
+    XGINew_SetRegANDOR(pVBInfo->Part4Port, 0x10, ~0x1F, 
+		       ((tempbx & 0xFF00) >> 8) | (tempcx & 0x00FF));
 
-    if ( temp > 0 )
-        return( 1 ) ;
-    else
-        return( 0 ) ;
+    for (i = 0; i < 10; i++)
+        XGI_LongWait(pVBInfo);
+
+    temp = XGINew_GetReg1( pVBInfo->Part4Port, 0x03);
+    temp = (temp ^ 0x0E) & ((tempcx & 0x7F00) >> 8);
+
+    return (temp > 0);
 }
 
 
@@ -176,11 +172,9 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
                 }
 
                 tempcx = 0x0E08 ;
-                if ( XGINew_Sense(tempbx , tempcx, pVBInfo ) )
-                {
-                    if ( XGINew_Sense(tempbx , tempcx, pVBInfo ) )
-                    {
-                        tempax |= Monitor2Sense ;
+                if (XGINew_Sense(tempbx, tempcx, pVBInfo)) {
+                    if (XGINew_Sense(tempbx, tempcx, pVBInfo)) {
+                        tempax |= Monitor2Sense;
                     }
                 }
 
@@ -209,10 +203,8 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
                 }
 
                 tempcx = 0x0604 ;
-                if ( XGINew_Sense(tempbx , tempcx, pVBInfo ) )
-                {
-                    if ( XGINew_Sense(tempbx , tempcx, pVBInfo ) )
-                    {
+                if (XGINew_Sense(tempbx, tempcx, pVBInfo)) {
+                    if (XGINew_Sense(tempbx, tempcx, pVBInfo)) {
                         tempax |= SVIDEOSense ;
                     }
                 }
@@ -227,11 +219,9 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
                     }
 
                     tempcx = 0x0804 ;
-                    if ( XGINew_Sense(tempbx , tempcx, pVBInfo ) )
-                    {
-                        if ( XGINew_Sense(tempbx , tempcx, pVBInfo ) )
-                        {
-                            tempax |= AVIDEOSense ;
+                    if (XGINew_Sense(tempbx, tempcx, pVBInfo)) {
+                        if (XGINew_Sense(tempbx, tempcx, pVBInfo)) {
+                            tempax |= AVIDEOSense;
                         }
                     }
                 }
@@ -247,11 +237,9 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
                         }
 
                         tempcx = 0x0804 ;
-                        if ( XGINew_Sense(tempbx , tempcx, pVBInfo ) )
-                        {
-                            if ( XGINew_Sense(tempbx , tempcx, pVBInfo ) )
-                            {
-                                tempax |= AVIDEOSense ;
+                        if (XGINew_Sense(tempbx, tempcx, pVBInfo)) {
+                            if (XGINew_Sense(tempbx, tempcx, pVBInfo)) {
+                                tempax |= AVIDEOSense;
                             }
                         }
                     }
@@ -266,7 +254,7 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
             }
             tempbx = 0 ;
             tempcx = 0 ;
-            XGINew_Sense(tempbx , tempcx, pVBInfo ) ;
+            XGINew_Sense(tempbx, tempcx, pVBInfo);
 
             XGINew_SetRegANDOR( pVBInfo->P3d4 , 0x32 , ~0xDF , tempax ) ;
             XGINew_SetReg1( pVBInfo->Part2Port , 0x00 , P2reg0 ) ;
