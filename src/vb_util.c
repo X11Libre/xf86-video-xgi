@@ -54,7 +54,6 @@ void XGINew_SetReg4( USHORT , ULONG ) ;
 UCHAR XGINew_GetReg1( USHORT , USHORT) ;
 UCHAR XGINew_GetReg2( USHORT ) ;
 ULONG XGINew_GetReg3( USHORT ) ;
-void XGINew_ClearDAC( PUCHAR ) ;
 void     XGINew_SetRegANDOR(USHORT Port,USHORT Index,USHORT DataAND,USHORT DataOR);
 void     XGINew_SetRegOR(USHORT Port,USHORT Index,USHORT DataOR);
 void     XGINew_SetRegAND(USHORT Port,USHORT Index,USHORT DataAND);
@@ -222,26 +221,6 @@ void XGINew_SetRegOR( USHORT Port , USHORT Index , USHORT DataOR )
     temp = XGINew_GetReg1( Port , Index ) ;	/* XGINew_Part1Port index 02 */
     temp |= DataOR ;
     XGINew_SetReg1( Port , Index , temp ) ;
-}
-
-
-
-/* --------------------------------------------------------------------- */
-/* Function : */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGINew_ClearDAC( PUCHAR port )
-{
-    int i ;
-
-    OutPortByte( port , 0 ) ;
-    port++ ;
-    for( i = 0 ; i < 256 * 3 ; i++ )
-    {
-        OutPortByte( port , 0 ) ;
-    }
 }
 
 
