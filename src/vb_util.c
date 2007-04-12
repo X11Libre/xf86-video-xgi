@@ -45,7 +45,6 @@
 #endif
 
 
-void XGINew_SetReg2( USHORT , USHORT , USHORT ) ;
 void XGINew_SetReg3( USHORT , USHORT ) ;
 void XGINew_SetReg4( USHORT , ULONG ) ;
 UCHAR XGINew_GetReg1( USHORT , USHORT) ;
@@ -54,21 +53,6 @@ ULONG XGINew_GetReg3( USHORT ) ;
 void     XGINew_SetRegANDOR(USHORT Port,USHORT Index,USHORT DataAND,USHORT DataOR);
 void     XGINew_SetRegOR(USHORT Port,USHORT Index,USHORT DataOR);
 void     XGINew_SetRegAND(USHORT Port,USHORT Index,USHORT DataAND);
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_SetReg2 */
-/* Input : */
-/* Output : */
-/* Description : AR( 3C0 ) */
-/* --------------------------------------------------------------------- */
-/*void XGINew_SetReg2( USHORT port , USHORT index , USHORT data )
-{
-    InPortByte( ( PUCHAR )port + 0x3da - 0x3c0 ) ;
-    OutPortByte( XGINew_P3c0 , index ) ;
-    OutPortByte( XGINew_P3c0 , data ) ;
-    OutPortByte( XGINew_P3c0 , 0x20 ) ;
-}*/
 
 
 /* --------------------------------------------------------------------- */
