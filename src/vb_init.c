@@ -224,37 +224,10 @@ BOOLEAN XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension )
     ULONG Temp ;
 
 
-    pVBInfo->ROMAddr = HwDeviceExtension->pjVirtualRomBase ;
-    pVBInfo->FBAddr = HwDeviceExtension->pjVideoMemoryAddress ;
-    pVBInfo->BaseAddr = ( USHORT )HwDeviceExtension->pjIOAddress ;
+    XGINew_InitVBIOSData(HwDeviceExtension, pVBInfo);
+
     pVideoMemory = ( PUCHAR )pVBInfo->ROMAddr;
     
-    pVBInfo->IF_DEF_LCDA = 1 ;
-    pVBInfo->IF_DEF_VideoCapture = 0 ;
-    pVBInfo->IF_DEF_ScaleLCD = 0 ;
-    pVBInfo->IF_DEF_OEMUtil = 0 ;
-    pVBInfo->IF_DEF_PWD = 0 ;
-
-
-    if ( HwDeviceExtension->jChipType == XG20 )			/* kuku 2004/06/25 */
-    {
-    	pVBInfo->IF_DEF_YPbPr = 0 ;
-        pVBInfo->IF_DEF_HiVision = 0 ;
-        pVBInfo->IF_DEF_CRT2Monitor = 0 ;
-    }
-    else if ( HwDeviceExtension->jChipType >= XG40 )
-    {
-        pVBInfo->IF_DEF_YPbPr = 1 ;
-        pVBInfo->IF_DEF_HiVision = 1 ;
-        pVBInfo->IF_DEF_CRT2Monitor = 1 ;
-    }
-    else
-    {
-        pVBInfo->IF_DEF_YPbPr = 1 ;
-        pVBInfo->IF_DEF_HiVision = 1 ;
-        pVBInfo->IF_DEF_CRT2Monitor = 0 ;
-    }
-
 
     Newdebugcode( 0x99 ) ;
 
@@ -269,9 +242,6 @@ BOOLEAN XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension )
 
     XGI_SetRegByte((XGIIOADDRESS) ( USHORT )( pVBInfo->BaseAddr + 0x12 ) , 0x67 ) ;	/* 3c2 <- 67 ,ynlai */
 
-    pVBInfo->ISXPDOS = 0 ;
-
-
 
     if ( !HwDeviceExtension->bIntegratedMMEnabled )
         return( FALSE ) ;	/* alan */
@@ -282,31 +252,6 @@ BOOLEAN XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension )
 
     VBIOSVersion[ 4 ] = 0x0 ;
 
-    /* 09/07/99 modify by domao */
-    
-    
-    pVBInfo->P3c4 = pVBInfo->BaseAddr + 0x14 ;
-    pVBInfo->P3d4 = pVBInfo->BaseAddr + 0x24 ;
-    pVBInfo->P3c0 = pVBInfo->BaseAddr + 0x10 ;
-    pVBInfo->P3ce = pVBInfo->BaseAddr + 0x1e ;
-    pVBInfo->P3c2 = pVBInfo->BaseAddr + 0x12 ;
-    pVBInfo->P3ca = pVBInfo->BaseAddr + 0x1a ;
-    pVBInfo->P3c6 = pVBInfo->BaseAddr + 0x16 ;
-    pVBInfo->P3c7 = pVBInfo->BaseAddr + 0x17 ;
-    pVBInfo->P3c8 = pVBInfo->BaseAddr + 0x18 ;
-    pVBInfo->P3c9 = pVBInfo->BaseAddr + 0x19 ;
-    pVBInfo->P3da = pVBInfo->BaseAddr + 0x2A ;
-    pVBInfo->Part0Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_00 ;
-    pVBInfo->Part1Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_04 ;
-    pVBInfo->Part2Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_10 ;
-    pVBInfo->Part3Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_12 ;
-    pVBInfo->Part4Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_14 ;
-    pVBInfo->Part5Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_14 + 2 ;
-
-    if ( HwDeviceExtension->jChipType != XG20 )			/* kuku 2004/06/25 */
-    XGI_GetVBType( pVBInfo ) ;         /* Run XGI_GetVBType before InitTo330Pointer */
-
-    InitTo330Pointer( HwDeviceExtension->jChipType,  pVBInfo ) ;
 
     /* ReadVBIOSData */
     ReadVBIOSTablData( HwDeviceExtension->jChipType , pVBInfo) ;
@@ -1522,32 +1467,8 @@ void XGINew_SetDRAMModeRegister340( PXGI_HW_DEVICE_INFO HwDeviceExtension )
     UCHAR data ;
     VB_DEVICE_INFO VBINF;
     PVB_DEVICE_INFO pVBInfo = &VBINF;
-    pVBInfo->ROMAddr = HwDeviceExtension->pjVirtualRomBase ;
-    pVBInfo->FBAddr = HwDeviceExtension->pjVideoMemoryAddress ;
-    pVBInfo->BaseAddr = ( USHORT )HwDeviceExtension->pjIOAddress ;
-    pVBInfo->ISXPDOS = 0 ;
 
-    pVBInfo->P3c4 = pVBInfo->BaseAddr + 0x14 ;
-    pVBInfo->P3d4 = pVBInfo->BaseAddr + 0x24 ;
-    pVBInfo->P3c0 = pVBInfo->BaseAddr + 0x10 ;
-    pVBInfo->P3ce = pVBInfo->BaseAddr + 0x1e ;
-    pVBInfo->P3c2 = pVBInfo->BaseAddr + 0x12 ;
-    pVBInfo->P3ca = pVBInfo->BaseAddr + 0x1a ;
-    pVBInfo->P3c6 = pVBInfo->BaseAddr + 0x16 ;
-    pVBInfo->P3c7 = pVBInfo->BaseAddr + 0x17 ;
-    pVBInfo->P3c8 = pVBInfo->BaseAddr + 0x18 ;
-    pVBInfo->P3c9 = pVBInfo->BaseAddr + 0x19 ;
-    pVBInfo->P3da = pVBInfo->BaseAddr + 0x2A ;
-    pVBInfo->Part0Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_00 ;
-    pVBInfo->Part1Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_04 ;
-    pVBInfo->Part2Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_10 ;
-    pVBInfo->Part3Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_12 ;
-    pVBInfo->Part4Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_14 ;
-    pVBInfo->Part5Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_14 + 2 ;
-
-    XGI_GetVBType( pVBInfo ) ;         /* Run XGI_GetVBType before InitTo330Pointer */
-
-    InitTo330Pointer(HwDeviceExtension->jChipType,pVBInfo);
+    XGINew_InitVBIOSData(HwDeviceExtension, pVBInfo);
 
     ReadVBIOSTablData( HwDeviceExtension->jChipType , pVBInfo) ;
 
@@ -2594,8 +2515,6 @@ void SetPowerConsume ( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT XGI_P3d4Po
 }
 
 
-
-#if defined(LINUX_XF86)||defined(LINUX_KERNEL)
 void XGINew_InitVBIOSData(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo)
 {
 
@@ -2623,21 +2542,40 @@ void XGINew_InitVBIOSData(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO
     pVBInfo->Part4Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_14 ;
     pVBInfo->Part5Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_14 + 2 ;
 
+    pVBInfo->IF_DEF_LCDA = 1 ;
+    pVBInfo->IF_DEF_VideoCapture = 0 ;
+    pVBInfo->IF_DEF_ScaleLCD = 0 ;
+    pVBInfo->IF_DEF_OEMUtil = 0 ;
+    pVBInfo->IF_DEF_PWD = 0 ;
+
+    if ( HwDeviceExtension->jChipType == XG20 )			/* kuku 2004/06/25 */
+    {
+    	pVBInfo->IF_DEF_YPbPr = 0 ;
+        pVBInfo->IF_DEF_HiVision = 0 ;
+        pVBInfo->IF_DEF_CRT2Monitor = 0 ;
+    }
+    else if ( HwDeviceExtension->jChipType >= XG40 )
+    {
+        pVBInfo->IF_DEF_YPbPr = 1 ;
+        pVBInfo->IF_DEF_HiVision = 1 ;
+        pVBInfo->IF_DEF_CRT2Monitor = 1 ;
+    }
+    else
+    {
+        pVBInfo->IF_DEF_YPbPr = 1 ;
+        pVBInfo->IF_DEF_HiVision = 1 ;
+        pVBInfo->IF_DEF_CRT2Monitor = 0 ;
+    }
+
+    if (HwDeviceExtension->jChipType != XG20) {
+	/* alan, disable VideoCapture */
+	XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->Part0Port, 0x3F, 0xEF, 0x00);
+    }
+
     XGI_GetVBType( pVBInfo ) ;         /* Run XGI_GetVBType before InitTo330Pointer */
-
-	switch(HwDeviceExtension->jChipType)
-	{
-	case XG40:
-	case XG41:
-	case XG42:
-	case XG20:
-	default:
-		InitTo330Pointer(HwDeviceExtension->jChipType,pVBInfo);
-		return ;
-	}
-
+    InitTo330Pointer(HwDeviceExtension->jChipType,pVBInfo);
 }
-#endif /* For Linux */
+
 
 /* --------------------------------------------------------------------- */
 /* Function : ReadVBIOSTablData */
@@ -2864,30 +2802,8 @@ void XGINew_SetDRAMModeRegister_XG20( PXGI_HW_DEVICE_INFO HwDeviceExtension )
 #endif
     VB_DEVICE_INFO VBINF;
     PVB_DEVICE_INFO pVBInfo = &VBINF;
-    pVBInfo->ROMAddr = HwDeviceExtension->pjVirtualRomBase ;
-    pVBInfo->FBAddr = HwDeviceExtension->pjVideoMemoryAddress ;
-    pVBInfo->BaseAddr = ( USHORT )HwDeviceExtension->pjIOAddress ;
-    pVBInfo->ISXPDOS = 0 ;
 
-    pVBInfo->P3c4 = pVBInfo->BaseAddr + 0x14 ;
-    pVBInfo->P3d4 = pVBInfo->BaseAddr + 0x24 ;
-    pVBInfo->P3c0 = pVBInfo->BaseAddr + 0x10 ;
-    pVBInfo->P3ce = pVBInfo->BaseAddr + 0x1e ;
-    pVBInfo->P3c2 = pVBInfo->BaseAddr + 0x12 ;
-    pVBInfo->P3ca = pVBInfo->BaseAddr + 0x1a ;
-    pVBInfo->P3c6 = pVBInfo->BaseAddr + 0x16 ;
-    pVBInfo->P3c7 = pVBInfo->BaseAddr + 0x17 ;
-    pVBInfo->P3c8 = pVBInfo->BaseAddr + 0x18 ;
-    pVBInfo->P3c9 = pVBInfo->BaseAddr + 0x19 ;
-    pVBInfo->P3da = pVBInfo->BaseAddr + 0x2A ;
-    pVBInfo->Part0Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_00 ;
-    pVBInfo->Part1Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_04 ;
-    pVBInfo->Part2Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_10 ;
-    pVBInfo->Part3Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_12 ;
-    pVBInfo->Part4Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_14 ;
-    pVBInfo->Part5Port = pVBInfo->BaseAddr + XGI_CRT2_PORT_14 + 2 ;
-
-    InitTo330Pointer(HwDeviceExtension->jChipType,pVBInfo);
+    XGINew_InitVBIOSData(HwDeviceExtension, pVBInfo);
 
     ReadVBIOSTablData( HwDeviceExtension->jChipType , pVBInfo) ;
 
