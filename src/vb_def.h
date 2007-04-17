@@ -452,18 +452,6 @@
 #define		DefThreshold                 0x0100
 #define		ExtRegsSize                  (57+8+37+70+63+28+768+1)/64+1
 
-#define		VGA_XGI315                   0x0001       /* VGA Type Info */
-#define		VGA_SNewis315e                  0x0002       /* 315 series */
-#define		VGA_XGI550                   0x0004
-#define		VGA_XGI640                   0x0008
-#define		VGA_XGI740                   0x0010
-#define		VGA_XGI650                   0x0020
-#define		VGA_XGI650M                  0x0040
-#define		VGA_XGI651                   0x0080
-#define		VGA_XGI340                   0x0001       /* 340 series */
-#define		VGA_XGI330                   0x0001       /* 330 series */
-#define		VGA_XGI660                   0x0001       /* 660 series */
-
 #define		VB_XGI301                    0x0001       /* VB Type Info */
 #define		VB_XGI301B                   0x0002       /* 301 series */
 #define		VB_XGI302B                   0x0004

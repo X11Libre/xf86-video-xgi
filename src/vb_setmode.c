@@ -129,7 +129,6 @@ void     XGI_GetLVDSData(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTabl
 void     XGI_ModCRT1Regs(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTableIndex,PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO  pVBInfo);
 void     XGI_SetLVDSRegs(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTableIndex,PVB_DEVICE_INFO  pVBInfo);
 void     XGI_UpdateModeInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO  pVBInfo);
-void     XGI_GetVGAType(PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO  pVBInfo);
 void     XGI_GetVBType(PVB_DEVICE_INFO  pVBInfo);
 void     XGI_GetVBInfo(USHORT ModeNo,USHORT ModeIdIndex,PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO  pVBInfo);
 void     XGI_GetTVInfo(USHORT ModeNo,USHORT ModeIdIndex,PVB_DEVICE_INFO  pVBInfo);
@@ -387,9 +386,6 @@ BOOLEAN XGISetModeNew( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo )
     XGI_SearchModeID(pVBInfo->SModeIDTable, pVBInfo->EModeIDTable, 0x11,
 		     &temp_mode_no, &ModeIdIndex);
 
-PDEBUG(ErrorF("XGI_GetVGAType \n"));
-    
-    XGI_GetVGAType(HwDeviceExtension,  pVBInfo) ;
     if ( HwDeviceExtension->jChipType != XG20 )			/* kuku 2004/06/25 */
     {
 PDEBUG(ErrorF("XGI_GetVBInfo \n"));
@@ -2387,32 +2383,6 @@ void XGI_UpdateModeInfo( PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO  
 
 
 /* --------------------------------------------------------------------- */
-/* Function : XGI_GetVGAType */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGI_GetVGAType( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO  pVBInfo)
-{
-#ifndef LINUX_XF86
-    USHORT tempbx ,
-           tempah ;
-#endif
-
-    if ( HwDeviceExtension->jChipType == XG20 )
-    {
-        pVBInfo->Set_VGAType = XG20;
-    }
-    else if ( HwDeviceExtension->jChipType >= XG40 )
-    {
-        pVBInfo->Set_VGAType = VGA_XGI340 ;
-    }
-
-
-}
-
-
-/* --------------------------------------------------------------------- */
 /* Function : XGI_GetVBType */
 /* Input : */
 /* Output : */
@@ -2509,8 +2479,6 @@ void XGI_GetVBInfo( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO HwD
 
         if ( pVBInfo->IF_DEF_LCDA == 1 )
         {
-
-            if ( ( pVBInfo->Set_VGAType == XG20 ) || ( pVBInfo->Set_VGAType >= XG40 ))
             {
                 {
                     /* if ( ( pVBInfo->VBType & VB_XGI302B ) || ( pVBInfo->VBType & VB_XGI301LV ) || ( pVBInfo->VBType & VB_XGI302LV ) || ( pVBInfo->VBType & VB_XGI301C ) ) */
@@ -2649,18 +2617,13 @@ void XGI_GetVBInfo( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO HwD
                         tempbx |= ( SetInSlaveMode | SetSimuScanMode ) ;
                 }
 
-                if ( pVBInfo->IF_DEF_VideoCapture == 1 )
-                {
-                    if ( ( ( HwDeviceExtension->jChipType == XG40 ) && ( pVBInfo->Set_VGAType == XG40 ) )
-                    || ( ( HwDeviceExtension->jChipType == XG41 ) && ( pVBInfo->Set_VGAType == XG41 ) )
-                    || ( ( HwDeviceExtension->jChipType == XG42 ) && ( pVBInfo->Set_VGAType == XG42 ) )
-                    || ( ( HwDeviceExtension->jChipType == XG45 ) && ( pVBInfo->Set_VGAType == XG45 ) ) )
-                    {
-                        if ( ModeNo <= 13 )
-                        {
-                            if ( !( tempbx & SetCRT2ToRAMDAC ) )	/*CRT2 not need to support*/
-                            {
-                                tempbx &= ( 0x00FF | ( ~SetInSlaveMode ) ) ;
+                if (pVBInfo->IF_DEF_VideoCapture == 1) {
+                    if ((HwDeviceExtension->jChipType >= XG40)
+			&& (HwDeviceExtension->jChipType <= XG45)) {
+                        if (ModeNo <= 13) {
+			    /* CRT2 not need to support*/
+                            if (!(tempbx & SetCRT2ToRAMDAC)) {
+                                tempbx &= (0x00FF | (~SetInSlaveMode));
                                 pVBInfo->SetFlag |= EnableVCMode ;
                             }
                         }

@@ -399,7 +399,7 @@ struct _VB_DEVICE_INFO
     USHORT   IF_DEF_ExpLink;
     USHORT   IF_DEF_HiVision;
     USHORT   LCDResInfo,LCDTypeInfo, VBType;/*301b*/
-    USHORT   VBInfo,TVInfo,LCDInfo, Set_VGAType;
+    USHORT   VBInfo,TVInfo,LCDInfo;
     USHORT   VBExtInfo;/*301lv*/
     USHORT   SetFlag;
     USHORT   NewFlickerMode;
