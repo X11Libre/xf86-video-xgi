@@ -84,10 +84,9 @@ static USHORT XGI_GetResInfo(USHORT ModeNo, USHORT ModeIdIndex,
 USHORT XGI_GetColorDepth(USHORT ModeNo, USHORT ModeIdIndex,
                          PVB_DEVICE_INFO pVBInfo);
 USHORT XGI_GetVGAHT2(PVB_DEVICE_INFO pVBInfo);
-USHORT XGI_GetVCLK2Ptr(USHORT ModeNo, USHORT ModeIdIndex,
-                       USHORT RefreshRateTableIndex,
-                       PXGI_HW_DEVICE_INFO HwDeviceExtension,
-                       PVB_DEVICE_INFO pVBInfo);
+static unsigned XGI_GetVCLK2Ptr(USHORT ModeNo, USHORT ModeIdIndex,
+                                USHORT RefreshRateTableIndex,
+                                PVB_DEVICE_INFO pVBInfo);
 void XGI_VBLongWait(PVB_DEVICE_INFO pVBInfo);
 void XGI_SaveCRT2Info(USHORT ModeNo, PVB_DEVICE_INFO pVBInfo);
 void XGI_GetCRT2Data(USHORT ModeNo, USHORT ModeIdIndex,
@@ -1474,14 +1473,13 @@ XGI_SetCRT1VCLK(USHORT ModeNo, USHORT ModeIdIndex,
                 USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo)
 {
     UCHAR index, data;
-    USHORT vclkindex;
 
     if ((pVBInfo->
          VBType & (VB_XGI301B | VB_XGI302B | VB_XGI301LV | VB_XGI302LV |
                    VB_XGI301C)) && (pVBInfo->VBInfo & SetCRT2ToLCDA)) {
-        vclkindex =
+        const unsigned vclkindex =
             XGI_GetVCLK2Ptr(ModeNo, ModeIdIndex, RefreshRateTableIndex,
-                            HwDeviceExtension, pVBInfo);
+                            pVBInfo);
         data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x31) & 0xCF;
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x31, data);
         data = pVBInfo->VBVCLKData[vclkindex].Part4_A;
@@ -7995,136 +7993,78 @@ XGI_GetVGAHT2(PVB_DEVICE_INFO pVBInfo)
 }
 
 
-/* --------------------------------------------------------------------- */
-/* Function : XGI_GetVCLK2Ptr */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-USHORT
+/**
+ * Get magic index into clock table.
+ * 
+ * \bugs
+ * I'm pretty sure the first if-statement is wrong.  It will \b always
+ * evaluate to true.
+ */
+unsigned
 XGI_GetVCLK2Ptr(USHORT ModeNo, USHORT ModeIdIndex,
                 USHORT RefreshRateTableIndex,
-                PXGI_HW_DEVICE_INFO HwDeviceExtension,
                 PVB_DEVICE_INFO pVBInfo)
 {
-    USHORT tempbx;
+    unsigned VCLKIndex;
+    const unsigned modeflag = (ModeNo <= 0x13)
+        ? pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag
+        : pVBInfo->EModeIDTable[ModeIdIndex].Ext_ModeFlag;
 
-    USHORT LCDXlat1VCLK[4] =
-        { VCLK65 + 2, VCLK65 + 2, VCLK65 + 2, VCLK65 + 2 };
-    USHORT LCDXlat2VCLK[4] =
-        { VCLK108_2 + 5, VCLK108_2 + 5, VCLK108_2 + 5, VCLK108_2 + 5 };
-    USHORT LVDSXlat1VCLK[4] = { VCLK40, VCLK40, VCLK40, VCLK40 };
-    USHORT LVDSXlat2VCLK[4] =
-        { VCLK65 + 2, VCLK65 + 2, VCLK65 + 2, VCLK65 + 2 };
-    USHORT LVDSXlat3VCLK[4] =
-        { VCLK65 + 2, VCLK65 + 2, VCLK65 + 2, VCLK65 + 2 };
 
-    USHORT CRT2Index, VCLKIndex;
-    USHORT modeflag, resinfo;
-    UCHAR *CHTVVCLKPtr = NULL;
-
-    if (ModeNo <= 0x13) {
-        modeflag = pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag;      /* si+St_ResInfo */
-        resinfo = pVBInfo->SModeIDTable[ModeIdIndex].St_ResInfo;
-        CRT2Index = pVBInfo->SModeIDTable[ModeIdIndex].St_CRT2CRTC;
-    }
-    else {
-        modeflag = pVBInfo->EModeIDTable[ModeIdIndex].Ext_ModeFlag;     /* si+Ext_ResInfo */
-        resinfo = pVBInfo->EModeIDTable[ModeIdIndex].Ext_RESINFO;
-        CRT2Index = pVBInfo->RefIndex[RefreshRateTableIndex].Ext_CRT2CRTC;
-    }
-
-    CRT2Index = CRT2Index >> 6; /*  for LCD */
     if (((pVBInfo->VBInfo & SetCRT2ToLCD) | SetCRT2ToLCDA)) {   /*301b */
-        if (pVBInfo->LCDResInfo != Panel1024x768) {
-            VCLKIndex = LCDXlat2VCLK[CRT2Index];
-        }
-        else {
-            VCLKIndex = LCDXlat1VCLK[CRT2Index];
-        }
+        VCLKIndex = (pVBInfo->LCDResInfo != Panel1024x768)
+            ? (VCLK108_2 + 5) : (VCLK65 + 2);
     }
     else {                      /* for TV */
-
         if (pVBInfo->VBInfo & SetCRT2ToTV) {
             if (pVBInfo->VBInfo & SetCRT2ToHiVisionTV) {
-                if (pVBInfo->SetFlag & RPLLDIV2XO) {
-                    VCLKIndex = HiTVVCLKDIV2;
+                VCLKIndex = (pVBInfo->SetFlag & RPLLDIV2XO)
+                    ? HiTVVCLKDIV2 : HiTVVCLK;
 
-
-                    VCLKIndex += 25;
-
-                }
-                else {
-                    VCLKIndex = HiTVVCLK;
-
-
-                    VCLKIndex += 25;
-
-                }
+                VCLKIndex += 25;
 
                 if (pVBInfo->SetFlag & TVSimuMode) {
-                    if (modeflag & Charx8Dot) {
-                        VCLKIndex = HiTVSimuVCLK;
+                    VCLKIndex = (modeflag & Charx8Dot)
+                        ? HiTVSimuVCLK : HiTVTextVCLK;
 
-
-                        VCLKIndex += 25;
-
-                    }
-                    else {
-                        VCLKIndex = HiTVTextVCLK;
-
-
-                        VCLKIndex += 25;
-
-                    }
+                    VCLKIndex += 25;
                 }
 
-                if (pVBInfo->VBType & VB_XGI301LV) {    /* 301lv */
-                    if (!(pVBInfo->VBExtInfo == VB_YPbPr1080i)) {
+                if (pVBInfo->VBType & VB_XGI301LV) {
+                    switch (pVBInfo->VBExtInfo) {
+                    case VB_YPbPr1080i:
+                        /* VCLKIndex already set to correct value? */
+                        break;
+                    case VB_YPbPr750p:
                         VCLKIndex = YPbPr750pVCLK;
-                        if (!(pVBInfo->VBExtInfo == VB_YPbPr750p)) {
-                            VCLKIndex = YPbPr525pVCLK;
-                            if (!(pVBInfo->VBExtInfo == VB_YPbPr525p)) {
-                                VCLKIndex = YPbPr525iVCLK_2;
-                                if (!(pVBInfo->SetFlag & RPLLDIV2XO))
-                                    VCLKIndex = YPbPr525iVCLK;
-                            }
-                        }
+                        break;
+                    case VB_YPbPr525p:
+                        VCLKIndex = YPbPr525pVCLK;
+                        break;
+                    case VB_YPbPr525i:
+                        VCLKIndex = (pVBInfo->SetFlag & RPLLDIV2XO)
+                            ? YPbPr525iVCLK_2 : YPbPr525iVCLK;
+                        break;
                     }
                 }
             }
             else {
-                if (pVBInfo->VBInfo & SetCRT2ToTV) {
-                    if (pVBInfo->SetFlag & RPLLDIV2XO) {
-                        VCLKIndex = TVVCLKDIV2;
+                VCLKIndex = (pVBInfo->SetFlag & RPLLDIV2XO)
+                    ? TVVCLKDIV2 : TVVCLK;
 
-
-                        VCLKIndex += 25;
-
-                    }
-                    else {
-                        VCLKIndex = TVVCLK;
-
-
-                        VCLKIndex += 25;
-
-                    }
-                }
+                VCLKIndex += 25;
             }
         }
         else {                  /* for CRT2 */
-            VCLKIndex = XGI_GetRegByte((XGIIOADDRESS) (USHORT) (pVBInfo->P3ca + 0x02)); /* Port 3cch */
+            VCLKIndex = XGI_GetRegByte((XGIIOADDRESS) (pVBInfo->P3ca + 0x02));
             VCLKIndex = ((VCLKIndex >> 2) & 0x03);
             if (ModeNo > 0x13) {
-                VCLKIndex = pVBInfo->RefIndex[RefreshRateTableIndex].Ext_CRTVCLK;       /* di+Ext_CRTVCLK */
-                VCLKIndex &= IndexMask;
+                VCLKIndex = 
+                    (pVBInfo->RefIndex[RefreshRateTableIndex].Ext_CRTVCLK
+                     & IndexMask);
             }
         }
     }
 
-    /* VCLKIndex = VCLKIndex&IndexMask ; */
-
-
-
-    return (VCLKIndex);
+    return VCLKIndex;
 }
