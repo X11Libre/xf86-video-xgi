@@ -236,11 +236,11 @@ void XGI_SetCRT1Offset(USHORT ModeNo, USHORT ModeIdIndex,
                        USHORT RefreshRateTableIndex,
                        PXGI_HW_DEVICE_INFO HwDeviceExtension,
                        PVB_DEVICE_INFO pVBInfo);
-void XGI_GetLCDVCLKPtr(UCHAR * di_0, UCHAR * di_1, PVB_DEVICE_INFO pVBInfo);
+static void XGI_GetLCDVCLKPtr(UCHAR *di, PVB_DEVICE_INFO pVBInfo);
 static unsigned XGI_GetVCLKPtr(USHORT RefreshRateTableIndex, USHORT ModeNo,
                                USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
-void XGI_GetVCLKLen(UCHAR tempal, UCHAR * di_0, UCHAR * di_1,
-                    PVB_DEVICE_INFO pVBInfo);
+static void XGI_GetVCLKLen(unsigned vclkindex, UCHAR *di,
+                           PVB_DEVICE_INFO pVBInfo);
 USHORT XGI_GetLCDCapPtr(PVB_DEVICE_INFO pVBInfo);
 USHORT XGI_GetLCDCapPtr1(PVB_DEVICE_INFO pVBInfo);
 XGI301C_Tap4TimingStruct *XGI_GetTap4Ptr(USHORT tempcx,
@@ -2314,25 +2314,25 @@ void
 XGI_SetCRT2ECLK(USHORT ModeNo, USHORT ModeIdIndex,
                 USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo)
 {
-    UCHAR di_0, di_1;
+    UCHAR di[2];
     int i;
     const unsigned vclkindex =
         XGI_GetVCLKPtr(RefreshRateTableIndex, ModeNo, ModeIdIndex, pVBInfo);
 
-    XGI_GetVCLKLen(vclkindex, &di_0, &di_1, pVBInfo);
-    XGI_GetLCDVCLKPtr(&di_0, &di_1, pVBInfo);
+    XGI_GetVCLKLen(vclkindex, di, pVBInfo);
+    XGI_GetLCDVCLKPtr(di, pVBInfo);
 
     for (i = 0; i < 4; i++) {
         XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3d4, 0x31, ~0x30,
                         (USHORT) (0x10 * i));
         if ((!(pVBInfo->VBInfo & SetCRT2ToLCDA))
             && (!(pVBInfo->VBInfo & SetInSlaveMode))) {
-            XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2e, di_0);
-            XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2f, di_1);
+            XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2e, di[0]);
+            XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2f, di[1]);
         }
         else {
-            XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2b, di_0);
-            XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2c, di_1);
+            XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2b, di[0]);
+            XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2c, di[1]);
         }
     }
 }
@@ -3596,21 +3596,21 @@ void
 XGI_SetCRT2VCLK(USHORT ModeNo, USHORT ModeIdIndex,
                 USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo)
 {
-    UCHAR di_0, di_1;
+    UCHAR di[2];
     const unsigned vclkindex =
         XGI_GetVCLKPtr(RefreshRateTableIndex, ModeNo, ModeIdIndex, pVBInfo);
 
-    XGI_GetVCLKLen(vclkindex, &di_0, &di_1, pVBInfo);
-    XGI_GetLCDVCLKPtr(&di_0, &di_1, pVBInfo);
+    XGI_GetVCLKLen(vclkindex, di, pVBInfo);
+    XGI_GetLCDVCLKPtr(di, pVBInfo);
 
     if (pVBInfo->VBType & VB_XGI301) {  /* shampoo 0129 *//* 301 */
         XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x0A, 0x10);
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x0B, di_1);
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x0A, di_0);
+        XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x0B, di[1]);
+        XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x0A, di[0]);
     }
     else {                      /* 301b/302b/301lv/302lv */
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x0A, di_0);
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x0B, di_1);
+        XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x0A, di[0]);
+        XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x0B, di[1]);
     }
 
     if ((pVBInfo->LCDInfo & EnableReduceTiming)
@@ -3637,28 +3637,24 @@ XGI_SetCRT2VCLK(USHORT ModeNo, USHORT ModeIdIndex,
 /* Description : */
 /* --------------------------------------------------------------------- */
 void
-XGI_GetLCDVCLKPtr(UCHAR * di_0, UCHAR * di_1, PVB_DEVICE_INFO pVBInfo)
+XGI_GetLCDVCLKPtr(UCHAR *di, PVB_DEVICE_INFO pVBInfo)
 {
-    USHORT index;
-
     if (pVBInfo->VBInfo & (SetCRT2ToLCD | SetCRT2ToLCDA)) {
-        if (pVBInfo->IF_DEF_ScaleLCD == 1) {
-            if (pVBInfo->LCDInfo & EnableScalingLCD)
-                return;
-        }
+        if ((pVBInfo->IF_DEF_ScaleLCD != 1) 
+            || !(pVBInfo->LCDInfo & EnableScalingLCD)) {
+            const unsigned index = XGI_GetLCDCapPtr1(pVBInfo);
 
-        /* index = XGI_GetLCDCapPtr(pVBInfo) ; */
-        index = XGI_GetLCDCapPtr1(pVBInfo);
-
-        if (pVBInfo->VBInfo & SetCRT2ToLCD) {   /* LCDB */
-            *di_0 = pVBInfo->LCDCapList[index].LCUCHAR_VCLKData1;
-            *di_1 = pVBInfo->LCDCapList[index].LCUCHAR_VCLKData2;
-        }
-        else {                  /* LCDA */
-            *di_0 = pVBInfo->LCDCapList[index].LCDA_VCLKData1;
-            *di_1 = pVBInfo->LCDCapList[index].LCDA_VCLKData2;
+            if (pVBInfo->VBInfo & SetCRT2ToLCD) {   /* LCDB */
+                di[0] = pVBInfo->LCDCapList[index].LCUCHAR_VCLKData1;
+                di[1] = pVBInfo->LCDCapList[index].LCUCHAR_VCLKData2;
+            }
+            else {                  /* LCDA */
+                di[0] = pVBInfo->LCDCapList[index].LCDA_VCLKData1;
+                di[1] = pVBInfo->LCDCapList[index].LCDA_VCLKData2;
+            }
         }
     }
+
     return;
 }
 
@@ -3746,21 +3742,20 @@ XGI_GetVCLKPtr(USHORT RefreshRateTableIndex, USHORT ModeNo,
 /* Description : */
 /* --------------------------------------------------------------------- */
 void
-XGI_GetVCLKLen(UCHAR tempal, UCHAR * di_0, UCHAR * di_1,
-               PVB_DEVICE_INFO pVBInfo)
+XGI_GetVCLKLen(unsigned vclkindex, UCHAR *di, PVB_DEVICE_INFO pVBInfo)
 {
     if (pVBInfo->
         VBType & (VB_XGI301 | VB_XGI301B | VB_XGI302B | VB_XGI301LV |
                   VB_XGI302LV | VB_XGI301C)) {
         if ((!(pVBInfo->VBInfo & SetCRT2ToLCDA))
             && (pVBInfo->SetFlag & ProgrammingCRT2)) {
-            *di_0 = (UCHAR) XGI_VBVCLKData[tempal].SR2B;
-            *di_1 = XGI_VBVCLKData[tempal].SR2C;
+            di[0] = XGI_VBVCLKData[vclkindex].SR2B;
+            di[1] = XGI_VBVCLKData[vclkindex].SR2C;
         }
     }
     else {
-        *di_0 = XGI_VCLKData[tempal].SR2B;
-        *di_1 = XGI_VCLKData[tempal].SR2C;
+        di[0] = XGI_VCLKData[vclkindex].SR2B;
+        di[1] = XGI_VCLKData[vclkindex].SR2C;
     }
 }
 
