@@ -49,7 +49,6 @@
 #include "vb_table.h"
 
 
-
 #define  IndexMask 0xff
 #ifndef XGI_MASK_DUAL_CHIP
 #define XGI_MASK_DUAL_CHIP	  0x04  /* SR3A */
@@ -303,11 +302,11 @@ static const USHORT XGINew_VGA_DAC[] = {
 void
 InitTo330Pointer(UCHAR ChipType, PVB_DEVICE_INFO pVBInfo)
 {
-    pVBInfo->SModeIDTable = (XGI_StStruct *) XGI330_SModeIDTable;
-    pVBInfo->StandTable = (XGI_StandTableStruct *) XGI330_StandTable;
-    pVBInfo->EModeIDTable = (XGI_ExtStruct *) XGI330_EModeIDTable;
-    pVBInfo->RefIndex = (XGI_Ext2Struct *) XGI330_RefIndex;
-    pVBInfo->XGINEWUB_CRT1Table = (XGI_CRT1TableStruct *) XGI_CRT1Table;
+    pVBInfo->SModeIDTable = XGI330_SModeIDTable;
+    pVBInfo->StandTable = XGI330_StandTable;
+    pVBInfo->EModeIDTable = XGI330_EModeIDTable;
+    pVBInfo->RefIndex = XGI330_RefIndex;
+    pVBInfo->XGINEWUB_CRT1Table = XGI_CRT1Table;
 
     /* add for new UNIVGABIOS */
     /* XGINew_UBLCDDataTable = (XGI_LCDDataTablStruct *) XGI_LCDDataTable ; */
@@ -315,19 +314,19 @@ InitTo330Pointer(UCHAR ChipType, PVB_DEVICE_INFO pVBInfo)
 
 
     if (ChipType >= XG40) {
-        pVBInfo->MCLKData = (XGI_MCLKDataStruct *) XGI340New_MCLKData;
-        pVBInfo->ECLKData = (XGI_ECLKDataStruct *) XGI340_ECLKData;
+        pVBInfo->MCLKData = XGI340New_MCLKData;
+        pVBInfo->ECLKData = XGI340_ECLKData;
     }
     else {
-        pVBInfo->MCLKData = (XGI_MCLKDataStruct *) XGI330New_MCLKData;
-        pVBInfo->ECLKData = (XGI_ECLKDataStruct *) XGI330_ECLKData;
+        pVBInfo->MCLKData = XGI330New_MCLKData;
+        pVBInfo->ECLKData = XGI330_ECLKData;
     }
 
-    pVBInfo->VCLKData = (XGI_VCLKDataStruct *) XGI_VCLKData;
-    pVBInfo->VBVCLKData = (XGI_VBVCLKDataStruct *) XGI_VBVCLKData;
+    pVBInfo->VCLKData = XGI_VCLKData;
+    pVBInfo->VBVCLKData = XGI_VBVCLKData;
     pVBInfo->ScreenOffset = XGI330_ScreenOffset;
-    pVBInfo->StResInfo = (XGI_StResInfoStruct *) XGI330_StResInfo;
-    pVBInfo->ModeResInfo = (XGI_ModeResInfoStruct *) XGI330_ModeResInfo;
+    pVBInfo->StResInfo = XGI330_StResInfo;
+    pVBInfo->ModeResInfo = XGI330_ModeResInfo;
 
     pVBInfo->pOutputSelect = &XGI330_OutputSelect;
     pVBInfo->pSoftSetting = &XGI330_SoftSetting;
@@ -397,8 +396,8 @@ InitTo330Pointer(UCHAR ChipType, PVB_DEVICE_INFO pVBInfo)
     pVBInfo->Ren750pGroup3 = XGI330_Ren750pGroup3;
 
 
-    pVBInfo->TimingH = (XGI_TimingHStruct *) XGI_TimingH;
-    pVBInfo->TimingV = (XGI_TimingVStruct *) XGI_TimingV;
+    pVBInfo->TimingH = XGI_TimingH;
+    pVBInfo->TimingV = XGI_TimingV;
 
     pVBInfo->CHTVVCLKUNTSC = XGI330_CHTVVCLKUNTSC;
     pVBInfo->CHTVVCLKONTSC = XGI330_CHTVVCLKONTSC;
