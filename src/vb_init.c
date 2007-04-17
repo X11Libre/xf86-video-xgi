@@ -2522,6 +2522,7 @@ void XGINew_InitVBIOSData(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO
     pVBInfo->ROMAddr = HwDeviceExtension->pjVirtualRomBase ;
     pVBInfo->FBAddr = HwDeviceExtension->pjVideoMemoryAddress ;
     pVBInfo->BaseAddr = ( USHORT )HwDeviceExtension->pjIOAddress ;
+    pVBInfo->RelIO = HwDeviceExtension->pjIOAddress - 0x30;
     pVBInfo->ISXPDOS = 0 ;
 
     pVBInfo->P3c4 = pVBInfo->BaseAddr + 0x14 ;
