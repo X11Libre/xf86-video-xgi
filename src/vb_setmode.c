@@ -156,7 +156,6 @@ void     XGI_UnLockCRT2(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO pVBInfo);
 void     XGI_LockCRT2(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO pVBInfo);
 void     XGINew_EnableCRT2(PVB_DEVICE_INFO pVBInfo);
 void     XGINew_LCD_Wait_Time(UCHAR DelayTime, PVB_DEVICE_INFO pVBInfo);
-void     XGI_LongWait(PVB_DEVICE_INFO pVBInfo);
 void     XGI_SetCRT1Offset( USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRateTableIndex , PXGI_HW_DEVICE_INFO HwDeviceExtension,PVB_DEVICE_INFO pVBInfo );
 void     XGI_GetLCDVCLKPtr(UCHAR* di_0,UCHAR *di_1, PVB_DEVICE_INFO pVBInfo);
 UCHAR    XGI_GetVCLKPtr(USHORT RefreshRateTableIndex,USHORT ModeNo,USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
@@ -7472,15 +7471,15 @@ void SetSpectrum( PVB_DEVICE_INFO pVBInfo )
     index = XGI_GetLCDCapPtr(pVBInfo) ;
 
     XGI_SetRegAND((XGIIOADDRESS) pVBInfo->Part4Port , 0x30 , 0x8F ) ;   /* disable down spectrum D[4] */
-    XGI_LongWait(pVBInfo) ;
+    XGI_WaitEndRetrace(pVBInfo->RelIO) ;
     XGI_SetRegOR((XGIIOADDRESS) pVBInfo->Part4Port , 0x30 , 0x20 ) ;	 /* reset spectrum */
-    XGI_LongWait(pVBInfo) ;
+    XGI_WaitEndRetrace(pVBInfo->RelIO) ;
 
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x31 , pVBInfo->LCDCapList[ index ].Spectrum_31 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x32 , pVBInfo->LCDCapList[ index ].Spectrum_32 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x33 , pVBInfo->LCDCapList[ index ].Spectrum_33 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x34 , pVBInfo->LCDCapList[ index ].Spectrum_34 ) ;
-    XGI_LongWait(pVBInfo) ;
+    XGI_WaitEndRetrace(pVBInfo->RelIO) ;
     XGI_SetRegOR((XGIIOADDRESS) pVBInfo->Part4Port , 0x30 , 0x40 ) ; /* enable spectrum */
 }
 
@@ -8153,36 +8152,6 @@ BOOLEAN XGI_BridgeIsOn( PVB_DEVICE_INFO pVBInfo )
 }
 
 
-
-/* --------------------------------------------------------------------- */
-/* Function : XGI_LongWait */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-void XGI_LongWait(PVB_DEVICE_INFO pVBInfo)
-{
-    USHORT i ;
-
-    i = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x1F ) ;
-
-    if ( !( i & 0xC0 ) )
-    {
-        for( i = 0 ; i < 0xFFFF ; i++ )
-        {
-            if ( !( XGI_GetRegByte((XGIIOADDRESS) pVBInfo->P3da ) & 0x08 ) )
-                break ;
-        }
-
-        for( i = 0 ; i < 0xFFFF ; i++ )
-        {
-            if ( ( XGI_GetRegByte((XGIIOADDRESS) pVBInfo->P3da ) & 0x08 ) )
-                break ;
-	}
-    }
-}
-
-
 /* --------------------------------------------------------------------- */
 /* Function : XGI_VBLongWait */
 /* Input : */
@@ -8234,7 +8203,7 @@ void XGI_VBLongWait( PVB_DEVICE_INFO pVBInfo )
     }
     else
     {
-        XGI_LongWait(pVBInfo) ;
+        XGI_WaitEndRetrace(pVBInfo->RelIO) ;
     }
     return ;
 }

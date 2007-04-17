@@ -95,7 +95,7 @@ BOOLEAN XGINew_Sense(USHORT tempbx, USHORT tempcx, PVB_DEVICE_INFO pVBInfo)
 		       ((tempbx & 0xFF00) >> 8) | (tempcx & 0x00FF));
 
     for (i = 0; i < 10; i++)
-        XGI_LongWait(pVBInfo);
+        XGI_WaitEndRetrace(pVBInfo->RelIO);
 
     temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x03);
     temp = (temp ^ 0x0E) & ((tempcx & 0x7F00) >> 8);
@@ -158,7 +158,7 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
                     XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3c4 , 0x01 , 0xDF , 0x20 ) ;	/* Display Off 0212 */
                     for( i = 0 ; i < 20 ; i++ )
                     {
-                        XGI_LongWait(pVBInfo) ;
+                        XGI_WaitEndRetrace(pVBInfo->RelIO) ;
                     }
                 }
                 XGI_SetReg((XGIIOADDRESS) pVBInfo->Part2Port , 0x00 , 0x1c ) ;
@@ -371,7 +371,7 @@ BOOLEAN XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INF
     XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->Part4Port , 0x10 , ~0x1F , temp ) ;
 
     for( i = 0 ; i < 10 ; i++ )
-        XGI_LongWait(pVBInfo) ;
+        XGI_WaitEndRetrace(pVBInfo->RelIO) ;
 
     tempch = ( tempcx & 0xFF00 ) >> 8;
     temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x03 ) ;
@@ -391,7 +391,7 @@ BOOLEAN XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INF
     XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->Part4Port , 0x10 , ~0x1F , temp ) ;
 
     for( i = 0 ; i < 10 ; i++ )
-        XGI_LongWait(pVBInfo) ;
+        XGI_WaitEndRetrace(pVBInfo->RelIO) ;
 
     tempch = ( tempcx & 0xFF00 ) >> 8;
     temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x03 ) ;
@@ -411,7 +411,7 @@ BOOLEAN XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INF
       XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->Part4Port , 0x10 , ~0x1F , temp ) ;
 
       for( i = 0 ; i < 10 ; i++ )
-          XGI_LongWait(pVBInfo) ;
+          XGI_WaitEndRetrace(pVBInfo->RelIO) ;
 
       tempch = ( tempcx & 0xFF00 ) >> 8;
       temp = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x03 ) ;
