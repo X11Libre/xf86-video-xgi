@@ -879,7 +879,6 @@ BOOLEAN XGI_AjustCRT2Rate( USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRa
     tempbx = pVBInfo->RefIndex[ RefreshRateTableIndex + ( *i ) ].ModeID ;
     tempax = 0 ;
 
-    {
         if ( pVBInfo->VBInfo & SetCRT2ToRAMDAC )
         {
             tempax |= SupportRAMDAC2 ;
@@ -970,7 +969,6 @@ BOOLEAN XGI_AjustCRT2Rate( USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRa
                 }
             }
         }
-    }
 
     for( ; pVBInfo->RefIndex[ RefreshRateTableIndex + ( *i ) ].ModeID == tempbx ; ( *i )-- )
     {
@@ -2478,8 +2476,6 @@ void XGI_GetVBInfo( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO HwD
 
         if ( pVBInfo->IF_DEF_LCDA == 1 )
         {
-            {
-                {
                     /* if ( ( pVBInfo->VBType & VB_XGI302B ) || ( pVBInfo->VBType & VB_XGI301LV ) || ( pVBInfo->VBType & VB_XGI302LV ) || ( pVBInfo->VBType & VB_XGI301C ) ) */
                     if ( pVBInfo->VBType & ( VB_XGI302B | VB_XGI301LV | VB_XGI302LV | VB_XGI301C ) )
                     {
@@ -2491,8 +2487,6 @@ void XGI_GetVBInfo( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO HwD
                                 tempbx |= SetCRT2ToLCDA ;
                         }
                     }
-                }
-            }
         }
 
         if ( pVBInfo->IF_DEF_YPbPr == 1 )
@@ -2521,7 +2515,6 @@ void XGI_GetVBInfo( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO HwD
 
         tempax = push ;  /* restore CR31 */
 
-        {
             if ( pVBInfo->IF_DEF_YPbPr == 1 )
             {
                 if ( pVBInfo->IF_DEF_HiVision == 1 )
@@ -2536,7 +2529,7 @@ void XGI_GetVBInfo( USHORT ModeNo , USHORT ModeIdIndex , PXGI_HW_DEVICE_INFO HwD
                 else
                     temp = 0x017C ;
             }
-        }
+
 
         if ( !( tempbx & temp ) )
         {
@@ -2691,10 +2684,8 @@ void XGI_GetTVInfo( USHORT ModeNo , USHORT ModeIdIndex ,PVB_DEVICE_INFO  pVBInfo
                 tempbx &= ( SetCHTVOverScan | SetNTSCJ | SetPALTV ) ;
         }
 
-        {
             if ( pVBInfo->VBInfo & SetCRT2ToSCART )
                 tempbx |= SetPALTV ;
-        }
 
         if ( pVBInfo->IF_DEF_YPbPr == 1 )
         {
@@ -2721,7 +2712,6 @@ void XGI_GetTVInfo( USHORT ModeNo , USHORT ModeIdIndex ,PVB_DEVICE_INFO  pVBInfo
             }
         }
 
-        {      /* shampoo */
             if ( ( pVBInfo->VBInfo & SetInSlaveMode ) && ( !( pVBInfo->VBInfo & SetNotSimuMode ) ) )
                 tempbx |= TVSimuMode ;
 
@@ -2745,7 +2735,6 @@ void XGI_GetTVInfo( USHORT ModeNo , USHORT ModeIdIndex ,PVB_DEVICE_INFO  pVBInfo
                         tempbx &= ( ~RPLLDIV2XO ) ;
                 }
             }
-        }
     }
     pVBInfo->TVInfo = tempbx ;
 }
@@ -2839,7 +2828,6 @@ BOOLEAN XGI_GetLCDInfo( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBI
 
     tempax = pVBInfo->LCDCapList[ LCDIdIndex ].LCD_Capability ;
 
-    {
         if ( ( ( pVBInfo->VBType & VB_XGI302LV ) || ( pVBInfo->VBType & VB_XGI301C ) ) && ( tempax & LCDDualLink ) )
         {
             tempbx |= SetLCDDualLink ;
@@ -2847,7 +2835,6 @@ BOOLEAN XGI_GetLCDInfo( USHORT ModeNo , USHORT ModeIdIndex, PVB_DEVICE_INFO pVBI
 
         if ( ( pVBInfo->LCDResInfo == Panel1400x1050 ) && ( pVBInfo->VBInfo & SetCRT2ToLCD ) && ( ModeNo > 0x13 ) && ( resinfo == 9 ) && ( !( tempbx & EnableScalingLCD ) ) )
             tempbx |= SetLCDtoNonExpanding ;	/* set to center in 1280x1024 LCDB for Panel1400x1050 */
-    }
 
 /*
     if ( tempax & LCDBToA )
@@ -8142,13 +8129,11 @@ BOOLEAN XGI_BridgeIsOn( PVB_DEVICE_INFO pVBInfo )
 {
     USHORT flag ;
 
-    {
         flag = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port , 0x00 ) ;
         if ( ( flag == 1 ) || ( flag == 2 ) )
             return( 1 ) ;	/* 301b */
         else
             return( 0 ) ;
-    }
 }
 
 
@@ -8263,7 +8248,6 @@ USHORT XGI_GetVCLK2Ptr( USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRateT
         CRT2Index = pVBInfo->RefIndex[ RefreshRateTableIndex ].Ext_CRT2CRTC ;
     }
 
-    {
         CRT2Index = CRT2Index >> 6 ;        /*  for LCD */
         if ( ( ( pVBInfo->VBInfo & SetCRT2ToLCD ) | SetCRT2ToLCDA ) )	 /*301b*/
         {
@@ -8371,7 +8355,7 @@ USHORT XGI_GetVCLK2Ptr( USHORT ModeNo , USHORT ModeIdIndex , USHORT RefreshRateT
                 }
             }
         }
-    }
+
     /* VCLKIndex = VCLKIndex&IndexMask ; */
 
     
