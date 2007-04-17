@@ -1749,17 +1749,6 @@ static const XGI_PlasmaTables XGI_PlasmaTable[] = {
 USHORT  XGI_GetModeID(ULONG VBFlags, int HDisplay, int VDisplay,
     int Depth, BOOLEAN FSTN, int LCDwith, int LCDheight);
 
-void 	XGI_SetReg(XGIIOADDRESS port, USHORT index, USHORT data);
-void 	XGI_SetRegByte(XGIIOADDRESS port, USHORT data);
-void  	XGI_SetRegShort(XGIIOADDRESS port, USHORT data);
-void	XGI_SetRegLong(XGIIOADDRESS port, ULONG data);
-UCHAR	XGI_GetReg(XGIIOADDRESS port, USHORT index);
-UCHAR 	XGI_GetRegByte(XGIIOADDRESS port);
-USHORT	XGI_GetRegShort(XGIIOADDRESS port);
-ULONG	XGI_GetRegLong(XGIIOADDRESS port);
-void	XGI_SetRegANDOR(XGIIOADDRESS Port,USHORT Index,USHORT DataAND,USHORT DataOR);
-void 	XGI_SetRegAND(XGIIOADDRESS Port,USHORT Index,USHORT DataAND);
-void	XGI_SetRegOR(XGIIOADDRESS Port,USHORT Index,USHORT DataOR);
 void	XGI_New_DisplayOn(XGI_Private *XGI_Pr);
 void	XGI_New_DisplayOff(XGI_Private *XGI_Pr);
 void	XGIRegInit(XGI_Private *XGI_Pr, XGIIOADDRESS BaseAddr);

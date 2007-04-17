@@ -930,6 +930,19 @@ extern BOOLEAN XGI_SearchModeID(const XGI_StStruct *SModeIDTable,
 extern UCHAR XGI_GetModePtr(const XGI_StStruct *SModeIDTable,
     unsigned ModeType, USHORT ModeNo, USHORT ModeIdIndex);
 
+extern void XGI_SetReg(XGIIOADDRESS port, USHORT index, USHORT data);
+extern void XGI_SetRegByte(XGIIOADDRESS port, USHORT data);
+extern void XGI_SetRegShort(XGIIOADDRESS port, USHORT data);
+extern void XGI_SetRegLong(XGIIOADDRESS port, ULONG data);
+extern UCHAR XGI_GetReg(XGIIOADDRESS port, USHORT index);
+extern UCHAR XGI_GetRegByte(XGIIOADDRESS port);
+extern USHORT XGI_GetRegShort(XGIIOADDRESS port);
+extern ULONG XGI_GetRegLong(XGIIOADDRESS port);
+extern void XGI_SetRegANDOR(XGIIOADDRESS Port, USHORT Index, USHORT DataAND,
+			    USHORT DataOR);
+extern void XGI_SetRegAND(XGIIOADDRESS Port, USHORT Index, USHORT DataAND);
+extern void XGI_SetRegOR(XGIIOADDRESS Port, USHORT Index, USHORT DataOR);
+
 #ifdef DEBUG
 void XGIDumpRegs(ScrnInfoPtr pScrn);
 
