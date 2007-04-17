@@ -1911,7 +1911,6 @@ XGI_GetLVDSData(USHORT ModeNo, USHORT ModeIdIndex,
 {
     USHORT tempbx;
     XGI330_LVDSDataStruct *LCDPtr = NULL;
-    XGI330_CHTVDataStruct *TVPtr = NULL;
 
     tempbx = 2;
 
@@ -3802,7 +3801,7 @@ XGI_GetOffset(USHORT ModeNo, USHORT ModeIdIndex, USHORT RefreshRateTableIndex,
 {
     USHORT temp,
         colordepth,
-        modeinfo, index, infoflag, ColorDepth[] = { 0x01, 0x02, 0x04 };
+        modeinfo, index, infoflag;
 
     modeinfo = pVBInfo->EModeIDTable[ModeIdIndex].Ext_ModeInfo;
     if (ModeNo <= 0x14)
@@ -3820,18 +3819,6 @@ XGI_GetOffset(USHORT ModeNo, USHORT ModeIdIndex, USHORT RefreshRateTableIndex,
     }
 
     colordepth = XGI_GetColorDepth(ModeNo, ModeIdIndex, pVBInfo);
-/*
-    if ( ( ModeNo >= 0x7C ) && ( ModeNo <= 0x7E ) )
-    {
-        temp = ModeNo - 0x7C ;
-	colordepth = ColorDepth[ temp ] ;
-	temp = 0x6B ;
-	if ( infoflag & InterlaceMode )
-	{
-            temp = temp << 1 ;
-	}
-	return( temp * colordepth ) ;
-    } 							*/
 
     if ((ModeNo >= 0x26) && (ModeNo <= 0x28)) {
         return (temp * colordepth + (colordepth >> 1));
