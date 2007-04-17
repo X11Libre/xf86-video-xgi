@@ -4469,7 +4469,7 @@ XGI_SetGroup2(USHORT ModeNo, USHORT ModeIdIndex, USHORT RefreshRateTableIndex,
 #ifndef LINUX_XF86
     UCHAR *PhasePoint;
 #endif
-    UCHAR *TimingPoint;
+    const UCHAR *TimingPoint;
 
     ULONG longtemp, tempeax, tempebx, temp2, tempecx;
 
@@ -5628,7 +5628,7 @@ XGI_GetLcdPtr(USHORT BX, USHORT ModeNo, USHORT ModeIdIndex,
 {
     USHORT i, tempdx, tempcx, tempbx, tempal, modeflag, table;
 
-    XGI330_LCDDataTablStruct *tempdi = 0;
+    const XGI330_LCDDataTablStruct *tempdi = 0;
 
 
     tempbx = BX;
