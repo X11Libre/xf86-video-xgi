@@ -237,8 +237,8 @@ void XGI_SetCRT1Offset(USHORT ModeNo, USHORT ModeIdIndex,
                        PXGI_HW_DEVICE_INFO HwDeviceExtension,
                        PVB_DEVICE_INFO pVBInfo);
 void XGI_GetLCDVCLKPtr(UCHAR * di_0, UCHAR * di_1, PVB_DEVICE_INFO pVBInfo);
-UCHAR XGI_GetVCLKPtr(USHORT RefreshRateTableIndex, USHORT ModeNo,
-                     USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
+static unsigned XGI_GetVCLKPtr(USHORT RefreshRateTableIndex, USHORT ModeNo,
+                               USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
 void XGI_GetVCLKLen(UCHAR tempal, UCHAR * di_0, UCHAR * di_1,
                     PVB_DEVICE_INFO pVBInfo);
 USHORT XGI_GetLCDCapPtr(PVB_DEVICE_INFO pVBInfo);
@@ -2314,12 +2314,12 @@ void
 XGI_SetCRT2ECLK(USHORT ModeNo, USHORT ModeIdIndex,
                 USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo)
 {
-    UCHAR di_0, di_1, tempal;
+    UCHAR di_0, di_1;
     int i;
-
-    tempal =
+    const unsigned vclkindex =
         XGI_GetVCLKPtr(RefreshRateTableIndex, ModeNo, ModeIdIndex, pVBInfo);
-    XGI_GetVCLKLen(tempal, &di_0, &di_1, pVBInfo);
+
+    XGI_GetVCLKLen(vclkindex, &di_0, &di_1, pVBInfo);
     XGI_GetLCDVCLKPtr(&di_0, &di_1, pVBInfo);
 
     for (i = 0; i < 4; i++) {
@@ -3596,11 +3596,11 @@ void
 XGI_SetCRT2VCLK(USHORT ModeNo, USHORT ModeIdIndex,
                 USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo)
 {
-    UCHAR di_0, di_1, tempal;
-
-    tempal =
+    UCHAR di_0, di_1;
+    const unsigned vclkindex =
         XGI_GetVCLKPtr(RefreshRateTableIndex, ModeNo, ModeIdIndex, pVBInfo);
-    XGI_GetVCLKLen(tempal, &di_0, &di_1, pVBInfo);
+
+    XGI_GetVCLKLen(vclkindex, &di_0, &di_1, pVBInfo);
     XGI_GetLCDVCLKPtr(&di_0, &di_1, pVBInfo);
 
     if (pVBInfo->VBType & VB_XGI301) {  /* shampoo 0129 *//* 301 */
@@ -3669,85 +3669,73 @@ XGI_GetLCDVCLKPtr(UCHAR * di_0, UCHAR * di_1, PVB_DEVICE_INFO pVBInfo)
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-UCHAR
+unsigned
 XGI_GetVCLKPtr(USHORT RefreshRateTableIndex, USHORT ModeNo,
                USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo)
 {
-
-    USHORT index, modeflag;
-#ifndef LINUX_XF86
-    USHORT tempbx;
-#endif
-
-    UCHAR tempal;
-
-    if (ModeNo <= 0x13)
-        modeflag = pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag;      /* si+St_ResInfo */
-    else
-        modeflag = pVBInfo->EModeIDTable[ModeIdIndex].Ext_ModeFlag;     /* si+Ext_ResInfo */
+    unsigned vclk;
+    const unsigned modeflag = (ModeNo <= 0x13)
+        ? pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag
+        : pVBInfo->EModeIDTable[ModeIdIndex].Ext_ModeFlag;
 
 
-    if ((pVBInfo->SetFlag & ProgrammingCRT2) && (!(pVBInfo->LCDInfo & EnableScalingLCD))) {     /* {LCDA/LCDB} */
-        index = XGI_GetLCDCapPtr(pVBInfo);
-        tempal = pVBInfo->LCDCapList[index].LCD_VCLK;
+    if ((pVBInfo->SetFlag & ProgrammingCRT2) 
+        && (!(pVBInfo->LCDInfo & EnableScalingLCD))) {     /* {LCDA/LCDB} */
+        const unsigned  index = XGI_GetLCDCapPtr(pVBInfo);
+        vclk = pVBInfo->LCDCapList[index].LCD_VCLK;
 
         if (pVBInfo->VBInfo & (SetCRT2ToLCD | SetCRT2ToLCDA))
-            return tempal;
+            return vclk;
 
         /* {TV} */
         if (pVBInfo->
             VBType & (VB_XGI301B | VB_XGI302B | VB_XGI301LV | VB_XGI302LV |
                       VB_XGI301C)) {
             if (pVBInfo->VBInfo & SetCRT2ToHiVisionTV) {
-                tempal = HiTVVCLKDIV2;
-                if (!(pVBInfo->TVInfo & RPLLDIV2XO))
-                    tempal = HiTVVCLK;
                 if (pVBInfo->TVInfo & TVSimuMode) {
-                    tempal = HiTVSimuVCLK;
-                    if (!(modeflag & Charx8Dot))
-                        tempal = HiTVTextVCLK;
-
+                    vclk = (modeflag & Charx8Dot)
+                        ? HiTVSimuVCLK : HiTVTextVCLK;
                 }
-                return tempal;
+                else {
+                    vclk = (pVBInfo->TVInfo & RPLLDIV2XO)
+                        ? HiTVVCLKDIV2 : HiTVVCLK;
+                }
+
+                return vclk;
+            }
+            else if (pVBInfo->TVInfo & SetYPbPrMode750p) {
+                return YPbPr750pVCLK;
+            }
+            else if (pVBInfo->TVInfo & SetYPbPrMode525p) {
+                return YPbPr525pVCLK;
             }
 
-            if (pVBInfo->TVInfo & SetYPbPrMode750p) {
-                tempal = YPbPr750pVCLK;
-                return tempal;
-            }
-
-            if (pVBInfo->TVInfo & SetYPbPrMode525p) {
-                tempal = YPbPr525pVCLK;
-                return tempal;
-            }
-
-            tempal = NTSC1024VCLK;
+            vclk = NTSC1024VCLK;
 
             if (!(pVBInfo->TVInfo & NTSC1024x768)) {
-                tempal = TVVCLKDIV2;
-                if (!(pVBInfo->TVInfo & RPLLDIV2XO))
-                    tempal = TVVCLK;
+                vclk = (pVBInfo->TVInfo & RPLLDIV2XO)
+                    ? TVVCLKDIV2 : TVVCLK;
             }
 
             if (pVBInfo->VBInfo & SetCRT2ToTV)
-                return tempal;
+                return vclk;
         }
     }                           /* {End of VB} */
 
-    tempal =
-        (UCHAR)
-        XGI_GetRegByte((XGIIOADDRESS) (USHORT) (pVBInfo->P3ca + 0x02));
-    tempal = tempal >> 2;
-    tempal &= 0x03;
+    vclk = XGI_GetRegByte((XGIIOADDRESS) (pVBInfo->P3ca + 0x02));
+    vclk = (vclk >> 2) & 0x03;
 
-    if ((pVBInfo->LCDInfo & EnableScalingLCD) && (modeflag & Charx8Dot) && ((pVBInfo->IF_DEF_VideoCapture) == 1))       /* for Dot8 Scaling LCD */
-        tempal = tempal ^ tempal;       /* ; set to VCLK25MHz always */
+    /* for Dot8 Scaling LCD */
+    if ((pVBInfo->LCDInfo & EnableScalingLCD)
+        && (modeflag & Charx8Dot) 
+        && ((pVBInfo->IF_DEF_VideoCapture) == 1)) {
+        vclk = VCLK25_175;       /* ; set to VCLK25MHz always */
+    }
 
     if (ModeNo <= 0x13)
-        return tempal;
+        return vclk;
 
-    tempal = pVBInfo->RefIndex[RefreshRateTableIndex].Ext_CRTVCLK;
-    return tempal;
+    return pVBInfo->RefIndex[RefreshRateTableIndex].Ext_CRTVCLK;
 }
 
 
