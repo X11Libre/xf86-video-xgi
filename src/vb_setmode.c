@@ -242,8 +242,8 @@ static void XGI_GetVCLKLen(unsigned vclkindex, UCHAR *di,
                            PVB_DEVICE_INFO pVBInfo);
 USHORT XGI_GetLCDCapPtr(PVB_DEVICE_INFO pVBInfo);
 USHORT XGI_GetLCDCapPtr1(PVB_DEVICE_INFO pVBInfo);
-XGI301C_Tap4TimingStruct *XGI_GetTap4Ptr(USHORT tempcx,
-                                         PVB_DEVICE_INFO pVBInfo);
+static const XGI301C_Tap4TimingStruct *XGI_GetTap4Ptr(USHORT tempcx,
+                                                      PVB_DEVICE_INFO pVBInfo);
 
 
 static const USHORT XGINew_MDA_DAC[] = {
@@ -5175,12 +5175,12 @@ XGI_SetLCDRegs(USHORT ModeNo, USHORT ModeIdIndex,
 /* Output : di -> Tap4 Reg. Setting Pointer */
 /* Description : */
 /* --------------------------------------------------------------------- */
-XGI301C_Tap4TimingStruct *
+const XGI301C_Tap4TimingStruct *
 XGI_GetTap4Ptr(USHORT tempcx, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT tempax, tempbx, i;
 
-    XGI301C_Tap4TimingStruct *Tap4TimingPtr;
+    const XGI301C_Tap4TimingStruct *Tap4TimingPtr;
 
     if (tempcx == 0) {
         tempax = pVBInfo->VGAHDE;
@@ -5239,7 +5239,7 @@ XGI_SetTap4Regs(PVB_DEVICE_INFO pVBInfo)
 #endif
     USHORT i, j;
 
-    XGI301C_Tap4TimingStruct *Tap4TimingPtr;
+    const XGI301C_Tap4TimingStruct *Tap4TimingPtr;
 
     if (!(pVBInfo->VBType & VB_XGI301C))
         return;
