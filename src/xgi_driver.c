@@ -1458,7 +1458,7 @@ XGIInternalDDC(ScrnInfoPtr pScrn, int crtno)
 
 		if( (pInt->ax & 0xff00) == 0 )
 		{
-			int i,j ;
+			int i;
       		xf86DrvMsg(pScrn->scrnIndex, X_INFO,
 				"XGIInternalDDC(): VESA get DDC success for CRT %d.\n",crtno+1 );
 
@@ -1470,6 +1470,7 @@ XGIInternalDDC(ScrnInfoPtr pScrn, int crtno)
 			#ifdef DEBUG5
 			for( i = 0 ; i < 128 ; i+=16)
 			{
+			    unsigned j;
 				ErrorF("EDID[%02X]",i);
 				for( j = 0 ; j < 16 ; j++)
 				{
@@ -2261,7 +2262,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 {
     XGIPtr pXGI;
     MessageType from;
-    unsigned char tmpval;
     unsigned long int i;
     int temp;
     ClockRangePtr clockRanges;
@@ -2283,10 +2283,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 	/****************** Code Start ***********************/
 
     ErrorF("XGIPreInit\n");
-
-//inXGIIDXREG(XGICR, 0x4D, tmpval);
-//tmpval = tmpval | 0x05;
-//outXGIIDXREG(XGICR, 0x4D, tmpval);
 
     if(flags & PROBE_DETECT) 
     {
@@ -4309,7 +4305,9 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 	vgaRegPtr vgaReg;
 	XGIPtr pXGI = XGIPTR(pScrn);
 	XGIRegPtr xgiReg;
+#ifdef __powerpc__
         unsigned char tmpval;
+#endif
 	#ifdef XGIDUALHEAD
 	XGIEntPtr pXGIEnt = NULL;
 	#endif
