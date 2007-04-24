@@ -396,6 +396,7 @@ static const ModeTiming StdTiming[] = {
 
 
 static void XGIDumpPalette(ScrnInfoPtr pScrn);
+#ifdef DEBUG
 static void XGIDumpSR(ScrnInfoPtr pScrn);
 static void XGIDumpCR(ScrnInfoPtr pScrn);
 static void XGIDumpGR(ScrnInfoPtr pScrn);
@@ -404,6 +405,7 @@ static void XGIDumpPart2(ScrnInfoPtr pScrn);
 static void XGIDumpPart3(ScrnInfoPtr pScrn);
 static void XGIDumpPart4(ScrnInfoPtr pScrn);
 static void XGIDumpMMIO(ScrnInfoPtr pScrn);
+#endif
 
 static Bool XGISwitchCRT2Type(ScrnInfoPtr pScrn, unsigned long newvbflags);
 static Bool XGISwitchCRT1Status(ScrnInfoPtr pScrn, int onoff);
@@ -1539,10 +1541,10 @@ XGIDoPrivateDDC(ScrnInfoPtr pScrn, int *crtnum)
 } */
 
 
+#ifdef DEBUG5
 static void
 XGIDumpMonitorInfo(xf86MonPtr pMonitor)
 {
-#ifdef DEBUG5
     struct detailed_timings *pd_timings;
     Uchar *pserial;
     Uchar *pascii_data;
@@ -1744,8 +1746,8 @@ XGIDumpMonitorInfo(xf86MonPtr pMonitor)
 		}
 		ErrorF("\n") ;
 	}
-#endif 
 }
+#endif 
 
 static void
 XGIGetMonitorRangeByDDC(MonitorRangePtr range, xf86MonPtr pMonitor)
@@ -2164,10 +2166,10 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
     /* end of DDC */
 }
 
+#ifdef DEBUG5
 static void
 XGIDumpModePtr(DisplayModePtr mode)
 {
-#ifdef DEBUG5
 	if(mode == NULL) return ; 
 
 	ErrorF("Dump DisplayModePtr mode\n") ;
@@ -2210,8 +2212,8 @@ XGIDumpModePtr(DisplayModePtr mode)
 	ErrorF("PrivFlags = %d\n",mode->PrivFlags) ;
 	ErrorF("HSync = %8.3f\n",mode->HSync) ;
 	ErrorF("VRefresh = %8.3f\n",mode->VRefresh) ;
-#endif 
 }
+#endif 
 
 static void
 XGIDumpMonPtr(MonPtr pMonitor)
@@ -7081,10 +7083,10 @@ xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1, unsigned char reg2)
 }
 
 
+#ifdef DEBUG
 void
 XGIDumpSR(ScrnInfoPtr pScrn)
 {
-#ifdef DEBUG
     XGIPtr pXGI = XGIPTR(pScrn);
 
     int i,j ;
@@ -7104,13 +7106,11 @@ XGIDumpSR(ScrnInfoPtr pScrn)
         ErrorF("\n") ;
     }
     ErrorF( "\n" ) ;
-#endif
 }
 
 void
 XGIDumpCR(ScrnInfoPtr pScrn)
 {
-#ifdef DEBUG
     XGIPtr pXGI = XGIPTR(pScrn);
 
     int i,j ;
@@ -7129,13 +7129,11 @@ XGIDumpCR(ScrnInfoPtr pScrn)
 		}
         ErrorF("\n") ;
     }
-#endif /* DEBUG */
 }
 
 void
 XGIDumpGR(ScrnInfoPtr pScrn)
 {
-#ifdef DEBUG
     XGIPtr pXGI = XGIPTR(pScrn);
 
     int i ;
@@ -7151,14 +7149,12 @@ XGIDumpGR(ScrnInfoPtr pScrn)
 		ErrorF(" %02lX",temp);
     }
     ErrorF("\n") ;
-#endif /* DEBUG */
 }
 
 
 void
 XGIDumpPart0(ScrnInfoPtr pScrn)
 {
-#ifdef DEBUG
     XGIPtr pXGI = XGIPTR(pScrn);
     int i,j ;
     unsigned long temp ;
@@ -7176,13 +7172,11 @@ XGIDumpPart0(ScrnInfoPtr pScrn)
 	 }									       
 	ErrorF("\n") ;
     }
-#endif /* DEBUG */
 }
 
 void
 XGIDumpPart05(ScrnInfoPtr pScrn)
 {
-#ifdef DEBUG
     XGIPtr pXGI = XGIPTR(pScrn);
     int i,j ;
     unsigned long temp ;
@@ -7199,13 +7193,11 @@ XGIDumpPart05(ScrnInfoPtr pScrn)
 	}
 	ErrorF("\n") ;
     }
-#endif /* DEBUG */
 }				    
 	
 void
 XGIDumpPart1(ScrnInfoPtr pScrn)
 {
-#ifdef DEBUG
     XGIPtr pXGI = XGIPTR(pScrn);
 
     int i,j ;
@@ -7224,14 +7216,11 @@ XGIDumpPart1(ScrnInfoPtr pScrn)
 		}
         ErrorF("\n") ;
     }
-#endif /* DEBUG */
 }
 
 void
 XGIDumpPart2(ScrnInfoPtr pScrn)
 {
-
-#ifdef DEBUG
     XGIPtr pXGI = XGIPTR(pScrn);
 
     int i,j ;
@@ -7250,13 +7239,11 @@ XGIDumpPart2(ScrnInfoPtr pScrn)
 		}
         ErrorF("\n") ;
     }
-#endif /* DEBUG */
 }
 
 void
 XGIDumpPart3(ScrnInfoPtr pScrn)
 {
-#ifdef DEBUG
     XGIPtr pXGI = XGIPTR(pScrn);
 
     int i,j ;
@@ -7276,13 +7263,11 @@ XGIDumpPart3(ScrnInfoPtr pScrn)
 		}
         ErrorF("\n") ;
     }
-#endif /* DEBUG */
 }
 
 void
 XGIDumpPart4(ScrnInfoPtr pScrn)
 {
-#ifdef DEBUG
     XGIPtr pXGI = XGIPTR(pScrn);
 
     int i,j ;
@@ -7301,14 +7286,11 @@ XGIDumpPart4(ScrnInfoPtr pScrn)
 		}
         ErrorF("\n") ;
     }
-
-#endif /* DEBUG */
 }
 
 void
 XGIDumpMMIO(ScrnInfoPtr pScrn)
 {
-#ifdef DEBUG
     XGIPtr pXGI = XGIPTR(pScrn);
 
     int i ;
@@ -7326,8 +7308,8 @@ XGIDumpMMIO(ScrnInfoPtr pScrn)
 			XGIMMIOLONG(i+12)) ;
 	}
 */
-#endif /* DEBUG */
 }
+#endif /* DEBUG */
 
 void
 XGIDumpRegs(ScrnInfoPtr pScrn)
