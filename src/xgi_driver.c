@@ -402,7 +402,6 @@ static void XGIDumpPart4(ScrnInfoPtr pScrn);
 static void XGIDumpMMIO(ScrnInfoPtr pScrn);
 #endif
 
-static Bool XGISwitchCRT2Type(ScrnInfoPtr pScrn, unsigned long newvbflags);
 static Bool XGISwitchCRT1Status(ScrnInfoPtr pScrn, int onoff);
 static BOOLEAN XGIBridgeIsInSlaveMode(ScrnInfoPtr pScrn);
 static int XGICalcVRate(DisplayModePtr mode);
