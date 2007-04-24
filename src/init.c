@@ -355,68 +355,6 @@ XGI_SetEnableFstn(XGI_Private *XGI_Pr, int enable)
 }
 
 /*********************************************/
-/*        HELPER: SET SEGMENT REGISTERS      */
-/*********************************************/
-/*
-static void
-XGI_SetSegRegLower(XGI_Private *XGI_Pr, USHORT value)
-{
-   USHORT temp;
-
-   value &= 0x00ff;
-   temp = XGI_GetRegByte(XGI_Pr->XGI_P3cb) & 0xf0;
-   temp |= (value >> 4);
-   XGI_SetRegByte(XGI_Pr->XGI_P3cb, temp);
-   temp = XGI_GetRegByte(XGI_Pr->XGI_P3cd) & 0xf0;
-   temp |= (value & 0x0f);
-   XGI_SetRegByte(XGI_Pr->XGI_P3cd, temp);
-}
-
-static void
-XGI_SetSegRegUpper(XGI_Private *XGI_Pr, USHORT value)
-{
-   USHORT temp;
-
-   value &= 0x00ff;
-   temp = XGI_GetRegByte(XGI_Pr->XGI_P3cb) & 0x0f;
-   temp |= (value & 0xf0);
-   XGI_SetRegByte(XGI_Pr->XGI_P3cb, temp);
-   temp = XGI_GetRegByte(XGI_Pr->XGI_P3cd) & 0x0f;
-   temp |= (value << 4);
-   XGI_SetRegByte(XGI_Pr->XGI_P3cd, temp);
-}
-
-static void
-XGI_SetSegmentReg(XGI_Private *XGI_Pr, USHORT value)
-{
-   XGI_SetSegRegLower(XGI_Pr, value);
-   XGI_SetSegRegUpper(XGI_Pr, value);
-}
-
-static void
-XGI_ResetSegmentReg(XGI_Private *XGI_Pr)
-{
-   XGI_SetSegmentReg(XGI_Pr, 0);
-}
-
-static void
-XGI_SetSegmentRegOver(XGI_Private *XGI_Pr, USHORT value)
-{
-   USHORT temp = value >> 8;
-
-   temp &= 0x07;
-   temp |= (temp << 4);
-   XGI_SetReg(XGI_Pr->XGI_P3c4,0x1d,temp);
-   XGI_SetSegmentReg(XGI_Pr, value);
-}
-
-static void
-XGI_ResetSegmentRegOver(XGI_Private *XGI_Pr)
-{
-   XGI_SetSegmentRegOver(XGI_Pr, 0);
-}
-*/
-/*********************************************/
 /*             HELPER: GetVBType             */
 /*********************************************/
 
