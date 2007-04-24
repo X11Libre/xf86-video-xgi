@@ -402,7 +402,6 @@ static void XGIDumpPart4(ScrnInfoPtr pScrn);
 static void XGIDumpMMIO(ScrnInfoPtr pScrn);
 #endif
 
-static BOOLEAN XGIBridgeIsInSlaveMode(ScrnInfoPtr pScrn);
 static int XGICalcVRate(DisplayModePtr mode);
 static unsigned char XGISearchCRT1Rate(ScrnInfoPtr pScrn,
     DisplayModePtr mode);
@@ -6381,19 +6380,6 @@ PDEBUG(ErrorF(" XGIPostSetMode(). \n"));
        - if this is called by SetModeCRT2, CRT2 mode has changed (duh!)
        -> Hence, in both cases, the settings must be re-applied.
      */
-}
-
-/* Check if video bridge is in slave mode */
-BOOLEAN
-XGIBridgeIsInSlaveMode(ScrnInfoPtr pScrn)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-    unsigned char usScratchP1_00;
-
-    if(!(pXGI->XGI_Pr->XGI_VBType & VB_XGIVB)) return FALSE;
-
-    inXGIIDXREG(XGIPART1,0x00,usScratchP1_00);
-    return FALSE;
 }
 
 /* Build a list of the VESA modes the BIOS reports as valid */
