@@ -2447,40 +2447,37 @@ XGI_GetVBType(PVB_DEVICE_INFO pVBInfo)
 {
     USHORT flag, tempbx, tempah;
 
-    {
-        tempbx = VB_XGI302B;
-        flag = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x00);
-        if (flag != 0x02) {
-            tempbx = VB_XGI301;
-            flag = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x01);
-            if (flag >= 0xB0) {
-                tempbx = VB_XGI301B;
-                if (flag >= 0xC0) {
-                    tempbx = VB_XGI301C;
-                    if (flag >= 0xD0) {
-                        tempbx = VB_XGI301LV;
-                        if (flag >= 0xE0) {
-                            tempbx = VB_XGI302LV;
-                            tempah =
-                                XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port,
-                                           0x39);
-                            if (tempah != 0xFF)
-                                tempbx = VB_XGI301C;
-                        }
-                    }
-                }
+    tempbx = VB_XGI302B;
+    flag = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x00);
+    if (flag != 0x02) {
+	tempbx = VB_XGI301;
+	flag = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x01);
+	if (flag >= 0xB0) {
+	    tempbx = VB_XGI301B;
+	    if (flag >= 0xC0) {
+		tempbx = VB_XGI301C;
+		if (flag >= 0xD0) {
+		    tempbx = VB_XGI301LV;
+		    if (flag >= 0xE0) {
+			tempbx = VB_XGI302LV;
+			tempah = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port,
+					    0x39);
+			if (tempah != 0xFF)
+			    tempbx = VB_XGI301C;
+		    }
+		}
+	    }
 
-                if (tempbx & (VB_XGI301B | VB_XGI302B)) {
-                    flag =
-                        XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x23);
+	    if (tempbx & (VB_XGI301B | VB_XGI302B)) {
+		flag = XGI_GetReg((XGIIOADDRESS) pVBInfo->Part4Port, 0x23);
 
-                    if (!(flag & 0x02))
-                        tempbx = tempbx | VB_NoLCD;
-                }
-            }
-        }
-        pVBInfo->VBType = tempbx;
+		if (!(flag & 0x02))
+		    tempbx = tempbx | VB_NoLCD;
+	    }
+	}
     }
+
+    pVBInfo->VBType = tempbx;
 }
 
 
