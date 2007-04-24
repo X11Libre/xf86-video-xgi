@@ -405,8 +405,6 @@ static void XGIDumpMMIO(ScrnInfoPtr pScrn);
 static Bool XGISwitchCRT2Type(ScrnInfoPtr pScrn, unsigned long newvbflags);
 static Bool XGISwitchCRT1Status(ScrnInfoPtr pScrn, int onoff);
 static BOOLEAN XGIBridgeIsInSlaveMode(ScrnInfoPtr pScrn);
-static USHORT XGI_CheckCalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode,
-    unsigned long VBFlags, BOOLEAN hcm);
 static int XGICalcVRate(DisplayModePtr mode);
 static unsigned char XGISearchCRT1Rate(ScrnInfoPtr pScrn,
     DisplayModePtr mode);
@@ -6641,69 +6639,6 @@ XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode, unsigned long VBFlags,
 
    return XGI_GetModeID(VBFlags, mode->HDisplay, mode->VDisplay,
                         i, pXGI->FSTN, pXGI->LCDwidth, pXGI->LCDheight);
-}
-
-USHORT
-XGI_CheckCalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode, unsigned long VBFlags, BOOLEAN havecustommodes)
-{
-   XGIPtr pXGI = XGIPTR(pScrn);
-/*   UShort i = (pXGI->CurrentLayout.bitsPerPixel+7)/8 - 1; */
-   UShort ModeIndex = 0;
-   int    j;
-
-#ifdef TWDEBUG
-   xf86DrvMsg(0, X_INFO, "Inside CheckCalcModeIndex (VBFlags %x, mode %dx%d)\n",
-   	VBFlags,mode->HDisplay, mode->VDisplay);
-#endif
-
-   if(VBFlags & CRT2_LCD) 
-   {			/* CRT2 is LCD */
-
-      if(pXGI->XGI_Pr->CP_HaveCustomData) 
-      {
-         for(j=0; j<7; j++) 
-         {
-            if((pXGI->XGI_Pr->CP_DataValid[j]) &&
-               (mode->HDisplay == pXGI->XGI_Pr->CP_HDisplay[j]) &&
-               (mode->VDisplay == pXGI->XGI_Pr->CP_VDisplay[j]) &&
-               (mode->type & M_T_BUILTIN))
-               return 0xfe;
-     }
-      }
-
-      if((pXGI->AddedPlasmaModes) && (mode->type & M_T_BUILTIN))
-         return 0xfe;
-
-      if((havecustommodes) &&
-         (pXGI->LCDwidth) &&		/* = test if LCD present */
-         (!(mode->type & M_T_DEFAULT)) &&
-     (!(mode->Flags & V_INTERLACE)))
-         return 0xfe;
-   }
-   else if(VBFlags & CRT2_TV) 
-   {		/* CRT2 is TV */
-
-   }
-   else if(VBFlags & CRT2_VGA) 
-   {		/* CRT2 is VGA2 */
-
-      if((pXGI->AddedPlasmaModes) && (mode->type & M_T_BUILTIN))
-     return 0xfe;
-
-      if((havecustommodes) &&
-     (!(mode->type & M_T_DEFAULT)) &&
-     (!(mode->Flags & V_INTERLACE)))
-         return 0xfe;
-
-   }
-   else 
-   {					/* CRT1 only, no CRT2 */
-
-      ModeIndex = XGI_CalcModeIndex(pScrn, mode, VBFlags, havecustommodes);
-
-   }
-
-   return(ModeIndex);
 }
 
 /* Calculate the vertical refresh rate from a mode */
