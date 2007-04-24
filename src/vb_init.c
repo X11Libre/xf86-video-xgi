@@ -530,15 +530,13 @@ BOOLEAN XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension )
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x22 , *pVBInfo->pSR22 ) ;
 */
 
-    base = 0x80000000 ;
-    OutPortLong( 0xcf8 , base ) ;
-    Temp = ( InPortLong( 0xcfc ) & 0xFFFF ) ;
-    if ( Temp == 0x1039 )
-    {
+    base = 0x80000000;
+    XGI_SetRegLong(0xcf8, base);
+    Temp = (XGI_GetRegLong(0xcfc) & 0x0000FFFF);
+    if (Temp == 0x1039) {
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x22 , ( UCHAR )( ( *pVBInfo->pSR22 ) & 0xFE ) ) ;
     }
-    else
-    {
+    else {
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x22 , *pVBInfo->pSR22 ) ;
     }
 

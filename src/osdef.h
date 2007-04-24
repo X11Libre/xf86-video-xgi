@@ -95,30 +95,6 @@
 
 /**********************************************************************/
 
-#ifdef OutPortByte
-#undef OutPortByte
-#endif
-
-#ifdef OutPortWord
-#undef OutPortWord
-#endif
-
-#ifdef OutPortLong
-#undef OutPortLong
-#endif
-
-#ifdef InPortByte
-#undef InPortByte
-#endif
-
-#ifdef InPortWord
-#undef InPortWord
-#endif
-
-#ifdef InPortLong
-#undef InPortLong
-#endif
-
 /**********************************************************************/
 /*  LINUX KERNEL                                                      */
 /**********************************************************************/
@@ -139,12 +115,6 @@
 #define XGIFBACCEL	/* Include 2D acceleration */
 #endif
 
-#define OutPortByte(p,v) outb((u8)(v),(IOADDRESS)(p))
-#define OutPortWord(p,v) outw((u16)(v),(IOADDRESS)(p))
-#define OutPortLong(p,v) outl((u32)(v),(IOADDRESS)(p))
-#define InPortByte(p)    inb((IOADDRESS)(p))
-#define InPortWord(p)    inw((IOADDRESS)(p))
-#define InPortLong(p)    inl((IOADDRESS)(p))
 #define XGI_SetMemory(MemoryAddress,MemorySize,value) memset_io(MemoryAddress, value, MemorySize)
 #endif
 
@@ -156,12 +126,6 @@
 #define XGI300
 #define XGI315H
 
-#define OutPortByte(p,v) outb((IOADDRESS)(p),(CARD8)(v))
-#define OutPortWord(p,v) outw((IOADDRESS)(p),(CARD16)(v))
-#define OutPortLong(p,v) outl((IOADDRESS)(p),(CARD32)(v))
-#define InPortByte(p)    inb((IOADDRESS)(p))
-#define InPortWord(p)    inw((IOADDRESS)(p))
-#define InPortLong(p)    inl((IOADDRESS)(p))
 #define XGI_SetMemory(MemoryAddress,MemorySize,value) memset(MemoryAddress, value, MemorySize)
 #endif
 

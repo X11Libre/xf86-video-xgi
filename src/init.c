@@ -191,51 +191,51 @@ XGI_GetModeID(ULONG VBFlags, int HDisplay, int VDisplay,
 void
 XGI_SetReg(XGIIOADDRESS port, USHORT index, USHORT data)
 {
-   OutPortByte(port,index);
-   OutPortByte(port + 1,data);
+   outb(port,index);
+   outb(port + 1,data);
 }
 
 void
 XGI_SetRegByte(XGIIOADDRESS port, USHORT data)
 {
-   OutPortByte(port,data);
+   outb(port,data);
 }
 
 void
 XGI_SetRegShort(XGIIOADDRESS port, USHORT data)
 {
-   OutPortWord(port,data);
+   outw(port,data);
 }
 
 void
 XGI_SetRegLong(XGIIOADDRESS port, ULONG data)
 {
-   OutPortLong(port,data);
+    outl(port,data);
 }
 
 UCHAR
 XGI_GetReg(XGIIOADDRESS port, USHORT index)
 {
-   OutPortByte(port,index);
-   return(InPortByte(port + 1));
+   outb(port,index);
+   return inb(port + 1);
 }
 
 UCHAR
 XGI_GetRegByte(XGIIOADDRESS port)
 {
-   return(InPortByte(port));
+   return inb(port);
 }
 
 USHORT
 XGI_GetRegShort(XGIIOADDRESS port)
 {
-   return(InPortWord(port));
+   return inw(port);
 }
 
 ULONG
 XGI_GetRegLong(XGIIOADDRESS port)
 {
-   return(InPortLong(port));
+   return inl(port);
 }
 
 void
