@@ -724,8 +724,6 @@ static Bool XGISaveScreenDH(ScreenPtr pScreen, int mode);
 /* Optional functions */
 static void       XGIFreeScreen(int scrnIndex, int flags);
 
-/* static ModeStatus XGIValidMode(int scrnIndex, DisplayModePtr mode, */
-/* Bool verbose, int flags); */
 static int      XGIValidMode(int scrnIndex, DisplayModePtr mode, Bool verbose,
                              int flags);
 /* Internally used functions */
@@ -767,11 +765,3 @@ extern void     XGI_New_GetVBType(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO);
 
 extern BOOLEAN 	XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwDeviceExtension,
 				   ScrnInfoPtr pScrn, DisplayModePtr mode, BOOLEAN IsCustom);
-
-/* For power management for 315 series */
-extern void XGI_Chrontel701xBLOn(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwDeviceExtension);
-extern void XGI_Chrontel701xBLOff(XGI_Private *XGI_Pr);
-extern void XGI_XGI30xBLOn(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwDeviceExtension);
-extern void XGI_XGI30xBLOff(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwDeviceExtension);
-
-
