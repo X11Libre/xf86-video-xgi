@@ -402,7 +402,6 @@ static void XGIDumpPart4(ScrnInfoPtr pScrn);
 static void XGIDumpMMIO(ScrnInfoPtr pScrn);
 #endif
 
-static Bool XGISwitchCRT1Status(ScrnInfoPtr pScrn, int onoff);
 static BOOLEAN XGIBridgeIsInSlaveMode(ScrnInfoPtr pScrn);
 static int XGICalcVRate(DisplayModePtr mode);
 static unsigned char XGISearchCRT1Rate(ScrnInfoPtr pScrn,
@@ -5070,114 +5069,6 @@ PDEBUG(ErrorF("XGISwitchMode (%d, %d) \n", mode->HDisplay, mode->VDisplay));
     /* Since RandR (indirectly) uses SwitchMode(), we need to
      * update our Xinerama info here, too, in case of resizing
      */
-    return TRUE;
-}
-
-Bool
-XGISwitchCRT1Status(ScrnInfoPtr pScrn, int onoff)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-    DisplayModePtr mode = pScrn->currentMode;
-    unsigned long vbflags = pXGI->VBFlags;
-    int crt1off;
-
-
-    ErrorF("XGISwitchCRT1Status\n");
-
-    /* onoff: 0=OFF, 1=ON(VGA), 2=ON(LCDA) */
-    /* Switching to LCDA will disable CRT2 if previously LCD */
-
-    /* Do NOT use this to switch from CRT1_LCDA to CRT2_LCD */
-
-    return FALSE;
-
-    /* Off only if at least one CRT2 device is active */
-    if((!onoff) && (!(vbflags & CRT2_ENABLE))) return FALSE;
-
-#ifdef XGIDUALHEAD
-    if(pXGI->DualHeadMode) return FALSE;
-#endif
-
-    /* Can't switch to LCDA of not supported (duh!) */
-    if(!(pXGI->XGI_SD_Flags & XGI_SD_SUPPORTLCDA)) 
-    {
-       if(onoff == 2) 
-       {
-          xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
-       	"LCD-via-CRT1 not supported on this hardware\n");
-          return FALSE;
-       }
-    }
-
-#ifdef XGIMERGED
-    if(pXGI->MergedFB) 
-    {
-       if(!onoff) 
-       {
-          xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
-       	"CRT1 can't be switched off in MergedFB mode\n");
-          return FALSE;
-       }
-       else if(onoff == 2) 
-       {
-          if(vbflags & CRT2_LCD) 
-          {
-         xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
-       	"CRT2 type can't be LCD while CRT1 is LCD-via-CRT1\n");
-             return FALSE;
-      }
-       }
-       if(mode->Private) 
-       {
-      mode = ((XGIMergedDisplayModePtr)mode->Private)->CRT1;
-       }
-    }
-#endif
-
-    vbflags &= ~(DISPTYPE_CRT1 | SINGLE_MODE | MIRROR_MODE | CRT1_LCDA);
-    crt1off = 1;
-    if(onoff > 0) 
-    {
-       vbflags |= DISPTYPE_CRT1;
-       crt1off = 0;
-       if(onoff == 2) 
-       {
-       	  vbflags |= CRT1_LCDA;
-      vbflags &= ~CRT2_LCD;
-       }
-       /* Remember: Dualhead not supported */
-       if(vbflags & CRT2_ENABLE) vbflags |= MIRROR_MODE;
-       else vbflags |= SINGLE_MODE;
-    }
-    else 
-    {
-       vbflags |= SINGLE_MODE;
-    }
-
-    if(vbflags & CRT1_LCDA) 
-    {
-       if(!XGI_CalcModeIndex(pScrn, mode, vbflags, pXGI->HaveCustomModes)) 
-       {
-          xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
-    	"Current mode not suitable for LCD-via-CRT1\n");
-          return FALSE;
-       }
-    }
-
-    pXGI->CRT1off = crt1off;
-    pXGI->VBFlags = pXGI->VBFlags_backup = vbflags;
-
-    /* Sync the accelerators */
-    if(!pXGI->NoAccel) 
-    {
-       if(pXGI->AccelInfoPtr) 
-       {
-          (*pXGI->AccelInfoPtr->Sync)(pScrn);
-       }
-    }
-
-    if(!(pScrn->SwitchMode(pScrn->scrnIndex, pScrn->currentMode, 0))) return FALSE;
-    XGIAdjustFrame(pScrn->scrnIndex, pScrn->frameX0, pScrn->frameY0, 0);
     return TRUE;
 }
 
