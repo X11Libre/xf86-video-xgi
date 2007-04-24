@@ -4528,65 +4528,6 @@ XGISetVESAMode(ScrnInfoPtr pScrn, DisplayModePtr pMode)
     return (TRUE);
 }
 
-/* static void
-XGISpecialRestore(ScrnInfoPtr pScrn)
-{
-    XGIPtr    pXGI = XGIPTR(pScrn);
-    XGIRegPtr xgiReg = &pXGI->SavedReg;
-    unsigned char temp;
-    int i;
-
-    if(!(pXGI->ChipFlags & XGICF_Is65x)) return;
-    inXGIIDXREG(XGICR, 0x34, temp);
-    temp &= 0x7f;
-    if(temp > 0x13) return;
-
-#ifdef UNLOCK_ALWAYS
-    xgiSaveUnlockExtRegisterLock(pXGI, NULL,NULL);
-#endif
-
-    outXGIIDXREG(XGICAP, 0x3f, xgiReg->xgiCapt[0x3f]);
-    outXGIIDXREG(XGICAP, 0x00, xgiReg->xgiCapt[0x00]);
-    for(i = 0; i < 0x4f; i++) 
-    {
-       outXGIIDXREG(XGICAP, i, xgiReg->xgiCapt[i]);
-    }
-    outXGIIDXREG(XGIVID, 0x32, (xgiReg->xgiVid[0x32] & ~0x05));
-    outXGIIDXREG(XGIVID, 0x30, xgiReg->xgiVid[0x30]);
-    outXGIIDXREG(XGIVID, 0x32, ((xgiReg->xgiVid[0x32] & ~0x04) | 0x01));
-    outXGIIDXREG(XGIVID, 0x30, xgiReg->xgiVid[0x30]);
-
-    if(!(pXGI->ChipFlags & XGICF_Is651)) return;
-    if(!(pXGI->XGI_Pr->XGI_VBType  & VB_XGIVB)) return;
-
-    inXGIIDXREG(XGICR, 0x30, temp);
-    if(temp & 0x40) 
-    {
-       unsigned char myregs[] = 
-       {
-       			0x2f, 0x08, 0x09, 0x03, 0x0a, 0x0c,
-    		0x0b, 0x0d, 0x0e, 0x12, 0x0f, 0x10,
-    		0x11, 0x04, 0x05, 0x06, 0x07, 0x00,
-    		0x2e
-       };
-       for(i = 0; i <= 18; i++) 
-       {
-          outXGIIDXREG(XGIPART1, myregs[i], xgiReg->VBPart1[myregs[i]]);
-       }
-    }
-    else if((temp & 0x20) || (temp & 0x9c)) 
-    {
-       unsigned char myregs[] = 
-       {
-       			0x04, 0x05, 0x06, 0x07, 0x00, 0x2e
-       };
-       for(i = 0; i <= 5; i++) 
-       {
-          outXGIIDXREG(XGIPART1, myregs[i], xgiReg->VBPart1[myregs[i]]);
-       }
-    }
-}  */
-
 
 /*
  * Restore the initial mode. To be used internally only!
