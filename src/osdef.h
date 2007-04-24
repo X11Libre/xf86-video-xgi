@@ -53,79 +53,14 @@
 /* #define LINUX_KERNEL	 */  	/* Kernel framebuffer */
 #define LINUX_XF86    		/* XFree86 */
 
-/**********************************************************************/
-#ifdef LINUX_KERNEL
-    #include <linux/config.h>
-    #ifdef CONFIG_FB_XGI_300
-        #define XGI300
-    #endif
+#define XGI_MemoryCopy(Destination,Soruce,Length) memcpy(Destination,Soruce,Length)
 
-    #ifdef CONFIG_FB_XGI_315
-        #define XGI315H
-    #endif
-#else
-    #define XGI315H
-#endif
-
-/**********************************************************************/
-#ifdef LINUX_XF86
-#define LINUX
-#endif
-#ifdef LINUX_KERNEL
-#define LINUX
-#endif
-
-/**********************************************************************/
 #ifdef LINUX_XF86
 #define XGI_SetMemory(MemoryAddress,MemorySize,value) memset(MemoryAddress, value, MemorySize)
 #endif
-#ifdef LINUX_KERNEL
-#define XGI_SetMemory(MemoryAddress,MemorySize,value) memset(MemoryAddress, value, MemorySize)
-#endif
-/**********************************************************************/
-
-/**********************************************************************/
-
-#ifdef LINUX_XF86
-#define XGI_MemoryCopy(Destination,Soruce,Length) memcpy(Destination,Soruce,Length)
-#endif
-#ifdef LINUX_KERNEL
-#define XGI_MemoryCopy(Destination,Soruce,Length) memcpy(Destination,Soruce,Length)
-#endif
-
-/**********************************************************************/
-
-/**********************************************************************/
-/*  LINUX KERNEL                                                      */
-/**********************************************************************/
-
 #ifdef LINUX_KERNEL
 #include <linux/config.h>
 #include <linux/version.h>
 
-#ifdef CONFIG_FB_XGI_300
-#define XGI300
-#endif
-
-#ifdef CONFIG_FB_XGI_315
-#define XGI315H
-#endif
-
-#if 1
-#define XGIFBACCEL	/* Include 2D acceleration */
-#endif
-
 #define XGI_SetMemory(MemoryAddress,MemorySize,value) memset_io(MemoryAddress, value, MemorySize)
 #endif
-
-/**********************************************************************/
-/*  XFree86                                                           */
-/**********************************************************************/
-
-#ifdef LINUX_XF86
-#define XGI300
-#define XGI315H
-
-#define XGI_SetMemory(MemoryAddress,MemorySize,value) memset(MemoryAddress, value, MemorySize)
-#endif
-
