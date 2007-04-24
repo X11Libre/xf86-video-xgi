@@ -322,11 +322,6 @@ static const char *notsuitablestr = "Not using mode \"%s\" (not suitable for %s 
 #endif
 */
 
-/* 2005/11/09 added by jjtseng */
-static void XGISavePrevMode(ScrnInfoPtr pScrn) ;
-static void XGIRestorePrevMode(ScrnInfoPtr pScrn) ;
-/*~jjtseng 2005/11/09 */
-
 typedef struct {
 		int width, height ;
 		float VRefresh,HSync,DCLK ;
@@ -4076,8 +4071,6 @@ XGISave(ScrnInfoPtr pScrn)
 
     xgiSaveUnlockExtRegisterLock(pXGI,&xgiReg->xgiRegs3C4[0x05],&xgiReg->xgiRegs3D4[0x80]);
 
-	/* XGISavePrevMode(pScrn) ; */
-
     (*pXGI->XGISave)(pScrn, xgiReg);
 
     if(pXGI->UseVESA) XGIVESASaveRestore(pScrn, MODE_SAVE);
@@ -4594,108 +4587,6 @@ XGISpecialRestore(ScrnInfoPtr pScrn)
     }
 }  */
 
-static void
-XGISavePrevMode(ScrnInfoPtr pScrn)
-{
-#ifdef SAVE_RESTORE_PREVIOUS_MODE
-#if !defined(__powerpc__)
-    XGIPtr    pXGI = XGIPTR(pScrn);
-    xf86Int10InfoPtr pInt = NULL ; /* Our int10 */
-
-    if(xf86LoadSubModule(pScrn, "int10")) 
-    {
-	   	pInt = xf86InitInt10(pXGI->pEnt->index);
-  	    pXGI->SavedMode = -1 ;
-    
-		if(pInt)
-		{
-    	
-			int i,j ;
-
-			for( i=0,j = 0x30 ; j <= 0x38 ; j++ , i++)
-			{
-    			inXGIIDXREG(XGICR,j,pXGI->ScratchSet[i]);  
-				PDEBUG2(ErrorF("Saved Scratch[%d] = %02X\n",i,pXGI->ScratchSet[i])) ;
-			}
-
-       		pInt->num = 0x10 ;
-    		pInt->ax = 0xF00 ; /* Get current Mode */
-    		xf86ExecX86int10(pInt) ;
-
-    		pXGI->SavedMode = pInt->ax & 0x7f ;
-            xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-                "XGISavePrevMode(): saved previous mode = 0x%x.\n",
-				pXGI->SavedMode);
-			xf86FreeInt10(pInt) ;
-			pInt = NULL ;
-    	}
-    	else
-        {
-            xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-                "XGISavePrevMode(): pInt is NULL, cannot save previous mode.\n");
-        }
-    }
-    else
-    {
-        xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-            "XGISavePrevMode(): Load int10 module fail, cannot save previous mode.\n");
-    }
-
-#endif /* if !defined(__powerpc__) */
-#endif /* SAVE_RESTORE_PREVIOUS_MODE */
-}
-
-static void
-XGIRestorePrevMode(ScrnInfoPtr pScrn)
-{
-#ifdef SAVE_RESTORE_PREVIOUS_MODE
-    XGIPtr    pXGI = XGIPTR(pScrn);
-    xf86Int10InfoPtr pInt = NULL ; /* Our int10 */
-#if !defined(__powerpc__)
-	PDEBUG(ErrorF("XGIRestorePrevMode()\n")) ;
-    if( pXGI->SavedMode == -1 )
-    {
-        xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-            "XGIRestorePrevMode(): no previous saved mode, ignore restoring.\n");
-        return ;           
-    }
-    
-
-    if(xf86LoadSubModule(pScrn, "int10")) 
-    {
-   		pInt = xf86InitInt10(pXGI->pEnt->index);
-
-    	if(pInt)
-    	{
-			int i,j ;
-			for( i=0,j = 0x30 ; j <= 0x38 ; j++ , i++)
-			{
-    			outXGIIDXREG(XGICR,j,pXGI->ScratchSet[i]);  
-				PDEBUG2(ErrorF("Restored Scratch[%d] = %02X\n",i,pXGI->ScratchSet[i])) ;
-			}
-       		pInt->num = 0x10 ;
-    		pInt->ax = 0x80 | pXGI->SavedMode ;
-    		/* ah = 0 , set mode */
-    		xf86ExecX86int10(pInt) ;
-
-			xf86FreeInt10(pInt) ;
-			pInt = NULL ;
-    	}
-        else
-        {
-        	xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-				"XGIRestorePrevMode(): pInt is NULL, cannot restore previous mode.\n");
-        }
-		
-    }
-    else
-    {
-        xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-            "XGIRestorePrevMode(): Load int10 module fail, cannot restore previous mode.\n");
-    }
-#endif /* if !defined(__powerpc__)*/    
-#endif /* SAVE_RESTORE_PREVIOUS_MODE */
-}
 
 /*
  * Restore the initial mode. To be used internally only!
@@ -4729,7 +4620,6 @@ XGIRestore(ScrnInfoPtr pScrn)
 #endif
 
     (*pXGI->XGIRestore)(pScrn, xgiReg);
-	/* XGIRestorePrevMode(pScrn) ; */
 
     vgaHWProtect(pScrn, TRUE);
     if(pXGI->Primary) 
