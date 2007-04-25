@@ -126,170 +126,76 @@ extern unsigned int CurrentHDisplay;
 extern unsigned int CurrentVDisplay;
 extern unsigned int CurrentColorDepth;
 
-/***********************************************************************
- *#define Volari_Idle \
- *  while( (MMIO_IN16(pXGI->IOBase, BR(16)+2) & 0xE000) != 0xE000){}; \
- *  while( (MMIO_IN16(pXGI->IOBase, BR(16)+2) & 0xE000) != 0xE000){}; \
- *  G2CmdQueLen=MMIO_IN16(pXGI->IOBase, 0x8240);
- ***********************************************************************/
-
 /* Jong; 08222005 */
-/* typedef __time_t long;*/ /* time_t;*/
-#if 0
-struct timespec
-{ 
-    int tv_sec;            /* Seconds.  */
-    long int tv_nsec;           /* Nanoseconds.  */
-};
-#endif
 
-/*
-typedef struct timespec_ {
-long tv_sec;
-long tv_nsec;
-} timespec;
-
-int nanosleep(const struct timespec_ *, struct timespec_ *);
-*/
-
-/* #include <time.h> */
-
-/*#if 0*/
 #define Volari_Idle \
     {\
-        ulong ulTemp ;\
-\
-	bool bIdle;\
-	int nRet, i; \
+	int  i; \
 	unsigned int WaitCount;\
-/*	struct timespec rqtp, rmtp;*/ \
-/*	rqtp.tv_sec=0;*/\
-/*	rqtp.tv_nsec=1;*/\
 \
 	WaitCount=65535;\
 	if(pXGI->Chipset == PCI_CHIP_XGIXG20)\
 	{\
 		WaitCount=1;\
-		switch(CurrentHDisplay)\
-		{\
-			case 640:\
-			if(CurrentColorDepth == 8)\
-				WaitCount=1;\
-			else if(CurrentColorDepth == 16)\
-				WaitCount=1000;\
-			else if(CurrentColorDepth == 24)\
-				WaitCount=3000;\
-			break;\
+		switch (CurrentHDisplay) {\
+		case 640:\
+		    if(CurrentColorDepth == 8)\
+			WaitCount=1;\
+		    else if(CurrentColorDepth == 16)\
+			WaitCount=1000;\
+		    else if(CurrentColorDepth == 24)\
+			WaitCount=3000;\
+		    break;\
 \
-			case 800:\
-			if(CurrentColorDepth == 8)\
-				WaitCount=160;\
-			else if(CurrentColorDepth == 16)\
-				WaitCount=1200;\
-			else if(CurrentColorDepth == 24)\
-				WaitCount=4000;\
-			break;\
+		case 800:\
+		    if(CurrentColorDepth == 8)\
+			WaitCount=160;\
+		    else if(CurrentColorDepth == 16)\
+			WaitCount=1200;\
+		    else if(CurrentColorDepth == 24)\
+			WaitCount=4000;\
+		    break;\
 \
-			case 1024:\
-			if(CurrentColorDepth == 8)\
-				WaitCount=200;\
-			else if(CurrentColorDepth == 16)\
-				WaitCount=1600;\
-			else if(CurrentColorDepth == 24)\
-				WaitCount=6000;\
-			break;\
+		case 1024:\
+		    if(CurrentColorDepth == 8)\
+			WaitCount=200;\
+		    else if(CurrentColorDepth == 16)\
+			WaitCount=1600;\
+		    else if(CurrentColorDepth == 24)\
+			WaitCount=6000;\
+		    break;\
 \
-			case 1280:\
-			if(CurrentColorDepth == 8)\
-				WaitCount=500;\
-			else if(CurrentColorDepth == 16)\
-				WaitCount=2000;\
-			else if(CurrentColorDepth == 24)\
-				WaitCount=8000;\
-			break;\
+		case 1280:\
+		    if(CurrentColorDepth == 8)\
+			WaitCount=500;\
+		    else if(CurrentColorDepth == 16)\
+			WaitCount=2000;\
+		    else if(CurrentColorDepth == 24)\
+			WaitCount=8000;\
+		    break;\
 \
-			default:\
-			break;\
+		default:\
+		    break;\
 		}\
 	}\
 \
-        do\
-        {\
-/*            ulTemp = MMIO_IN32(pXGI->IOBase, 0x85CC) ;*/ \
-\
-	    bIdle=0;\
-	    for (i=0; i<WaitCount; i++)\
-	    {\
-                ulTemp = MMIO_IN32(pXGI->IOBase, 0x85CC) ;\
-  	    	if( ulTemp & 0x80000000 )\
-             	{\
-			bIdle=1;\
-                	break ;\
-             	}\
+        do {\
+	    bool bIdle = 0;\
+	    for (i=0; i<WaitCount; i++) {\
+		ulong ulTemp = MMIO_IN32(pXGI->IOBase, 0x85CC); \
+  	    	if (ulTemp & 0x80000000) {\
+		    bIdle=1; \
+		    break;\
+		}\
 	    }\
-	    if(bIdle == 1) break;\
+	    if (bIdle == 1) \
+		break; \
 \
-	    /* rqtp.tv_sec=0;*/\
-	    /* rqtp.tv_nsec=1;*/\
-	    /* nRet=nanosleep(&rqtp,&rmtp);*/\  
-\
-	   if(pXGI->Chipset == PCI_CHIP_XGIXG20)\
-	      usleep(1);\
-\
-           /* sleep(0);*/\
-        }while(1) ;\
-\
-    }
-/*#endif*/
-
-#if 0
-#define Volari_Idle \
-    {\
-        ulong ulTemp ;\
-\
-        do \
-        {\
-            ulTemp = MMIO_IN32(pXGI->IOBase, 0x85CC) ;\
-            if( ulTemp & 0x80000000 )\
-            {\
-                break ;\
-            }\
-            usleep(50);\
-            /* usleep(50);*/ \
-        }while(1) ;\
-\
-        do \
-        {\
-            ulTemp = MMIO_IN32(pXGI->IOBase, 0x85CC) ;\
-            if( ulTemp & 0x80000000 )\
-            {\
-                break ;\
-            }\
-           usleep(50);\
-           /* usleep(50);*/ \
-        }while(1) ;\
-\
-        do \
-        {\
-            ulTemp = MMIO_IN32(pXGI->IOBase, 0x85CC) ;\
-            if( ulTemp & 0x80000000 )\
-            {\
-                break ;\
-            }\
-        }while(1) ;\
-\
-        do \
-        {\
-            ulTemp = MMIO_IN32(pXGI->IOBase, 0x85CC) ;\
-            if( ulTemp & 0x80000000 )\
-            {\
-                break ;\
-            }\
-        }while(1) ;\
-\
+	    if (pXGI->Chipset == PCI_CHIP_XGIXG20)\
+		usleep(1);\
+        } while(1);\
     }
 
-#endif
 
 #define Volari_GetSwWP() (unsigned long)(*(pXGI->pCQ_shareWritePort))
 #define Volari_GetHwRP() (unsigned long)(MMIO_IN32(pXGI->IOBase, 0x85c8))
