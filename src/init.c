@@ -1204,7 +1204,7 @@ XGI_New_SetCRT1Group(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 
 /*
   if(XGI_Pr->XGI_SetFlag & LowModeTests) {
-     if(XGI_Pr->XGI_VBInfo & (SetSimuScanMode | SwitchCRT2)) {
+     if(XGI_Pr->XGI_VBInfo & (SetSimuScanMode | SwitchToCRT2)) {
         XGI_New_DisableBridge(XGI_Pr, HwInfo);
      }
   }
@@ -1397,7 +1397,7 @@ XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,USHORT ModeNo)
 
    /* Set mode on CRT1 */
    if( (XGI_Pr->XGI_VBInfo & (SetSimuScanMode | SetCRT2ToLCDA)) ||
-       (!(XGI_Pr->XGI_VBInfo & SwitchCRT2)) ) {
+       (!(XGI_Pr->XGI_VBInfo & SwitchToCRT2)) ) {
       XGI_New_SetCRT1Group(XGI_Pr, HwInfo, ModeNo, ModeIdIndex);
    }
 
