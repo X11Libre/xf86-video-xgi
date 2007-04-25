@@ -339,7 +339,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
   }
 
   xf86DrvMsg(pScreen->myNum, X_INFO, "[drm] Registers = 0x%08lx\n",
-	       pXGIDRI->regs.handle);
+	     (unsigned long) pXGIDRI->regs.handle);
 
   /* AGP */
   do{
@@ -619,7 +619,7 @@ ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink)
 		
 	uBuffer = pciReadLong(pXGI->PciTag, uNextLink);
 	uLink = (uBuffer & 0xff00) >> 8;
-	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s]uBuffer=0x%x uNextLink=0x%x, uLink=0x%x\n", __FUNCTION__, uBuffer, uNextLink, uLink);    	
+	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s]uBuffer=0x%lx uNextLink=0x%lx, uLink=0x%lx\n", __FUNCTION__, uBuffer, uNextLink, uLink);
 	
 	if ((uBuffer & 0xff) != 0x02)
 	{
@@ -645,7 +645,7 @@ ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink)
 	XGIPtr pXGI = XGIPTR(pScrn);
 	
 	ULONG u34h = pciReadLong(pXGI->PciTag,0x34);
-	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] u34h=0x%x\n", __FUNCTION__, u34h);    
+	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] u34h=0x%lx\n", __FUNCTION__, u34h);
 	
 	/* This value is read only and the default value should be 0x40; 
 	* I have no idea why I should do this */
@@ -660,7 +660,7 @@ ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink)
 	ULONG uType = 0;
 	uType = CheckAGPSlot(pScreen, uLink);	
 
-	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] This Card Type is %d \n", __FUNCTION__, uType);
+	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] This Card Type is %ld \n", __FUNCTION__, uType);
 
 	if (uType == PCI_BUS_TYPE)
 		xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] This Card Type is PCI\n", __FUNCTION__);    	
