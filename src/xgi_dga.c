@@ -302,8 +302,6 @@ XGI_GetViewport(ScrnInfoPtr pScrn)
 static void
 XGI_SetViewport(ScrnInfoPtr pScrn, int x, int y, int flags)
 {
-   XGIPtr pXGI = XGIPTR(pScrn);
-
    (*pScrn->AdjustFrame)(pScrn->pScreen->myNum, x, y, flags);
 }
 

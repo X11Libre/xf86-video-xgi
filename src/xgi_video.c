@@ -1643,21 +1643,15 @@ XGIPutVideo(
     short drw_w, short drw_h,
     RegionPtr clipBoxes, pointer data)
 {
-
-
-   XGIPtr pXGI = XGIPTR(pScrn);
+    /* XGIPtr pXGI = XGIPTR(pScrn); */
    XGIPortPrivPtr pPriv = (XGIPortPrivPtr)data;
-
-   int totalSize=0;
 
 # ifdef VC
    struct v4l2_format		fmt;
-   struct xgi_framebuf          xgifbuf; 
-   int width, height, id;
+/*   struct xgi_framebuf          xgifbuf;*/
+   int width, height /*, id*/;
    int last_width, last_height;
-   static int offset;
-   int on = 1; 
-# endif //VC	
+# endif //VC
 
    //EnableCaptureAutoFlip(pXGI, TRUE);
    pPriv->id     = PIXEL_FMT_UYVY;
@@ -1673,16 +1667,9 @@ XGIPutVideo(
    pPriv->src_h  = src_h;
    pPriv->height = src_h;
    
-  /*
-   ImageInfo(
-  src_x, src_y,
-  drw_x, drw_y,
-  src_w, src_h,
-  drw_w, drw_h,
-  id, buf,
-  width, height
-  );
-  */  
+    /* ImageInfo(src_x, src_y, drw_x, drw_y, src_w, src_h, drw_w, drw_h,
+                 id, buf, width, height);
+     */  
 
 # ifdef VC
     {
@@ -1775,6 +1762,7 @@ XGIPutVideo(
             	    //so that I can make sure the capture buffs are valid
             	    if (0 == ioctl(pPriv->fd, XGIIOC_G_FBUF, &xgifbuf))
 	    	    {
+			static int offset;
 			ErrorF("ioctl:XGIIOC_G_FBUF succes!\n");
 			pPriv->bufAddr[0] = offset = xgifbuf.fboffset[0];
 			ErrorF("capture buf offset 0 = %x\n",offset);

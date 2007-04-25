@@ -1220,7 +1220,7 @@ void XGINew_SetDRAMDefaultRegister340( PXGI_HW_DEVICE_INFO HwDeviceExtension ,  
 /* --------------------------------------------------------------------- */
 void XGINew_SetDRAMDefaultRegisterXG45( PXGI_HW_DEVICE_INFO HwDeviceExtension ,  USHORT Port , PVB_DEVICE_INFO pVBInfo)
 {
-    UCHAR temp , temp1 , temp2 , temp3 ,
+    UCHAR temp , temp1 , temp2 ,
           i , j , k ;
 
     USHORT P3d4 = Port ,

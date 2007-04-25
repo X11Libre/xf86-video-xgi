@@ -616,7 +616,6 @@ ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink)
 	ULONG uBuffer = 0, uLink = 0, uValue = 0 ;
 	ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
 	XGIPtr pXGI = XGIPTR(pScrn);
-	XGIDRIPtr pXGIDRI;    
 		
 	uBuffer = pciReadLong(pXGI->PciTag, uNextLink);
 	uLink = (uBuffer & 0xff00) >> 8;
@@ -644,7 +643,6 @@ ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink)
 {
 	ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
 	XGIPtr pXGI = XGIPTR(pScrn);
-	XGIDRIPtr pXGIDRI;    
 	
 	ULONG u34h = pciReadLong(pXGI->PciTag,0x34);
 	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] u34h=0x%x\n", __FUNCTION__, u34h);    
