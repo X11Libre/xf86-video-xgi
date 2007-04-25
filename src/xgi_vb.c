@@ -41,7 +41,7 @@
 #include "xgi_regs.h"
 #include "xgi_vb.h"
 #include "xgi_dac.h"
-#include "initdef.h"
+#include "vb_def.h"
 
 extern unsigned char XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned char value);
 

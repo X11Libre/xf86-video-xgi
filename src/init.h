@@ -53,7 +53,6 @@
 
 #include "osdef.h"
 
-#include "initdef.h"
 #include "vgatypes.h"
 #include "vb_struct.h"
 

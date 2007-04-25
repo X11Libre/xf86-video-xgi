@@ -71,7 +71,7 @@
 #include "xgi_regs.h"
 #include "xgi_vb.h"
 #include "xgi_dac.h"
-#include "initdef.h"
+#include "vb_def.h"
 #include "xgi_driver.h"
 #include "valid_mode.h" 
 

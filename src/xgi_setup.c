@@ -59,7 +59,7 @@
 #define DPMS_SERVER
 #include <X11/extensions/dpms.h>
 
-#include "initdef.h"   //yilin
+#include "vb_def.h"
 extern  int  FbDevExist;
 
 static Bool bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset,

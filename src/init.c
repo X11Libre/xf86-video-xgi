@@ -66,6 +66,7 @@
 
 #include "init.h"
 #include "vgatypes.h"
+#include "vb_def.h"
 #include "vb_setmode.h"
 
 #if defined(ALLOC_PRAGMA)
