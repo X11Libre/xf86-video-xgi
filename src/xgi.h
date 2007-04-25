@@ -440,13 +440,6 @@ typedef struct {
     unsigned long xgiRegsPCI50, xgiRegsPCIA0;
 } XGIRegRec, *XGIRegPtr;
 
-typedef struct _xgiModeInfoPtr {
-    int width;
-    int height;
-    int bpp;
-    int n;
-    struct _xgiModeInfoPtr *next;
-} xgiModeInfoRec, *xgiModeInfoPtr;
 
 /* XGIFBLayout is mainly there because of DGA. It holds the
  * current layout parameters needed for acceleration and other
@@ -591,7 +584,6 @@ typedef struct {
     Bool                NoAccel;
     Bool                NoXvideo;
     Bool                TurboQueue;
-    int			VESA;
     int                 ForceCRT1Type;
     int                 ForceCRT2Type;
     int                 OptROMUsage;
@@ -745,18 +737,9 @@ typedef struct {
     CARD16 		LCDheight;		/* Vertical resolution of LCD panel */
     CARD16 		LCDwidth;		/* Horizontal resolution of LCD panel */
     vbeInfoPtr 		pVbe;			/* For VESA mode switching */
-    CARD16 		vesamajor;
-    CARD16 		vesaminor;
-    VbeInfoBlock 	*vbeInfo;
-    int 		UseVESA;
-    xgiModeInfoPtr      XGIVESAModeList;
-    int 		statePage, stateSize, stateMode;
-    int	SavedMode;
     UCHAR ScratchSet[16];
     MonitorRangeRec CRT1Range,CRT2Range;
 
-    CARD8 		*fonts;
-    CARD8 		*state, *pstate;
 #ifdef XGIDUALHEAD
     BOOL 		DualHeadMode;		/* TRUE if we use dual head mode */
     BOOL 		SecondHead;		/* TRUE is this is the second head */

@@ -471,10 +471,6 @@ XGIFreeRec(ScrnInfoPtr pScrn)
     pXGIEnt = pXGI->entityPrivate;
 #endif
 
-    if(pXGI->pstate) xfree(pXGI->pstate);
-    pXGI->pstate = NULL;
-    if(pXGI->fonts) xfree(pXGI->fonts);
-    pXGI->fonts = NULL;
 
 #ifdef XGIDUALHEAD
     if(pXGIEnt) 
@@ -2273,7 +2269,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #endif
     unsigned char srlockReg,crlockReg;
     vbeInfoPtr pVbe;
-    VbeInfoBlock *vbe;
 
 	/****************** Code Start ***********************/
 
@@ -3107,15 +3102,9 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 
     if ((pXGI->XGI_Pr->XGI_VBType& (VB_XGI301C | VB_XGI302B | VB_XGI301LV | VB_XGI302LV)) 
-	&& (pXGI->VBFlags & CRT2_LCD)
-	&& (pXGI->VESA != 1))
+	&& (pXGI->VBFlags & CRT2_LCD))
     {
        pXGI->XGI_SD_Flags |= XGI_SD_SUPPORTLCDA;
-    }
-    else 
-    {
-       /* Paranoia */
-       pXGI->ForceCRT1Type = CRT1_VGA;
     }
 
     pXGI->VBFlags |= pXGI->ForceCRT1Type;
@@ -3252,13 +3241,7 @@ PDEBUG(ErrorF("3674 pXGI->VBFlags =%x\n",pXGI->VBFlags)) ;
          if(pXGI->DualHeadMode) 
          {
     	pXGI->VBFlags |= (VB_DISPMODE_DUAL | DISPTYPE_CRT1);
-            if(pXGI->VESA != -1) 
-            {
-    	    xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-    		"VESA option not used in Dual Head mode. VESA disabled.\n");
-    	}
     	if(pXGIEnt) pXGIEnt->DisableDual = FALSE;
-    	pXGI->VESA = 0;
          }
          else
 #endif
@@ -3266,12 +3249,6 @@ PDEBUG(ErrorF("3674 pXGI->VBFlags =%x\n",pXGI->VBFlags)) ;
                 if(pXGI->MergedFB) 
                 {
     	 pXGI->VBFlags |= (VB_DISPMODE_MIRROR | DISPTYPE_CRT1);
-    	 if(pXGI->VESA != -1) 
-    	 {
-    	    xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-    		"VESA option not used in MergedFB mode. VESA disabled.\n");
-    	 }
-    	 pXGI->VESA = 0;
          }
          else
 #endif
@@ -3825,40 +3802,6 @@ PDEBUG(ErrorF("3782 pXGI->VBFlags =%x\n",pXGI->VBFlags)) ;
 
 
     /* Now load and initialize VBE module for VESA and mode restoring. */
-    pXGI->UseVESA = 0;
-#if !defined(__powerpc__)
-    if(pXGI->VESA == 1) 
-    {
-       if(!pXGI->pVbe) 
-       {
-          if(xf86LoadSubModule(pScrn, "vbe")) 
-          {
-	      xf86LoaderReqSymLists(vbeSymbols, NULL);
-	      pXGI->pVbe = VBEExtendedInit(pXGI->pInt,pXGI->pEnt->index,
-					   SET_BIOS_SCRATCH | RESTORE_BIOS_SCRATCH);
-          }
-       }
-       if(pXGI->pVbe) 
-       {
-          vbe = VBEGetVBEInfo(pXGI->pVbe);
-          pXGI->vesamajor = (unsigned)(vbe->VESAVersion >> 8);
-          pXGI->vesaminor = vbe->VESAVersion & 0xff;
-          pXGI->vbeInfo = vbe;
-          if(pXGI->VESA == 1) 
-          {
-             XGIBuildVesaModeList(pScrn, pXGI->pVbe, vbe);
-             VBEFreeVBEInfo(vbe);
-             pXGI->UseVESA = 1;
-          }
-       }
-       else 
-       {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-        	"Could not load and initialize VBE module.%s\n",
-    	(pXGI->VESA == 1) ? " VESA disabled." : "");
-       }
-    }
-#endif  /*#if !defined(__powerpc__) */
     if(pXGI->pVbe) 
     {
        vbeFree(pXGI->pVbe);
@@ -4064,227 +4007,9 @@ XGISave(ScrnInfoPtr pScrn)
 
     (*pXGI->XGISave)(pScrn, xgiReg);
 
-    if(pXGI->UseVESA) XGIVESASaveRestore(pScrn, MODE_SAVE);
-
     /* "Save" these again as they may have been changed prior to XGISave() call */
 }
 
-static void
-XGI_WriteAttr(XGIPtr pXGI, int index, int value)
-{
-    (void) inb(pXGI->IODBase + VGA_IOBASE_COLOR + VGA_IN_STAT_1_OFFSET);
-    index |= 0x20;
-    outb(pXGI->IODBase + VGA_ATTR_INDEX, index);
-    outb(pXGI->IODBase + VGA_ATTR_DATA_W, value);
-}
-
-static int
-XGI_ReadAttr(XGIPtr pXGI, int index)
-{
-    (void) inb(pXGI->IODBase + VGA_IOBASE_COLOR + VGA_IN_STAT_1_OFFSET);
-    index |= 0x20;
-    outb(pXGI->IODBase + VGA_ATTR_INDEX, index);
-    return(inb(pXGI->IODBase + VGA_ATTR_DATA_R));
-}
-
-#define XGI_FONTS_SIZE (8 * 8192)
-
-static void
-XGI_SaveFonts(ScrnInfoPtr pScrn)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-    unsigned char miscOut, attr10, gr4, gr5, gr6, seq2, seq4, scrn;
-    pointer vgaIOBase = VGAHWPTR(pScrn)->Base;
-
-    if(pXGI->fonts) return;
-
-    /* If in graphics mode, don't save anything */
-    attr10 = XGI_ReadAttr(pXGI, 0x10);
-    if(attr10 & 0x01) return;
-
-    if(!(pXGI->fonts = xalloc(XGI_FONTS_SIZE * 2))) 
-    {
-       xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
-       		"Could not save console fonts, mem allocation failed\n");
-       return;
-    }
-
-    /* save the registers that are needed here */
-    miscOut = inXGIREG(XGIMISCR);
-    inXGIIDXREG(XGIGR, 0x04, gr4);
-    inXGIIDXREG(XGIGR, 0x05, gr5);
-    inXGIIDXREG(XGIGR, 0x06, gr6);
-    inXGIIDXREG(XGISR, 0x02, seq2);
-    inXGIIDXREG(XGISR, 0x04, seq4);
-
-    /* Force into color mode */
-    outXGIREG(XGIMISCW, miscOut | 0x01);
-
-    inXGIIDXREG(XGISR, 0x01, scrn);
-    outXGIIDXREG(XGISR, 0x00, 0x01);
-    outXGIIDXREG(XGISR, 0x01, scrn | 0x20);
-    outXGIIDXREG(XGISR, 0x00, 0x03);
-
-    XGI_WriteAttr(pXGI, 0x10, 0x01);  /* graphics mode */
-
-    /*font1 */
-    outXGIIDXREG(XGISR, 0x02, 0x04);  /* write to plane 2 */
-    outXGIIDXREG(XGISR, 0x04, 0x06);  /* enable plane graphics */
-    outXGIIDXREG(XGIGR, 0x04, 0x02);  /* read plane 2 */
-    outXGIIDXREG(XGIGR, 0x05, 0x00);  /* write mode 0, read mode 0 */
-    outXGIIDXREG(XGIGR, 0x06, 0x05);  /* set graphics */
-    slowbcopy_frombus(vgaIOBase, pXGI->fonts, XGI_FONTS_SIZE);
-
-    /* font2 */
-    outXGIIDXREG(XGISR, 0x02, 0x08);  /* write to plane 3 */
-    outXGIIDXREG(XGISR, 0x04, 0x06);  /* enable plane graphics */
-    outXGIIDXREG(XGIGR, 0x04, 0x03);  /* read plane 3 */
-    outXGIIDXREG(XGIGR, 0x05, 0x00);  /* write mode 0, read mode 0 */
-    outXGIIDXREG(XGIGR, 0x06, 0x05);  /* set graphics */
-    slowbcopy_frombus(vgaIOBase, pXGI->fonts + XGI_FONTS_SIZE, XGI_FONTS_SIZE);
-
-    inXGIIDXREG(XGISR, 0x01, scrn);
-    outXGIIDXREG(XGISR, 0x00, 0x01);
-    outXGIIDXREG(XGISR, 0x01, scrn & ~0x20);
-    outXGIIDXREG(XGISR, 0x00, 0x03);
-
-    /* Restore clobbered registers */
-    XGI_WriteAttr(pXGI, 0x10, attr10);
-    outXGIIDXREG(XGISR, 0x02, seq2);
-    outXGIIDXREG(XGISR, 0x04, seq4);
-    outXGIIDXREG(XGIGR, 0x04, gr4);
-    outXGIIDXREG(XGIGR, 0x05, gr5);
-    outXGIIDXREG(XGIGR, 0x06, gr6);
-    outXGIREG(XGIMISCW, miscOut);
-}
-
-static void
-XGI_RestoreFonts(ScrnInfoPtr pScrn)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-    unsigned char miscOut, attr10, gr1, gr3, gr4, gr5, gr6, gr8, seq2, seq4, scrn;
-    pointer vgaIOBase = VGAHWPTR(pScrn)->Base;
-
-    if(!pXGI->fonts) return;
-
-    /* save the registers that are needed here */
-    miscOut = inXGIREG(XGIMISCR);
-    attr10 = XGI_ReadAttr(pXGI, 0x10);
-    inXGIIDXREG(XGIGR, 0x01, gr1);
-    inXGIIDXREG(XGIGR, 0x03, gr3);
-    inXGIIDXREG(XGIGR, 0x04, gr4);
-    inXGIIDXREG(XGIGR, 0x05, gr5);
-    inXGIIDXREG(XGIGR, 0x06, gr6);
-    inXGIIDXREG(XGIGR, 0x08, gr8);
-    inXGIIDXREG(XGISR, 0x02, seq2);
-    inXGIIDXREG(XGISR, 0x04, seq4);
-
-    /* Force into color mode */
-    outXGIREG(XGIMISCW, miscOut | 0x01);
-    inXGIIDXREG(XGISR, 0x01, scrn);
-    outXGIIDXREG(XGISR, 0x00, 0x01);
-    outXGIIDXREG(XGISR, 0x01, scrn | 0x20);
-    outXGIIDXREG(XGISR, 0x00, 0x03);
-
-    XGI_WriteAttr(pXGI, 0x10, 0x01);	  /* graphics mode */
-    if(pScrn->depth == 4) 
-    {
-       outXGIIDXREG(XGIGR, 0x03, 0x00);  /* don't rotate, write unmodified */
-       outXGIIDXREG(XGIGR, 0x08, 0xFF);  /* write all bits in a byte */
-       outXGIIDXREG(XGIGR, 0x01, 0x00);  /* all planes come from CPU */
-    }
-
-    outXGIIDXREG(XGISR, 0x02, 0x04); /* write to plane 2 */
-    outXGIIDXREG(XGISR, 0x04, 0x06); /* enable plane graphics */
-    outXGIIDXREG(XGIGR, 0x04, 0x02); /* read plane 2 */
-    outXGIIDXREG(XGIGR, 0x05, 0x00); /* write mode 0, read mode 0 */
-    outXGIIDXREG(XGIGR, 0x06, 0x05); /* set graphics */
-    slowbcopy_tobus(pXGI->fonts, vgaIOBase, XGI_FONTS_SIZE);
-
-    outXGIIDXREG(XGISR, 0x02, 0x08); /* write to plane 3 */
-    outXGIIDXREG(XGISR, 0x04, 0x06); /* enable plane graphics */
-    outXGIIDXREG(XGIGR, 0x04, 0x03); /* read plane 3 */
-    outXGIIDXREG(XGIGR, 0x05, 0x00); /* write mode 0, read mode 0 */
-    outXGIIDXREG(XGIGR, 0x06, 0x05); /* set graphics */
-    slowbcopy_tobus(pXGI->fonts + XGI_FONTS_SIZE, vgaIOBase, XGI_FONTS_SIZE);
-
-    inXGIIDXREG(XGISR, 0x01, scrn);
-    outXGIIDXREG(XGISR, 0x00, 0x01);
-    outXGIIDXREG(XGISR, 0x01, scrn & ~0x20);
-    outXGIIDXREG(XGISR, 0x00, 0x03);
-
-    /* restore the registers that were changed */
-    outXGIREG(XGIMISCW, miscOut);
-    XGI_WriteAttr(pXGI, 0x10, attr10);
-    outXGIIDXREG(XGIGR, 0x01, gr1);
-    outXGIIDXREG(XGIGR, 0x03, gr3);
-    outXGIIDXREG(XGIGR, 0x04, gr4);
-    outXGIIDXREG(XGIGR, 0x05, gr5);
-    outXGIIDXREG(XGIGR, 0x06, gr6);
-    outXGIIDXREG(XGIGR, 0x08, gr8);
-    outXGIIDXREG(XGISR, 0x02, seq2);
-    outXGIIDXREG(XGISR, 0x04, seq4);
-}
-
-#undef XGI_FONTS_SIZE
-
-/* VESASaveRestore taken from vesa driver */
-static void
-XGIVESASaveRestore(ScrnInfoPtr pScrn, vbeSaveRestoreFunction function)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-
-    /* Query amount of memory to save state */
-    if((function == MODE_QUERY) ||
-       (function == MODE_SAVE && pXGI->state == NULL)) 
-       {
-
-       /* Make sure we save at least this information in case of failure */
-       (void)VBEGetVBEMode(pXGI->pVbe, &pXGI->stateMode);
-       XGI_SaveFonts(pScrn);
-
-       if(pXGI->vesamajor > 1) 
-       {
-      if(!VBESaveRestore(pXGI->pVbe, function, (pointer)&pXGI->state,
-    			&pXGI->stateSize, &pXGI->statePage)) 
-    			{
-         return;
-      }
-       }
-    }
-
-    /* Save/Restore Super VGA state */
-    if(function != MODE_QUERY) 
-    {
-
-       if(pXGI->vesamajor > 1) 
-       {
-      if(function == MODE_RESTORE) 
-      {
-         memcpy(pXGI->state, pXGI->pstate, pXGI->stateSize);
-      }
-
-      if(VBESaveRestore(pXGI->pVbe,function,(pointer)&pXGI->state,
-    		    &pXGI->stateSize,&pXGI->statePage) &&
-         (function == MODE_SAVE)) 
-         {
-         /* don't rely on the memory not being touched */
-         if(!pXGI->pstate) 
-         {
-    	pXGI->pstate = xalloc(pXGI->stateSize);
-         }
-         memcpy(pXGI->pstate, pXGI->state, pXGI->stateSize);
-      }
-       }
-
-       if(function == MODE_RESTORE) 
-       {
-      VBESetVBEMode(pXGI->pVbe, pXGI->stateMode, NULL);
-      XGI_RestoreFonts(pScrn);
-       }
-
-    }
-}
 
 /*
  * Initialise a new mode.  This is currently done using the
@@ -4321,54 +4046,6 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 	
 	XGIModifyModeInfo(mode);		/* Quick check of the mode parameters */
 	
-	if(pXGI->UseVESA) 
-	{  /* With VESA: */
-	
-		#ifdef XGIDUALHEAD
-		/* No dual head mode when using VESA */
-		if(pXGI->SecondHead)
-		{
-			return TRUE;
-		}
-		/* if(pXGI->SecondHead) */
-		#endif
-		
-		PDEBUG(ErrorF("XGIModeInit() VESA. \n"));
-		pScrn->vtSema = TRUE;
-		
-		/*
-		* This order is required:
-		* The video bridge needs to be adjusted before the
-		* BIOS is run as the BIOS sets up CRT2 according to
-		* these register settings.
-		* After the BIOS is run, the bridges and turboqueue
-		* registers need to be readjusted as th e BIOSmay
-		* very probably have messed them up.
-		*/
-		
-		if(!XGISetVESAMode(pScrn, mode)) 
-		{
-			XGIErrorLog(pScrn, "XGISetVESAMode() failed\n");
-			return FALSE;
-		}
-		xgiSaveUnlockExtRegisterLock(pXGI,NULL,NULL);
-		
-		#ifdef TWDEBUG
-		xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-		"REAL REGISTER CONTENTS AFTER SETMODE:\n");
-		#endif
-		if(!(*pXGI->ModeInit)(pScrn, mode)) 
-		{
-			XGIErrorLog(pScrn, "ModeInit() failed\n");
-			return FALSE;
-		}
-		
-		vgaHWProtect(pScrn, TRUE);
-		(*pXGI->XGIRestore)(pScrn, &pXGI->ModeReg);
-		vgaHWProtect(pScrn, FALSE);
-		
-	}
-	else 
 	{ /* Without VESA: */
 	
 		PDEBUG(ErrorF("XGIModeInit().  none VESA\n"));
@@ -4489,38 +4166,6 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 return TRUE;
 }
 
-static Bool
-XGISetVESAMode(ScrnInfoPtr pScrn, DisplayModePtr pMode)
-{
-    XGIPtr pXGI;
-    int mode;
-
-    pXGI = XGIPTR(pScrn);
-
-    if(!(mode = XGICalcVESAModeIndex(pScrn, pMode))) return FALSE;
-
-    mode |= (1 << 15);	/* Don't clear framebuffer */
-    mode |= (1 << 14); 	/* Use linear adressing */
-
-    if(VBESetVBEMode(pXGI->pVbe, mode, NULL) == FALSE) 
-    {
-       XGIErrorLog(pScrn, "Setting VESA mode 0x%x failed\n",
-                 	mode & 0x0fff);
-       return (FALSE);
-    }
-
-    if(pMode->HDisplay != pScrn->virtualX) 
-    {
-       VBESetLogicalScanline(pXGI->pVbe, pScrn->virtualX);
-    }
-
-    xf86DrvMsg(pScrn->scrnIndex, X_PROBED,
-    	"Setting VESA mode 0x%x succeeded\n",
-    mode & 0x0fff);
-
-    return (TRUE);
-}
-
 
 /*
  * Restore the initial mode. To be used internally only!
@@ -4571,33 +4216,6 @@ XGIRestore(ScrnInfoPtr pScrn)
     vgaHWProtect(pScrn, FALSE);
 }
 
-static void
-XGIVESARestore(ScrnInfoPtr pScrn)
-{
-   XGIPtr pXGI = XGIPTR(pScrn);
-
-   if(pXGI->UseVESA) 
-   {
-      XGIVESASaveRestore(pScrn, MODE_RESTORE);
-#ifdef XGIVRAMQ
-      /* Restore queue mode registers on 315/330 series */
-      /* (This became necessary due to the switch to VRAM queue) */
-#endif
-   }
-}
-
-/* Restore bridge config registers - to be called BEFORE VESARestore */
-static void
-XGIBridgeRestore(ScrnInfoPtr pScrn)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-
-#ifdef XGIDUALHEAD
-    /* We only restore for master head */
-    if(pXGI->DualHeadMode && pXGI->SecondHead) return;
-#endif
-
-}
 
 /* Our generic BlockHandler for Xv */
 static void
@@ -5458,24 +5076,7 @@ XGILeaveVT(int scrnIndex, int flags)
 	XGI_WaitBeginRetrace(pXGI->RelIO);
     }
 
-    XGIBridgeRestore(pScrn);
-
-    if (pXGI->UseVESA) {
-	/* This is a q&d work-around for a BIOS bug. In case we disabled CRT2,
-	 * VBESaveRestore() does not restore CRT1. So we set any mode now,
-	 * because VBESetVBEMode correctly restores CRT1. Afterwards, we
-	 * can call VBESaveRestore to restore original mode.
-	 */
-	if ((pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) 
-	    && (!(pXGI->VBFlags & DISPTYPE_DISP2))) {
-	    VBESetVBEMode(pXGI->pVbe, (pXGI->XGIVESAModeList->n) | 0xc000, NULL);
-	}
-
-	XGIVESARestore(pScrn);
-    }
-    else {
-	XGIRestore(pScrn);
-    }
+    XGIRestore(pScrn);
 
 
     /* We use (otherwise unused) bit 7 to indicate that we are running to keep
@@ -5519,31 +5120,9 @@ XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
 	    XGI_WaitBeginRetrace(pXGI->RelIO);
 	}
 
-        XGIBridgeRestore(pScrn);
 
-    if(pXGI->UseVESA) 
-    {
-
-      /* This is a q&d work-around for a BIOS bug. In case we disabled CRT2,
-    	   * VBESaveRestore() does not restore CRT1. So we set any mode now,
-       * because VBESetVBEMode correctly restores CRT1. Afterwards, we
-       * can call VBESaveRestore to restore original mode.
-       */
-           if((pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) && (!(pXGI->VBFlags & DISPTYPE_DISP2)))
-          VBESetVBEMode(pXGI->pVbe, (pXGI->XGIVESAModeList->n) | 0xc000, NULL);
-
-       XGIVESARestore(pScrn);
-
-    }
-    else 
-    {
-
-       XGIRestore(pScrn);
-
-    }
-
+        XGIRestore(pScrn);
         vgaHWLock(hwp);
-
     }
 
     /* We should restore the mode number in case vtsema = false as well,
@@ -6123,10 +5702,6 @@ PDEBUG(ErrorF("VBFlags=0x%lx\n", pXGI->VBFlags));
        default:
           CR30 |= 0x00;
           CR31 |= 0x20;    /* VB_OUTPUT_DISABLE */
-      if(pXGI->UseVESA) 
-      {
-         crt1rateindex = XGISearchCRT1Rate(pScrn, mymode);
-      }
        }
 
     }
@@ -6166,33 +5741,10 @@ PDEBUG(ErrorF("VBFlags=0x%lx\n", pXGI->VBFlags));
        }
     }
 
-    /* for VESA: no DRIVERMODE, otherwise
-     * -) CRT2 will not be initialized correctly when using mode
-     *    where LCD has to scale, and
-     * -) CRT1 will have too low rate
-     */
-     if(pXGI->UseVESA) 
-     {
-        CR31 &= ~0x40;   /* Clear Drivermode */
-    CR31 |= 0x06;    /* Set SlaveMode, Enable SimuMode in Slavemode */
-#ifdef TWDEBUG
-        CR31 |= 0x40;    /* DEBUG (for non-slave mode VESA) */
-    crt1rateindex = XGISearchCRT1Rate(pScrn, mymode);
-#endif
-     }
-     else 
-     {
-        CR31 |=  0x40;  /* Set Drivermode */
+    CR31 |=  0x40;  /* Set Drivermode */
     CR31 &=  ~0x06; /* Disable SlaveMode, disable SimuMode in SlaveMode */
-    if(!pXGI->IsCustom) 
-    {
-           crt1rateindex = XGISearchCRT1Rate(pScrn, mymode);
-    }
-    else 
-    {
-       crt1rateindex = CR33;
-    }
-     }
+    crt1rateindex = (!pXGI->IsCustom)
+	? XGISearchCRT1Rate(pScrn, mymode) : CR33;
 
 #ifdef XGIDUALHEAD
      if(pXGI->DualHeadMode) 
@@ -6246,7 +5798,7 @@ PDEBUG(ErrorF("VBFlags=0x%lx\n", pXGI->VBFlags));
         {
            CR33 |= ((crt1rateindex & 0x0f) << 4);
     }
-    if((!(pXGI->UseVESA)) && (vbflag & CRT2_ENABLE)) 
+    if (vbflag & CRT2_ENABLE)
     {
        if(pXGI->CRT1off) CR33 &= 0xf0;
     }
@@ -6264,7 +5816,7 @@ PDEBUG(ErrorF("VBFlags=0x%lx\n", pXGI->VBFlags));
 
      pXGI->XGI_Pr->XGI_UseOEM = pXGI->OptUseOEM;
 
-     if((!pXGI->UseVESA) && (pXGI->VBFlags & CRT2_ENABLE)) 
+     if (pXGI->VBFlags & CRT2_ENABLE) 
      {
         /* Switch on CRT1 for modes that require the bridge in SlaveMode */
     andXGIIDXREG(XGISR,0x1f,0x3f);
@@ -6382,114 +5934,6 @@ PDEBUG(ErrorF(" XGIPostSetMode(). \n"));
      */
 }
 
-/* Build a list of the VESA modes the BIOS reports as valid */
-static void
-XGIBuildVesaModeList(ScrnInfoPtr pScrn, vbeInfoPtr pVbe, VbeInfoBlock *vbe)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-    int i = 0;
-
-    while(vbe->VideoModePtr[i] != 0xffff) 
-    {
-    xgiModeInfoPtr m;
-    VbeModeInfoBlock *mode;
-    int id = vbe->VideoModePtr[i++];
-    int bpp;
-
-    if((mode = VBEGetModeInfo(pVbe, id)) == NULL)
-        continue;
-
-    bpp = mode->BitsPerPixel;
-
-    m = xnfcalloc(sizeof(xgiModeInfoRec),1);
-    m->width = mode->XResolution;
-    m->height = mode->YResolution;
-    m->bpp = bpp;
-    m->n = id;
-    m->next = pXGI->XGIVESAModeList;
-
-    xf86DrvMsg(pScrn->scrnIndex, X_PROBED,
-          "BIOS supports VESA mode 0x%x: x:%i y:%i bpp:%i\n",
-           m->n, m->width, m->height, m->bpp);
-
-    pXGI->XGIVESAModeList = m;
-
-    VBEFreeModeInfo(mode);
-    }
-}
-
-/* Calc VESA mode from given resolution/depth */
-static UShort
-XGICalcVESAModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-    xgiModeInfoPtr m = pXGI->XGIVESAModeList;
-    UShort i = (pScrn->bitsPerPixel+7)/8 - 1;
-    UShort ModeIndex = 0;
-
-    while(m) 
-    {
-    if(pScrn->bitsPerPixel == m->bpp &&
-       mode->HDisplay == m->width &&
-       mode->VDisplay == m->height)
-        return m->n;
-    m = m->next;
-    }
-
-    xf86DrvMsg(pScrn->scrnIndex, X_PROBED,
-             "No valid BIOS VESA mode found for %dx%dx%d; searching built-in table.\n",
-             mode->HDisplay, mode->VDisplay, pScrn->bitsPerPixel);
-
-    switch(mode->HDisplay) 
-    {
-      case 320:
-          if(mode->VDisplay == 200)
-             ModeIndex = VESAModeIndex_320x200[i];
-      else if(mode->VDisplay == 240)
-             ModeIndex = VESAModeIndex_320x240[i];
-          break;
-      case 400:
-          if(mode->VDisplay == 300)
-             ModeIndex = VESAModeIndex_400x300[i];
-          break;
-      case 512:
-          if(mode->VDisplay == 384)
-             ModeIndex = VESAModeIndex_512x384[i];
-          break;
-      case 640:
-          if(mode->VDisplay == 480)
-             ModeIndex = VESAModeIndex_640x480[i];
-      else if(mode->VDisplay == 400)
-             ModeIndex = VESAModeIndex_640x400[i];
-          break;
-      case 800:
-          if(mode->VDisplay == 600)
-             ModeIndex = VESAModeIndex_800x600[i];
-          break;
-      case 1024:
-          if(mode->VDisplay == 768)
-             ModeIndex = VESAModeIndex_1024x768[i];
-          break;
-      case 1280:
-          if(mode->VDisplay == 1024)
-             ModeIndex = VESAModeIndex_1280x1024[i];
-          break;
-      case 1600:
-          if(mode->VDisplay == 1200)
-             ModeIndex = VESAModeIndex_1600x1200[i];
-          break;
-      case 1920:
-          if(mode->VDisplay == 1440)
-             ModeIndex = VESAModeIndex_1920x1440[i];
-          break;
-   }
-
-   if(!ModeIndex) xf86DrvMsg(pScrn->scrnIndex, X_PROBED,
-        "No valid mode found for %dx%dx%d in built-in table either.\n",
-    mode->HDisplay, mode->VDisplay, pScrn->bitsPerPixel);
-
-   return(ModeIndex);
-}
 
 USHORT
 XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode, unsigned long VBFlags, BOOLEAN havecustommodes)

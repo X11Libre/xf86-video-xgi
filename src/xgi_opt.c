@@ -59,7 +59,6 @@ typedef enum {
     OPTION_AGP_SIZE2,
     OPTION_ROTATE,
     OPTION_NOXVIDEO,
-    OPTION_VESA,
     OPTION_MAXXFBMEM,
     OPTION_PDC,
     OPTION_PDCA,
@@ -125,7 +124,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_AGP_SIZE2,			"GARTSize",      	  OPTV_INTEGER,   {0}, FALSE },
     { OPTION_ROTATE,            	"Rotate",                 OPTV_STRING,    {0}, FALSE },
     { OPTION_NOXVIDEO,          	"NoXvideo",               OPTV_BOOLEAN,   {0}, FALSE },
-    { OPTION_VESA,			"Vesa",		          OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_MAXXFBMEM,         	"MaxXFBMem",              OPTV_INTEGER,   {0}, -1    },
     { OPTION_PDC,               	"PanelDelayCompensation", OPTV_INTEGER,   {0}, -1    },
     { OPTION_PDCA,               	"PanelDelayCompensation1",OPTV_INTEGER,   {0}, -1    },
@@ -217,7 +215,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->ShadowFB = FALSE;
     pXGI->loadDRI = FALSE;
     pXGI->agpWantedPages = AGP_PAGES;
-    pXGI->VESA = -1;
     pXGI->NoXvideo = FALSE;
     pXGI->maxxfbmem = 0;
     pXGI->DSTN = FALSE;
@@ -425,22 +422,6 @@ xgiOptions(ScrnInfoPtr pScrn)
        }
     }
 
-    /* VESA - DEPRECATED
-     * This option is for forcing the driver to use
-     * the VESA BIOS extension for mode switching.
-     */
-    {
-	Bool val;
-	if(xf86GetOptValBool(pXGI->Options, OPTION_VESA, &val)) {
-	    pXGI->VESA = val ? 1 : 0;
-	    xf86DrvMsg(pScrn->scrnIndex, X_CONFIG,
-	        "VESA: VESA usage shall be %s\n",
-		val ? enabledstr : disabledstr);
- 	    xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-	    	"*** Option \"VESA\" is deprecated. *** \n");
-	    if(pXGI->VESA) pXGI->ForceCRT1Type = CRT1_VGA;
-	}
-    }
 
     /* ShadowFB */
     from = X_DEFAULT;

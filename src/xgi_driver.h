@@ -29,24 +29,6 @@
  *
  */
 
-/* VESA */
-/*     The following is included because there are BIOSes out there that
- *     report incomplete mode lists. These are 630 BIOS versions <2.01.2x
- *
-
- */
-				             /*     8      16    (24)    32   */
-static const UShort  VESAModeIndex_320x200[]   = {0x138, 0x10e, 0x000, 0x000};
-static const UShort  VESAModeIndex_320x240[]   = {0x132, 0x135, 0x000, 0x000};
-static const UShort  VESAModeIndex_400x300[]   = {0x133, 0x136, 0x000, 0x000};
-static const UShort  VESAModeIndex_512x384[]   = {0x134, 0x137, 0x000, 0x000};
-static const UShort  VESAModeIndex_640x400[]   = {0x100, 0x139, 0x000, 0x000};
-static const UShort  VESAModeIndex_640x480[]   = {0x101, 0x111, 0x000, 0x13a};
-static const UShort  VESAModeIndex_800x600[]   = {0x103, 0x114, 0x000, 0x13b};
-static const UShort  VESAModeIndex_1024x768[]  = {0x105, 0x117, 0x000, 0x13c};
-static const UShort  VESAModeIndex_1280x1024[] = {0x107, 0x11a, 0x000, 0x13d};
-static const UShort  VESAModeIndex_1600x1200[] = {0x130, 0x131, 0x000, 0x13e};
-static const UShort  VESAModeIndex_1920x1440[] = {0x13f, 0x140, 0x000, 0x141};
 
 /* For calculating refresh rate index (CR33) */
 static const struct _xgi_vrate {
@@ -731,17 +713,11 @@ static Bool    XGIMapMem(ScrnInfoPtr pScrn);
 static Bool    XGIUnmapMem(ScrnInfoPtr pScrn);
 static void    XGISave(ScrnInfoPtr pScrn);
 static void    XGIRestore(ScrnInfoPtr pScrn);
-static void    XGIVESARestore(ScrnInfoPtr pScrn);
 static Bool    XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode);
 static void    XGIModifyModeInfo(DisplayModePtr mode);
 static void    XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode);
 static void    XGIPostSetMode(ScrnInfoPtr pScrn, XGIRegPtr xgiReg);
 
-static Bool    XGISetVESAMode(ScrnInfoPtr pScrn, DisplayModePtr pMode);
-static void    XGIBuildVesaModeList(ScrnInfoPtr pScrn, vbeInfoPtr pVbe, VbeInfoBlock *vbe);
-static UShort  XGICalcVESAModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode);
-static void    XGIVESASaveRestore(ScrnInfoPtr pScrn, vbeSaveRestoreFunction function);
-static void    XGIBridgeRestore(ScrnInfoPtr pScrn);
 /* static Bool    InRegion(int x, int y, region r); */
 /* #ifdef XGIMERGED
 static void    XGIMergePointerMoved(int scrnIndex, int x, int y);
