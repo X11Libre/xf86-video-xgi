@@ -46,13 +46,17 @@
 /* ~shampoo */
 
 
-#define VB_XGI301	      0x0001  /*301b*/
-#define VB_XGI301B        0x0002
-#define VB_XGI302B        0x0004
+#define VB_XGI301       0x0001 /*301b*/
+#define VB_XGI301B      0x0002
+#define VB_XGI302B      0x0004
 #define VB_XGI301LV     0x0008 /*301lv*/
 #define VB_XGI302LV     0x0010
-#define VB_XGI301C      0x0020       /* for 301C */
-#define  VB_NoLCD        0x8000
+#define VB_XGI302ELV    0x0020
+#define VB_XGI301C      0x0040 /* for 301C */
+#define VB_NoLCD        0x8000
+#define VB_XGI301BLV302BLV      (VB_XGI301B|VB_XGI301C|VB_XGI302B|VB_XGI301LV|VB_XGI302LV|VB_XGI302ELV)
+#define VB_XGI301LV302LV        (VB_XGI301LV|VB_XGI302LV|VB_XGI302ELV)
+#define VB_XGIVB		(VB_XGI301 | VB_XGI301BLV302BLV)
 /*end 301b*/
 
 #define VB_YPbPrInfo     0x07          /*301lv*/
@@ -91,7 +95,7 @@
 #define SupportTV               0x0008
 #define SupportHiVisionTV       0x0010
 #define SupportLCD              0x0020
-#define SupportRAMDAC2          0x0040
+#define SupportRAMDAC2          0x0040 /* All           (<= 100Mhz) */
 #define NoSupportTV             0x0070
 #define NoSupportHiVisionTV     0x0060
 #define NoSupportLCD            0x0058
@@ -110,29 +114,44 @@
 #define ECLKindex3              0x0300
 #define ECLKindex4              0x0400
 
+/**
+ * CR30
+ */
 #define SetSimuScanMode         0x0001
 #define SwitchToCRT2            0x0002
-/* #define SetCRT2ToTV 0x009C */
 #define SetCRT2ToAVIDEO         0x0004
 #define SetCRT2ToSVIDEO         0x0008
 #define SetCRT2ToSCART          0x0010
 #define SetCRT2ToLCD            0x0020
 #define SetCRT2ToRAMDAC         0x0040
 #define SetCRT2ToHiVisionTV     0x0080
+#define SetCRT2ToCHYPbPr        SetCRT2ToHiVisionTV  /* for Chrontel   */
+
+/**
+ * CR31
+ */
 #define SetNTSCTV               0x0000
 /* #define SetPALTV 0x0100 */
+#define SetCRT2ToLCDA           0x0100
 #define SetInSlaveMode          0x0200
 #define SetNotSimuMode          0x0400
-#define SetNotSimuTVMode        0x0400
+#define SetNotSimuTVMode        SetNotSimuMode
 #define SetDispDevSwitch        0x0800
+#define SetCRT2ToYPbPr          0x0800
 #define LoadDACFlag             0x1000
 #define DisableCRT2Display      0x2000
 #define DriverMode              0x4000
 #define HotKeySwitch            0x8000
-#define SetCHTVOverScan  	0x8000
-/* #define SetCRT2ToLCDA 0x8000 301b */
+#define SetCHTVOverScan         0x8000
+#define SetCRT2ToDualEdge       0x8000
+/* #define SetCRT2ToLCDA          0x8000 301b */
 #define PanelRGB18Bit           0x0100
 #define PanelRGB24Bit           0x0000
+
+/* v-- Needs change in xgi_vga.c if changed (GPIO) --v */
+#define SetCRT2ToTV1            (SetCRT2ToHiVisionTV | SetCRT2ToSCART | SetCRT2ToSVIDEO | SetCRT2ToAVIDEO)
+#define SetCRT2ToTV             (SetCRT2ToYPbPr | SetCRT2ToTV1)
+
 
 #define TVOverScan              0x10
 #define TVOverScanShift         4
@@ -148,15 +167,9 @@
 
 #define SetSCARTOutput          0x01
 #define BoardTVType             0x02
-#define  EnablePALMN           0x40
-/* #define ProgrammingCRT2 0x01 */
-/* #define TVSimuMode 0x02 */
-/* #define RPLLDIV2XO 0x04 */
-/* #define LCDVESATiming 0x08 */
-/* #define EnableLVDSDDA 0x10 */
-#define SetDispDevSwitchFlag    0x20
-#define CheckWinDos             0x40
-#define SetJDOSMode             0x80
+#define  EnablePALMN           0x40   /* Romflag: 1 = Allow PALM/PALN */
+/* #define LCDVESATiming 0x0008 */
+/* #define EnableLVDSDDA 0x0010 */
 
 #define Panel320x480              0x07/*fstn*/
 /* [ycchen] 02/12/03 Modify for Multi-Sync. LCD Support */
@@ -179,15 +192,6 @@
 
 #define PanelRef60Hz            0x00
 #define PanelRef75Hz            0x20
-#define LCDRGB18Bit             0x01
-
-#define ExtChipTrumpion         0x06
-#define ExtChipMitacTV          0x0a
-#define LCDNonExpanding         0x10
-#define LCDNonExpandingShift    4
-#define LCDSync                 0x20
-#define LCDSyncBit              0xe0
-#define LCDSyncShift            6
 
 /* #define DDC2DelayTime 300 */
 
@@ -198,6 +202,7 @@
 /* #define SetPALTV 0x0100 */
 #define HalfDCLK                0x1000
 #define NTSCHT                  1716
+#define NTSC2HT                 1920
 #define NTSCVT                  525
 #define PALHT                   1728
 #define PALVT                   625
@@ -227,18 +232,9 @@
 
 #define VCLK162             	0x21
 
-#define LCDRGB18Bit             0x01
-#define LoadDACFlag             0x1000
-#define AfterLockCRT2           0x4000
-#define SetCRT2ToAVIDEO         0x0004
-#define SetCRT2ToSCART          0x0010
-#define Ext2StructSize          5
-
-
 #define YPbPr525iVCLK           0x03B
 #define YPbPr525iVCLK_2         0x03A
 
-#define SwitchToCRT2            0x0002
 /* #define LCDVESATiming 0x08 */
 #define SetSCARTOutput          0x01
 #define AVIDEOSense             0x01
@@ -253,16 +249,17 @@
 #define StStructSize            0x06
 
 
-#define XGI_CRT2_PORT_00        0x00 - 0x030
-#define XGI_CRT2_PORT_04        0x04 - 0x030
+#define XGI_VIDEO_CAPTURE       0x00 - 0x30
+#define XGI_VIDEO_PLAYBACK      0x02 - 0x30
+#define XGI_CRT2_PORT_00        0x00 - 0x30
+#define XGI_CRT2_PORT_04        0x04 - 0x30
 #define XGI_CRT2_PORT_10        0x10 - 0x30
 #define XGI_CRT2_PORT_12        0x12 - 0x30
 #define XGI_CRT2_PORT_14        0x14 - 0x30
 
 
-#define LCDNonExpanding         0x10
 #define ADR_CRT2PtrData         0x20E
-#define offset_Zurac            0x210
+#define offset_Zurac            0x210   /* TW: Trumpion Zurac data pointer */
 #define ADR_LVDSDesPtrData      0x212
 #define ADR_LVDSCRT1DataPtr     0x214
 #define ADR_CHTVVCLKPtr         0x216
@@ -300,8 +297,8 @@
 #define _PanelType0F             0x78
 
 
-#define PRIMARY_VGA       0     /* 1: XGI is primary vga 0:XGI is secondary vga */
-#define BIOSIDCodeAddr          0x235
+#define PRIMARY_VGA             0      /* 1: XGI is primary vga 0:XGI is secondary vga */
+#define BIOSIDCodeAddr          0x235  /* Offsets to ptrs in BIOS image */
 #define OEMUtilIDCodeAddr       0x237
 #define VBModeIDTableAddr       0x239
 #define OEMTVPtrAddr            0x241
@@ -515,44 +512,23 @@
 #define		SyncPP                       0x0000
 #define		SyncPN                       0x4000
 #define		SyncNP                       0x8000
-#define		SyncNN                       0xC000
+#define		SyncNN                       0xc000
 
-/* -------------- SetMode Stack/Scratch */
-#define		SetSimuScanMode              0x0001       /* VBInfo/CR30 & CR31 */
-#define		SwitchToCRT2                 0x0002
-#define		SetCRT2ToTV1                 0x009C
-#define		SetCRT2ToTV                  0x089C
-#define		SetCRT2ToAVIDEO              0x0004
-#define		SetCRT2ToSVIDEO              0x0008
-#define		SetCRT2ToSCART               0x0010
-#define		SetCRT2ToLCD                 0x0020
-#define		SetCRT2ToRAMDAC              0x0040
-#define		SetCRT2ToHiVisionTV          0x0080
-#define		SetCRT2ToLCDA                0x0100
-#define		SetInSlaveMode               0x0200
-#define		SetNotSimuMode               0x0400
-#define		HKEventMode                  0x0800
-#define		SetCRT2ToYPbPr               0x0800
-#define		LoadDACFlag                  0x1000
-#define		DisableCRT2Display           0x2000
-#define		DriverMode                   0x4000
-#define		SetCRT2ToDualEdge            0x8000
-#define		HotKeySwitch                 0x8000
-
-#define		ProgrammingCRT2              0x0001       /* Set Flag */
-#define		EnableVCMode                 0x0002
-#define		SetHKEventMode               0x0004
-#define		ReserveTVOption              0x0008
-#define		DisableRelocateIO            0x0010
-#define		Win9xDOSMode                 0x0020
-#define		JDOSMode                     0x0040
-/* #define SetWin9xforJap 0x0080 // not used now */
-/* #define SetWin9xforKorea 0x0100 // not used now */
-#define		GatingCRT                    0x0800
-#define		DisableChB                   0x1000
-#define		EnableChB                    0x2000
-#define		DisableChA                   0x4000
-#define		EnableChA                    0x8000
+/**
+ * Bits for SetFlag
+ */
+#define ProgrammingCRT2              0x0001
+#define LowModeTests                 0x0002
+#define EnableVCMode                 0x0004
+#define SetHKEventMode               0x0008
+#define ReserveTVOption              0x0010
+#define DisableRelocateIO            0x0020
+#define Win9xDOSMode                 0x0040
+#define GatingCRT                    0x0800
+#define DisableChB                   0x1000
+#define EnableChB                    0x2000
+#define DisableChA                   0x4000
+#define EnableChA                    0x8000
 
 #define		SetNTSCTV                    0x0000       /* TV Info */
 #define		SetPALTV                     0x0001
@@ -629,42 +605,87 @@
 
 #define		TVSense                      0xc7
 
-#define		TVOverScan                   0x10               /* CR35 */
-#define		TVOverScanShift              4
+/**
+ * CR35 (661 series only)
+ *
+ *   [0]    1 = PAL, 0 = NTSC
+ *   [1]    1 = NTSC-J (if D0 = 0)
+ *   [2]    1 = PALM (if D0 = 1)
+ *   [3]    1 = PALN (if D0 = 1)
+ *   [4]    1 = Overscan (Chrontel only)
+ *   [7:5]  (only if D2 in CR38 is set)
+ *          000  525i
+ *          001  525p
+ *          010  750p
+ *          011  1080i (or HiVision on 301, 301B)
+ *
+ *   These bits are being translated to TVMode flag.
+ */
+#define TVOverScan                   0x10
+#define TVOverScanShift              4
 
 #ifdef                   NewScratch
-#define		NTSCMode                     0x00
-#define		PALMode                      0x00
-#define		NTSCJMode                    0x02
-#define		PALMNMode                    0x0c
-#define		YPbPrMode                    0xe0
-#define		YPbPrMode525i                0x00
-#define		YPbPrMode525p                0x20
-#define		YPbPrMode750p                0x40
-#define		YPbPrMode1080i               0x60
+#define NTSCMode                     0x00
+#define PALMode                      0x00
+#define NTSCJMode                    0x02
+#define PALMNMode                    0x0c
+#define YPbPrMode                    0xe0
+#define YPbPrMode525i                0x00
+#define YPbPrMode525p                0x20
+#define YPbPrMode750p                0x40
+#define YPbPrMode1080i               0x60
 #else                    /* Old Scratch */
-#define		ClearBufferFlag              0x20
+#define ClearBufferFlag              0x20
 #endif
 
 
-#define		LCDRGB18Bit                  0x01               /* CR37 */
-#define		LCDNonExpanding              0x10
-#define		LCDNonExpandingShift         4
-#define		LCDSync                      0x20
-#define		LCDSyncBit                   0xe0               /* H/V polarity & sync ID */
-#define		LCDSyncShift                 6
+/**
+ * CR37
+ *
+ * [0]   Set 24/18 bit (0/1) RGB to LVDS/TMDS transmitter (set by BIOS)
+ * [3:1] External chip
+ *        660 series [2:1] only:
+ *           reserved (now in CR38)
+ *        All other combinations reserved
+ * [3]    661 only: Pass 1:1 data
+ * [4]    LVDS: 0: Panel Link expands / 1: Panel Link does not expand
+ *        30x:  0: Bridge scales      / 1: Bridge does not scale = Panel scales (if possible)
+ * [5]    LCD polarity select
+ *        0: VESA DMT Standard
+ *        1: EDID 2.x defined
+ * [6]    LCD horizontal polarity select
+ *        0: High active
+ *        1: Low active
+ * [7]    LCD vertical polarity select
+ *        0: High active
+ *        1: Low active
+ */
+#define ExtChipTrumpion         0x0006  /**< Is this actually CR38? */
+#define ExtChipMitacTV          0x000a  /**< Is this actually CR38? */
+#define LCDRGB18Bit             0x0001
+#define ScalingLCD              0x0008
+#define LCDNonExpanding         0x0010
+#define LCDNonExpandingShift    4
+#define LCDSync                 0x0020
+#define LCDSyncBit              0x00e0  /* H/V polarity & sync ID */
+#define LCDSyncShift            6
+#define LCDPass11               0x0100   /* 0: center screen, 1: Pass 1:1 data */
 
-#ifdef          NewScratch
-#define		ScalingLCD                   0x08
-#define		ReduceTiming		     0x01
-#else                    /* Old Scratch */
-#define		ExtChipType                  0x0e
-#define		ExtChip301                   0x02
-#define		ExtChipLVDS                  0x04
-#define		ExtChipCH7019                0x06
-#define		ScalingLCD                   0x10
-#endif
+#define DontExpandLCD           LCDNonExpanding
+#define DontExpandLCDShift      LCDNonExpandingShift
 
+
+/**
+ * CR38 (661 and later)
+ *
+ * D[7:5]  000 No VB
+ *         001 301 series VB
+ *         010 LVDS
+ *         011 Chrontel 7019
+ *         100 Conexant
+ * D2      Enable YPbPr output (see CR35)
+ * D[1:0]  LCDA (like before)
+ */
 #define		EnableDualEdge               0x01               /* CR38 */
 #define		SetToLCDA                    0x02
 #ifdef                   NewScratch
@@ -685,6 +706,17 @@
 #define		YPbPrMode1080i               0x30
 #define		PALMNMode                    0xc0
 #endif
+
+/**
+ * CR39 (661 and later)
+ *
+ *   D[1:0] YPbPr Aspect Ratio
+ *          00 4:3 letterbox
+ *          01 4:3
+ *          10 16:9
+ *          11 4:3
+ */
+#define ReduceTiming                    0x0001
 
 #define		BacklightControlBit          0x01               /* CR3A */
 #define		Win9xforJap                  0x40
@@ -722,7 +754,7 @@
 #define		HK_Volume                    0x07
 #define		ModeSwitchStatus             0xf0
 #define		ActiveCRT1                   0x10
-#define		ActiveLCD                    0x0020
+#define		ActiveLCD                    0x20
 #define		ActiveTV                     0x40
 #define		ActiveCRT2                   0x80
 
@@ -756,7 +788,7 @@
 #define		HK_Contrast                  0x05
 #define		HK_Mute                      0x06
 #define		HK_Volume                    0x07
-#define		ActivePAL                    0x0020
+#define		ActivePAL                    0x20
 #define		ActivePALShift               5
 #define		ActiveNonExpanding           0x40
 #define		ActiveNonExpandingShift      6
