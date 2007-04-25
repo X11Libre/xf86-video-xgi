@@ -1439,8 +1439,9 @@ XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr pScr
     UShort  ModeNo=0;
     BOOLEAN SetModeRet = FALSE ;
     UShort  HDisplay = pXGI->scrnOffset >> 3 ;
-	
+#if XGI_USING_BIOS_SETMODE
     xf86Int10InfoPtr pInt = NULL ; /* Our int10 */
+#endif
     
     XGI_Pr->UseCustomMode = FALSE;
     
