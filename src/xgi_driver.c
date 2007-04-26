@@ -4177,18 +4177,12 @@ XGIRestore(ScrnInfoPtr pScrn)
     XGIRegPtr xgiReg = &pXGI->SavedReg;
     vgaHWPtr  hwp = VGAHWPTR(pScrn);
     vgaRegPtr vgaReg = &hwp->SavedReg;
-/*    Bool      doit = FALSE, doitlater = FALSE;
-    Bool      vesasuccess = FALSE;  */
 
-    /* WARNING: Don't ever touch this. It now seems to work on
-     * all chipset/bridge combinations - but finding out the
-     * correct combination was pure hell.
-     */
+
+    PDEBUG(ErrorF("XGIRestore():\n")) ;
 
     /* Wait for the accelerators */
-	PDEBUG(ErrorF("XGIRestore():\n")) ;
-    if(pXGI->AccelInfoPtr) 
-    {
+    if(pXGI->AccelInfoPtr) {
        (*pXGI->AccelInfoPtr->Sync)(pScrn);
     }
 
@@ -4201,18 +4195,12 @@ XGIRestore(ScrnInfoPtr pScrn)
     (*pXGI->XGIRestore)(pScrn, xgiReg);
 
     vgaHWProtect(pScrn, TRUE);
-    if(pXGI->Primary) 
-    {
+    if(pXGI->Primary) {
         vgaHWRestore(pScrn, vgaReg, VGA_SR_ALL);
     }
 
-    /* Restore TV. This is rather complicated, but if we don't do it,
-     * TV output will flicker terribly
-     */
-
-
-    xgiRestoreExtRegisterLock(pXGI,xgiReg->xgiRegs3C4[5],xgiReg->xgiRegs3D4[0x80]);
-
+    xgiRestoreExtRegisterLock(pXGI, xgiReg->xgiRegs3C4[5],
+			      xgiReg->xgiRegs3D4[0x80]);
     vgaHWProtect(pScrn, FALSE);
 }
 
