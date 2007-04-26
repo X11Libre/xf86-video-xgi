@@ -320,7 +320,6 @@ typedef struct _XGI_Private
 	USHORT XGI_DDC_DeviceAddr;
 	USHORT XGI_DDC_ReadAddr;
 	USHORT XGI_DDC_SecAddr;
-	USHORT XGI_ChrontelInit;
 	
 
 	USHORT XGI_PanelMinLVDS;

@@ -290,10 +290,6 @@ typedef unsigned short UShort;
 typedef unsigned char UChar;
 
 
-/* Chrontel type */
-#define CHRONTEL_700x 0
-#define CHRONTEL_701x 1
-
 /* ChipFlags */
 /* Use only lower 16 bit for chip id! (xgictrl) */
 #define XGICF_LARGEOVERLAY  0x00000001
@@ -331,7 +327,6 @@ typedef unsigned char UChar;
 #define XGI_SD_ISDHXINERAMA    0x00000200   /* Dual head: We are running Xinerama */
 #define XGI_SD_VBHASSCART      0x00000400   /* videobridge has SCART instead of VGA2 */
 #define XGI_SD_ISDEPTH8        0x00000800   /* Depth is 8, no independent gamma correction */
-#define XGI_SD_SUPPORTSOVER    0x00001000   /* Support for Chrontel Super Overscan */
 #define XGI_SD_ENABLED         0x00002000   /* xgictrl is enabled (by option) */
 #define XGI_SD_PSEUDOXINERAMA  0x00004000   /* pseudo xinerama is active */
 #define XGI_SD_SUPPORTLCDA     0x00008000   /* Support LCD Channel A */
@@ -550,13 +545,6 @@ typedef struct {
     unsigned long   	VBFlags;		/* Video bridge configuration */
     unsigned long       VBFlags_backup;         /* Backup for SlaveMode-modes */
     
-    /**
-     * CHRONTEL_700x or CHRONTEL_701x
-     * 
-     * \bug This field is tested but never initialized.
-     */
-    int                 ChrontelType;
-
     unsigned int        PDC, PDCA;		/* PanelDelayCompensation */
     short               scrnOffset;		/* Screen pitch (data) */
     short               scrnPitch;		/* Screen pitch (display; regarding interlace) */
@@ -583,11 +571,9 @@ typedef struct {
     void        	(*XGISave)(ScrnInfoPtr pScrn, XGIRegPtr xgireg);
     void        	(*XGISave2)(ScrnInfoPtr pScrn, XGIRegPtr xgireg);
     void        	(*XGISave3)(ScrnInfoPtr pScrn, XGIRegPtr xgireg);
-    void        	(*XGISaveLVDSChrontel)(ScrnInfoPtr pScrn, XGIRegPtr xgireg);
     void        	(*XGIRestore)(ScrnInfoPtr pScrn, XGIRegPtr xgireg);
     void        	(*XGIRestore2)(ScrnInfoPtr pScrn, XGIRegPtr xgireg);
     void        	(*XGIRestore3)(ScrnInfoPtr pScrn, XGIRegPtr xgireg);
-    void        	(*XGIRestoreLVDSChrontel)(ScrnInfoPtr pScrn, XGIRegPtr xgireg);
     void        	(*LoadCRT2Palette)(ScrnInfoPtr pScrn, int numColors,
                 		int *indicies, LOCO *colors, VisualPtr pVisual);
 
