@@ -92,6 +92,13 @@
 #include "dri.h"
 #endif
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#include <fcntl.h>
+#include <sys/ioctl.h>
+
 void Volari_EnableAccelerator(ScrnInfoPtr pScrn) ;
 /* Globals (yes, these ARE really required to be global) */
 
