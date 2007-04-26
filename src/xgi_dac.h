@@ -28,34 +28,18 @@
  *
  */
 
-int  compute_vclk(int Clock, int *out_n, int *out_dn, int *out_div,
-	     		int *out_sbit, int *out_scale);
+int compute_vclk(int Clock, int *out_n, int *out_dn, int *out_div,
+    int *out_sbit, int *out_scale);
+
 void XGIDACPreInit(ScrnInfoPtr pScrn);
+
 void XGILoadPalette(ScrnInfoPtr pScrn, int numColors, int *indices,
-		        LOCO *colors, VisualPtr pVisual);
-void XGICalcClock(ScrnInfoPtr pScrn, int clock, int max_VLD,
-                        unsigned int *vclk);
-void XGIIODump(ScrnInfoPtr pScrn);
-int  XG40_MemBandWidth(ScrnInfoPtr pScrn);
-int  XGIMclk(XGIPtr pXGI);
-void XGIRestoreBridge(ScrnInfoPtr pScrn, XGIRegPtr xgiReg);
+    LOCO *colors, VisualPtr pVisual);
+
+void XGICalcClock(ScrnInfoPtr pScrn, int clock, int max_VLD, unsigned *vclk);
 
 
-/* Functions from init.c and init301.c */
-
-extern void     XGI_New_EnableBridge(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO);
-extern USHORT 	XGI_GetCH700x(XGI_Private *XGI_Pr, USHORT tempbx);
-extern void 	XGI_SetCH700x(XGI_Private *XGI_Pr, USHORT tempbx);
-extern USHORT 	XGI_GetCH701x(XGI_Private *XGI_Pr, USHORT tempbx);
-extern void 	XGI_SetCH701x(XGI_Private *XGI_Pr, USHORT tempbx);
-extern USHORT 	XGI_GetCH70xx(XGI_Private *XGI_Pr, USHORT tempbx);
-extern void 	XGI_SetCH70xx(XGI_Private *XGI_Pr, USHORT tempbx);
-extern void     XGI_SetCH70xxANDOR(XGI_Private *XGI_Pr, USHORT tempax,USHORT tempbh);
-extern void     XGI_SetTrumpReg(XGI_Private *XGI_Pr, USHORT tempbx);
-extern USHORT   XGI_GetTrumpReg(XGI_Private *XGI_Pr, USHORT tempbx);
-extern void     XGI_DDC2Delay(XGI_Private *XGI_Pr, USHORT delaytime);
-extern void     XGI_SetChrontelGPIO(XGI_Private *XGI_Pr, USHORT myvbinfo);
-extern void     XGI_New_DisplayOn(XGI_Private *XGI_Pr);
-extern unsigned char XGI_GetSetModeID(ScrnInfoPtr pScrn, unsigned char id);
-extern void     XGI_SetEnableDstn(XGI_Private *XGI_Pr, int enable);
-extern void     XGI_SetEnableFstn(XGI_Private *XGI_Pr, int enable);
+/* Functions from init.c
+ */
+extern void XGI_SetEnableDstn(XGI_Private *XGI_Pr, int enable);
+extern void XGI_SetEnableFstn(XGI_Private *XGI_Pr, int enable);

@@ -61,9 +61,6 @@ static void Volari_Save(ScrnInfoPtr pScrn, XGIRegPtr xgiReg) ;
 static void Volari_Restore(ScrnInfoPtr pScrn, XGIRegPtr xgiReg) ;
 static void Volari_Threshold(ScrnInfoPtr pScrn, DisplayModePtr mode,
                                 unsigned short *Low, unsigned short *High);
-/*
-static void SetBlock(CARD16 port, CARD8 from, CARD8 to, CARD8 *DataPtr);
-*/
 int
 compute_vclk(
         int Clock,
@@ -444,7 +441,6 @@ PDEBUG(ErrorF("--- Volari_Restore(). \n")) ;
     }
 
 
-    /*outb(0x3C2, xgiReg->xgiRegs3C2);*/
     outb(pXGI->RelIO+0x42, xgiReg->xgiRegs3C2);
 
     /* MemClock needs this to take effect */
@@ -457,81 +453,63 @@ PDEBUG(ErrorF("--- Volari_Restore(). \n")) ;
 
 }
 
-static  void
+static void
 Volari_Threshold(ScrnInfoPtr pScrn, DisplayModePtr mode,
-                                unsigned short *Low, unsigned short *High)
+		 unsigned short *Low, unsigned short *High)
 {
-        XGIPtr          pXGI = XGIPTR(pScrn);
-/*        XGIRegPtr       pReg = &pXGI->ModeReg;
-        int             mclk = pXGI->MemClock;
-        int             vclk = mode->Clock;
-        int             bpp = pScrn->bitsPerPixel/8;
-        int             lowa, lowb, low;
-        struct funcargc *p;
-        unsigned int    i, j;
-*/
+        XGIPtr pXGI = XGIPTR(pScrn);
 
-        orXGIIDXREG(XGISR, 0x3D, 0x01) ;
+        orXGIIDXREG(XGISR, 0x3D, 0x01);
 }
 
-const float     magic315[4] = { 1.2, 1.368421, 2.263158, 1.2};
 
-int XG40_MemBandWidth(ScrnInfoPtr pScrn)
+/**
+ * Calculate available memory bandwidth for an XG40 series chip.
+ *
+ * \sa XG20_MemBandWidth
+ */
+static int XG40_MemBandWidth(ScrnInfoPtr pScrn)
 {
-    XGIPtr          pXGI = XGIPTR(pScrn);
-    int             bus = pXGI->BusWidth;
-    int             mclk = pXGI->MemClock;
-    int             bpp = pScrn->bitsPerPixel;
-    float           magic, total;
-
-    if ( bus > 128 ) bus = 128 ;
-
-    magic = magic315[bus/64];
+    static const float magic315[4] = { 1.2, 1.368421, 2.263158, 1.2 };
+    XGIPtr pXGI = XGIPTR(pScrn);
+    const int bus = (pXGI->BusWidth > 128) ? 128 : pXGI->BusWidth;
+    const int mclk = pXGI->MemClock;
+    const int bpp = pScrn->bitsPerPixel;
+    const float magic = magic315[bus / 64];
+    float  total  = (mclk * bus) / bpp;
 
     PDEBUG5(ErrorF("mclk: %d, bus: %d, magic: %f, bpp: %d\n",
                    mclk, bus, magic, bpp));
-
-    total = mclk*bus/bpp;
     PDEBUG5(ErrorF("Total Adapter Bandwidth is %fM\n", total/1000));
+
     if (pXGI->VBFlags & CRT2_ENABLE)  {
-        if (total/2 > 540000)
-		{
-            total = total - 540000;
-		}
-        else
-		{
-            total = total/2;
-		}
-/* ErrorF("CRT1 Used Bandwidth is %gM\n", total/1000); */
+	total = ((total / 2) > 540000)
+	    ? (total - 540000) : (total / 2);
     }
-/*
-    if( (total/magic) > (float)(MAX_INT))
-    {
-    	return MAX_INT ;
-    }
-*/
-    return  (int)(total/magic);
+
+    return  (int)(total / magic);
 }
 
-int XG20_MemBandWidth(ScrnInfoPtr pScrn)
+
+/**
+ * Calculate available memory bandwidth for an XG20 series chip.
+ *
+ * \sa XG40_MemBandWidth
+ */
+static int XG20_MemBandWidth(ScrnInfoPtr pScrn)
 {
-    XGIPtr          pXGI = XGIPTR(pScrn);
-    int             bus = pXGI->BusWidth;
-    int             mclk = pXGI->MemClock;
-    int             bpp = pScrn->bitsPerPixel;
-    float           magic, total;
-
-    if ( bus > 128 ) bus = 128 ;
-
-    magic = 1.44 ;
+    XGIPtr pXGI = XGIPTR(pScrn);
+    const int bus = (pXGI->BusWidth > 128) ? 128 : pXGI->BusWidth;
+    const int mclk = pXGI->MemClock;
+    const int bpp = pScrn->bitsPerPixel;
+    const float magic = 1.44;
+    float  total  = (mclk * bus) / bpp;
 
     PDEBUG5(ErrorF("mclk: %d, bus: %d, magic: %f, bpp: %d\n",
                    mclk, bus, magic, bpp));
-
-    total = mclk*bus/bpp;
     PDEBUG5(ErrorF("Total Adapter Bandwidth is %fM\n", total/1000));
 
-    return  (int)(total/magic);
+    return (int)(total / magic);
 }
 
 void
@@ -645,32 +623,14 @@ XGIDACPreInit(ScrnInfoPtr pScrn)
 
 PDEBUG(ErrorF("XGIDACPreInit()\n"));
 
-    switch (pXGI->Chipset)  {
-      case PCI_CHIP_XGIXG20:
-        pXGI->MaxClock          = XG20_MemBandWidth(pScrn);
-        pXGI->XGISave           = Volari_Save;
-        pXGI->XGIRestore        = Volari_Restore;
-        pXGI->SetThreshold      = Volari_Threshold;
-        break;
-      case PCI_CHIP_XGIXG40:
-	default:
-        pXGI->MaxClock          = XG40_MemBandWidth(pScrn);
-        pXGI->XGISave           = Volari_Save;
-        pXGI->XGIRestore        = Volari_Restore;
-        pXGI->SetThreshold      = Volari_Threshold;
-        break;
-    }
+    pXGI->XGISave = Volari_Save;
+    pXGI->XGIRestore = Volari_Restore;
+    pXGI->SetThreshold = Volari_Threshold;
+
+    pXGI->MaxClock = (pXGI->Chipset == PCI_CHIP_XGIXG20)
+	? XG20_MemBandWidth(pScrn) : XG40_MemBandWidth(pScrn);
 }
 
-/* static void
-SetBlock(CARD16 port, CARD8 from, CARD8 to, CARD8 *DataPtr)
-{
-    CARD8   index;
-
-    for(index = from; index <= to; index++, DataPtr++) {
-       outXGIIDXREG(port, index, *DataPtr);
-    }
-} */
 
 int
 XG40Mclk(XGIPtr pXGI)
@@ -679,34 +639,24 @@ XG40Mclk(XGIPtr pXGI)
     unsigned char Num, Denum;
 
     /* Numerator */
-    switch (pXGI->Chipset)  {
-    case PCI_CHIP_XGIXG40:
-    default:
-        /* Numerator */
-        read_xr(0x28, Num);
-        mclk = 14318*((Num &0x7f)+1);
+    inXGIIDXREG(0x3c4, 0x28, Num);
+    mclk = 14318 * ((Num & 0x7f) + 1);
 
-        /* Denumerator */
-        read_xr(0x29, Denum);
-        mclk = mclk/((Denum & 0x1f)+1);
+    /* Denumerator */
+    inXGIIDXREG(0x3c4, 0x29, Denum);
+    mclk = mclk / ((Denum & 0x1f) + 1);
 
-        /* Divider */
-        if ((Num & 0x80)!=0)  {
-            mclk = mclk * 2;
-        }
-
-        /* Post-Scaler */
-        if ((Denum & 0x80)==0)  {
-            mclk = mclk / (((Denum & 0x60) >> 5) + 1);
-        }
-        else  {
-            mclk = mclk / ((((Denum & 0x60) >> 5) + 1) * 2);
-        }
-        break;
-    /*    mclk = 0; */
+    /* Divider */
+    if ((Num & 0x80)!=0)  {
+	mclk = mclk * 2;
     }
 
-    return(mclk);
+    /* Post-Scaler */
+    mclk /= ((Denum & 0x80) == 0) 
+	?  (((Denum & 0x60) >> 5) + 1)
+	: ((((Denum & 0x60) >> 5) + 1) * 2);
+
+    return mclk;
 }
 
 

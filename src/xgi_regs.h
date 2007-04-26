@@ -133,8 +133,6 @@
 #define XGIPART5       (pXGI->RelIO+0x16)
 
 
-#define read_xr(num,var) do {outb(0x3c4, num);var=inb(0x3c5);} while (0)
-
 /*  PART1 */
 #define xgiPART1_FUNCTION                     0x00
 #define xgiPART1_THRESHOLD_HIGH               0x01
