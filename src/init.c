@@ -80,19 +80,19 @@
 
 USHORT
 XGI_GetModeID(ULONG VBFlags, int HDisplay, int VDisplay,
-              int Depth, BOOLEAN FSTN, int LCDwidth, int LCDheight)
+              int Depth, int LCDwidth, int LCDheight)
 {
    USHORT ModeIndex = 0;
 
    switch(HDisplay)
    {
      case 320:
-     	  if(VDisplay == 200)     ModeIndex = ModeIndex_320x200[Depth];
-	  else if(VDisplay == 240) {
-	     if(FSTN) ModeIndex = ModeIndex_320x240_FSTN[Depth];
-	     else     ModeIndex = ModeIndex_320x240[Depth];
-          }
-          break;
+       if(VDisplay == 200)
+	   ModeIndex = ModeIndex_320x200[Depth];
+       else if(VDisplay == 240)
+	   ModeIndex = ModeIndex_320x240[Depth];
+
+       break;
      case 400:
           if(VDisplay == 300) ModeIndex = ModeIndex_400x300[Depth];
           break;
@@ -337,22 +337,6 @@ XGIInitPCIetc(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
       XGI_SetRegOR(XGI_Pr->XGI_P3c4,0x1E,0xDA);
       break;
    }
-}
-
-/*********************************************/
-/*          HELPER: Enable DSTN/FSTN         */
-/*********************************************/
-
-void
-XGI_SetEnableDstn(XGI_Private *XGI_Pr, int enable)
-{
-   XGI_Pr->XGI_IF_DEF_DSTN = enable ? 1 : 0;
-}
-
-void
-XGI_SetEnableFstn(XGI_Private *XGI_Pr, int enable)
-{
-   XGI_Pr->XGI_IF_DEF_FSTN = enable ? 1 : 0;
 }
 
 /*********************************************/

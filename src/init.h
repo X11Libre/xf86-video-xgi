@@ -84,7 +84,6 @@
 /* Mode numbers */
 const USHORT  ModeIndex_320x200[]      = {0x59, 0x41, 0x00, 0x4f};
 const USHORT  ModeIndex_320x240[]      = {0x50, 0x56, 0x00, 0x53};
-const USHORT  ModeIndex_320x240_FSTN[] = {0x5a, 0x5b, 0x00, 0x00};  /* FSTN */
 const USHORT  ModeIndex_400x300[]      = {0x51, 0x57, 0x00, 0x54};
 const USHORT  ModeIndex_512x384[]      = {0x52, 0x58, 0x00, 0x5c};
 const USHORT  ModeIndex_640x400[]      = {0x2f, 0x5d, 0x00, 0x5e};
@@ -1745,15 +1744,10 @@ static const XGI_PlasmaTables XGI_PlasmaTable[] = {
    { 0x0000 }
 };
 
-USHORT  XGI_GetModeID(ULONG VBFlags, int HDisplay, int VDisplay,
-    int Depth, BOOLEAN FSTN, int LCDwith, int LCDheight);
-
 void	XGI_New_DisplayOn(XGI_Private *XGI_Pr);
 void	XGI_New_DisplayOff(XGI_Private *XGI_Pr);
 void	XGIRegInit(XGI_Private *XGI_Pr, XGIIOADDRESS BaseAddr);
 
-void	XGI_SetEnableDstn(XGI_Private *XGI_Pr, int enable);
-void	XGI_SetEnableFstn(XGI_Private *XGI_Pr, int enable);
 void	XGI_New_GetVBType(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo);
 USHORT	XGI_GetMCLK(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo);
 USHORT	XGI_New_GetColorDepth(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex);

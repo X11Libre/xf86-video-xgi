@@ -37,9 +37,3 @@ void XGILoadPalette(ScrnInfoPtr pScrn, int numColors, int *indices,
     LOCO *colors, VisualPtr pVisual);
 
 void XGICalcClock(ScrnInfoPtr pScrn, int clock, int max_VLD, unsigned *vclk);
-
-
-/* Functions from init.c
- */
-extern void XGI_SetEnableDstn(XGI_Private *XGI_Pr, int enable);
-extern void XGI_SetEnableFstn(XGI_Private *XGI_Pr, int enable);

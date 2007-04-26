@@ -217,8 +217,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->agpWantedPages = AGP_PAGES;
     pXGI->NoXvideo = FALSE;
     pXGI->maxxfbmem = 0;
-    pXGI->DSTN = FALSE;
-    pXGI->FSTN = FALSE;
     pXGI->PDC = -1;
     pXGI->PDCA = -1;
     pXGI->OptROMUsage = -1;

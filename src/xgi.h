@@ -554,7 +554,6 @@ typedef struct {
     int                 Chipset;
     int                 ChipRev;
     XGI_Private   *     XGI_Pr;         /* For new mode switching code */
-    int			DSTN; 		/* For 550 FSTN/DSTN; set by option, no detection */
     unsigned long       FbAddress;      /* VRAM physical address (in DHM: for each Fb!) */
     unsigned long       realFbAddress;  /* For DHM/PCI mem mapping: store global FBAddress */
     unsigned char *     FbBase;         /* VRAM virtual linear address */
@@ -794,7 +793,6 @@ typedef struct {
     int			AllowHotkey;
     BOOLEAN		enablexgictrl;
     short		Video_MaxWidth, Video_MaxHeight;
-    int			FSTN;
     BOOLEAN		AddedPlasmaModes;
     short               scrnPitch2;
     unsigned long	mmioSize;
@@ -907,9 +905,13 @@ Bool Volari_AccelInit(ScreenPtr pScreen) ;
 /* void XGI_EnableBridge(PXGI_HW_DEVICE_INFO,USHORT BaseAddr); */
 #endif
 
+extern USHORT XGI_GetModeID(ULONG VBFlags, int HDisplay, int VDisplay,
+    int Depth, int LCDwith, int LCDheight);
+
 extern BOOLEAN XGI_SearchModeID(const XGI_StStruct *SModeIDTable, 
     const XGI_ExtStruct *EModeIDTable, unsigned char VGAINFO,
     USHORT *ModeNo, USHORT *ModeIdIndex);
+
 extern UCHAR XGI_GetModePtr(const XGI_StStruct *SModeIDTable,
     unsigned ModeType, USHORT ModeNo, USHORT ModeIdIndex);
 

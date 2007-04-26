@@ -5590,8 +5590,6 @@ PDEBUG(ErrorF("VBFlags=0x%lx\n", pXGI->VBFlags));
     }
        CR79 &= ~0x10;     /* Enable Backlight control on 315 series */
 
-    XGI_SetEnableDstn(pXGI->XGI_Pr, FALSE);
-    XGI_SetEnableFstn(pXGI->XGI_Pr, FALSE);
 
     if((vbflag & CRT1_LCDA) && (viewmode == XGI_MODE_CRT1)) 
     {
@@ -5679,8 +5677,6 @@ PDEBUG(ErrorF("VBFlags=0x%lx\n", pXGI->VBFlags));
 
        case CRT2_LCD:
           CR30 |= 0x20;
-      XGI_SetEnableDstn(pXGI->XGI_Pr, pXGI->DSTN);
-      XGI_SetEnableFstn(pXGI->XGI_Pr, pXGI->FSTN);
           break;
 
        case CRT2_VGA:
@@ -5946,7 +5942,7 @@ XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode, unsigned long VBFlags,
    }
 
    return XGI_GetModeID(VBFlags, mode->HDisplay, mode->VDisplay,
-                        i, pXGI->FSTN, pXGI->LCDwidth, pXGI->LCDheight);
+                        i, pXGI->LCDwidth, pXGI->LCDheight);
 }
 
 /* Calculate the vertical refresh rate from a mode */
