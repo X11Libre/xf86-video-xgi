@@ -173,7 +173,6 @@ USHORT	XGI_New_GetColorDepth(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIn
 USHORT	XGI_New_GetOffset(XGI_Private *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
               USHORT RefreshRateTableIndex,PXGI_HW_DEVICE_INFO HwInfo);
 void	XGI_New_LoadDAC(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, USHORT ModeNo, USHORT ModeIdIndex);
-void	XGI_CalcLCDACRT1Timing(XGI_Private *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex);
 #ifdef LINUX_XF86
 BOOLEAN	XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,ScrnInfoPtr pScrn,USHORT ModeNo, BOOLEAN dosetpitch);
 BOOLEAN	XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr pScrn,
