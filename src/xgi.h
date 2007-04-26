@@ -239,23 +239,6 @@
 #define VGA2_CONNECTED          0x00040000
 #define DISPTYPE_CRT1		0x00080000  	/* CRT1 connected and used */
 
-#if 0  //yilin : we shoud change to store in vbtype not vbflag and use 301 defintion in initdef.h
-#define VB_301                  0x00100000	/* Video bridge type */
-#define VB_301B                 0x00200000
-#define VB_302B                 0x00400000
-#define VB_302                  0x00200000
-#define VB_303                  0x00400000
-#define VB_30xBDH		0x00800000      /* 30xB DH version (w/o LCD support) */
-#define VB_LVDS                 0x01000000
-#define VB_CHRONTEL             0x02000000
-#define VB_301LV                0x04000000
-#define VB_302LV                0x08000000
-#define VB_301C			0x10000000
-#define VB_XGIBRIDGE            (VB_301|VB_301B|VB_301C|VB_302B|VB_301LV|VB_302LV|VB_302ELV)
-#define VB_XGITVBRIDGE          (VB_301|VB_301B|VB_301C|VB_302B|VB_301LV|VB_302LV)
-#define VB_VIDEOBRIDGE		(VB_XGIBRIDGE | VB_LVDS | VB_CHRONTEL | VB_CONEXANT)
-#endif 
-
 #define SINGLE_MODE             0x20000000   	/* CRT1 or CRT2; determined by DISPTYPE_CRTx */
 #define MIRROR_MODE		0x40000000   	/* CRT1 + CRT2 identical (mirror mode) */
 #define DUALVIEW_MODE		0x80000000   	/* CRT1 + CRT2 independent (dual head mode) */
@@ -284,30 +267,6 @@
 #define VB_DISPMODE_MIRROR	MIRROR_MODE  	/* alias */
 #define VB_DISPMODE_DUAL	DUALVIEW_MODE 	/* alias */
 #define DISPLAY_MODE            (SINGLE_MODE | MIRROR_MODE | DUALVIEW_MODE)
-
-/* pXGI->VBLCDFlags */
-#define VB_LCD_320x480		0x00000001	/* DSTN/FSTN for 550 */
-#define VB_LCD_640x480          0x00000002
-#define VB_LCD_800x600          0x00000004
-#define VB_LCD_1024x768         0x00000008
-#define VB_LCD_1280x1024        0x00000010
-#define VB_LCD_1280x960    	0x00000020
-#define VB_LCD_1600x1200	0x00000040
-#define VB_LCD_2048x1536	0x00000080
-#define VB_LCD_1400x1050        0x00000100
-#define VB_LCD_1152x864         0x00000200
-#define VB_LCD_1152x768         0x00000400
-#define VB_LCD_1280x768         0x00000800
-#define VB_LCD_1024x600         0x00001000
-#define VB_LCD_640x480_2	0x00002000  	/* DSTN/FSTN */
-#define VB_LCD_640x480_3	0x00004000  	/* DSTN/FSTN */
-#define VB_LCD_848x480		0x00008000	/* LVDS only, otherwise handled as custom */
-#define VB_LCD_1280x800		0x00010000
-#define VB_LCD_1680x1050	0x00020000
-#define VB_LCD_1280x720         0x00040000
-#define VB_LCD_BARCO1366        0x20000000
-#define VB_LCD_CUSTOM  		0x40000000
-#define VB_LCD_EXPANDING	0x80000000
 
 /* PresetMode argument */
 #define XGI_MODE_SIMU 		0
@@ -590,7 +549,6 @@ typedef struct {
     unsigned char       myCR63;
     unsigned long   	VBFlags;		/* Video bridge configuration */
     unsigned long       VBFlags_backup;         /* Backup for SlaveMode-modes */
-    unsigned long	VBLCDFlags;             /* Moved LCD panel size bits here */
     
     /**
      * CHRONTEL_700x or CHRONTEL_701x
