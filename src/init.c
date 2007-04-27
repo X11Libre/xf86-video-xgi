@@ -69,11 +69,6 @@
 #include "vb_def.h"
 #include "vb_setmode.h"
 
-#if defined(ALLOC_PRAGMA)
-#pragma alloc_text(PAGE,XGISetMode)
-#endif
-
-
 /*********************************************/
 /*            HELPER: Get ModeID             */
 /*********************************************/
@@ -1103,23 +1098,6 @@ XGI_New_SetCRT1Group(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 }
 
 
-
-/*********************************************/
-/*         HELPER: RESET VIDEO BRIDGE        */
-/*********************************************/
-
-static void
-XGI_ResetVB(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
-{
-    if (XGI_Pr->XGI_UseROM) {
-	UCHAR *const ROMAddr = HwInfo->pjVirtualRomBase;
-	const USHORT temp = 0x40 | (XGI_Pr->XGI_ROMNew)
-	    ? ROMAddr[0x80] : ROMAddr[0x7e];
-
-	XGI_SetReg(XGI_Pr->XGI_Part1Port, 0x02, temp);
-    }
-}
-
 /*********************************************/
 /*         XFree86: SET SCREEN PITCH         */
 /*********************************************/
@@ -1148,102 +1126,6 @@ XGI_SetPitch(XGI_Private *XGI_Pr, ScrnInfoPtr pScrn)
    }
 }
 #endif
-
-/*********************************************/
-/*                 XGISetMode()              */
-/*********************************************/
-
-#ifdef LINUX_XF86
-/* We need pScrn for setting the pitch correctly */
-BOOLEAN
-XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,ScrnInfoPtr pScrn,USHORT ModeNo, BOOLEAN dosetpitch)
-#else
-BOOLEAN
-XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,USHORT ModeNo)
-#endif
-{
-   USHORT  ModeIdIndex;
-   XGIIOADDRESS BaseAddr = HwInfo->pjIOAddress;
-   unsigned char backupreg=0;
-#ifndef LINUX_XF86
-   USHORT  KeepLockReg;
-   ULONG   temp;
-#endif
-
-   XGIRegInit(XGI_Pr, BaseAddr);
-
-#if defined(LINUX_XF86) && (defined(i386) || defined(__i386) || defined(__i386__) || defined(__AMD64__))
-   if(pScrn) XGI_Pr->XGI_VGAINFO = XGI_GetSetBIOSScratch(pScrn, 0x489, 0xff);
-   else
-#endif
-         XGI_Pr->XGI_VGAINFO = 0x11;
-
-   XGIInitPCIetc(XGI_Pr, HwInfo);
-
-   ModeNo &= 0x7f;
-
-#ifndef LINUX_XF86
-   KeepLockReg = XGI_GetReg(XGI_Pr->XGI_P3c4,0x05);
-#endif
-   XGI_SetReg(XGI_Pr->XGI_P3c4,0x05,0x86);
-
-   if (!XGI_SearchModeID(XGI_Pr->XGI_SModeIDTable,
-			 XGI_Pr->XGI_EModeIDTable,
-			 XGI_Pr->XGI_VGAINFO, &ModeNo, &ModeIdIndex)) {
-       return FALSE;
-   }
-
-   XGI_New_GetVBType(XGI_Pr, HwInfo);
-
-   /* Init/restore some VB registers */
-
-    if(XGI_Pr->XGI_VBType & VB_XGI301BLV302BLV) {
-	XGI_ResetVB(XGI_Pr, HwInfo);
-	XGI_SetRegOR(XGI_Pr->XGI_P3c4,0x32,0x10);
-	XGI_SetRegOR(XGI_Pr->XGI_Part2Port,0x00,0x0c);
-	backupreg = XGI_GetReg(XGI_Pr->XGI_P3d4,0x38);
-    }
-
-   /* Get VB information (connectors, connected devices) */
-   XGI_SetLowModeTest(XGI_Pr, ModeNo, HwInfo);
-
-#ifndef LINUX_XF86
-   /* 3. Check memory size (Kernel framebuffer driver only) */
-   temp = XGI_CheckMemorySize(XGI_Pr, HwInfo, ModeNo, ModeIdIndex);
-   if(!temp) return(0);
-#endif
-
-
-   /* Set mode on CRT1 */
-   if( (XGI_Pr->XGI_VBInfo & (SetSimuScanMode | SetCRT2ToLCDA)) ||
-       (!(XGI_Pr->XGI_VBInfo & SwitchToCRT2)) ) {
-      XGI_New_SetCRT1Group(XGI_Pr, HwInfo, ModeNo, ModeIdIndex);
-   }
-
-   XGI_HandleCRT1(XGI_Pr);
-
-   XGI_New_DisplayOn(XGI_Pr);
-   XGI_SetRegByte(XGI_Pr->XGI_P3c6,0xFF);
-
-#ifdef LINUX_XF86
-   if(pScrn) {
-      /* SetPitch: Adapt to virtual size & position */
-      if((ModeNo > 0x13) && (dosetpitch)) {
-         XGI_SetPitch(XGI_Pr, pScrn);
-      }
-
-      /* Backup/Set ModeNo in BIOS scratch area */
-      XGI_GetSetModeID(pScrn, ModeNo);
-   }
-#endif
-
-#ifndef LINUX_XF86  /* We never lock registers in XF86 */
-   if(KeepLockReg == 0xA1) XGI_SetReg(XGI_Pr->XGI_P3c4,0x05,0x86);
-   else XGI_SetReg(XGI_Pr->XGI_P3c4,0x05,0x00);
-#endif
-
-   return TRUE;
-}
 
 /*********************************************/
 /*          XFree86: XGIBIOSSetMode()        */
