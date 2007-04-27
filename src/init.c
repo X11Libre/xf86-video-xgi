@@ -1166,12 +1166,6 @@ XGI_New_SetCRT1Group(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
   XGI_New_SetCRT1ModeRegs(XGI_Pr, HwInfo, ModeNo, ModeIdIndex, RefreshRateTableIndex);
 
   XGI_New_LoadDAC(XGI_Pr, HwInfo, ModeNo, ModeIdIndex);
-
-#ifndef LINUX_XF86
-  if(XGI_Pr->XGI_flag_clearbuffer) {
-     XGI_ClearBuffer(XGI_Pr,HwInfo,ModeNo);
-  }
-#endif
 }
 
 
@@ -1259,12 +1253,7 @@ XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,USHORT ModeNo)
 
    XGIInitPCIetc(XGI_Pr, HwInfo);
 
-   XGI_Pr->XGI_flag_clearbuffer = 0;
-
    if(!XGI_Pr->UseCustomMode) {
-#ifndef LINUX_XF86
-      if(!(ModeNo & 0x80)) XGI_Pr->XGI_flag_clearbuffer = 1;
-#endif
       ModeNo &= 0x7f;
    }
 
@@ -1506,9 +1495,6 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr 
    XGI_Pr->XGI_VGAINFO = 0x11;
 #endif
    XGIInitPCIetc(XGI_Pr, HwInfo);
-
-   /* We don't clear the buffer under X */
-   XGI_Pr->XGI_flag_clearbuffer = 0;
 
    XGI_SetReg(XGI_Pr->XGI_P3c4,0x05,0x86);
 

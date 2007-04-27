@@ -125,7 +125,6 @@ typedef struct _XGI_Private
 	BOOLEAN OverruleEMI;
 	SHORT  PDC, PDCA;
 	USHORT XGI_CRT1Mode;
-	USHORT XGI_flag_clearbuffer;
 	int    XGI_RAMType;
 	UCHAR  XGI_ChannelAB;
 	UCHAR  XGI_DataBusWidth;
