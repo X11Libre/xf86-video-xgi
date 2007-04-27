@@ -1206,6 +1206,19 @@ XGI_SetPitchCRT1(XGI_Private *XGI_Pr, ScrnInfoPtr pScrn)
    XGI_SetReg(XGI_Pr->XGI_P3d4,0x13,(HDisplay & 0xFF));
    XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x0E,0xF0,(HDisplay>>8));
 }
+
+
+static void
+XGI_SetPitch(XGI_Private *XGI_Pr, ScrnInfoPtr pScrn)
+{
+   XGIPtr pXGI = XGIPTR(pScrn);
+   BOOLEAN isslavemode = FALSE;
+
+   /* We need to set pitch for CRT1 if bridge is in slave mode, too */
+   if((pXGI->VBFlags & DISPTYPE_DISP1) || (isslavemode)) {
+      XGI_SetPitchCRT1(XGI_Pr, pScrn);
+   }
+}
 #endif
 
 /*********************************************/
