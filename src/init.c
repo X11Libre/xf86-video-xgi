@@ -1339,7 +1339,8 @@ XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,USHORT ModeNo)
 
 #ifdef LINUX_XF86
 BOOLEAN
-XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr pScrn, DisplayModePtr mode, BOOLEAN IsCustom, BOOLEAN dosetpitch)
+XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
+	       ScrnInfoPtr pScrn, DisplayModePtr mode, BOOLEAN dosetpitch)
 {
     XGIPtr  pXGI = XGIPTR(pScrn);
     UShort  ModeNo=0;
@@ -1350,21 +1351,6 @@ XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr pScr
 #endif
     
     XGI_Pr->UseCustomMode = FALSE;
-    
-    if((IsCustom) && (XGI_CheckBuildCustomMode(pScrn, mode, pXGI->VBFlags)))
-    {
-    
-        xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3, "Setting custom mode %dx%d\n",
-            XGI_Pr->CHDisplay,
-            (mode->Flags & V_INTERLACE ? XGI_Pr->CVDisplay * 2 :
-            (mode->Flags & V_DBLSCAN ? XGI_Pr->CVDisplay / 2 :
-            XGI_Pr->CVDisplay)));
-        
-        return(XGISetMode(XGI_Pr, HwInfo, pScrn, ModeNo, TRUE));
-        
-        return(XGISetModeNew( HwInfo, ModeNo));
-        
-    }
     
     ModeNo = XGI_CalcModeIndex(pScrn, mode, pXGI->VBFlags);
     if(!ModeNo) return FALSE;
@@ -1452,8 +1438,8 @@ XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr pScr
 /*********************************************/
 
 BOOLEAN
-XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr pScrn,
-                   DisplayModePtr mode, BOOLEAN IsCustom)
+XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
+		   ScrnInfoPtr pScrn, DisplayModePtr mode)
 {
    XGIPtr  pXGI = XGIPTR(pScrn);
    XGIIOADDRESS BaseAddr = HwInfo->pjIOAddress;
@@ -1467,19 +1453,7 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr 
 
    XGI_Pr->UseCustomMode = FALSE;
 
-   if((IsCustom) && (XGI_CheckBuildCustomMode(pScrn, mode, pXGI->VBFlags))) {
-
-         USHORT temptemp = XGI_Pr->CVDisplay;
-
-         if(XGI_Pr->CModeFlag & DoubleScanMode)     temptemp >>= 1;
-         else if(XGI_Pr->CInfoFlag & InterlaceMode) temptemp <<= 1;
-
-         xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
-	 	"Setting custom mode %dx%d on CRT1\n",
-	 	XGI_Pr->CHDisplay, temptemp);
-	 ModeNo = 0xfe;
-
-   } else {
+   {
 
          ModeNo = XGI_CalcModeIndex(pScrn, mode, pXGI->VBFlags);
          if(!ModeNo) return FALSE;

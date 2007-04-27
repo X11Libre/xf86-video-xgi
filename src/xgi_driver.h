@@ -730,11 +730,12 @@ static void    XGIDumpModeInfo(ScrnInfoPtr pScrn, DisplayModePtr mode);
 #endif
 
 extern BOOLEAN 	XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwDeviceExtension,
-                               ScrnInfoPtr pScrn, DisplayModePtr mode, BOOLEAN IsCustom, BOOLEAN dosetpitch);
+                               ScrnInfoPtr pScrn, DisplayModePtr mode, BOOLEAN dosetpitch);
 extern BOOLEAN  XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwDeviceExtension,
                            ScrnInfoPtr pScrn,USHORT ModeNo, BOOLEAN dosetpitch);
 extern void	XGIRegInit(XGI_Private *XGI_Pr, USHORT BaseAddr);
 extern void     XGI_New_GetVBType(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO);
 
-extern BOOLEAN 	XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwDeviceExtension,
-				   ScrnInfoPtr pScrn, DisplayModePtr mode, BOOLEAN IsCustom);
+extern BOOLEAN 	XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr,
+    PXGI_HW_DEVICE_INFO HwDeviceExtension, ScrnInfoPtr pScrn,
+    DisplayModePtr mode);

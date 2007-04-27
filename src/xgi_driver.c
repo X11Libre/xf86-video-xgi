@@ -3945,7 +3945,7 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 	/* Head 2 (slave) is always CRT1 */
 	XGIPreSetMode(pScrn, mode, XGI_MODE_CRT1);
 	if (!XGIBIOSSetModeCRT1(pXGI->XGI_Pr, &pXGI->xgi_HwDevExt, pScrn, 
-				mode, pXGI->IsCustom)) {
+				mode)) {
 	    XGIErrorLog(pScrn, "XGIBIOSSetModeCRT1() failed\n");
 	    return FALSE;
 	}
@@ -4009,7 +4009,7 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
         PDEBUG(ErrorF(" *** Start SetMode() \n"));
 
         if (!XGIBIOSSetMode(pXGI->XGI_Pr, &pXGI->xgi_HwDevExt, pScrn,
-                            mode, pXGI->IsCustom, TRUE)) {
+                            mode, TRUE)) {
             XGIErrorLog(pScrn, "XGIBIOSSetModeCRT() failed\n");
             return FALSE;
         }
@@ -5256,10 +5256,6 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
 
     vbflag = pXGI->VBFlags;
     PDEBUG(ErrorF("VBFlags=0x%lx\n", pXGI->VBFlags));
-    pXGI->IsCustom = FALSE;
-#ifdef XGIMERGED
-    pXGI->IsCustomCRT2 = FALSE;
-#endif
 
 #ifdef UNLOCK_ALWAYS
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);     /* Unlock Registers */
@@ -5415,8 +5411,7 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
 
     CR31 |= 0x40;               /* Set Drivermode */
     CR31 &= ~0x06;              /* Disable SlaveMode, disable SimuMode in SlaveMode */
-    crt1rateindex = (!pXGI->IsCustom)
-        ? XGISearchCRT1Rate(pScrn, mymode) : CR33;
+    crt1rateindex = XGISearchCRT1Rate(pScrn, mymode);
 
 #ifdef XGIDUALHEAD
     if (pXGI->DualHeadMode) {
@@ -5444,9 +5439,7 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
             CR33 |= (crt1rateindex & 0x0f);
         }
         if (vbflag & CRT2_VGA) {
-            if (!pXGI->IsCustomCRT2) {
-                CR33 |= (XGISearchCRT1Rate(pScrn, mymode2) << 4);
-            }
+	    CR33 |= (XGISearchCRT1Rate(pScrn, mymode2) << 4);
         }
     }
     else

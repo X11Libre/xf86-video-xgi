@@ -705,7 +705,6 @@ typedef struct {
     unsigned long	ForceYPbPrType, ForceYPbPrAR;
     unsigned long       lockcalls;		/* Count unlock calls for debug */
 
-    BOOLEAN		IsCustom;
     Atom                xvBrightness, xvContrast, xvColorKey, xvHue, xvSaturation;
     Atom                xvAutopaintColorKey, xvSetDefaults, xvSwitchCRT;
     Atom		xvDisableGfx, xvDisableGfxLR, xvTVXPosition, xvTVYPosition;
@@ -752,7 +751,6 @@ typedef struct {
     int			CRT1frameX1;
     int			CRT1frameY1;
     Bool		CheckForCRT2;
-    Bool		IsCustomCRT2;
     int			MergedFBXDPI, MergedFBYDPI;
 #ifdef XGIXINERAMA
     Bool		UsexgiXinerama;
