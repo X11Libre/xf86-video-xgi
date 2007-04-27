@@ -194,31 +194,6 @@ typedef struct _XGI_Private
 	USHORT  PanelHRS,  PanelHRE;
   	USHORT 	PanelVRS,  PanelVRE;
 
-	BOOLEAN UseCustomMode;
-	BOOLEAN CRT1UsesCustomMode;
-	USHORT  CHDisplay;
-	USHORT  CHSyncStart;
-	USHORT  CHSyncEnd;
-	USHORT  CHTotal;
-	USHORT  CHBlankStart;
-	USHORT  CHBlankEnd;
-	USHORT  CVDisplay;
-	USHORT  CVSyncStart;
-	USHORT  CVSyncEnd;
-	USHORT  CVTotal;
-	USHORT  CVBlankStart;
-	USHORT  CVBlankEnd;
-	ULONG   CDClock;
-	ULONG   CFlags;
-	UCHAR   CCRT1CRTC[17];
-	UCHAR   CSR2B;
-	UCHAR   CSR2C;
-	USHORT  CSRClock;
-	USHORT  CSRClock_CRT1;
-	USHORT  CModeFlag;
-	USHORT  CModeFlag_CRT1;
-	USHORT  CInfoFlag;
-
 	int	LVDSHL;
 
 	BOOLEAN Backup;

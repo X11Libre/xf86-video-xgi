@@ -2566,7 +2566,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         pXGI->XGI_Pr->PanelSelfDetected = FALSE;
         pXGI->XGI_Pr->UsePanelScaler = -1;
         pXGI->XGI_Pr->CenterScreen = -1;
-        pXGI->XGI_Pr->CRT1UsesCustomMode = FALSE;
         pXGI->XGI_Pr->PDC = pXGI->XGI_Pr->PDCA = -1;
         pXGI->XGI_Pr->LVDSHL = -1;
         pXGI->XGI_Pr->HaveEMI = FALSE;

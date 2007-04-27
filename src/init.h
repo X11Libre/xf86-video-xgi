@@ -181,22 +181,11 @@ BOOLEAN	XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 
 BOOLEAN	XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
     ScrnInfoPtr pScrn, DisplayModePtr mode);
-
-USHORT 	XGI_CheckBuildCustomMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int VBFlags);
-
 #else
 BOOLEAN	XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,USHORT ModeNo);
 #endif
 
-extern USHORT    XGI_GetCH700x(XGI_Private *XGI_Pr, USHORT tempax);
-extern BOOLEAN   XGI_IsVAMode(XGI_Private *, PXGI_HW_DEVICE_INFO);
-extern BOOLEAN   XGI_IsDualEdge(XGI_Private *, PXGI_HW_DEVICE_INFO);
-
 #ifdef LINUX_XF86
-extern int      compute_vclk(int Clock, int *out_n, int *out_dn, int *out_div,
-	     	 		 int *out_sbit, int *out_scale);
-extern void 	XGICalcClock(ScrnInfoPtr pScrn, int clock, int max_VLD, unsigned int *vclk);
-
 extern unsigned char XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned char value);
 extern unsigned char XGI_GetSetModeID(ScrnInfoPtr pScrn, unsigned char id);
 extern USHORT XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode,

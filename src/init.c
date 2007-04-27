@@ -500,15 +500,10 @@ XGI_New_GetColorDepth(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex)
   SHORT  index;
   USHORT modeflag;
 
-  /* Do NOT check UseCustomMode, will skrew up FIFO */
-  if(ModeNo == 0xfe) {
-     modeflag = XGI_Pr->CModeFlag;
-  } else {
-     if(ModeNo <= 0x13)
-    	modeflag = XGI_Pr->XGI_SModeIDTable[ModeIdIndex].St_ModeFlag;
-     else
-    	modeflag = XGI_Pr->XGI_EModeIDTable[ModeIdIndex].Ext_ModeFlag;
-  }
+    if(ModeNo <= 0x13)
+        modeflag = XGI_Pr->XGI_SModeIDTable[ModeIdIndex].St_ModeFlag;
+    else
+        modeflag = XGI_Pr->XGI_EModeIDTable[ModeIdIndex].Ext_ModeFlag;
 
   index = (modeflag & ModeInfoFlag) - ModeEGA;
   if(index < 0) index = 0;
@@ -525,13 +520,8 @@ XGI_New_GetOffset(XGI_Private *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
 {
   USHORT xres, temp, colordepth, infoflag;
 
-  if(XGI_Pr->UseCustomMode) {
-     infoflag = XGI_Pr->CInfoFlag;
-     xres = XGI_Pr->CHDisplay;
-  } else {
-     infoflag = XGI_Pr->XGI_RefIndex[RefreshRateTableIndex].Ext_InfoFlag;
-     xres = XGI_Pr->XGI_RefIndex[RefreshRateTableIndex].XRes;
-  }
+  infoflag = XGI_Pr->XGI_RefIndex[RefreshRateTableIndex].Ext_InfoFlag;
+  xres = XGI_Pr->XGI_RefIndex[RefreshRateTableIndex].XRes;
 
   colordepth = XGI_New_GetColorDepth(XGI_Pr,ModeNo,ModeIdIndex);
 
@@ -719,12 +709,7 @@ XGI_SetCRT1Sync(XGI_Private *XGI_Pr, USHORT RefreshRateTableIndex)
 {
   USHORT sync;
 
-  if(XGI_Pr->UseCustomMode) {
-     sync = XGI_Pr->CInfoFlag >> 8;
-  } else {
-     sync = XGI_Pr->XGI_RefIndex[RefreshRateTableIndex].Ext_InfoFlag >> 8;
-  }
-
+  sync = XGI_Pr->XGI_RefIndex[RefreshRateTableIndex].Ext_InfoFlag >> 8;
   sync &= 0xC0;
   sync |= 0x2f;
   XGI_SetRegByte(XGI_Pr->XGI_P3c2,sync);
@@ -743,32 +728,6 @@ XGI_New_SetCRT1CRTC(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
   USHORT temp,i,j,modeflag;
 
   XGI_SetRegAND(XGI_Pr->XGI_P3d4,0x11,0x7f);		/* unlock cr0-7 */
-
-  if(XGI_Pr->UseCustomMode) {
-
-     modeflag = XGI_Pr->CModeFlag;
-
-     for(i=0,j=0;i<=7;i++,j++) {
-        XGI_SetReg(XGI_Pr->XGI_P3d4,j,XGI_Pr->CCRT1CRTC[i]);
-     }
-     for(j=0x10;i<=10;i++,j++) {
-        XGI_SetReg(XGI_Pr->XGI_P3d4,j,XGI_Pr->CCRT1CRTC[i]);
-     }
-     for(j=0x15;i<=12;i++,j++) {
-        XGI_SetReg(XGI_Pr->XGI_P3d4,j,XGI_Pr->CCRT1CRTC[i]);
-     }
-     for(j=0x0A;i<=15;i++,j++) {
-        XGI_SetReg(XGI_Pr->XGI_P3c4,j,XGI_Pr->CCRT1CRTC[i]);
-     }
-
-     temp = XGI_Pr->CCRT1CRTC[16] & 0xE0;
-     XGI_SetReg(XGI_Pr->XGI_P3c4,0x0E,temp);
-
-     temp = (XGI_Pr->CCRT1CRTC[16] & 0x01) << 5;
-     if(modeflag & DoubleScanMode) temp |= 0x80;
-     XGI_SetRegANDOR(XGI_Pr->XGI_P3d4,0x09,0x5F,temp);
-
-  } else {
 
      if(ModeNo <= 0x13) {
         modeflag = XGI_Pr->XGI_SModeIDTable[ModeIdIndex].St_ModeFlag;
@@ -798,8 +757,6 @@ XGI_New_SetCRT1CRTC(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
      if(modeflag & DoubleScanMode)  temp |= 0x80;
      XGI_SetRegANDOR(XGI_Pr->XGI_P3d4,0x09,0x5F,temp);
 
-  }
-
   if(XGI_Pr->XGI_ModeType > ModeVGA) XGI_SetReg(XGI_Pr->XGI_P3d4,0x14,0x4F);
 }
 
@@ -816,11 +773,7 @@ XGI_New_SetCRT1Offset(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
 {
    USHORT temp, DisplayUnit, infoflag;
 
-   if(XGI_Pr->UseCustomMode) {
-      infoflag = XGI_Pr->CInfoFlag;
-   } else {
-      infoflag = XGI_Pr->XGI_RefIndex[RefreshRateTableIndex].Ext_InfoFlag;
-   }
+   infoflag = XGI_Pr->XGI_RefIndex[RefreshRateTableIndex].Ext_InfoFlag;
 
    DisplayUnit = XGI_New_GetOffset(XGI_Pr,ModeNo,ModeIdIndex,
                      	       RefreshRateTableIndex,HwInfo);
@@ -850,10 +803,6 @@ XGI_New_SetCRT1VCLK(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
 {
   USHORT  index=0, clka, clkb;
 
-  if(XGI_Pr->UseCustomMode) {
-     clka = XGI_Pr->CSR2B;
-     clkb = XGI_Pr->CSR2C;
-  } else {
      if((XGI_Pr->XGI_VBType & VB_XGI301BLV302BLV) && (XGI_Pr->XGI_VBInfo & SetCRT2ToLCDA)) {
         clka = XGI_Pr->XGI_VBVCLKData[index].Part4_A;
 	clkb = XGI_Pr->XGI_VBVCLKData[index].Part4_B;
@@ -861,7 +810,6 @@ XGI_New_SetCRT1VCLK(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
         clka = XGI_Pr->XGI_VCLKData[index].SR2B;
 	clkb = XGI_Pr->XGI_VCLKData[index].SR2C;
      }
-  }
 
     XGI_SetRegAND(XGI_Pr->XGI_P3c4,0x31,0xCF);
     XGI_SetReg(XGI_Pr->XGI_P3c4,0x2B,clka);
@@ -881,11 +829,7 @@ XGI_New_SetVCLKState(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
   USHORT data=0, VCLK=0, index=0;
 
   if(ModeNo > 0x13) {
-     if(XGI_Pr->UseCustomMode) {
-        VCLK = XGI_Pr->CSRClock;
-     } else {
         VCLK = XGI_Pr->XGI_VCLKData[index].CLOCK;
-     }
   }
 
     if(VCLK >= 166)
@@ -908,11 +852,6 @@ XGI_New_SetCRT1ModeRegs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
   USHORT data,infoflag=0,modeflag;
   USHORT resindex = 0,xres;
 
-  if(XGI_Pr->UseCustomMode) {
-     modeflag = XGI_Pr->CModeFlag;
-     infoflag = XGI_Pr->CInfoFlag;
-     xres = XGI_Pr->CHDisplay;
-  } else {
      if(ModeNo > 0x13) {
     	modeflag = XGI_Pr->XGI_EModeIDTable[ModeIdIndex].Ext_ModeFlag;
     	infoflag = XGI_Pr->XGI_RefIndex[RefreshRateTableIndex].Ext_InfoFlag;
@@ -921,7 +860,6 @@ XGI_New_SetCRT1ModeRegs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
     	modeflag = XGI_Pr->XGI_SModeIDTable[ModeIdIndex].St_ModeFlag;
 	xres = XGI_Pr->XGI_StResInfo[resindex].HTotal;
      }
-  }
 
   /* Disable DPMS */
   XGI_SetRegAND(XGI_Pr->XGI_P3c4,0x1F,0x3F);
@@ -1023,11 +961,7 @@ XGI_New_LoadDAC(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
    if(ModeNo <= 0x13) {
       data = XGI_Pr->XGI_SModeIDTable[ModeIdIndex].St_ModeFlag;
    } else {
-      if(XGI_Pr->UseCustomMode) {
-	 data = XGI_Pr->CModeFlag;
-      } else {
-         data = XGI_Pr->XGI_EModeIDTable[ModeIdIndex].Ext_ModeFlag;
-      }
+      data = XGI_Pr->XGI_EModeIDTable[ModeIdIndex].Ext_ModeFlag;
    }
 
    data &= DACInfoFlag;
@@ -1234,14 +1168,7 @@ XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,USHORT ModeNo)
 #ifndef LINUX_XF86
    USHORT  KeepLockReg;
    ULONG   temp;
-
-   XGI_Pr->UseCustomMode = FALSE;
-   XGI_Pr->CRT1UsesCustomMode = FALSE;
 #endif
-
-   if(XGI_Pr->UseCustomMode) {
-      ModeNo = 0xfe;
-   }
 
    XGIRegInit(XGI_Pr, BaseAddr);
 
@@ -1253,25 +1180,18 @@ XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,USHORT ModeNo)
 
    XGIInitPCIetc(XGI_Pr, HwInfo);
 
-   if(!XGI_Pr->UseCustomMode) {
-      ModeNo &= 0x7f;
-   }
+   ModeNo &= 0x7f;
 
 #ifndef LINUX_XF86
    KeepLockReg = XGI_GetReg(XGI_Pr->XGI_P3c4,0x05);
 #endif
    XGI_SetReg(XGI_Pr->XGI_P3c4,0x05,0x86);
 
-    if (!XGI_Pr->UseCustomMode) {
-	if (!XGI_SearchModeID(XGI_Pr->XGI_SModeIDTable,
-			      XGI_Pr->XGI_EModeIDTable,
-			      XGI_Pr->XGI_VGAINFO, &ModeNo, &ModeIdIndex)) {
-	    return FALSE;
-	}
-    }
-    else {
-	ModeIdIndex = 0;
-    }
+   if (!XGI_SearchModeID(XGI_Pr->XGI_SModeIDTable,
+			 XGI_Pr->XGI_EModeIDTable,
+			 XGI_Pr->XGI_VGAINFO, &ModeNo, &ModeIdIndex)) {
+       return FALSE;
+   }
 
    XGI_New_GetVBType(XGI_Pr, HwInfo);
 
@@ -1293,13 +1213,6 @@ XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,USHORT ModeNo)
    if(!temp) return(0);
 #endif
 
-   if(XGI_Pr->UseCustomMode) {
-      XGI_Pr->CRT1UsesCustomMode = TRUE;
-      XGI_Pr->CSRClock_CRT1 = XGI_Pr->CSRClock;
-      XGI_Pr->CModeFlag_CRT1 = XGI_Pr->CModeFlag;
-   } else {
-      XGI_Pr->CRT1UsesCustomMode = FALSE;
-   }
 
    /* Set mode on CRT1 */
    if( (XGI_Pr->XGI_VBInfo & (SetSimuScanMode | SetCRT2ToLCDA)) ||
@@ -1349,8 +1262,6 @@ XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 #if XGI_USING_BIOS_SETMODE
     xf86Int10InfoPtr pInt = NULL ; /* Our int10 */
 #endif
-    
-    XGI_Pr->UseCustomMode = FALSE;
     
     ModeNo = XGI_CalcModeIndex(pScrn, mode, pXGI->VBFlags);
     if(!ModeNo) return FALSE;
@@ -1448,10 +1359,7 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 #ifdef XGIDUALHEAD
    XGIEntPtr pXGIEnt = pXGI->entityPrivate;
    UCHAR backupcr30, backupcr31, backupcr38, backupcr35, backupp40d=0;
-   BOOLEAN backupcustom;
 #endif
-
-   XGI_Pr->UseCustomMode = FALSE;
 
    {
 
@@ -1472,16 +1380,11 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 
    XGI_SetReg(XGI_Pr->XGI_P3c4,0x05,0x86);
 
-    if (!XGI_Pr->UseCustomMode) {
-	if (!XGI_SearchModeID(XGI_Pr->XGI_SModeIDTable,
-			      XGI_Pr->XGI_EModeIDTable,
-			      XGI_Pr->XGI_VGAINFO, &ModeNo, &ModeIdIndex)) {
-	    return FALSE;
-	}
-    }
-    else {
-	ModeIdIndex = 0;
-    }
+   if (!XGI_SearchModeID(XGI_Pr->XGI_SModeIDTable,
+			 XGI_Pr->XGI_EModeIDTable,
+			 XGI_Pr->XGI_VGAINFO, &ModeNo, &ModeIdIndex)) {
+       return FALSE;
+   }
 
    /* Determine VBType */
    XGI_New_GetVBType(XGI_Pr, HwInfo);
@@ -1506,13 +1409,6 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
    }
 #endif
 
-   if(XGI_Pr->UseCustomMode) {
-      XGI_Pr->CRT1UsesCustomMode = TRUE;
-      XGI_Pr->CSRClock_CRT1 = XGI_Pr->CSRClock;
-      XGI_Pr->CModeFlag_CRT1 = XGI_Pr->CModeFlag;
-   } else {
-      XGI_Pr->CRT1UsesCustomMode = FALSE;
-   }
 
    /* Reset CRT2 if changing mode on CRT1 */
 #ifdef XGIDUALHEAD
@@ -1520,7 +1416,6 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
       if(pXGIEnt->CRT2ModeNo != -1) {
          xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
 				"(Re-)Setting mode for CRT2\n");
-	 backupcustom = XGI_Pr->UseCustomMode;
 	 backupcr30 = XGI_GetReg(XGI_Pr->XGI_P3d4,0x30);
 	 backupcr31 = XGI_GetReg(XGI_Pr->XGI_P3d4,0x31);
 	 backupcr35 = XGI_GetReg(XGI_Pr->XGI_P3d4,0x35);
@@ -1545,7 +1440,6 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 	 if(XGI_Pr->XGI_VBType & VB_XGIVB) {
 	    XGI_SetRegANDOR(XGI_Pr->XGI_Part4Port,0x0d, ~0x08, backupp40d);
 	 }
-	 XGI_Pr->UseCustomMode = backupcustom;
       }
    }
 #endif
@@ -1565,208 +1459,3 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
    return TRUE;
 }
 #endif /* Linux_XF86 */
-
-#ifndef GETBITSTR
-#define BITMASK(h,l)    	(((unsigned)(1U << ((h)-(l)+1))-1)<<(l))
-#define GENMASK(mask)   	BITMASK(1?mask,0?mask)
-#define GETBITS(var,mask)   	(((var) & GENMASK(mask)) >> (0?mask))
-#define GETBITSTR(val,from,to)  ((GETBITS(val,from)) << (0?to))
-#endif
-
-static void
-XGI_CalcCRRegisters(XGI_Private *XGI_Pr, int depth)
-{
-   XGI_Pr->CCRT1CRTC[0]  =  ((XGI_Pr->CHTotal >> 3) - 5) & 0xff;		/* CR0 */
-   XGI_Pr->CCRT1CRTC[1]  =  (XGI_Pr->CHDisplay >> 3) - 1;			/* CR1 */
-   XGI_Pr->CCRT1CRTC[2]  =  (XGI_Pr->CHBlankStart >> 3) - 1;			/* CR2 */
-   XGI_Pr->CCRT1CRTC[3]  =  (((XGI_Pr->CHBlankEnd >> 3) - 1) & 0x1F) | 0x80;	/* CR3 */
-   XGI_Pr->CCRT1CRTC[4]  =  (XGI_Pr->CHSyncStart >> 3) + 3;			/* CR4 */
-   XGI_Pr->CCRT1CRTC[5]  =  ((((XGI_Pr->CHBlankEnd >> 3) - 1) & 0x20) << 2) |	/* CR5 */
-       			    (((XGI_Pr->CHSyncEnd >> 3) + 3) & 0x1F);
-
-   XGI_Pr->CCRT1CRTC[6]  =  (XGI_Pr->CVTotal - 2) & 0xFF;			/* CR6 */
-   XGI_Pr->CCRT1CRTC[7]  =  (((XGI_Pr->CVTotal - 2) & 0x100) >> 8)		/* CR7 */
- 	 		  | (((XGI_Pr->CVDisplay - 1) & 0x100) >> 7)
-	 		  | ((XGI_Pr->CVSyncStart & 0x100) >> 6)
-	 	  	  | (((XGI_Pr->CVBlankStart - 1) & 0x100) >> 5)
-			  | 0x10
-	 		  | (((XGI_Pr->CVTotal - 2) & 0x200)   >> 4)
-	 		  | (((XGI_Pr->CVDisplay - 1) & 0x200) >> 3)
-	 		  | ((XGI_Pr->CVSyncStart & 0x200) >> 2);
-
-   XGI_Pr->CCRT1CRTC[16] = ((((XGI_Pr->CVBlankStart - 1) & 0x200) >> 4) >> 5); 	/* CR9 */
-
-   if(depth != 8) {
-      if(XGI_Pr->CHDisplay >= 1600)      XGI_Pr->CCRT1CRTC[16] |= 0x60;		/* SRE */
-      else if(XGI_Pr->CHDisplay >= 640)  XGI_Pr->CCRT1CRTC[16] |= 0x40;
-   }
-
-   XGI_Pr->CCRT1CRTC[8] =  (XGI_Pr->CVSyncStart     ) & 0xFF;			/* CR10 */
-   XGI_Pr->CCRT1CRTC[9] =  ((XGI_Pr->CVSyncEnd      ) & 0x0F) | 0x80;		/* CR11 */
-   XGI_Pr->CCRT1CRTC[10] = (XGI_Pr->CVDisplay    - 1) & 0xFF;			/* CR12 */
-   XGI_Pr->CCRT1CRTC[11] = (XGI_Pr->CVBlankStart - 1) & 0xFF;			/* CR15 */
-   XGI_Pr->CCRT1CRTC[12] = (XGI_Pr->CVBlankEnd   - 1) & 0xFF;			/* CR16 */
-
-   XGI_Pr->CCRT1CRTC[13] =							/* SRA */
-                        GETBITSTR((XGI_Pr->CVTotal     -2), 10:10, 0:0) |
-                        GETBITSTR((XGI_Pr->CVDisplay   -1), 10:10, 1:1) |
-                        GETBITSTR((XGI_Pr->CVBlankStart-1), 10:10, 2:2) |
-                        GETBITSTR((XGI_Pr->CVSyncStart   ), 10:10, 3:3) |
-                        GETBITSTR((XGI_Pr->CVBlankEnd  -1),   8:8, 4:4) |
-                        GETBITSTR((XGI_Pr->CVSyncEnd     ),   4:4, 5:5) ;
-
-   XGI_Pr->CCRT1CRTC[14] =							/* SRB */
-                        GETBITSTR((XGI_Pr->CHTotal      >> 3) - 5, 9:8, 1:0) |
-                        GETBITSTR((XGI_Pr->CHDisplay    >> 3) - 1, 9:8, 3:2) |
-                        GETBITSTR((XGI_Pr->CHBlankStart >> 3) - 1, 9:8, 5:4) |
-                        GETBITSTR((XGI_Pr->CHSyncStart  >> 3) + 3, 9:8, 7:6) ;
-
-
-   XGI_Pr->CCRT1CRTC[15] =							/* SRC */
-                        GETBITSTR((XGI_Pr->CHBlankEnd >> 3) - 1, 7:6, 1:0) |
-                        GETBITSTR((XGI_Pr->CHSyncEnd  >> 3) + 3, 5:5, 2:2) ;
-}
-
-/* ================ XFREE86 ================= */
-
-/* Helper functions */
-
-#ifdef LINUX_XF86
-
-USHORT
-XGI_CheckBuildCustomMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int VBFlags)
-{
-   XGIPtr pXGI = XGIPTR(pScrn);
-   int    out_n, out_dn, out_div, out_sbit, out_scale;
-   int    depth = pXGI->CurrentLayout.bitsPerPixel;
-   unsigned int vclk[5];
-
-#define Midx         0
-#define Nidx         1
-#define VLDidx       2
-#define Pidx         3
-#define PSNidx       4
-
-   pXGI->XGI_Pr->CModeFlag = 0;
-
-   pXGI->XGI_Pr->CDClock = mode->Clock;
-
-   pXGI->XGI_Pr->CHDisplay = mode->HDisplay;
-   pXGI->XGI_Pr->CHSyncStart = mode->HSyncStart;
-   pXGI->XGI_Pr->CHSyncEnd = mode->HSyncEnd;
-   pXGI->XGI_Pr->CHTotal = mode->HTotal;
-
-   pXGI->XGI_Pr->CVDisplay = mode->VDisplay;
-   pXGI->XGI_Pr->CVSyncStart = mode->VSyncStart;
-   pXGI->XGI_Pr->CVSyncEnd = mode->VSyncEnd;
-   pXGI->XGI_Pr->CVTotal = mode->VTotal;
-
-   pXGI->XGI_Pr->CFlags = mode->Flags;
-
-   if(pXGI->XGI_Pr->CFlags & V_INTERLACE) {
-      pXGI->XGI_Pr->CVDisplay >>= 1;
-      pXGI->XGI_Pr->CVSyncStart >>= 1;
-      pXGI->XGI_Pr->CVSyncEnd >>= 1;
-      pXGI->XGI_Pr->CVTotal >>= 1;
-   }
-   if(pXGI->XGI_Pr->CFlags & V_DBLSCAN) {
-      /* pXGI->XGI_Pr->CDClock <<= 1; */
-      pXGI->XGI_Pr->CVDisplay <<= 1;
-      pXGI->XGI_Pr->CVSyncStart <<= 1;
-      pXGI->XGI_Pr->CVSyncEnd <<= 1;
-      pXGI->XGI_Pr->CVTotal <<= 1;
-   }
-
-   pXGI->XGI_Pr->CHBlankStart = pXGI->XGI_Pr->CHDisplay;
-   pXGI->XGI_Pr->CHBlankEnd = pXGI->XGI_Pr->CHTotal;
-   pXGI->XGI_Pr->CVBlankStart = pXGI->XGI_Pr->CVSyncStart - 1;
-   pXGI->XGI_Pr->CVBlankEnd = pXGI->XGI_Pr->CVTotal;
-
-   if(compute_vclk(pXGI->XGI_Pr->CDClock, &out_n, &out_dn, &out_div, &out_sbit, &out_scale)) {
-      pXGI->XGI_Pr->CSR2B = (out_div == 2) ? 0x80 : 0x00;
-      pXGI->XGI_Pr->CSR2B |= ((out_n - 1) & 0x7f);
-      pXGI->XGI_Pr->CSR2C = (out_dn - 1) & 0x1f;
-      pXGI->XGI_Pr->CSR2C |= (((out_scale - 1) & 3) << 5);
-      pXGI->XGI_Pr->CSR2C |= ((out_sbit & 0x01) << 7);
-#ifdef TWDEBUG
-      xf86DrvMsg(pScrn->scrnIndex, X_INFO, "Clock %d: n %d dn %d div %d sb %d sc %d\n",
-        	pXGI->XGI_Pr->CDClock, out_n, out_dn, out_div, out_sbit, out_scale);
-#endif
-   } else {
-      XGICalcClock(pScrn, pXGI->XGI_Pr->CDClock, 2, vclk);
-      pXGI->XGI_Pr->CSR2B = (vclk[VLDidx] == 2) ? 0x80 : 0x00;
-      pXGI->XGI_Pr->CSR2B |= (vclk[Midx] - 1) & 0x7f;
-      pXGI->XGI_Pr->CSR2C = (vclk[Nidx] - 1) & 0x1f;
-      if(vclk[Pidx] <= 4) {
-         /* postscale 1,2,3,4 */
-         pXGI->XGI_Pr->CSR2C |= ((vclk[Pidx] - 1) & 3) << 5;
-      } else {
-         /* postscale 6,8 */
-         pXGI->XGI_Pr->CSR2C |= (((vclk[Pidx] / 2) - 1) & 3) << 5;
-	 pXGI->XGI_Pr->CSR2C |= 0x80;
-      }
-#ifdef TWDEBUG
-      xf86DrvMsg(pScrn->scrnIndex, X_INFO, "Clock %d: n %d dn %d div %d sc %d\n",
-        	pXGI->XGI_Pr->CDClock, vclk[Midx], vclk[Nidx], vclk[VLDidx], vclk[Pidx]);
-#endif
-   }
-
-   pXGI->XGI_Pr->CSRClock = (pXGI->XGI_Pr->CDClock / 1000) + 1;
-
-   XGI_CalcCRRegisters(pXGI->XGI_Pr, depth);
-
-   switch(depth) {
-   case 8:  pXGI->XGI_Pr->CModeFlag |= 0x223b; break;
-   case 16: pXGI->XGI_Pr->CModeFlag |= 0x227d; break;
-   case 32: pXGI->XGI_Pr->CModeFlag |= 0x22ff; break;
-   default: return 0;
-   }
-
-   if(pXGI->XGI_Pr->CFlags & V_DBLSCAN)
-      pXGI->XGI_Pr->CModeFlag |= DoubleScanMode;
-
-   if((pXGI->XGI_Pr->CVDisplay >= 1024)	||
-      (pXGI->XGI_Pr->CVTotal >= 1024)   ||
-      (pXGI->XGI_Pr->CHDisplay >= 1024))
-      pXGI->XGI_Pr->CModeFlag |= LineCompareOff;
-
-   if(pXGI->XGI_Pr->CFlags & V_CLKDIV2)
-      pXGI->XGI_Pr->CModeFlag |= HalfDCLK;
-
-   pXGI->XGI_Pr->CInfoFlag = 0x0007;
-
-   if(pXGI->XGI_Pr->CFlags & V_NHSYNC)
-      pXGI->XGI_Pr->CInfoFlag |= 0x4000;
-
-   if(pXGI->XGI_Pr->CFlags & V_NVSYNC)
-      pXGI->XGI_Pr->CInfoFlag |= 0x8000;
-
-   if(pXGI->XGI_Pr->CFlags & V_INTERLACE)
-      pXGI->XGI_Pr->CInfoFlag |= InterlaceMode;
-
-   pXGI->XGI_Pr->UseCustomMode = TRUE;
-#ifdef TWDEBUG
-   xf86DrvMsg(0, X_INFO, "Custom mode %dx%d:\n",
-   	pXGI->XGI_Pr->CHDisplay,pXGI->XGI_Pr->CVDisplay);
-   xf86DrvMsg(0, X_INFO, "Modeflag %04x, Infoflag %04x\n",
-   	pXGI->XGI_Pr->CModeFlag, pXGI->XGI_Pr->CInfoFlag);
-   xf86DrvMsg(0, X_INFO, " {{0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,\n",
-   	pXGI->XGI_Pr->CCRT1CRTC[0], pXGI->XGI_Pr->CCRT1CRTC[1],
-	pXGI->XGI_Pr->CCRT1CRTC[2], pXGI->XGI_Pr->CCRT1CRTC[3],
-	pXGI->XGI_Pr->CCRT1CRTC[4], pXGI->XGI_Pr->CCRT1CRTC[5],
-	pXGI->XGI_Pr->CCRT1CRTC[6], pXGI->XGI_Pr->CCRT1CRTC[7]);
-   xf86DrvMsg(0, X_INFO, "  0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,0x%02x,\n",
-   	pXGI->XGI_Pr->CCRT1CRTC[8], pXGI->XGI_Pr->CCRT1CRTC[9],
-	pXGI->XGI_Pr->CCRT1CRTC[10], pXGI->XGI_Pr->CCRT1CRTC[11],
-	pXGI->XGI_Pr->CCRT1CRTC[12], pXGI->XGI_Pr->CCRT1CRTC[13],
-	pXGI->XGI_Pr->CCRT1CRTC[14], pXGI->XGI_Pr->CCRT1CRTC[15]);
-   xf86DrvMsg(0, X_INFO, "  0x%02x}},\n", pXGI->XGI_Pr->CCRT1CRTC[16]);
-   xf86DrvMsg(0, X_INFO, "Clock: 0x%02x, 0x%02x, %d\n",
-   	pXGI->XGI_Pr->CSR2B, pXGI->XGI_Pr->CSR2C, pXGI->XGI_Pr->CSRClock);
-#endif
-   return 1;
-}
-
-#endif  /* Xfree86 */
-
-
