@@ -238,7 +238,6 @@ typedef struct _XGI_Private
 	int	CenterScreen;
 
 	USHORT  CP_Vendor, CP_Product;
-	BOOLEAN CP_HaveCustomData;
 	int     CP_PreferredX, CP_PreferredY, CP_PreferredIndex;
 	int	CP_MaxX, CP_MaxY, CP_MaxClock;
 	BOOLEAN CP_Supports64048075;

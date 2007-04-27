@@ -722,8 +722,8 @@ static void    XGIPostSetMode(ScrnInfoPtr pScrn, XGIRegPtr xgiReg);
 /* #ifdef XGIMERGED
 static void    XGIMergePointerMoved(int scrnIndex, int x, int y);
 #endif */
-USHORT 	       XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode,
-				 unsigned long VBFlags, BOOLEAN hcm);
+USHORT XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode,
+    unsigned long VBFlags);
 unsigned char  XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned char value);
 #ifdef DEBUG
 static void    XGIDumpModeInfo(ScrnInfoPtr pScrn, DisplayModePtr mode);

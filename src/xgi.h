@@ -705,7 +705,6 @@ typedef struct {
     unsigned long	ForceYPbPrType, ForceYPbPrAR;
     unsigned long       lockcalls;		/* Count unlock calls for debug */
 
-    BOOLEAN		HaveCustomModes;
     BOOLEAN		IsCustom;
     Atom                xvBrightness, xvContrast, xvColorKey, xvHue, xvSaturation;
     Atom                xvAutopaintColorKey, xvSetDefaults, xvSwitchCRT;
@@ -737,7 +736,6 @@ typedef struct {
     int			AllowHotkey;
     BOOLEAN		enablexgictrl;
     short		Video_MaxWidth, Video_MaxHeight;
-    BOOLEAN		AddedPlasmaModes;
     short               scrnPitch2;
     unsigned long	mmioSize;
 #ifdef XGIMERGED
@@ -755,7 +753,6 @@ typedef struct {
     int			CRT1frameY1;
     Bool		CheckForCRT2;
     Bool		IsCustomCRT2;
-    BOOLEAN 		HaveCustomModes2;
     int			MergedFBXDPI, MergedFBYDPI;
 #ifdef XGIXINERAMA
     Bool		UsexgiXinerama;

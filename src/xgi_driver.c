@@ -3488,8 +3488,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             includelcdmodes = FALSE;
             acceptcustommodes = FALSE;
         }
-
-        pXGI->HaveCustomModes2 = FALSE;
     }
 
     if (pXGI->MergedFB) {
@@ -5240,7 +5238,7 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
     unsigned char CR17, CR38 = 0;
     unsigned char CR35 = 0, CR79 = 0;
     unsigned long vbflag;
-    int temp = 0, i;
+    int temp = 0;
     int crt1rateindex = 0;
     DisplayModePtr mymode;
 #ifdef XGIMERGED
@@ -5261,119 +5259,7 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
     pXGI->IsCustom = FALSE;
 #ifdef XGIMERGED
     pXGI->IsCustomCRT2 = FALSE;
-
-    if (pXGI->MergedFB) {
-        /* CRT2 */
-        if (vbflag & CRT2_LCD) {
-            if (pXGI->XGI_Pr->CP_HaveCustomData) {
-                for (i = 0; i < 7; i++) {
-                    if (pXGI->XGI_Pr->CP_DataValid[i]) {
-                        if ((mymode2->HDisplay ==
-                             pXGI->XGI_Pr->CP_HDisplay[i])
-                            && (mymode2->VDisplay ==
-                                pXGI->XGI_Pr->CP_VDisplay[i])) {
-                            if (mymode2->type & M_T_BUILTIN) {
-                                pXGI->IsCustomCRT2 = TRUE;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (vbflag & (CRT2_VGA | CRT2_LCD)) {
-            if (pXGI->AddedPlasmaModes) {
-                if (mymode2->type & M_T_BUILTIN) {
-                    pXGI->IsCustomCRT2 = TRUE;
-                }
-            }
-            if (pXGI->HaveCustomModes2) {
-                if (!(mymode2->type & M_T_DEFAULT)) {
-                    pXGI->IsCustomCRT2 = TRUE;
-                }
-            }
-        }
-        /* CRT1 */
-        if (pXGI->HaveCustomModes) {
-            if (!(mymode->type & M_T_DEFAULT)) {
-                pXGI->IsCustom = TRUE;
-            }
-        }
-    }
-    else
 #endif
-#ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode) {
-        if (!pXGI->SecondHead) {
-            /* CRT2 */
-            if (vbflag & CRT2_LCD) {
-                if (pXGI->XGI_Pr->CP_HaveCustomData) {
-                    for (i = 0; i < 7; i++) {
-                        if (pXGI->XGI_Pr->CP_DataValid[i]) {
-                            if ((mymode->HDisplay ==
-                                 pXGI->XGI_Pr->CP_HDisplay[i])
-                                && (mymode->VDisplay ==
-                                    pXGI->XGI_Pr->CP_VDisplay[i])) {
-                                if (mymode->type & M_T_BUILTIN) {
-                                    pXGI->IsCustom = TRUE;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if (vbflag & (CRT2_VGA | CRT2_LCD)) {
-                if (pXGI->AddedPlasmaModes) {
-                    if (mymode->type & M_T_BUILTIN) {
-                        pXGI->IsCustom = TRUE;
-                    }
-                }
-                if (pXGI->HaveCustomModes) {
-                    if (!(mymode->type & M_T_DEFAULT)) {
-                        pXGI->IsCustom = TRUE;
-                    }
-                }
-            }
-        }
-        else {
-            /* CRT1 */
-            if (pXGI->HaveCustomModes) {
-                if (!(mymode->type & M_T_DEFAULT)) {
-                    pXGI->IsCustom = TRUE;
-                }
-            }
-        }
-    }
-    else
-#endif
-    {
-        if (vbflag & CRT2_LCD) {
-            if (pXGI->XGI_Pr->CP_HaveCustomData) {
-                for (i = 0; i < 7; i++) {
-                    if (pXGI->XGI_Pr->CP_DataValid[i]) {
-                        if ((mymode->HDisplay == pXGI->XGI_Pr->CP_HDisplay[i])
-                            && (mymode->VDisplay ==
-                                pXGI->XGI_Pr->CP_VDisplay[i])) {
-                            if (mymode->type & M_T_BUILTIN) {
-                                pXGI->IsCustom = TRUE;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (vbflag & (CRT2_LCD | CRT2_VGA)) {
-            if (pXGI->AddedPlasmaModes) {
-                if (mymode->type & M_T_BUILTIN) {
-                    pXGI->IsCustom = TRUE;
-                }
-            }
-        }
-        if ((pXGI->HaveCustomModes) && (!(vbflag & CRT2_TV))) {
-            if (!(mymode->type & M_T_DEFAULT)) {
-                pXGI->IsCustom = TRUE;
-            }
-        }
-    }
 
 #ifdef UNLOCK_ALWAYS
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);     /* Unlock Registers */
@@ -5704,17 +5590,12 @@ XGIPostSetMode(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
 
 USHORT
 XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode,
-                  unsigned long VBFlags, BOOLEAN havecustommodes)
+                  unsigned long VBFlags)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
     UShort i = (pXGI->CurrentLayout.bitsPerPixel + 7) / 8 - 1;
 
-    if (!(VBFlags & CRT1_LCDA)) {
-        if ((havecustommodes) && (!(mode->type & M_T_DEFAULT))) {
-            return 0xfe;
-        }
-    }
-    else {
+    if ((VBFlags & CRT1_LCDA)) {
         if ((mode->HDisplay > pXGI->LCDwidth) ||
             (mode->VDisplay > pXGI->LCDheight)) {
             return 0;

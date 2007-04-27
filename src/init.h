@@ -198,8 +198,8 @@ extern void 	XGICalcClock(ScrnInfoPtr pScrn, int clock, int max_VLD, unsigned in
 
 extern unsigned char XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned char value);
 extern unsigned char XGI_GetSetModeID(ScrnInfoPtr pScrn, unsigned char id);
-extern USHORT 	     XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode, unsigned long VBFlags,
-					BOOLEAN hcm);
+extern USHORT XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode,
+    unsigned long VBFlags);
 #endif
 
 #endif

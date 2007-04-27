@@ -1366,7 +1366,7 @@ XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr pScr
         
     }
     
-    ModeNo = XGI_CalcModeIndex(pScrn, mode, pXGI->VBFlags, pXGI->HaveCustomModes);
+    ModeNo = XGI_CalcModeIndex(pScrn, mode, pXGI->VBFlags);
     if(!ModeNo) return FALSE;
     
     xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3, "Setting standard mode 0x%x\n", ModeNo);
@@ -1481,7 +1481,7 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, ScrnInfoPtr 
 
    } else {
 
-         ModeNo = XGI_CalcModeIndex(pScrn, mode, pXGI->VBFlags, pXGI->HaveCustomModes);
+         ModeNo = XGI_CalcModeIndex(pScrn, mode, pXGI->VBFlags);
          if(!ModeNo) return FALSE;
 
          xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
