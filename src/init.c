@@ -1253,7 +1253,7 @@ XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,USHORT ModeNo)
 #ifdef LINUX_XF86
 BOOLEAN
 XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
-	       ScrnInfoPtr pScrn, DisplayModePtr mode, BOOLEAN dosetpitch)
+	       ScrnInfoPtr pScrn, DisplayModePtr mode)
 {
     XGIPtr  pXGI = XGIPTR(pScrn);
     UShort  ModeNo=0;
@@ -1313,10 +1313,9 @@ XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 	}
     
     
-    #ifdef LINUX_XF86
     if(pScrn) {
         /* SetPitch: Adapt to virtual size & position */
-        if((ModeNo > 0x13) && (dosetpitch)) {
+        if (ModeNo > 0x13) {
             /* XGI_SetPitch(XGI_Pr, pScrn); */
 
             XGI_SetReg(XGI_Pr->XGI_Part1Port, 0x2f, 1);  //yilin for crt2pitch it shoude modify if not colone mode
@@ -1329,7 +1328,7 @@ XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
         /* Backup/Set ModeNo in BIOS scratch area */
         /* XGI_GetSetModeID(pScrn, ModeNo); */
     }
-    #endif
+
 /*    XGI_SetReg(XGI_Pr->XGI_Part1Port,0x2F,1); //yilin test
     XGI_SetReg(XGI_Pr->XGI_Part1Port,0x03,0x41);
     XGI_SetReg(XGI_Pr->XGI_Part1Port,0x07,(0x00 & 0xFF));
@@ -1337,7 +1336,6 @@ XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
        XGI_SetRegANDOR(XGI_Pr->XGI_Part1Port,0x09,0xF0,(0x02));
 
 */
-
     
     return SetModeRet ;
     /* return (XGISetModeNew( HwInfo, ModeNo )); */

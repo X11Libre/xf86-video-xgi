@@ -177,7 +177,7 @@ void	XGI_New_LoadDAC(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, USHORT Mod
 BOOLEAN	XGISetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,ScrnInfoPtr pScrn,USHORT ModeNo, BOOLEAN dosetpitch);
 
 BOOLEAN	XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
-    ScrnInfoPtr pScrn, DisplayModePtr mode, BOOLEAN dosetpitch);
+    ScrnInfoPtr pScrn, DisplayModePtr mode);
 
 BOOLEAN	XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
     ScrnInfoPtr pScrn, DisplayModePtr mode);

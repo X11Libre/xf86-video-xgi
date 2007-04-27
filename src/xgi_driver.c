@@ -4007,8 +4007,7 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
         /* PDEBUG(XGIDumpRegs(pScrn)) ; */
         PDEBUG(ErrorF(" *** Start SetMode() \n"));
 
-        if (!XGIBIOSSetMode(pXGI->XGI_Pr, &pXGI->xgi_HwDevExt, pScrn,
-                            mode, TRUE)) {
+        if (!XGIBIOSSetMode(pXGI->XGI_Pr, &pXGI->xgi_HwDevExt, pScrn, mode)) {
             XGIErrorLog(pScrn, "XGIBIOSSetModeCRT() failed\n");
             return FALSE;
         }
