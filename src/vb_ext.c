@@ -144,7 +144,6 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
 				     pVBInfo->EModeIDTable, 0x11,
 				     &temp_mode_no, &ModeIdIndex);
 
-                    XGI_GetVGAType( HwDeviceExtension , pVBInfo) ;
                     XGI_GetVBType( pVBInfo ) ;
                     pVBInfo->SetFlag = 0x00 ;
                     pVBInfo->ModeType = ModeVGA ;
