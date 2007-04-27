@@ -3932,82 +3932,75 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 
     XGIModifyModeInfo(mode);    /* Quick check of the mode parameters */
 
-    {                           /* Without VESA: */
 
-        PDEBUG(ErrorF("XGIModeInit().  none VESA\n"));
 #ifdef XGIDUALHEAD
-        if (pXGI->DualHeadMode) {
+    if (pXGI->DualHeadMode) {
+	if (!(*pXGI->ModeInit) (pScrn, mode)) {
+	    XGIErrorLog(pScrn, "ModeInit() failed\n");
+	    return FALSE;
+	}
 
-            if (!(*pXGI->ModeInit) (pScrn, mode)) {
-                XGIErrorLog(pScrn, "ModeInit() failed\n");
-                return FALSE;
-            }
+	pScrn->vtSema = TRUE;
 
-            pScrn->vtSema = TRUE;
+	pXGIEnt = pXGI->entityPrivate;
 
-            pXGIEnt = pXGI->entityPrivate;
-
-            /* Head 2 (slave) is always CRT1 */
-            XGIPreSetMode(pScrn, mode, XGI_MODE_CRT1);
-            if (!XGIBIOSSetModeCRT1
-                (pXGI->XGI_Pr, &pXGI->xgi_HwDevExt, pScrn, mode,
-                 pXGI->IsCustom)) {
-                XGIErrorLog(pScrn, "XGIBIOSSetModeCRT1() failed\n");
-                return FALSE;
-            }
-            XGIPostSetMode(pScrn, &pXGI->ModeReg);
-            XGIAdjustFrame(pXGIEnt->pScrn_1->scrnIndex,
-                           pXGIEnt->pScrn_1->frameX0,
-                           pXGIEnt->pScrn_1->frameY0, 0);
-
-        }
-        else
+	/* Head 2 (slave) is always CRT1 */
+	XGIPreSetMode(pScrn, mode, XGI_MODE_CRT1);
+	if (!XGIBIOSSetModeCRT1(pXGI->XGI_Pr, &pXGI->xgi_HwDevExt, pScrn, 
+				mode, pXGI->IsCustom)) {
+	    XGIErrorLog(pScrn, "XGIBIOSSetModeCRT1() failed\n");
+	    return FALSE;
+	}
+	XGIPostSetMode(pScrn, &pXGI->ModeReg);
+	XGIAdjustFrame(pXGIEnt->pScrn_1->scrnIndex, pXGIEnt->pScrn_1->frameX0,
+		       pXGIEnt->pScrn_1->frameY0, 0);
+    }
+    else
 #endif
-        {
-            /* For other chipsets, use the old method */
+    {
+	/* For other chipsets, use the old method */
 
-            /* Initialise the ModeReg values */
-            if (!vgaHWInit(pScrn, mode)) {
-                XGIErrorLog(pScrn, "vgaHWInit() failed\n");
-                return FALSE;
-            }
+	/* Initialise the ModeReg values */
+	if (!vgaHWInit(pScrn, mode)) {
+	    XGIErrorLog(pScrn, "vgaHWInit() failed\n");
+	    return FALSE;
+	}
 
-            /* Reset our PIOOffset as vgaHWInit might have reset it */
-            VGAHWPTR(pScrn)->PIOOffset =
-                pXGI->IODBase + (pXGI->PciInfo->ioBase[2] & 0xFFFC) - 0x380;
+	/* Reset our PIOOffset as vgaHWInit might have reset it */
+	VGAHWPTR(pScrn)->PIOOffset =
+	    pXGI->IODBase + (pXGI->PciInfo->ioBase[2] & 0xFFFC) - 0x380;
 
-            /* Prepare the register contents */
-            if (!(*pXGI->ModeInit) (pScrn, mode)) {
-                XGIErrorLog(pScrn, "ModeInit() failed\n");
-                return FALSE;
-            }
+	/* Prepare the register contents */
+	if (!(*pXGI->ModeInit) (pScrn, mode)) {
+	    XGIErrorLog(pScrn, "ModeInit() failed\n");
+	    return FALSE;
+	}
 
-            pScrn->vtSema = TRUE;
+	pScrn->vtSema = TRUE;
 
-            /* Program the registers */
-            vgaHWProtect(pScrn, TRUE);
-            vgaReg = &hwp->ModeReg;
-            xgiReg = &pXGI->ModeReg;
+	/* Program the registers */
+	vgaHWProtect(pScrn, TRUE);
+	vgaReg = &hwp->ModeReg;
+	xgiReg = &pXGI->ModeReg;
 
-            vgaReg->Attribute[0x10] = 0x01;
-            if (pScrn->bitsPerPixel > 8) {
-                vgaReg->Graphics[0x05] = 0x00;
-            }
+	vgaReg->Attribute[0x10] = 0x01;
+	if (pScrn->bitsPerPixel > 8) {
+	    vgaReg->Graphics[0x05] = 0x00;
+	}
 
-            vgaHWRestore(pScrn, vgaReg, VGA_SR_MODE);
+	vgaHWRestore(pScrn, vgaReg, VGA_SR_MODE);
 
-            (*pXGI->XGIRestore) (pScrn, xgiReg);
+	(*pXGI->XGIRestore) (pScrn, xgiReg);
 
 #ifdef TWDEBUG
-            xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-                       "REAL REGISTER CONTENTS AFTER SETMODE:\n");
-            (*pXGI->ModeInit) (pScrn, mode);
+	xf86DrvMsg(pScrn->scrnIndex, X_INFO,
+		   "REAL REGISTER CONTENTS AFTER SETMODE:\n");
+	(*pXGI->ModeInit) (pScrn, mode);
 #endif
 
-            vgaHWProtect(pScrn, FALSE);
-
-        }
+	vgaHWProtect(pScrn, FALSE);
     }
+
 
     if (pXGI->Chipset == PCI_CHIP_XGIXG40 ||
         pXGI->Chipset == PCI_CHIP_XGIXG20) {
