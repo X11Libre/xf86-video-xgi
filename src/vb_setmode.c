@@ -1905,6 +1905,35 @@ XGI_GetLVDSResInfo(USHORT ModeNo, USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo)
 }
 
 
+static void
+get_HDE_VDE(PVB_DEVICE_INFO pVBInfo, USHORT *HDE, USHORT *VDE)
+{
+    switch (pVBInfo->LCDResInfo) {
+    case Panel1024x768:
+    case Panel1024x768x75:
+	*HDE = 1024;
+	*VDE = 768;
+	break;
+
+    case Panel1280x1024:
+    case Panel1280x1024x75:
+	*HDE = 1280;
+	*VDE = 1024;
+	break;
+
+    case Panel1400x1050:
+	*HDE = 1400;
+	*VDE = 1050;
+	break;
+
+    default:
+	*HDE = 1600;
+	*VDE = 1200;
+	break;
+    }
+}
+
+
 /* --------------------------------------------------------------------- */
 /* Function : XGI_GetLVDSData */
 /* Input : */
@@ -1934,24 +1963,7 @@ XGI_GetLVDSData(USHORT ModeNo, USHORT ModeIdIndex,
 
     if (pVBInfo->VBInfo & (SetCRT2ToLCD | SetCRT2ToLCDA)) {
         if (!(pVBInfo->LCDInfo & (SetLCDtoNonExpanding | EnableScalingLCD))) {
-            if ((pVBInfo->LCDResInfo == Panel1024x768)
-                || (pVBInfo->LCDResInfo == Panel1024x768x75)) {
-                pVBInfo->HDE = 1024;
-                pVBInfo->VDE = 768;
-            }
-            else if ((pVBInfo->LCDResInfo == Panel1280x1024)
-                     || (pVBInfo->LCDResInfo == Panel1280x1024x75)) {
-                pVBInfo->HDE = 1280;
-                pVBInfo->VDE = 1024;
-            }
-            else if (pVBInfo->LCDResInfo == Panel1400x1050) {
-                pVBInfo->HDE = 1400;
-                pVBInfo->VDE = 1050;
-            }
-            else {
-                pVBInfo->HDE = 1600;
-                pVBInfo->VDE = 1200;
-            }
+	    get_HDE_VDE(pVBInfo, & pVBInfo->HDE, & pVBInfo->VDE);
         }
     }
 }
@@ -2069,44 +2081,17 @@ XGI_SetLVDSRegs(USHORT ModeNo, USHORT ModeIdIndex,
         push2 = tempax;
 
         /* GetLCDResInfo */
-        if ((pVBInfo->LCDResInfo == Panel1024x768)
-            || (pVBInfo->LCDResInfo == Panel1024x768x75)) {
-            tempax = 1024;
-            tempbx = 768;
-        }
-        else if ((pVBInfo->LCDResInfo == Panel1280x1024)
-                 || (pVBInfo->LCDResInfo == Panel1280x1024x75)) {
-            tempax = 1280;
-            tempbx = 1024;
-        }
-        else if (pVBInfo->LCDResInfo == Panel1400x1050) {
-            tempax = 1400;
-            tempbx = 1050;
-        }
-        else {
-            tempax = 1600;
-            tempbx = 1200;
-        }
-
         if (pVBInfo->LCDInfo & SetLCDtoNonExpanding) {
-            pVBInfo->HDE = tempax;
-            pVBInfo->VDE = tempbx;
-            pVBInfo->VGAHDE = tempax;
-            pVBInfo->VGAVDE = tempbx;
-        }
+	    get_HDE_VDE(pVBInfo, & pVBInfo->HDE, & pVBInfo->VDE);
 
-        if ((pVBInfo->IF_DEF_ScaleLCD == 1)
-            && (pVBInfo->LCDInfo & EnableScalingLCD)) {
-            tempax = pVBInfo->HDE;
-            tempbx = pVBInfo->VDE;
+            pVBInfo->VGAHDE = pVBInfo->HDE;
+            pVBInfo->VGAVDE = pVBInfo->VDE;
         }
 
         tempax = pVBInfo->HT;
 
-        if (pVBInfo->LCDInfo & EnableScalingLCD)
-            tempbx = LCDPtr1->LCDHDES;
-        else
-            tempbx = LCDPtr->LCDHDES;
+	tempbx = (pVBInfo->LCDInfo & EnableScalingLCD)
+	    ? LCDPtr1->LCDHDES : LCDPtr->LCDHDES;
 
         tempcx = pVBInfo->HDE;
         tempbx = tempbx & 0x0fff;
@@ -2142,6 +2127,7 @@ XGI_SetLVDSRegs(USHORT ModeNo, USHORT ModeIdIndex,
         if (tempcx >= tempax)
             tempcx -= tempax;
 
+	/* FIXME: Won't this *always* set tempax to zero? */
         tempax = tempbx & 0x07;
         tempax = tempax >> 5;
         tempcx = tempcx >> 3;
@@ -5001,33 +4987,16 @@ XGI_SetLCDRegs(USHORT ModeNo, USHORT ModeIdIndex,
     XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->Part2Port, 0x18, 0xDF, 0x00);
 
     /* Customized LCDB Des no add */
-    tempbx = 5;
-    LCDBDesPtr =
-        (XGI_LCDDesStruct *) XGI_GetLcdPtr(tempbx, ModeNo, ModeIdIndex,
-                                           RefreshRateTableIndex, pVBInfo);
-    tempah = pVBInfo->LCDResInfo;
-    tempah &= PanelResInfo;
-
-    if ((tempah == Panel1024x768) || (tempah == Panel1024x768x75)) {
-        tempbx = 1024;
-        tempcx = 768;
-    }
-    else if ((tempah == Panel1280x1024) || (tempah == Panel1280x1024x75)) {
-        tempbx = 1280;
-        tempcx = 1024;
-    }
-    else if (tempah == Panel1400x1050) {
-        tempbx = 1400;
-        tempcx = 1050;
-    }
-    else {
-        tempbx = 1600;
-        tempcx = 1200;
-    }
+    LCDBDesPtr = (XGI_LCDDesStruct *) XGI_GetLcdPtr(5, ModeNo, ModeIdIndex,
+						    RefreshRateTableIndex, 
+						    pVBInfo);
 
     if (pVBInfo->LCDInfo & EnableScalingLCD) {
         tempbx = pVBInfo->HDE;
         tempcx = pVBInfo->VDE;
+    }
+    else {
+	get_HDE_VDE(pVBInfo, & tempbx, & tempcx);
     }
 
     pushbx = tempbx;
