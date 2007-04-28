@@ -910,6 +910,11 @@ XGI_New_SetCRT1ModeRegs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 /*                 LOAD DAC                  */
 /*********************************************/
 
+extern const uint8_t XGI_MDA_DAC[];
+extern const uint8_t XGI_CGA_DAC[];
+extern const uint8_t XGI_EGA_DAC[];
+extern const uint8_t XGI_VGA_DAC[];
+
 void
 XGI_New_LoadDAC(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
             USHORT ModeNo, USHORT ModeIdIndex)
@@ -919,7 +924,7 @@ XGI_New_LoadDAC(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
    USHORT si,di,bx,dl,al,ah,dh;
    USHORT shiftflag;
    XGIIOADDRESS DACAddr, DACData;
-   const USHORT *table = NULL;
+   const uint8_t *table = NULL;
 
    if(ModeNo <= 0x13) {
       data = XGI_Pr->XGI_SModeIDTable[ModeIdIndex].St_ModeFlag;
