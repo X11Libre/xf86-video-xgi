@@ -171,8 +171,6 @@ void XGI_SetVCLKState(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
                       USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo);
 
 void XGI_LoadDAC(USHORT ModeNo, USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
-void XGI_WriteDAC(USHORT dl, USHORT ah, USHORT al, USHORT dh,
-                  PVB_DEVICE_INFO pVBInfo);
 void XGI_SetLCDAGroup(USHORT ModeNo, USHORT ModeIdIndex,
                       PXGI_HW_DEVICE_INFO HwDeviceExtension,
                       PVB_DEVICE_INFO pVBInfo);
@@ -1792,7 +1790,8 @@ XGI_LoadDAC(USHORT ModeNo, USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo)
                     ah = table[di];
                     al = table[bx];
                     si++;
-                    XGI_WriteDAC(dl, ah, al, dh, pVBInfo);
+                    XGI_WriteDAC((XGIIOADDRESS) pVBInfo->P3c9, 0, dl, 
+				 ah, al, dh);
                 }
 
                 si -= 2;
@@ -1802,7 +1801,8 @@ XGI_LoadDAC(USHORT ModeNo, USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo)
                     ah = table[di];
                     al = table[si];
                     si--;
-                    XGI_WriteDAC(dl, ah, al, dh, pVBInfo);
+                    XGI_WriteDAC((XGIIOADDRESS) pVBInfo->P3c9, 0, dl, 
+				 ah, al, dh);
                 }
 
                 dl++;
@@ -1821,19 +1821,25 @@ XGI_LoadDAC(USHORT ModeNo, USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo)
 /* Description : */
 /* --------------------------------------------------------------------- */
 void
-XGI_WriteDAC(USHORT dl, USHORT ah, USHORT al, USHORT dh,
-             PVB_DEVICE_INFO pVBInfo)
+XGI_WriteDAC(XGIIOADDRESS dac_data, unsigned shift, unsigned ordering,
+	     uint8_t ah, uint8_t al, uint8_t dh)
 {
     USHORT temp, bh, bl;
+
+    if (shift) {
+	ah <<= 2;
+	al <<= 2;
+	dh <<= 2;
+    }
 
     bh = ah;
     bl = al;
 
-    if (dl != 0) {
+    if (ordering != 0) {
         temp = bh;
         bh = dh;
         dh = temp;
-        if (dl == 1) {
+        if (ordering == 1) {
             temp = bl;
             bl = dh;
             dh = temp;
@@ -1844,9 +1850,9 @@ XGI_WriteDAC(USHORT dl, USHORT ah, USHORT al, USHORT dh,
             bh = temp;
         }
     }
-    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c9, (USHORT) dh);
-    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c9, (USHORT) bh);
-    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c9, (USHORT) bl);
+    XGI_SetRegByte(dac_data, dh);
+    XGI_SetRegByte(dac_data, bh);
+    XGI_SetRegByte(dac_data, bl);
 }
 
 

@@ -867,6 +867,9 @@ extern void XGI_SetRegANDOR(XGIIOADDRESS Port, USHORT Index, USHORT DataAND,
 extern void XGI_SetRegAND(XGIIOADDRESS Port, USHORT Index, USHORT DataAND);
 extern void XGI_SetRegOR(XGIIOADDRESS Port, USHORT Index, USHORT DataOR);
 
+extern void XGI_WriteDAC(XGIIOADDRESS dac_data, unsigned shift,
+    unsigned ordering, uint8_t red, uint8_t green, uint8_t blue);
+
 #ifdef DEBUG
 void XGIDumpRegs(ScrnInfoPtr pScrn);
 

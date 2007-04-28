@@ -910,38 +910,6 @@ XGI_New_SetCRT1ModeRegs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 /*                 LOAD DAC                  */
 /*********************************************/
 
-static void
-XGI_New_WriteDAC(XGI_Private *XGI_Pr, XGIIOADDRESS DACData, USHORT shiftflag,
-             USHORT dl, USHORT ah, USHORT al, USHORT dh)
-{
-  USHORT temp,bh,bl;
-
-  bh = ah;
-  bl = al;
-  if(dl != 0) {
-     temp = bh;
-     bh = dh;
-     dh = temp;
-     if(dl == 1) {
-        temp = bl;
-        bl = dh;
-        dh = temp;
-     } else {
-        temp = bl;
-        bl = bh;
-        bh = temp;
-     }
-  }
-  if(shiftflag) {
-     dh <<= 2;
-     bh <<= 2;
-     bl <<= 2;
-  }
-  XGI_SetRegByte(DACData,(USHORT)dh);
-  XGI_SetRegByte(DACData,(USHORT)bh);
-  XGI_SetRegByte(DACData,(USHORT)bl);
-}
-
 void
 XGI_New_LoadDAC(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
             USHORT ModeNo, USHORT ModeIdIndex)
@@ -1016,7 +984,7 @@ XGI_New_LoadDAC(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 	       ah = table[di];
 	       al = table[bx];
 	       si++;
-	       XGI_New_WriteDAC(XGI_Pr, DACData, shiftflag, dl, ah, al, dh);
+	       XGI_WriteDAC(DACData, shiftflag, dl, ah, al, dh);
 	    }
 	    si -= 2;
 	    for(o = 0; o < 3; o++) {
@@ -1024,7 +992,7 @@ XGI_New_LoadDAC(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 	       ah = table[di];
 	       al = table[si];
 	       si--;
-	       XGI_New_WriteDAC(XGI_Pr, DACData, shiftflag, dl, ah, al, dh);
+	       XGI_WriteDAC(DACData, shiftflag, dl, ah, al, dh);
 	    }
 	    dl++;
 	 }            /* for n < 3 */
