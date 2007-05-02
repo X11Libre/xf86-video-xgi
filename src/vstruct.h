@@ -53,19 +53,6 @@
 
 #include "vb_struct.h"
 
-typedef struct _XGI_VBModeStruct
-{
-	UCHAR  ModeID;
-	UCHAR  VB_TVDelayIndex;
-	UCHAR  VB_TVFlickerIndex;
-	UCHAR  VB_TVPhaseIndex;
-	UCHAR  VB_TVYFilterIndex;
-	UCHAR  VB_LCDDelayIndex;
-	UCHAR  _VB_LCDHIndex;
-	UCHAR  _VB_LCDVIndex;
-} XGI_VBModeStruct;
-
-
 typedef struct _XGI_Private
 {
 #ifdef LINUX_KERNEL
@@ -76,19 +63,30 @@ typedef struct _XGI_Private
 	XGIIOADDRESS XGI_P3c0;
 	XGIIOADDRESS XGI_P3ce;
 	XGIIOADDRESS XGI_P3c2;
+
+    /* FIXME: This field is set but never used. */
 	XGIIOADDRESS XGI_P3ca;
+
 	XGIIOADDRESS XGI_P3c6;
 	XGIIOADDRESS XGI_P3c7;
 	XGIIOADDRESS XGI_P3c8;
 	XGIIOADDRESS XGI_P3c9;
+
+    /* FIXME: These three fields are set but never used. */
 	XGIIOADDRESS XGI_P3cb;
 	XGIIOADDRESS XGI_P3cd;
 	XGIIOADDRESS XGI_P3da;
+
 	XGIIOADDRESS XGI_Part1Port;
+
+    /* FIXME: These two fields are set but never used. */
 	XGIIOADDRESS XGI_Part2Port;
 	XGIIOADDRESS XGI_Part3Port;
+
 	XGIIOADDRESS XGI_Part4Port;
 	XGIIOADDRESS XGI_Part5Port;
+
+    /* FIXME: These two fields are set but never used. */
 	XGIIOADDRESS XGI_VidCapt;
 	XGIIOADDRESS XGI_VidPlay;
 
@@ -96,15 +94,9 @@ typedef struct _XGI_Private
 	USHORT XGI_IF_DEF_CONEX;
 
 	UCHAR  XGI_VGAINFO;
-#ifndef LINUX_KERNEL
-        USHORT XGI_CP1, XGI_CP2, XGI_CP3, XGI_CP4;
-#endif
-	BOOLEAN XGI_UseROM;
-	BOOLEAN XGI_ROMNew;
+
+    /* FIXME: These 9 fields are set but never used. */
 	BOOLEAN PanelSelfDetected;
-	int     XGI_CHOverScan;
-	BOOLEAN XGI_CHSOverScan;
-	BOOLEAN XGI_UseLCDA;
 	int     XGI_UseOEM;
 	USHORT  XGI_Backup70xx;
 	BOOLEAN HaveEMI;
@@ -112,27 +104,17 @@ typedef struct _XGI_Private
 	BOOLEAN OverruleEMI;
 	SHORT  PDC, PDCA;
 	USHORT XGI_CRT1Mode;
-	int    XGI_RAMType;
-	UCHAR  XGI_ChannelAB;
-	UCHAR  XGI_DataBusWidth;
+
+    /* FIXME: These two fields are tested but is never set. */
 	USHORT XGI_ModeType;
 	USHORT XGI_VBInfo;
-	USHORT XGI_TVMode;
-	USHORT XGI_LCDResInfo;
-	USHORT XGI_LCDTypeInfo;
-	USHORT XGI_LCDInfo;
+
 	USHORT XGI_VBType;
-	USHORT XGI_VBExtInfo;
-	USHORT XGI_YPbPr;
+
+    /* FIXME: This field is set but never used. */
 	USHORT XGI_SelectCRT2Rate;
+
 	USHORT XGI_SetFlag;
-	USHORT XGI_RVBHCFACT;
-	USHORT XGI_RVBHCMAX;
-	USHORT XGI_RVBHRS;
-	USHORT XGI_VGAVT;
-	USHORT XGI_VGAHT;
-	USHORT XGI_VT;
-	USHORT XGI_HT;
 
     /* FIXME: These two fields are read but never set. */
 	USHORT XGI_VGAVDE;
@@ -141,77 +123,23 @@ typedef struct _XGI_Private
     /* FIXME: This field is set but never used. */
 	USHORT XGI_DDC_Port;
 
+    /* FIXME: These pointers are accessed in various parts of the code, but
+     * FIXME: I can't see any place that they are initialized.
+     */
 	const XGI_StStruct          *XGI_SModeIDTable;
 	XGI_New_StandTableStruct        *XGI_StandTable;
 	const XGI_ExtStruct         *XGI_EModeIDTable;
 	const XGI_Ext2Struct        *XGI_RefIndex;
-	const XGI_VBModeStruct      *XGI_VBModeIDTable;
 	const XGI_CRT1TableStruct   *XGI_CRT1Table;
 	XGI_VCLKDataStruct    	    *XGI_VCLKData;
 	XGI_VBVCLKDataStruct        *XGI_VBVCLKData;
 	const XGI_StResInfoStruct   *XGI_StResInfo;
 	const XGI_ModeResInfoStruct *XGI_ModeResInfo;
 
-#ifndef LINUX_XF86
-	UCHAR *pXGI_SR07;
-	UCHAR *XGI_CR49;
-	UCHAR *XGI_SR25;
-	UCHAR *pXGI_SR1F;
-	UCHAR *pXGI_SR21;
-	UCHAR *pXGI_SR22;
-	UCHAR *pXGI_SR23;
-	UCHAR *pXGI_SR24;
-	UCHAR *pXGI_SR31;
-	UCHAR *pXGI_SR32;
-	UCHAR *pXGI_SR33;
-	UCHAR *pXGI_CRT2Data_1_2;
-	UCHAR *pXGI_CRT2Data_4_D;
-	UCHAR *pXGI_CRT2Data_4_E;
-	UCHAR *pXGI_CRT2Data_4_10;
-	const USHORT *pXGI_RGBSenseData;
-	const USHORT *pXGI_VideoSenseData;
-	const USHORT *pXGI_YCSenseData;
-	const USHORT *pXGI_RGBSenseData2;
-	const USHORT *pXGI_VideoSenseData2;
-	const USHORT *pXGI_YCSenseData2;
-#endif
-
-	USHORT  PanelXRes, PanelHT;
-	USHORT  PanelYRes, PanelVT;
-	USHORT  PanelHRS,  PanelHRE;
-  	USHORT 	PanelVRS,  PanelVRE;
-
+    /* FIXME: These three fields are set but never used. */
 	int	LVDSHL;
-
-	BOOLEAN Backup;
-	UCHAR Backup_Mode;
-	UCHAR Backup_14;
-	UCHAR Backup_15;
-	UCHAR Backup_16;
-	UCHAR Backup_17;
-	UCHAR Backup_18;
-	UCHAR Backup_19;
-	UCHAR Backup_1a;
-	UCHAR Backup_1b;
-	UCHAR Backup_1c;
-	UCHAR Backup_1d;
-
 	int     UsePanelScaler;
 	int	CenterScreen;
-
-	USHORT  CP_Vendor, CP_Product;
-	int     CP_PreferredX, CP_PreferredY, CP_PreferredIndex;
-	int	CP_MaxX, CP_MaxY, CP_MaxClock;
-	BOOLEAN CP_Supports64048075;
-	int     CP_HDisplay[7], CP_VDisplay[7];	/* For Custom LCD panel dimensions */
-    	int     CP_HTotal[7], CP_VTotal[7];
-    	int     CP_HSyncStart[7], CP_VSyncStart[7];
-    	int     CP_HSyncEnd[7], CP_VSyncEnd[7];
-	int     CP_HBlankStart[7], CP_VBlankStart[7];
-	int     CP_HBlankEnd[7], CP_VBlankEnd[7];
-    	int     CP_Clock[7];
-	BOOLEAN CP_DataValid[7];
-	BOOLEAN CP_HSync_P[7], CP_VSync_P[7], CP_SyncValid[7];
 } XGI_Private;
 
 #endif
