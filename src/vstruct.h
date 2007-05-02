@@ -51,6 +51,8 @@
 #ifndef _VSTRUCT_
 #define _VSTRUCT_
 
+#include "vb_struct.h"
+
 typedef struct _XGI_VBModeStruct
 {
 	UCHAR  ModeID;
@@ -62,21 +64,6 @@ typedef struct _XGI_VBModeStruct
 	UCHAR  _VB_LCDHIndex;
 	UCHAR  _VB_LCDVIndex;
 } XGI_VBModeStruct;
-
-typedef struct _XGI_New_StResInfoStruct
-{
-	USHORT HTotal;
-	USHORT VTotal;
-} XGI_New_StResInfoStruct;
-
-typedef struct _XGI_New_ModeResInfoStruct
-{
-	USHORT HTotal;
-	USHORT VTotal;
-	UCHAR  XChar;
-	UCHAR  YChar;
-} XGI_New_ModeResInfoStruct;
-
 
 
 typedef struct _XGI_Private
@@ -162,8 +149,8 @@ typedef struct _XGI_Private
 	const XGI_CRT1TableStruct   *XGI_CRT1Table;
 	XGI_VCLKDataStruct    	    *XGI_VCLKData;
 	XGI_VBVCLKDataStruct        *XGI_VBVCLKData;
-	const XGI_New_StResInfoStruct   *XGI_StResInfo;
-	const XGI_New_ModeResInfoStruct *XGI_ModeResInfo;
+	const XGI_StResInfoStruct   *XGI_StResInfo;
+	const XGI_ModeResInfoStruct *XGI_ModeResInfo;
 
 #ifndef LINUX_XF86
 	UCHAR *pXGI_SR07;
