@@ -1156,6 +1156,7 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
    XGIIOADDRESS BaseAddr = HwInfo->pjIOAddress;
    USHORT  ModeIdIndex, ModeNo=0;
    UCHAR backupreg=0;
+    unsigned vga_info;
 #ifdef XGIDUALHEAD
    XGIEntPtr pXGIEnt = pXGI->entityPrivate;
    UCHAR backupcr30, backupcr31, backupcr38, backupcr35, backupp40d=0;
@@ -1172,17 +1173,16 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 
    XGIRegInit(XGI_Pr, BaseAddr);
 #if (defined(i386) || defined(__i386) || defined(__i386__) || defined(__AMD64__))
-   XGI_Pr->XGI_VGAINFO = XGI_GetSetBIOSScratch(pScrn, 0x489, 0xff);
+    vga_info = XGI_GetSetBIOSScratch(pScrn, 0x489, 0xff);
 #else
-   XGI_Pr->XGI_VGAINFO = 0x11;
+    vga_info = 0x11;
 #endif
    XGIInitPCIetc(XGI_Pr, HwInfo);
 
    XGI_SetReg(XGI_Pr->XGI_P3c4,0x05,0x86);
 
-   if (!XGI_SearchModeID(XGI_Pr->XGI_SModeIDTable,
-			 XGI_Pr->XGI_EModeIDTable,
-			 XGI_Pr->XGI_VGAINFO, &ModeNo, &ModeIdIndex)) {
+   if (!XGI_SearchModeID(XGI_Pr->XGI_SModeIDTable, XGI_Pr->XGI_EModeIDTable,
+                         vga_info, &ModeNo, &ModeIdIndex)) {
        return FALSE;
    }
 

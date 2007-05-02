@@ -93,8 +93,6 @@ typedef struct _XGI_Private
     /* FIXME: This field is tested but is never set. */
 	USHORT XGI_IF_DEF_CONEX;
 
-	UCHAR  XGI_VGAINFO;
-
     /* FIXME: These 9 fields are set but never used. */
 	BOOLEAN PanelSelfDetected;
 	int     XGI_UseOEM;
