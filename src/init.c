@@ -1114,86 +1114,46 @@ XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
     UShort  ModeNo=0;
     BOOLEAN SetModeRet = FALSE ;
     UShort  HDisplay = pXGI->scrnOffset >> 3 ;
-#if XGI_USING_BIOS_SETMODE
-    xf86Int10InfoPtr pInt = NULL ; /* Our int10 */
-#endif
-    
+
     ModeNo = XGI_CalcModeIndex(pScrn, mode, pXGI->VBFlags);
     if(!ModeNo) return FALSE;
-    
+
     xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3, "Setting standard mode 0x%x\n", ModeNo);
-    
-    PDEBUG(ErrorF("C code setmode: ModeNo: 0x%08lX \n",ModeNo));
-    
-    /* PDEBUG(XGIDumpRegs(pScrn)) ; */
-    /*
-        return(XGISetMode(XGI_Pr, HwInfo, pScrn, ModeNo, TRUE));
-    */
-    
-    /*
-    if( ModeNo <= 13 )
-        outXGIIDXREG(XGISR, 0x20, 0x21);
-    else
-        outXGIIDXREG(XGISR, 0x20, 0xAD);
-    */
-    /* outXGIIDXREG(XGISR, 0x1E, 0xDA); */
 
 #if XGI_USING_BIOS_SETMODE
-       PDEBUG(ErrorF("XGI_USING_BIOS_SETMODE \n"));
-    if(pXGI->pVbe)
-	{
-		pInt = pXGI->pVbe->pInt10 ;
-	}
+    PDEBUG(ErrorF("XGI_USING_BIOS_SETMODE \n"));
+    if ((pXGI->pVbe != NULL) && (pXGI->pVbe->pInt10 != NULL)) {
+        xf86Int10InfoPtr pInt = pXGI->pVbe->pInt10;
 
-	if(pInt)
-	{
-		
-		if(xf86LoadSubModule(pScrn, "int10")) {
-	   		pInt->num = 0x10 ;
-			pInt->ax = 0x80 | ModeNo ;
-			/* ah = 0 , set mode */
-			xf86ExecX86int10(pInt) ;
-			if( (pInt->ax & 0x7f) == ModeNo) 
-			{
-				SetModeRet = TRUE ;
-			}
-		}
-	}
-	else
-#endif
-	{
-	       PDEBUG(ErrorF("XGI_USING_C_code_SETMODE \n"));	
-    	SetModeRet = XGISetModeNew( HwInfo, ModeNo );
-	       PDEBUG(ErrorF("out_of_C_code_SETMODE \n"));
-	}
-    
-    
-    if(pScrn) {
-        /* SetPitch: Adapt to virtual size & position */
-        if (ModeNo > 0x13) {
-            /* XGI_SetPitch(XGI_Pr, pScrn); */
+        if (xf86LoadSubModule(pScrn, "int10")) {
+            pInt->num = 0x10;
+            pInt->ax = 0x80 | ModeNo;
 
-            XGI_SetReg(XGI_Pr->XGI_Part1Port, 0x2f, 1);  //yilin for crt2pitch it shoude modify if not colone mode
-            XGI_SetReg(XGI_Pr->XGI_Part1Port, 0x07, (HDisplay & 0xFF));
-            XGI_SetRegANDOR(XGI_Pr->XGI_Part1Port, 0x09, 0xF0, (HDisplay>>8)); 
-            
-            XGI_SetReg(XGI_Pr->XGI_P3d4,0x13,(HDisplay & 0xFF));
-            XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x0E,0xF0,(HDisplay>>8));
+            /* ah = 0, set mode */
+            xf86ExecX86int10(pInt);
+            SetModeRet = ((pInt->ax & 0x7f) == ModeNo);
         }
-        /* Backup/Set ModeNo in BIOS scratch area */
-        /* XGI_GetSetModeID(pScrn, ModeNo); */
+    }
+    else
+#endif
+    {
+        PDEBUG(ErrorF("XGI_USING_C_code_SETMODE \n"));
+        SetModeRet = XGISetModeNew(HwInfo, ModeNo);
+        PDEBUG(ErrorF("out_of_C_code_SETMODE \n"));
+    }
+    
+    
+    /* SetPitch: Adapt to virtual size & position */
+    if (ModeNo > 0x13) {
+        XGI_SetReg(XGI_Pr->XGI_Part1Port, 0x2f, 1);  //yilin for crt2pitch it shoude modify if not colone mode
+        XGI_SetReg(XGI_Pr->XGI_Part1Port, 0x07, (HDisplay & 0xFF));
+        XGI_SetRegANDOR(XGI_Pr->XGI_Part1Port, 0x09, 0xF0, (HDisplay>>8)); 
+
+        XGI_SetReg(XGI_Pr->XGI_P3d4,0x13,(HDisplay & 0xFF));
+        XGI_SetRegANDOR(XGI_Pr->XGI_P3c4,0x0E,0xF0,(HDisplay>>8));
     }
 
-/*    XGI_SetReg(XGI_Pr->XGI_Part1Port,0x2F,1); //yilin test
-    XGI_SetReg(XGI_Pr->XGI_Part1Port,0x03,0x41);
-    XGI_SetReg(XGI_Pr->XGI_Part1Port,0x07,(0x00 & 0xFF));
-    
-       XGI_SetRegANDOR(XGI_Pr->XGI_Part1Port,0x09,0xF0,(0x02));
-
-*/
-    
-    return SetModeRet ;
-    /* return (XGISetModeNew( HwInfo, ModeNo )); */
+    return SetModeRet;
 }
 
 /*********************************************/
