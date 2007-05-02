@@ -415,8 +415,6 @@ typedef struct {
     ScrnInfoPtr         pScrn_2;
     unsigned char *     BIOS;
     XGI_Private   *     XGI_Pr;
-    int			CRT1ModeNo;		/* Current display mode for CRT1 */
-    DisplayModePtr	CRT1DMode;		/* Current display mode for CRT1 */
     int 		CRT2ModeNo;		/* Current display mode for CRT2 */
     Bool		CRT2ModeSet;		/* CRT2 mode has been set */
     unsigned char	CRT2CR30, CRT2CR31, CRT2CR35, CRT2CR38;

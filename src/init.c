@@ -1202,13 +1202,6 @@ XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
    /* SetPitch: Adapt to virtual size & position */
    XGI_SetPitchCRT1(XGI_Pr, pScrn);
 
-#ifdef XGIDUALHEAD
-   if(pXGI->DualHeadMode) {
-      pXGIEnt->CRT1ModeNo = ModeNo;
-      pXGIEnt->CRT1DMode = mode;
-   }
-#endif
-
 
    /* Reset CRT2 if changing mode on CRT1 */
 #ifdef XGIDUALHEAD

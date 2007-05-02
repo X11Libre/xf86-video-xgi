@@ -2507,7 +2507,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                 /* First Head (always CRT2) */
                 pXGI->SecondHead = FALSE;
                 pXGIEnt->pScrn_1 = pScrn;
-                pXGIEnt->CRT1ModeNo = pXGIEnt->CRT2ModeNo = -1;
+                pXGIEnt->CRT2ModeNo = -1;
                 pXGIEnt->CRT2ModeSet = FALSE;
                 pXGI->DualHeadMode = TRUE;
                 pXGIEnt->DisableDual = FALSE;
