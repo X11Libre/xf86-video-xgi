@@ -109,12 +109,10 @@
 #endif
 
 #include "xgi_pci.h"
-
 #include "osdef.h"
 #include "vgatypes.h"
-
 #include "vb_struct.h"
-#include "vstruct.h"
+
 #ifdef XF86DRI
 #define XGINEWDRI
 #undef XGINEWDRI2
@@ -414,7 +412,7 @@ typedef struct {
     ScrnInfoPtr         pScrn_1;
     ScrnInfoPtr         pScrn_2;
     unsigned char *     BIOS;
-    XGI_Private   *     XGI_Pr;
+    VB_DEVICE_INFO     *XGI_Pr;
     int 		CRT2ModeNo;		/* Current display mode for CRT2 */
     Bool		CRT2ModeSet;		/* CRT2 mode has been set */
     unsigned char	CRT2CR30, CRT2CR31, CRT2CR35, CRT2CR38;
@@ -505,7 +503,7 @@ typedef struct {
     EntityInfoPtr       pEnt;
     int                 Chipset;
     int                 ChipRev;
-    XGI_Private   *     XGI_Pr;         /* For new mode switching code */
+    VB_DEVICE_INFO     *XGI_Pr;         /* For new mode switching code */
     unsigned long       FbAddress;      /* VRAM physical address (in DHM: for each Fb!) */
     unsigned long       realFbAddress;  /* For DHM/PCI mem mapping: store global FBAddress */
     unsigned char *     FbBase;         /* VRAM virtual linear address */

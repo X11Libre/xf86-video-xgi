@@ -30,7 +30,6 @@ xgi_drv_ladir = @moduledir@/drivers
 
 xgi_drv_la_SOURCES = \
 	init.c \
-	initdef.h \
 	init.h \
 	osdef.h \
 	valid_mode.h \
@@ -44,7 +43,6 @@ xgi_drv_la_SOURCES = \
 	vb_struct.h \
 	vb_table.h \
 	vgatypes.h \
-	vstruct.h \
 	xgi_accel.c \
 	xgi_accel.h \
 	xgi_common.h \

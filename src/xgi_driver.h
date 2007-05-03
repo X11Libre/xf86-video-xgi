@@ -729,13 +729,13 @@ unsigned char  XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned 
 static void    XGIDumpModeInfo(ScrnInfoPtr pScrn, DisplayModePtr mode);
 #endif
 
-extern BOOLEAN XGIBIOSSetMode(XGI_Private *XGI_Pr,
+extern BOOLEAN XGIBIOSSetMode(VB_DEVICE_INFO *XGI_Pr,
     PXGI_HW_DEVICE_INFO HwDeviceExtension, ScrnInfoPtr pScrn,
     DisplayModePtr mode);
 
-extern void	XGIRegInit(XGI_Private *XGI_Pr, USHORT BaseAddr);
-extern void     XGI_New_GetVBType(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO);
+extern void	XGIRegInit(VB_DEVICE_INFO *XGI_Pr, USHORT BaseAddr);
+extern void     XGI_New_GetVBType(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO);
 
-extern BOOLEAN 	XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr,
+extern BOOLEAN 	XGIBIOSSetModeCRT1(VB_DEVICE_INFO *XGI_Pr,
     PXGI_HW_DEVICE_INFO HwDeviceExtension, ScrnInfoPtr pScrn,
     DisplayModePtr mode);

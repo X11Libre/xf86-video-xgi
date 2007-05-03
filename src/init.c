@@ -269,13 +269,13 @@ XGI_SetRegOR(XGIIOADDRESS Port,USHORT Index,USHORT DataOR)
 /*********************************************/
 
 void
-XGI_New_DisplayOn(XGI_Private *XGI_Pr)
+XGI_New_DisplayOn(VB_DEVICE_INFO *XGI_Pr)
 {
    XGI_SetRegAND(XGI_Pr->P3c4,0x01,0xDF);
 }
 
 void
-XGI_New_DisplayOff(XGI_Private *XGI_Pr)
+XGI_New_DisplayOff(VB_DEVICE_INFO *XGI_Pr)
 {
    XGI_SetRegOR(XGI_Pr->P3c4,0x01,0x20);
 }
@@ -286,7 +286,7 @@ XGI_New_DisplayOff(XGI_Private *XGI_Pr)
 /*********************************************/
 
 void
-XGIRegInit(XGI_Private *XGI_Pr, XGIIOADDRESS BaseAddr)
+XGIRegInit(VB_DEVICE_INFO *XGI_Pr, XGIIOADDRESS BaseAddr)
 {
    XGI_Pr->P3c4 = BaseAddr + 0x14;       /* DDC Port ( = P3C4, SR11/0A) */
    XGI_Pr->P3d4 = BaseAddr + 0x24;
@@ -311,7 +311,7 @@ XGIRegInit(XGI_Private *XGI_Pr, XGIIOADDRESS BaseAddr)
 /*********************************************/
 
 static void
-XGIInitPCIetc(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
+XGIInitPCIetc(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
 {
    switch(HwInfo->jChipType) {
    case XG40:
@@ -334,7 +334,7 @@ XGIInitPCIetc(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
 /*********************************************/
 
 void
-XGI_New_GetVBType(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
+XGI_New_GetVBType(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
 {
   USHORT flag=0, rev=0, nolcd=0;
 
@@ -443,7 +443,7 @@ XGI_GetModePtr(const XGI_StStruct *SModeIDTable, unsigned ModeType,
 /*********************************************/
 
 static BOOLEAN
-XGI_DoLowModeTest(XGI_Private *XGI_Pr, USHORT ModeNo, PXGI_HW_DEVICE_INFO HwInfo)
+XGI_DoLowModeTest(VB_DEVICE_INFO *XGI_Pr, USHORT ModeNo, PXGI_HW_DEVICE_INFO HwInfo)
 {
     USHORT temp,temp1,temp2;
 
@@ -463,7 +463,7 @@ XGI_DoLowModeTest(XGI_Private *XGI_Pr, USHORT ModeNo, PXGI_HW_DEVICE_INFO HwInfo
 }
 
 static void
-XGI_SetLowModeTest(XGI_Private *XGI_Pr, USHORT ModeNo, PXGI_HW_DEVICE_INFO HwInfo)
+XGI_SetLowModeTest(VB_DEVICE_INFO *XGI_Pr, USHORT ModeNo, PXGI_HW_DEVICE_INFO HwInfo)
 {
     if(XGI_DoLowModeTest(XGI_Pr, ModeNo, HwInfo)) {
        XGI_Pr->SetFlag |= LowModeTests;
@@ -471,7 +471,7 @@ XGI_SetLowModeTest(XGI_Private *XGI_Pr, USHORT ModeNo, PXGI_HW_DEVICE_INFO HwInf
 }
 
 static void
-XGI_HandleCRT1(XGI_Private *XGI_Pr)
+XGI_HandleCRT1(VB_DEVICE_INFO *XGI_Pr)
 {
     XGI_SetRegAND(XGI_Pr->P3d4, 0x53, 0xbf);
 }
@@ -481,7 +481,7 @@ XGI_HandleCRT1(XGI_Private *XGI_Pr)
 /*********************************************/
 
 USHORT
-XGI_New_GetColorDepth(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex)
+XGI_New_GetColorDepth(VB_DEVICE_INFO *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex)
 {
   USHORT ColorDepth[6] = { 1, 2, 4, 4, 6, 8};
   SHORT  index;
@@ -502,7 +502,7 @@ XGI_New_GetColorDepth(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex)
 /*********************************************/
 
 USHORT
-XGI_New_GetOffset(XGI_Private *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
+XGI_New_GetOffset(VB_DEVICE_INFO *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
               USHORT RefreshRateTableIndex,PXGI_HW_DEVICE_INFO HwInfo)
 {
   USHORT xres, temp, colordepth, infoflag;
@@ -528,7 +528,7 @@ XGI_New_GetOffset(XGI_Private *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
 /*********************************************/
 
 static void
-XGI_New_SetSeqRegs(XGI_Private *XGI_Pr, USHORT StandTableIndex, PXGI_HW_DEVICE_INFO HwInfo)
+XGI_New_SetSeqRegs(VB_DEVICE_INFO *XGI_Pr, USHORT StandTableIndex, PXGI_HW_DEVICE_INFO HwInfo)
 {
    UCHAR SRdata;
    USHORT i;
@@ -564,7 +564,7 @@ XGI_New_SetSeqRegs(XGI_Private *XGI_Pr, USHORT StandTableIndex, PXGI_HW_DEVICE_I
 /*********************************************/
 
 static void
-XGI_New_SetMiscRegs(XGI_Private *XGI_Pr, USHORT StandTableIndex, PXGI_HW_DEVICE_INFO HwInfo)
+XGI_New_SetMiscRegs(VB_DEVICE_INFO *XGI_Pr, USHORT StandTableIndex, PXGI_HW_DEVICE_INFO HwInfo)
 {
    UCHAR Miscdata;
 
@@ -578,7 +578,7 @@ XGI_New_SetMiscRegs(XGI_Private *XGI_Pr, USHORT StandTableIndex, PXGI_HW_DEVICE_
 /*********************************************/
 
 static void
-XGI_New_SetCRTCRegs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
+XGI_New_SetCRTCRegs(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
                 USHORT StandTableIndex)
 {
   UCHAR CRTCdata;
@@ -598,7 +598,7 @@ XGI_New_SetCRTCRegs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 /*********************************************/
 
 static void
-XGI_New_SetATTRegs(XGI_Private *XGI_Pr, USHORT StandTableIndex,
+XGI_New_SetATTRegs(VB_DEVICE_INFO *XGI_Pr, USHORT StandTableIndex,
                PXGI_HW_DEVICE_INFO HwInfo)
 {
    UCHAR ARdata;
@@ -633,7 +633,7 @@ XGI_New_SetATTRegs(XGI_Private *XGI_Pr, USHORT StandTableIndex,
 /*********************************************/
 
 static void
-XGI_New_SetGRCRegs(XGI_Private *XGI_Pr, USHORT StandTableIndex)
+XGI_New_SetGRCRegs(VB_DEVICE_INFO *XGI_Pr, USHORT StandTableIndex)
 {
    UCHAR GRdata;
    USHORT i;
@@ -654,7 +654,7 @@ XGI_New_SetGRCRegs(XGI_Private *XGI_Pr, USHORT StandTableIndex)
 /*********************************************/
 
 static void
-XGI_New_ClearExt1Regs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, USHORT ModeNo)
+XGI_New_ClearExt1Regs(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, USHORT ModeNo)
 {
   USHORT i;
 
@@ -675,7 +675,7 @@ XGI_New_ClearExt1Regs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, USHORT Mo
 /*********************************************/
 
 static void
-XGI_ResetCRT1VCLK(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
+XGI_ResetCRT1VCLK(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
 {
     XGI_SetRegANDOR(XGI_Pr->P3c4,0x31,0xCF,0x20);
     XGI_SetReg(XGI_Pr->P3c4,0x2B,XGI_Pr->VCLKData[1].SR2B);
@@ -692,7 +692,7 @@ XGI_ResetCRT1VCLK(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
 /*********************************************/
 
 static void
-XGI_SetCRT1Sync(XGI_Private *XGI_Pr, USHORT RefreshRateTableIndex)
+XGI_SetCRT1Sync(VB_DEVICE_INFO *XGI_Pr, USHORT RefreshRateTableIndex)
 {
   USHORT sync;
 
@@ -707,7 +707,7 @@ XGI_SetCRT1Sync(XGI_Private *XGI_Pr, USHORT RefreshRateTableIndex)
 /*********************************************/
 
 static void
-XGI_New_SetCRT1CRTC(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
+XGI_New_SetCRT1CRTC(VB_DEVICE_INFO *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
                 USHORT RefreshRateTableIndex,
 		PXGI_HW_DEVICE_INFO HwInfo)
 {
@@ -754,7 +754,7 @@ XGI_New_SetCRT1CRTC(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
 /*********************************************/
 
 static void
-XGI_New_SetCRT1Offset(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
+XGI_New_SetCRT1Offset(VB_DEVICE_INFO *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
                   USHORT RefreshRateTableIndex,
 		  PXGI_HW_DEVICE_INFO HwInfo)
 {
@@ -785,7 +785,7 @@ XGI_New_SetCRT1Offset(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
 /*********************************************/
 
 static void
-XGI_New_SetCRT1VCLK(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
+XGI_New_SetCRT1VCLK(VB_DEVICE_INFO *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
                 PXGI_HW_DEVICE_INFO HwInfo, USHORT RefreshRateTableIndex)
 {
   USHORT  index=0, clka, clkb;
@@ -809,7 +809,7 @@ XGI_New_SetCRT1VCLK(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex,
 /*********************************************/
 
 static void
-XGI_New_SetVCLKState(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
+XGI_New_SetVCLKState(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
                  USHORT ModeNo, USHORT RefreshRateTableIndex,
                  USHORT ModeIdIndex)
 {
@@ -833,7 +833,7 @@ XGI_New_SetVCLKState(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 }
 
 static void
-XGI_New_SetCRT1ModeRegs(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
+XGI_New_SetCRT1ModeRegs(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
                     USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTableIndex)
 {
   USHORT data,infoflag=0,modeflag;
@@ -908,7 +908,7 @@ extern const uint8_t XGI_EGA_DAC[];
 extern const uint8_t XGI_VGA_DAC[];
 
 void
-XGI_New_LoadDAC(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
+XGI_New_LoadDAC(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
             USHORT ModeNo, USHORT ModeIdIndex)
 {
    USHORT data,data2;
@@ -1003,7 +1003,7 @@ XGI_New_LoadDAC(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 /*********************************************/
 
 static void
-XGI_New_SetCRT1Group(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
+XGI_New_SetCRT1Group(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
                  USHORT ModeNo, USHORT ModeIdIndex)
 {
     const USHORT StandTableIndex = XGI_GetModePtr(XGI_Pr->SModeIDTable,
@@ -1067,7 +1067,7 @@ XGI_New_SetCRT1Group(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 
 #ifdef LINUX_XF86
 static void
-XGI_SetPitchCRT1(XGI_Private *XGI_Pr, ScrnInfoPtr pScrn)
+XGI_SetPitchCRT1(VB_DEVICE_INFO *XGI_Pr, ScrnInfoPtr pScrn)
 {
    XGIPtr pXGI = XGIPTR(pScrn);
    UShort HDisplay = pXGI->scrnPitch >> 3;
@@ -1084,7 +1084,7 @@ XGI_SetPitchCRT1(XGI_Private *XGI_Pr, ScrnInfoPtr pScrn)
 
 #ifdef LINUX_XF86
 BOOLEAN
-XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
+XGIBIOSSetMode(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 	       ScrnInfoPtr pScrn, DisplayModePtr mode)
 {
     XGIPtr  pXGI = XGIPTR(pScrn);
@@ -1139,7 +1139,7 @@ XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 /*********************************************/
 
 BOOLEAN
-XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
+XGIBIOSSetModeCRT1(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 		   ScrnInfoPtr pScrn, DisplayModePtr mode)
 {
    XGIPtr  pXGI = XGIPTR(pScrn);

@@ -113,21 +113,21 @@ static const USHORT  ModeIndex_1920x1440[]    = {0x68, 0x69, 0x00, 0x6b};
 static const USHORT  ModeIndex_310_2048x1536[]= {0x6c, 0x6d, 0x00, 0x6e};
 
 
-void	XGI_New_DisplayOn(XGI_Private *XGI_Pr);
-void	XGI_New_DisplayOff(XGI_Private *XGI_Pr);
-void	XGIRegInit(XGI_Private *XGI_Pr, XGIIOADDRESS BaseAddr);
+void	XGI_New_DisplayOn(VB_DEVICE_INFO *XGI_Pr);
+void	XGI_New_DisplayOff(VB_DEVICE_INFO *XGI_Pr);
+void	XGIRegInit(VB_DEVICE_INFO *XGI_Pr, XGIIOADDRESS BaseAddr);
 
-void	XGI_New_GetVBType(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo);
-USHORT	XGI_GetMCLK(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo);
-USHORT	XGI_New_GetColorDepth(XGI_Private *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex);
-USHORT	XGI_New_GetOffset(XGI_Private *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
+void	XGI_New_GetVBType(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo);
+USHORT	XGI_GetMCLK(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo);
+USHORT	XGI_New_GetColorDepth(VB_DEVICE_INFO *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex);
+USHORT	XGI_New_GetOffset(VB_DEVICE_INFO *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
               USHORT RefreshRateTableIndex,PXGI_HW_DEVICE_INFO HwInfo);
-void	XGI_New_LoadDAC(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, USHORT ModeNo, USHORT ModeIdIndex);
+void	XGI_New_LoadDAC(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, USHORT ModeNo, USHORT ModeIdIndex);
 #ifdef LINUX_XF86
-BOOLEAN	XGIBIOSSetMode(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
+BOOLEAN	XGIBIOSSetMode(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
     ScrnInfoPtr pScrn, DisplayModePtr mode);
 
-BOOLEAN	XGIBIOSSetModeCRT1(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
+BOOLEAN	XGIBIOSSetModeCRT1(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
     ScrnInfoPtr pScrn, DisplayModePtr mode);
 #endif
 

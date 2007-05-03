@@ -489,7 +489,7 @@ XGIFreeRec(ScrnInfoPtr pScrn)
         if (!pXGI->SecondHead) {
             /* Free memory only if we are first head; in case of an error
              * during init of the second head, the server will continue -
-             * and we need the BIOS image and XGI_Private for the first
+             * and we need the BIOS image and VB_DEVICE_INFO for the first
              * head.
              */
             if (pXGIEnt->BIOS)
@@ -2536,7 +2536,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 #endif
 
-    /* Allocate XGI_Private (for mode switching code) and initialize it */
+    /* Allocate VB_DEVICE_INFO (for mode switching code) and initialize it */
     pXGI->XGI_Pr = NULL;
 #ifdef XGIDUALHEAD
     if (pXGIEnt) {
@@ -2545,7 +2545,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 #endif
     if (!pXGI->XGI_Pr) {
-        if (!(pXGI->XGI_Pr = xnfcalloc(sizeof(XGI_Private), 1))) {
+        if (!(pXGI->XGI_Pr = xnfcalloc(sizeof(VB_DEVICE_INFO), 1))) {
             XGIErrorLog(pScrn,
                         "Could not allocate memory for XGI_Pr private\n");
 #ifdef XGIDUALHEAD
@@ -2561,7 +2561,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         if (pXGIEnt)
             pXGIEnt->XGI_Pr = pXGI->XGI_Pr;
 #endif
-        memset(pXGI->XGI_Pr, 0, sizeof(XGI_Private));
+        memset(pXGI->XGI_Pr, 0, sizeof(VB_DEVICE_INFO));
     }
 
     /* Get our relocated IO registers */
