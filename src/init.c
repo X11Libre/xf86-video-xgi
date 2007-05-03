@@ -280,32 +280,6 @@ XGI_New_DisplayOff(VB_DEVICE_INFO *XGI_Pr)
    XGI_SetRegOR(XGI_Pr->P3c4,0x01,0x20);
 }
 
-
-/*********************************************/
-/*        HELPER: Init Port Addresses        */
-/*********************************************/
-
-void
-XGIRegInit(VB_DEVICE_INFO *XGI_Pr, XGIIOADDRESS BaseAddr)
-{
-   XGI_Pr->P3c4 = BaseAddr + 0x14;       /* DDC Port ( = P3C4, SR11/0A) */
-   XGI_Pr->P3d4 = BaseAddr + 0x24;
-   XGI_Pr->P3c0 = BaseAddr + 0x10;
-   XGI_Pr->P3ce = BaseAddr + 0x1e;
-   XGI_Pr->P3c2 = BaseAddr + 0x12;
-   XGI_Pr->P3ca = BaseAddr + 0x1a;
-   XGI_Pr->P3c6 = BaseAddr + 0x16;
-   XGI_Pr->P3c7 = BaseAddr + 0x17;
-   XGI_Pr->P3c8 = BaseAddr + 0x18;
-   XGI_Pr->P3c9 = BaseAddr + 0x19;
-   XGI_Pr->P3da = BaseAddr + 0x2a;
-   XGI_Pr->Part1Port = BaseAddr + XGI_CRT2_PORT_04;     /* Digital video interface registers (LCD) */
-   XGI_Pr->Part2Port = BaseAddr + XGI_CRT2_PORT_10;     /* 301 TV Encoder registers */
-   XGI_Pr->Part3Port = BaseAddr + XGI_CRT2_PORT_12;     /* 301 Macrovision registers */
-   XGI_Pr->Part4Port = BaseAddr + XGI_CRT2_PORT_14;     /* 301 VGA2 (and LCD) registers */
-   XGI_Pr->Part5Port = BaseAddr + XGI_CRT2_PORT_14 + 2; /* 301 palette address port registers */
-}
-
 /*********************************************/
 /*         HELPER: Init PCI & Engines        */
 /*********************************************/
@@ -1115,7 +1089,7 @@ XGIBIOSSetMode(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 #endif
     {
         PDEBUG(ErrorF("XGI_USING_C_code_SETMODE \n"));
-        SetModeRet = XGISetModeNew(HwInfo, ModeNo);
+        SetModeRet = XGISetModeNew(HwInfo, XGI_Pr, ModeNo);
         PDEBUG(ErrorF("out_of_C_code_SETMODE \n"));
     }
     
@@ -1143,7 +1117,6 @@ XGIBIOSSetModeCRT1(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 		   ScrnInfoPtr pScrn, DisplayModePtr mode)
 {
    XGIPtr  pXGI = XGIPTR(pScrn);
-   XGIIOADDRESS BaseAddr = HwInfo->pjIOAddress;
    USHORT  ModeIdIndex, ModeNo=0;
    UCHAR backupreg=0;
     unsigned vga_info;
@@ -1152,16 +1125,13 @@ XGIBIOSSetModeCRT1(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
    UCHAR backupcr30, backupcr31, backupcr38, backupcr35, backupp40d=0;
 #endif
 
-   {
 
-         ModeNo = XGI_CalcModeIndex(pScrn, mode, pXGI->VBFlags);
-         if(!ModeNo) return FALSE;
+    ModeNo = XGI_CalcModeIndex(pScrn, mode, pXGI->VBFlags);
+    if(!ModeNo) return FALSE;
 
-         xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
-	 	"Setting standard mode 0x%x on CRT1\n", ModeNo);
-   }
+    xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
+                   "Setting standard mode 0x%x on CRT1\n", ModeNo);
 
-   XGIRegInit(XGI_Pr, BaseAddr);
 #if (defined(i386) || defined(__i386) || defined(__i386__) || defined(__AMD64__))
     vga_info = XGI_GetSetBIOSScratch(pScrn, 0x489, 0xff);
 #else

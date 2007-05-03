@@ -344,27 +344,6 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
     pHwDevInfo->jChipRevision = (UCHAR)(ulTemp & 0xff) ;
     pHwDevInfo->ujVBChipID = VB_CHIP_UNKNOWN ;
     pHwDevInfo->ulExternalChip = 0 ;
-    XGI_New_GetVBType(pXGI->XGI_Pr, pHwDevInfo); //yilin
-    PDEBUG(ErrorF("XGI_InitHwDevInfo  pXGI->XGI_Pr->XGI_VBType= %x  \n",pXGI->XGI_Pr->XGI_VBType)) ; //yilin
- //   pHwDevInfo->ujVBChipID = VB_CHIP_301 ; //yilin
-    if( pXGI->XGI_Pr->VBType & (VB_XGI301 | VB_XGI301B | VB_XGI301C))
-    {
-    PDEBUG(ErrorF("VB chip = 301 \n")) ;
-	 pHwDevInfo->ujVBChipID = VB_CHIP_301 ;
-    }
-    else if( pXGI->VBFlags & ( VB_XGI302B| VB_XGI302LV ))
-    {
-        pHwDevInfo->ujVBChipID = VB_CHIP_302 ;
-    }
-    else
-    {
-/*        if( pXGI->VBFlags & VB_LVDS )
-        {
-            pHwDevInfo->ulExternalChip |= 0x01 ;
-        }
-*/ //yilin
-
-    }
 
     pHwDevInfo->ulCRT2LCDType = LCD_1024x768 ;
     pHwDevInfo->bIntegratedMMEnabled = FALSE ;
@@ -382,14 +361,36 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
         pHwDevInfo->pCR[i].jVal = 0xFF ;
     }
 
-
     for( i = 0 ; i < VBIOS_VER_MAX_LENGTH ; i++ ){
         pHwDevInfo -> szVBIOSVer[i] = '\0' ;
     }
 
+
+    XGINew_InitVBIOSData(pHwDevInfo, pXGI->XGI_Pr);
+    PDEBUG(ErrorF("XGINew_InitVBIOSData(pHwDevInfo) done\n")) ;
+
+    ErrorF("XGI_InitVBIOSData  VBType = %x\n", pXGI->XGI_Pr->VBType);
+    XGI_New_GetVBType(pXGI->XGI_Pr, pHwDevInfo); //yilin
+    ErrorF("XGI_New_GetVBType  VBType = %x\n", pXGI->XGI_Pr->VBType);
+
+ //   pHwDevInfo->ujVBChipID = VB_CHIP_301 ; //yilin
+    if( pXGI->XGI_Pr->VBType & (VB_XGI301 | VB_XGI301B | VB_XGI301C))
+    {
+    PDEBUG(ErrorF("VB chip = 301 \n")) ;
+	 pHwDevInfo->ujVBChipID = VB_CHIP_301 ;
+    }
+    else if( pXGI->VBFlags & ( VB_XGI302B| VB_XGI302LV ))
+    {
+        pHwDevInfo->ujVBChipID = VB_CHIP_302 ;
+    }
+/*
+    else if (pXGI->VBFlags & VB_LVDS) {
+        pHwDevInfo->ulExternalChip |= 0x01 ;
+    }
+*/ //yilin
+
+
     PDEBUG(ErrorF("pHwDevInfo->jChipType = %08lX done\n",pHwDevInfo->jChipType)) ;
-//    XGINew_InitVBIOSData(pHwDevInfo,pXGI->pVBInfo) ;
-//    PDEBUG(ErrorF("XGINew_InitVBIOSData(pHwDevInfo) done\n")) ;
 }
 
 Bool

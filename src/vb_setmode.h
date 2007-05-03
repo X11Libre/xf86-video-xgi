@@ -44,7 +44,9 @@ extern   void     XGI_GetTVInfo(USHORT ModeNo,USHORT ModeIdIndex, PVB_DEVICE_INF
 extern   void     XGI_SetCRT1Offset(USHORT ModeNo,USHORT ModeIdIndex,USHORT RefreshRateTableIndex,PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO );
 extern   void     XGI_SetLCDAGroup(USHORT ModeNo,USHORT ModeIdIndex,PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO );
 
-extern   BOOLEAN  XGISetModeNew( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT ModeNo ) ;
+extern BOOLEAN XGISetModeNew(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+    PVB_DEVICE_INFO pVBInfo, USHORT ModeNo);
+
 extern   BOOLEAN  CheckDualChip(PVB_DEVICE_INFO );
 extern   BOOLEAN  XGI_GetLCDInfo(USHORT ModeNo,USHORT ModeIdIndex,PVB_DEVICE_INFO );
 extern   BOOLEAN  XGI_BridgeIsOn( PVB_DEVICE_INFO );

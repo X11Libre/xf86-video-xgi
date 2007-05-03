@@ -47,7 +47,7 @@
 #include "vgatypes.h"
 #include "vb_struct.h"
 #include "vb_table.h"
-
+#include "vb_setmode.h"
 
 #define  IndexMask 0xff
 #ifndef XGI_MASK_DUAL_CHIP
@@ -70,7 +70,6 @@ BOOLEAN XGI_AjustCRT2Rate(USHORT ModeNo, USHORT ModeIdIndex,
                           PVB_DEVICE_INFO pVBInfo);
 BOOLEAN XGI_GetLCDInfo(USHORT ModeNo, USHORT ModeIdIndex,
                        PVB_DEVICE_INFO pVBInfo);
-BOOLEAN XGISetModeNew(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo);
 BOOLEAN XGI_BridgeIsOn(PVB_DEVICE_INFO pVBInfo);
 USHORT XGI_GetOffset(USHORT ModeNo, USHORT ModeIdIndex,
                      USHORT RefreshRateTableIndex,
@@ -430,7 +429,8 @@ InitTo330Pointer(UCHAR ChipType, PVB_DEVICE_INFO pVBInfo)
 /* Description : */
 /* --------------------------------------------------------------------- */
 BOOLEAN
-XGISetModeNew(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo)
+XGISetModeNew(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo,
+	      USHORT ModeNo)
 {
 #ifndef LINUX_XF86
     ULONG temp;
@@ -438,11 +438,7 @@ XGISetModeNew(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo)
 #endif
     USHORT ModeIdIndex;
     /* PUCHAR pVBInfo->FBAddr = HwDeviceExtension->pjVideoMemoryAddress ; */
-    VB_DEVICE_INFO VBINF;
-    PVB_DEVICE_INFO pVBInfo = &VBINF;
     USHORT temp_mode_no;
-
-    XGINew_InitVBIOSData(HwDeviceExtension, pVBInfo);
 
     pVBInfo->IF_DEF_VideoCapture = 1;
     pVBInfo->IF_DEF_ScaleLCD = 1;

@@ -137,7 +137,7 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
 
                     SenseModeNo = 0x2e ;
                     /* XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x30 , 0x41 ) ; */
-                    /* XGISetModeNew( HwDeviceExtension , 0x2e ) ; // ynlai InitMode */
+		    /* XGISetModeNew(HwDeviceExtension, pVBInfo, 0x2e); // ynlai InitMode */
 
 		    temp_mode_no = SenseModeNo;
 		    XGI_SearchModeID(pVBInfo->SModeIDTable,

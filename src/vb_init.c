@@ -200,11 +200,9 @@ void DelayUS(ULONG MicroSeconds)
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-BOOLEAN XGIInitNew( PXGI_HW_DEVICE_INFO HwDeviceExtension )
+BOOLEAN XGIInitNew(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+		   PVB_DEVICE_INFO pVBInfo)
 {
-
-    VB_DEVICE_INFO VBINF;
-    PVB_DEVICE_INFO pVBInfo = &VBINF;
 #ifndef LINUX_XF86
     USHORT Mclockdata[ 30 ] , Eclockdata[ 30 ] ;
     UCHAR  j , SR11 , SR17 = 0 , SR18 = 0 , SR19 = 0 ;
@@ -1409,7 +1407,7 @@ void XGINew_SetDRAMSize_340( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_
 
     pVBInfo->ROMAddr = HwDeviceExtension->pjVirtualRomBase ;
     pVBInfo->FBAddr = HwDeviceExtension->pjVideoMemoryAddress ;
-    XGISetModeNew( HwDeviceExtension , 0x2e ) ;
+    XGISetModeNew(HwDeviceExtension, pVBInfo, 0x2e);
 
     data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x21 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x21 , ( USHORT )( data & 0xDF ) ) ;	/* disable read cache */
@@ -1437,7 +1435,7 @@ void XGINew_SetDRAMSize_XG45( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE
 
     pVBInfo->ROMAddr = HwDeviceExtension->pjVirtualRomBase ;
     pVBInfo->FBAddr = HwDeviceExtension->pjVideoMemoryAddress ;
-    XGISetModeNew( HwDeviceExtension , 0x2e ) ;
+    XGISetModeNew(HwDeviceExtension, pVBInfo, 0x2e);
 
     data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x21 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x21 , ( USHORT )( data & 0xDF ) ) ;	/*disable read cache*/  
@@ -1460,13 +1458,10 @@ void XGINew_SetDRAMSize_XG45( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE
 /* Description : */
 /* --------------------------------------------------------------------- */
 
-void XGINew_SetDRAMModeRegister340( PXGI_HW_DEVICE_INFO HwDeviceExtension )
+void XGINew_SetDRAMModeRegister340(PXGI_HW_DEVICE_INFO HwDeviceExtension
+				   PVB_DEVICE_INFO pVBInfo)
 {
     UCHAR data ;
-    VB_DEVICE_INFO VBINF;
-    PVB_DEVICE_INFO pVBInfo = &VBINF;
-
-    XGINew_InitVBIOSData(HwDeviceExtension, pVBInfo);
 
     ReadVBIOSTablData( HwDeviceExtension->jChipType , pVBInfo) ;
 
@@ -2794,15 +2789,12 @@ void XGINew_DDR1x_MRS_XG20( USHORT P3c4 , PVB_DEVICE_INFO pVBInfo)
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void XGINew_SetDRAMModeRegister_XG20( PXGI_HW_DEVICE_INFO HwDeviceExtension )
+void XGINew_SetDRAMModeRegister_XG20(PXGI_HW_DEVICE_INFO HwDeviceExtension,
+				     PVB_DEVICE_INFO pVBInfo)
 {
 #ifndef LINUX_XF86
     UCHAR data ;
 #endif
-    VB_DEVICE_INFO VBINF;
-    PVB_DEVICE_INFO pVBInfo = &VBINF;
-
-    XGINew_InitVBIOSData(HwDeviceExtension, pVBInfo);
 
     ReadVBIOSTablData( HwDeviceExtension->jChipType , pVBInfo) ;
 

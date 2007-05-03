@@ -2571,11 +2571,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     xf86DrvMsg(pScrn->scrnIndex, from, "Relocated IO registers at 0x%lX\n",
                (unsigned long) pXGI->RelIO);
 
-    /* Initialize XGI Port Reg definitions for externally used
-     * init.c/init301.c functions.
-     */
-    XGIRegInit(pXGI->XGI_Pr, pXGI->RelIO + 0x30);
-
     if (!xf86SetDepthBpp(pScrn, 0, 0, 0, pix24flags)) {
         XGIErrorLog(pScrn, "xf86SetDepthBpp() error\n");
 #ifdef XGIDUALHEAD

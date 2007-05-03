@@ -733,7 +733,6 @@ extern BOOLEAN XGIBIOSSetMode(VB_DEVICE_INFO *XGI_Pr,
     PXGI_HW_DEVICE_INFO HwDeviceExtension, ScrnInfoPtr pScrn,
     DisplayModePtr mode);
 
-extern void	XGIRegInit(VB_DEVICE_INFO *XGI_Pr, USHORT BaseAddr);
 extern void     XGI_New_GetVBType(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO);
 
 extern BOOLEAN 	XGIBIOSSetModeCRT1(VB_DEVICE_INFO *XGI_Pr,

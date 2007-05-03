@@ -115,7 +115,6 @@ static const USHORT  ModeIndex_310_2048x1536[]= {0x6c, 0x6d, 0x00, 0x6e};
 
 void	XGI_New_DisplayOn(VB_DEVICE_INFO *XGI_Pr);
 void	XGI_New_DisplayOff(VB_DEVICE_INFO *XGI_Pr);
-void	XGIRegInit(VB_DEVICE_INFO *XGI_Pr, XGIIOADDRESS BaseAddr);
 
 void	XGI_New_GetVBType(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo);
 USHORT	XGI_GetMCLK(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo);
