@@ -647,9 +647,6 @@ typedef struct {
 #endif
 
     HW_DEVICE_EXTENSION xgi_HwDevExt;      /* For new mode switching code */
-    VB_DEVICE_INFO      VBInfo ;
-    PVB_DEVICE_INFO     pVBInfo ;
-
     XF86VideoAdaptorPtr adaptor;
     ScreenBlockHandlerProcPtr BlockHandler;
 

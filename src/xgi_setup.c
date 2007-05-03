@@ -315,7 +315,6 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
     pXGI = XGIPTR(pScrn ) ;
     pHwDevInfo = &pXGI->xgi_HwDevExt ;
     NBridge = pciTag(0,0,0) ;
-    pXGI->pVBInfo = &(pXGI->VBInfo) ;
 
     pHwDevInfo->pDevice = pXGI ;
     pHwDevInfo->pjVirtualRomBase = pXGI->BIOS ;
