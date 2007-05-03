@@ -666,7 +666,7 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
         setXGIIDXREG(XGISR, 0x01, ~0x20, sr1);
 
         if ((!(pXGI->VBFlags & CRT1_LCDA))
-            || (pXGI->XGI_Pr->XGI_VBType & VB_XGI301C)) {
+            || (pXGI->XGI_Pr->VBType & VB_XGI301C)) {
             inXGIIDXREG(XGISR, 0x1f, oldpmreg);
             if (!pXGI->CRT1off) {
                 setXGIIDXREG(XGISR, 0x1f, 0x3f, pmreg);
@@ -677,7 +677,7 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
 
     if ((docrt1) && (pmreg != oldpmreg)
         && ((!(pXGI->VBFlags & CRT1_LCDA))
-            || (pXGI->XGI_Pr->XGI_VBType & VB_XGI301C))) {
+            || (pXGI->XGI_Pr->VBType & VB_XGI301C))) {
         outXGIIDXREG(XGISR, 0x00, 0x01);        /* Synchronous Reset */
         usleep(10000);
         outXGIIDXREG(XGISR, 0x00, 0x03);        /* End Reset */
@@ -2932,7 +2932,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     if (pXGI->ForceCRT1Type == CRT1_LCDA) {
         if (!
             (pXGI->XGI_Pr->
-             XGI_VBType & (VB_XGI301C | VB_XGI302B | VB_XGI301LV |
+             VBType & (VB_XGI301C | VB_XGI302B | VB_XGI301LV |
                            VB_XGI302LV))) {
             xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
                        "Chipset/Video bridge does not support LCD-via-CRT1\n");
@@ -2949,12 +2949,12 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     /* Setup SD flags */
     pXGI->XGI_SD_Flags |= XGI_SD_ADDLSUPFLAG;
 
-    if (pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) {
+    if (pXGI->XGI_Pr->VBType & VB_XGIVB) {
         pXGI->XGI_SD_Flags |= XGI_SD_SUPPORTTV;
     }
 
 #ifdef ENABLE_YPBPR
-    if (pXGI->XGI_Pr->XGI_VBType & (VB_XGI301 | VB_XGI301B | VB_XGI302B)) {
+    if (pXGI->XGI_Pr->VBType & (VB_XGI301 | VB_XGI301B | VB_XGI302B)) {
         pXGI->XGI_SD_Flags |= XGI_SD_SUPPORTHIVISION;
     }
 #endif
@@ -2987,19 +2987,19 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         }
     }
 
-    if (pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) {
+    if (pXGI->XGI_Pr->VBType & VB_XGIVB) {
         pXGI->XGI_SD_Flags |= (XGI_SD_SUPPORTPALMN | XGI_SD_SUPPORTNTSCJ);
     }
-    if (pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) {
+    if (pXGI->XGI_Pr->VBType & VB_XGIVB) {
         pXGI->XGI_SD_Flags |= XGI_SD_SUPPORTTVPOS;
     }
     if (pXGI->XGI_Pr->
-        XGI_VBType & (VB_XGI301 | VB_XGI301B | VB_XGI301C | VB_XGI302B)) {
+        VBType & (VB_XGI301 | VB_XGI301B | VB_XGI301C | VB_XGI302B)) {
         pXGI->XGI_SD_Flags |= (XGI_SD_SUPPORTSCART | XGI_SD_SUPPORTVGA2);
     }
 
     if ((pXGI->XGI_Pr->
-         XGI_VBType & (VB_XGI301C | VB_XGI302B | VB_XGI301LV | VB_XGI302LV))
+         VBType & (VB_XGI301C | VB_XGI302B | VB_XGI301LV | VB_XGI302LV))
         && (pXGI->VBFlags & CRT2_LCD)) {
         pXGI->XGI_SD_Flags |= XGI_SD_SUPPORTLCDA;
     }
@@ -3023,7 +3023,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #endif
 
     /* Eventually overrule TV Type (SVIDEO, COMPOSITE, SCART, HIVISION, YPBPR) */
-    if (pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) {
+    if (pXGI->XGI_Pr->VBType & VB_XGIVB) {
         if (pXGI->ForceTVType != -1) {
             pXGI->VBFlags &= ~(TV_INTERFACE);
             pXGI->VBFlags |= pXGI->ForceTVType;
@@ -3043,10 +3043,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      *     - Depth = 8 and bridge=LVDS|301B-DH
      *     - LCDA
      */
-    if (((pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) == 0)
+    if (((pXGI->XGI_Pr->VBType & VB_XGIVB) == 0)
         || ((pXGI->VBFlags & (CRT2_VGA | CRT2_LCD | CRT2_TV)) == 0)
         || ((pScrn->bitsPerPixel == 8)
-            && (pXGI->XGI_Pr->XGI_VBType & VB_XGI301LV302LV))
+            && (pXGI->XGI_Pr->VBType & VB_XGI301LV302LV))
         || (pXGI->VBFlags & CRT1_LCDA)) {
         pXGI->CRT1off = 0;
     }
@@ -3054,7 +3054,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     /* Handle TVStandard option */
     if ((pXGI->NonDefaultPAL != -1) || (pXGI->NonDefaultNTSC != -1)) {
-        if (!(pXGI->XGI_Pr->XGI_VBType & VB_XGIVB)) {
+        if (!(pXGI->XGI_Pr->VBType & VB_XGIVB)) {
             xf86DrvMsg(pScrn->scrnIndex, X_INFO,
                        "PALM, PALN and NTSCJ not supported on this hardware\n");
             pXGI->NonDefaultPAL = pXGI->NonDefaultNTSC = -1;
@@ -3465,7 +3465,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                    clockRanges->maxClock / 1000);
 
         if ((pXGI->XGI_Pr->
-             XGI_VBType & (VB_XGI301 | VB_XGI301B | VB_XGI301C | VB_XGI302B)))
+             VBType & (VB_XGI301 | VB_XGI301B | VB_XGI301C | VB_XGI302B)))
         {
             if (!(pXGI->VBFlags & (CRT2_LCD | CRT2_VGA)))
                 includelcdmodes = FALSE;
@@ -5132,7 +5132,7 @@ XGISaveScreenDH(ScreenPtr pScreen, int mode)
 
         if ((pXGI->SecondHead)
             && ((!(pXGI->VBFlags & CRT1_LCDA))
-                || (pXGI->XGI_Pr->XGI_VBType & VB_XGI301C))) {
+                || (pXGI->XGI_Pr->VBType & VB_XGI301C))) {
 
             /* Slave head is always CRT1 */
             if (pXGI->VBFlags & CRT1_LCDA)
@@ -5324,7 +5324,7 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
                 if (vbflag & TV_PAL) {
                     CR31 |= 0x01;
                     CR35 |= 0x01;
-                    if (pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) {
+                    if (pXGI->XGI_Pr->VBType & VB_XGIVB) {
                         if (vbflag & TV_PALM) {
                             CR38 |= 0x40;
                             CR35 |= 0x04;
@@ -5541,7 +5541,7 @@ XGIPostSetMode(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
 
     /* Determine if our very special TV mode is active */
     pXGI->MiscFlags &= ~MISC_TVNTSC1024;
-    if ((pXGI->XGI_Pr->XGI_VBType & VB_XGIVB) && (pXGI->VBFlags & CRT2_TV)
+    if ((pXGI->XGI_Pr->VBType & VB_XGIVB) && (pXGI->VBFlags & CRT2_TV)
         && (!(pXGI->VBFlags & TV_HIVISION))) {
         if (((pXGI->VBFlags & TV_YPBPR) && (pXGI->VBFlags & TV_YPBPR525I))
             || ((!(pXGI->VBFlags & TV_YPBPR))

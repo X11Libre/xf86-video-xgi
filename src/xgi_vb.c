@@ -110,7 +110,7 @@ void XGICRT1PreInit(ScrnInfoPtr pScrn)
     unsigned char CR32;
     unsigned char CRT1Detected;
 
-    if(!(pXGI->XGI_Pr->XGI_VBType & VB_XGIVB)
+    if(!(pXGI->XGI_Pr->VBType & VB_XGIVB)
 #ifdef XGIDUALHEAD
        || pXGI->DualHeadMode
 #endif
@@ -148,7 +148,7 @@ void XGILCDPreInit(ScrnInfoPtr pScrn)
 
     pXGI->LCDwidth = 0;
 
-    /* if(!(pXGI->XGI_Pr->XGI_VBType & VB_XGIVB)) return; */
+    /* if(!(pXGI->XGI_Pr->VBType & VB_XGIVB)) return; */
 
     inXGIIDXREG(XGICR, 0x32, CR32);
 
@@ -195,7 +195,7 @@ void XGITVPreInit(ScrnInfoPtr pScrn)
     unsigned char SR16, SR38, CR32, CR35=0, CR38=0, CR39;
     int temp = 0;
 
-    if(!(pXGI->XGI_Pr->XGI_VBType & VB_XGIVB)) return;
+    if(!(pXGI->XGI_Pr->VBType & VB_XGIVB)) return;
 
     inXGIIDXREG(XGICR, 0x32, CR32);
     inXGIIDXREG(XGICR, 0x35, CR35);

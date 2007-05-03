@@ -348,7 +348,7 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
     XGI_New_GetVBType(pXGI->XGI_Pr, pHwDevInfo); //yilin
     PDEBUG(ErrorF("XGI_InitHwDevInfo  pXGI->XGI_Pr->XGI_VBType= %x  \n",pXGI->XGI_Pr->XGI_VBType)) ; //yilin
  //   pHwDevInfo->ujVBChipID = VB_CHIP_301 ; //yilin
-    if( pXGI->XGI_Pr->XGI_VBType & (VB_XGI301 | VB_XGI301B | VB_XGI301C))
+    if( pXGI->XGI_Pr->VBType & (VB_XGI301 | VB_XGI301B | VB_XGI301C))
     {
     PDEBUG(ErrorF("VB chip = 301 \n")) ;
 	 pHwDevInfo->ujVBChipID = VB_CHIP_301 ;
