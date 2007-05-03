@@ -79,7 +79,6 @@ typedef enum {
     OPTION_SCALELCD,
     OPTION_CENTERLCD,
     OPTION_SPECIALTIMING,
-    OPTION_LVDSHL,
     OPTION_ENABLEHOTKEY,
     OPTION_MERGEDFB,
     OPTION_MERGEDFBAUTO,
@@ -120,7 +119,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_ROTATE,            	"Rotate",                 OPTV_STRING,    {0}, FALSE },
     { OPTION_NOXVIDEO,          	"NoXvideo",               OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_MAXXFBMEM,         	"MaxXFBMem",              OPTV_INTEGER,   {0}, -1    },
-    { OPTION_LVDSHL,			"LVDSHL", 	  	  OPTV_INTEGER,   {0}, -1    },
     { OPTION_SPECIALTIMING,        	"SpecialTiming",          OPTV_STRING,    {0}, -1    },
     { OPTION_USEROMDATA,		"UseROMData",	          OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_NOINTERNALMODES,   	"NoInternalModes",        OPTV_BOOLEAN,   {0}, FALSE },
@@ -357,9 +355,6 @@ xgiOptions(ScrnInfoPtr pScrn)
        }
        if(xf86GetOptValString(pXGI->Options, OPTION_SPECIALTIMING)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "SpecialTiming");
-       }
-       if(xf86GetOptValString(pXGI->Options, OPTION_LVDSHL)) {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "LVDSHL");
        }
        if(xf86GetOptValBool(pXGI->Options, OPTION_CRT2GAMMA, &val)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "CRT2Gamma");

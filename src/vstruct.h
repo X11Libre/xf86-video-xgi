@@ -110,9 +110,6 @@ typedef struct _XGI_Private
 	XGI_VBVCLKDataStruct        *XGI_VBVCLKData;
 	const XGI_StResInfoStruct   *XGI_StResInfo;
 	const XGI_ModeResInfoStruct *XGI_ModeResInfo;
-
-    /* FIXME: This field is set but never used. */
-	int	LVDSHL;
 } XGI_Private;
 
 #endif
