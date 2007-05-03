@@ -288,7 +288,7 @@ XGI_New_DisplayOff(XGI_Private *XGI_Pr)
 void
 XGIRegInit(XGI_Private *XGI_Pr, XGIIOADDRESS BaseAddr)
 {
-   XGI_Pr->XGI_P3c4 = BaseAddr + 0x14;
+   XGI_Pr->XGI_P3c4 = BaseAddr + 0x14;       /* DDC Port ( = P3C4, SR11/0A) */
    XGI_Pr->XGI_P3d4 = BaseAddr + 0x24;
    XGI_Pr->XGI_P3c0 = BaseAddr + 0x10;
    XGI_Pr->XGI_P3ce = BaseAddr + 0x1e;
@@ -298,17 +298,12 @@ XGIRegInit(XGI_Private *XGI_Pr, XGIIOADDRESS BaseAddr)
    XGI_Pr->XGI_P3c7 = BaseAddr + 0x17;
    XGI_Pr->XGI_P3c8 = BaseAddr + 0x18;
    XGI_Pr->XGI_P3c9 = BaseAddr + 0x19;
-   XGI_Pr->XGI_P3cb = BaseAddr + 0x1b;
-   XGI_Pr->XGI_P3cd = BaseAddr + 0x1d;
    XGI_Pr->XGI_P3da = BaseAddr + 0x2a;
    XGI_Pr->XGI_Part1Port = BaseAddr + XGI_CRT2_PORT_04;     /* Digital video interface registers (LCD) */
    XGI_Pr->XGI_Part2Port = BaseAddr + XGI_CRT2_PORT_10;     /* 301 TV Encoder registers */
    XGI_Pr->XGI_Part3Port = BaseAddr + XGI_CRT2_PORT_12;     /* 301 Macrovision registers */
    XGI_Pr->XGI_Part4Port = BaseAddr + XGI_CRT2_PORT_14;     /* 301 VGA2 (and LCD) registers */
    XGI_Pr->XGI_Part5Port = BaseAddr + XGI_CRT2_PORT_14 + 2; /* 301 palette address port registers */
-   XGI_Pr->XGI_DDC_Port = BaseAddr + 0x14;                  /* DDC Port ( = P3C4, SR11/0A) */
-   XGI_Pr->XGI_VidCapt = BaseAddr + XGI_VIDEO_CAPTURE;
-   XGI_Pr->XGI_VidPlay = BaseAddr + XGI_VIDEO_PLAYBACK;
 }
 
 /*********************************************/
@@ -1019,7 +1014,6 @@ XGI_New_SetCRT1Group(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 						  ModeNo, ModeIdIndex);
     USHORT RefreshRateTableIndex = 0;
 
-    XGI_Pr->XGI_CRT1Mode = ModeNo;
 
 /*
   if(XGI_Pr->XGI_SetFlag & LowModeTests) {
@@ -1036,7 +1030,6 @@ XGI_New_SetCRT1Group(XGI_Private *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
   XGI_New_ClearExt1Regs(XGI_Pr, HwInfo, ModeNo);
   XGI_ResetCRT1VCLK(XGI_Pr, HwInfo);
 
-  XGI_Pr->XGI_SelectCRT2Rate = 0;
   XGI_Pr->XGI_SetFlag &= (~ProgrammingCRT2);
 
 #ifdef LINUX_XF86

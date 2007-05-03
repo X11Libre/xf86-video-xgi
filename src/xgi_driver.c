@@ -2562,15 +2562,8 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             pXGIEnt->XGI_Pr = pXGI->XGI_Pr;
 #endif
         memset(pXGI->XGI_Pr, 0, sizeof(XGI_Private));
-        pXGI->XGI_Pr->XGI_Backup70xx = 0xff;
-        pXGI->XGI_Pr->PanelSelfDetected = FALSE;
-        pXGI->XGI_Pr->UsePanelScaler = -1;
-        pXGI->XGI_Pr->CenterScreen = -1;
         pXGI->XGI_Pr->PDC = pXGI->XGI_Pr->PDCA = -1;
         pXGI->XGI_Pr->LVDSHL = -1;
-        pXGI->XGI_Pr->HaveEMI = FALSE;
-        pXGI->XGI_Pr->HaveEMILCD = FALSE;
-        pXGI->XGI_Pr->OverruleEMI = FALSE;
     }
 
     /* Get our relocated IO registers */

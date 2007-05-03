@@ -72,9 +72,7 @@ typedef struct _XGI_Private
 	XGIIOADDRESS XGI_P3c8;
 	XGIIOADDRESS XGI_P3c9;
 
-    /* FIXME: These three fields are set but never used. */
-	XGIIOADDRESS XGI_P3cb;
-	XGIIOADDRESS XGI_P3cd;
+    /* FIXME: This field is set but never used. */
 	XGIIOADDRESS XGI_P3da;
 
 	XGIIOADDRESS XGI_Part1Port;
@@ -86,40 +84,23 @@ typedef struct _XGI_Private
 	XGIIOADDRESS XGI_Part4Port;
 	XGIIOADDRESS XGI_Part5Port;
 
-    /* FIXME: These two fields are set but never used. */
-	XGIIOADDRESS XGI_VidCapt;
-	XGIIOADDRESS XGI_VidPlay;
-
     /* FIXME: This field is tested but is never set. */
 	USHORT XGI_IF_DEF_CONEX;
 
-    /* FIXME: These 9 fields are set but never used. */
-	BOOLEAN PanelSelfDetected;
+    /* FIXME: These three fields are set but never used. */
 	int     XGI_UseOEM;
-	USHORT  XGI_Backup70xx;
-	BOOLEAN HaveEMI;
-	BOOLEAN HaveEMILCD;
-	BOOLEAN OverruleEMI;
 	SHORT  PDC, PDCA;
-	USHORT XGI_CRT1Mode;
 
     /* FIXME: These two fields are tested but is never set. */
 	USHORT XGI_ModeType;
 	USHORT XGI_VBInfo;
 
 	USHORT XGI_VBType;
-
-    /* FIXME: This field is set but never used. */
-	USHORT XGI_SelectCRT2Rate;
-
 	USHORT XGI_SetFlag;
 
     /* FIXME: These two fields are read but never set. */
 	USHORT XGI_VGAVDE;
 	USHORT XGI_VGAHDE;
-
-    /* FIXME: This field is set but never used. */
-	USHORT XGI_DDC_Port;
 
     /* FIXME: These pointers are accessed in various parts of the code, but
      * FIXME: I can't see any place that they are initialized.
@@ -134,10 +115,8 @@ typedef struct _XGI_Private
 	const XGI_StResInfoStruct   *XGI_StResInfo;
 	const XGI_ModeResInfoStruct *XGI_ModeResInfo;
 
-    /* FIXME: These three fields are set but never used. */
+    /* FIXME: This field is set but never used. */
 	int	LVDSHL;
-	int     UsePanelScaler;
-	int	CenterScreen;
 } XGI_Private;
 
 #endif
