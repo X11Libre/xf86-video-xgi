@@ -543,7 +543,6 @@ typedef struct {
     unsigned long   	VBFlags;		/* Video bridge configuration */
     unsigned long       VBFlags_backup;         /* Backup for SlaveMode-modes */
     
-    unsigned int        PDC, PDCA;		/* PanelDelayCompensation */
     short               scrnOffset;		/* Screen pitch (data) */
     short               scrnPitch;		/* Screen pitch (display; regarding interlace) */
     unsigned long       DstColor;

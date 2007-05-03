@@ -2562,7 +2562,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             pXGIEnt->XGI_Pr = pXGI->XGI_Pr;
 #endif
         memset(pXGI->XGI_Pr, 0, sizeof(XGI_Private));
-        pXGI->XGI_Pr->PDC = pXGI->XGI_Pr->PDCA = -1;
         pXGI->XGI_Pr->LVDSHL = -1;
     }
 

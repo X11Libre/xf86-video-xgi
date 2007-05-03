@@ -60,10 +60,6 @@ typedef enum {
     OPTION_ROTATE,
     OPTION_NOXVIDEO,
     OPTION_MAXXFBMEM,
-    OPTION_PDC,
-    OPTION_PDCA,
-    OPTION_PDCS,
-    OPTION_PDCAS,
     OPTION_USEROMDATA,
     OPTION_NOINTERNALMODES,
     OPTION_RESTOREBYSET,
@@ -124,10 +120,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_ROTATE,            	"Rotate",                 OPTV_STRING,    {0}, FALSE },
     { OPTION_NOXVIDEO,          	"NoXvideo",               OPTV_BOOLEAN,   {0}, FALSE },
     { OPTION_MAXXFBMEM,         	"MaxXFBMem",              OPTV_INTEGER,   {0}, -1    },
-    { OPTION_PDC,               	"PanelDelayCompensation", OPTV_INTEGER,   {0}, -1    },
-    { OPTION_PDCA,               	"PanelDelayCompensation1",OPTV_INTEGER,   {0}, -1    },
-    { OPTION_PDCS,               	"PDC", 			  OPTV_INTEGER,   {0}, -1    },
-    { OPTION_PDCAS,               	"PDC1",			  OPTV_INTEGER,   {0}, -1    },
     { OPTION_LVDSHL,			"LVDSHL", 	  	  OPTV_INTEGER,   {0}, -1    },
     { OPTION_SPECIALTIMING,        	"SpecialTiming",          OPTV_STRING,    {0}, -1    },
     { OPTION_USEROMDATA,		"UseROMData",	          OPTV_BOOLEAN,   {0}, -1    },
@@ -215,8 +207,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->agpWantedPages = AGP_PAGES;
     pXGI->NoXvideo = FALSE;
     pXGI->maxxfbmem = 0;
-    pXGI->PDC = -1;
-    pXGI->PDCA = -1;
     pXGI->OptROMUsage = -1;
     pXGI->noInternalModes = FALSE;
     pXGI->NonDefaultPAL = pXGI->NonDefaultNTSC = -1;
@@ -331,7 +321,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     if((pXGI->DualHeadMode) && (pXGI->SecondHead)) {
        static const char *mystring = "Option \"%s\" is only accepted in Master Head's device section\n";
        Bool val;
-       int vali;
 
        if(xf86GetOptValBool(pXGI->Options, OPTION_TURBOQUEUE, &val)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "TurboQueue");
@@ -365,14 +354,6 @@ xgiOptions(ScrnInfoPtr pScrn)
        }
        if(xf86GetOptValString(pXGI->Options, OPTION_YPBPRAR)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "YPbPrAspectRatio");
-       }
-       if((xf86GetOptValInteger(pXGI->Options, OPTION_PDC, &vali)) ||
-          (xf86GetOptValInteger(pXGI->Options, OPTION_PDCS, &vali))) {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "PanelDelayCompensation (PDC)");
-       }
-       if((xf86GetOptValInteger(pXGI->Options, OPTION_PDCA, &vali)) ||
-          (xf86GetOptValInteger(pXGI->Options, OPTION_PDCAS, &vali))) {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "PanelDelayCompensation1 (PDC1)");
        }
        if(xf86GetOptValString(pXGI->Options, OPTION_SPECIALTIMING)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "SpecialTiming");
