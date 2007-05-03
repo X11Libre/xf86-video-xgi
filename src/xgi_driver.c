@@ -5458,8 +5458,6 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
                    "After:  CR30=0x%02x,CR31=0x%02x,CR33=0x%02x,CR%02x=%02x\n",
                    CR30, CR31, CR33, temp, CR38);
 
-    pXGI->XGI_Pr->XGI_UseOEM = pXGI->OptUseOEM;
-
     if (pXGI->VBFlags & CRT2_ENABLE) {
         /* Switch on CRT1 for modes that require the bridge in SlaveMode */
         andXGIIDXREG(XGISR, 0x1f, 0x3f);

@@ -66,7 +66,6 @@ typedef enum {
     OPTION_PDCAS,
     OPTION_USEROMDATA,
     OPTION_NOINTERNALMODES,
-    OPTION_USEOEM,
     OPTION_RESTOREBYSET,
     OPTION_NODDCFORCRT2,
     OPTION_FORCECRT2REDETECTION,
@@ -133,7 +132,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_SPECIALTIMING,        	"SpecialTiming",          OPTV_STRING,    {0}, -1    },
     { OPTION_USEROMDATA,		"UseROMData",	          OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_NOINTERNALMODES,   	"NoInternalModes",        OPTV_BOOLEAN,   {0}, FALSE },
-    { OPTION_USEOEM, 			"UseOEMData",		  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_RESTOREBYSET,		"RestoreBySetMode", 	  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_NODDCFORCRT2,		"NoCRT2Detection", 	  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_FORCECRT2REDETECTION,	"ForceCRT2ReDetection",   OPTV_BOOLEAN,   {0}, -1    },
@@ -221,7 +219,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->PDCA = -1;
     pXGI->OptROMUsage = -1;
     pXGI->noInternalModes = FALSE;
-    pXGI->OptUseOEM = -1;
     pXGI->NonDefaultPAL = pXGI->NonDefaultNTSC = -1;
     pXGI->restorebyset = TRUE;
     pXGI->nocrt2ddcdetection = FALSE;
@@ -350,9 +347,6 @@ xgiOptions(ScrnInfoPtr pScrn)
        }
        if(xf86GetOptValBool(pXGI->Options, OPTION_USEROMDATA, &val)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "UseROMData");
-       }
-       if(xf86GetOptValBool(pXGI->Options, OPTION_USEOEM, &val)) {
-          xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "UseOEMData");
        }
        if(xf86GetOptValBool(pXGI->Options, OPTION_NODDCFORCRT2, &val)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "NoCRT2Detection");

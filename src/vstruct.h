@@ -87,8 +87,7 @@ typedef struct _XGI_Private
     /* FIXME: This field is tested but is never set. */
 	USHORT XGI_IF_DEF_CONEX;
 
-    /* FIXME: These three fields are set but never used. */
-	int     XGI_UseOEM;
+    /* FIXME: These two fields are set but never used. */
 	SHORT  PDC, PDCA;
 
     /* FIXME: These two fields are tested but is never set. */
