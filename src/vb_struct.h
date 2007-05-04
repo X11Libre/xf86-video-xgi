@@ -28,14 +28,6 @@
 #ifndef _VB_STRUCT_
 #define _VB_STRUCT_
 
-#ifdef _INITNEW_
-#define EXTERN
-#else
-#define EXTERN extern
-#endif
-
-
-
 
 typedef struct _XGI_PanelDelayTblStruct
 {
@@ -380,6 +372,14 @@ typedef UCHAR DRAM2Type[2];
 
 typedef struct _VB_DEVICE_INFO  VB_DEVICE_INFO,*PVB_DEVICE_INFO;
 
+#define AGP_REG_SIZE 12
+#define CR40_SIZE    24
+#define CR6B_SIZE    8
+#define CR6E_SIZE    8
+#define CR6F_SIZE    8
+#define CR89_SIZE    8
+#define SR15_SIZE    4
+
 struct _VB_DEVICE_INFO
 {
     BOOLEAN  ISXPDOS;
@@ -410,17 +410,18 @@ struct _VB_DEVICE_INFO
     USHORT BaseAddr;
     XGIIOADDRESS RelIO;
 
-    DRAM4Type  *CR6B;
-    UCHAR  *XG45CR6E;
-    UCHAR  *XG45CR6F;
-    DRAM4Type  *CR6E;
-    DRAM32Type *CR6F;
-    DRAM2Type  *CR89;
+    DRAM4Type  CR6B[CR6B_SIZE];
 
-    DRAM8Type  *SR15; /* pointer : point to array */
-    DRAM8Type  *CR40;
-    UCHAR  *pSoftSetting;
-    UCHAR  *pOutputSelect;
+    UCHAR  XG45CR6E[CR6E_SIZE];
+    UCHAR  XG45CR6F[CR6F_SIZE];
+    DRAM4Type  CR6E[CR6E_SIZE];
+    DRAM32Type CR6F[CR6F_SIZE];
+    DRAM2Type  CR89[CR89_SIZE];
+
+    DRAM8Type  SR15[SR15_SIZE]; /* pointer : point to array */
+    DRAM8Type  CR40[CR40_SIZE];
+    UCHAR  SoftSetting;
+    UCHAR  OutputSelect;
 
     USHORT *pRGBSenseData;
     USHORT *pRGBSenseData2; /*301b*/
@@ -429,24 +430,24 @@ struct _VB_DEVICE_INFO
     USHORT *pYCSenseData;
     USHORT *pYCSenseData2;
 
-    UCHAR  *pSR07;
-    UCHAR  *CR49;
-    UCHAR  *pSR1F;
-    UCHAR  *AGPReg;
-    UCHAR  *SR16;
-    UCHAR  *pSR21;
-    UCHAR  *pSR22;
-    UCHAR  *pSR23;
-    UCHAR  *pSR24;
-    UCHAR  *SR25;
-    UCHAR  *pSR31;
-    UCHAR  *pSR32;
-    UCHAR  *pSR33;
-    UCHAR  *pCRCF;
-    UCHAR  *pCRT2Data_1_2;
-    UCHAR  *pCRT2Data_4_D;
-    UCHAR  *pCRT2Data_4_E;
-    UCHAR  *pCRT2Data_4_10;
+    UCHAR  SR07;
+    UCHAR  CR49[2];
+    UCHAR  SR1F;
+    UCHAR  AGPReg[AGP_REG_SIZE];
+    UCHAR  SR16[4];
+    UCHAR  SR21;
+    UCHAR  SR22;
+    UCHAR  SR23;
+    UCHAR  SR24;
+    UCHAR  SR25[2];
+    UCHAR  SR31;
+    UCHAR  SR32;
+    UCHAR  SR33;
+    UCHAR  CRCF;
+    UCHAR  CRT2Data_1_2;
+    UCHAR  CRT2Data_4_D;
+    UCHAR  CRT2Data_4_E;
+    UCHAR  CRT2Data_4_10;
     XGI_MCLKDataStruct  *MCLKData;
     XGI_ECLKDataStruct  *ECLKData;
 
@@ -471,14 +472,14 @@ struct _VB_DEVICE_INFO
     UCHAR   *Ren525pGroup3;
     UCHAR   *Ren750pGroup3;
     UCHAR   *ScreenOffset;
-    UCHAR   *pXGINew_DRAMTypeDefinition;
-    UCHAR   *pXGINew_I2CDefinition ;
-    UCHAR   *pXGINew_CR97 ;
+    UCHAR   DRAMTypeDefinition;
+    UCHAR   I2CDefinition;
+    UCHAR   CR97;
 
     XGI330_LCDCapStruct  *LCDCapList;
 
-    XGI_TimingHStruct  *TimingH;
-    XGI_TimingVStruct  *TimingV;
+    XGI_TimingHStruct  TimingH;
+    XGI_TimingVStruct  TimingV;
 
     XGI_StStruct          *SModeIDTable;
     XGI_StandTableStruct  *StandTable;
@@ -491,8 +492,6 @@ struct _VB_DEVICE_INFO
     XGI_StResInfoStruct   *StResInfo;
     XGI_ModeResInfoStruct *ModeResInfo;
 };  /* _VB_DEVICE_INFO */
-
-
 
 #define _VB_STRUCT_
 #endif /* _VB_STRUCT_ */

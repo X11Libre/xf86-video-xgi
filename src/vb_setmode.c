@@ -325,9 +325,9 @@ InitTo330Pointer(UCHAR ChipType, PVB_DEVICE_INFO pVBInfo)
     pVBInfo->StResInfo = XGI330_StResInfo;
     pVBInfo->ModeResInfo = XGI330_ModeResInfo;
 
-    pVBInfo->pOutputSelect = &XGI330_OutputSelect;
-    pVBInfo->pSoftSetting = &XGI330_SoftSetting;
-    pVBInfo->pSR07 = &XGI330_SR07;
+    pVBInfo->OutputSelect = XGI330_OutputSelect;
+    pVBInfo->SoftSetting = XGI330_SoftSetting;
+    pVBInfo->SR07 = XGI330_SR07;
     pVBInfo->LCDResInfo = 0;
     pVBInfo->LCDTypeInfo = 0;
     pVBInfo->LCDInfo = 0;
@@ -335,41 +335,41 @@ InitTo330Pointer(UCHAR ChipType, PVB_DEVICE_INFO pVBInfo)
     pVBInfo->TVInfo = 0;
 
 
-    pVBInfo->SR15 = XGI340_SR13;
-    pVBInfo->CR40 = XGI340_cr41;
-    pVBInfo->SR25 = XGI330_sr25;
-    pVBInfo->pSR31 = &XGI330_sr31;
-    pVBInfo->pSR32 = &XGI330_sr32;
-    pVBInfo->CR6B = XGI340_CR6B;
+    (void) memcpy(pVBInfo->SR15, XGI340_SR13, sizeof(XGI340_SR13));
+    (void) memcpy(pVBInfo->CR40, XGI340_CR41, sizeof(XGI340_CR41));
+    (void) memcpy(pVBInfo->SR25, XGI330_SR25, sizeof(XGI330_SR25));
+    pVBInfo->SR31 = XGI330_SR31;
+    pVBInfo->SR32 = XGI330_SR32;
+    (void) memcpy(pVBInfo->CR6B, XGI340_CR6B, sizeof(XGI340_CR6B));
     if (ChipType == XG45) {
-        pVBInfo->XG45CR6E = XGI45_CR6E;
-        pVBInfo->XG45CR6F = XGI45_CR6F;
+        (void) memcpy(pVBInfo->XG45CR6E, XGI45_CR6E, sizeof(XGI45_CR6E));
+        (void) memcpy(pVBInfo->XG45CR6F, XGI45_CR6F, sizeof(XGI45_CR6F));
     }
     else {
-        pVBInfo->CR6E = XGI340_CR6E;
-        pVBInfo->CR6F = XGI340_CR6F;
+        (void) memcpy(pVBInfo->CR6E, XGI340_CR6E, sizeof(XGI340_CR6E));
+        (void) memcpy(pVBInfo->CR6F, XGI340_CR6F, sizeof(XGI340_CR6F));
     }
-    pVBInfo->CR89 = XGI340_CR89;
-    pVBInfo->AGPReg = XGI340_AGPReg;
-    pVBInfo->SR16 = XGI340_SR16;
-    pVBInfo->pCRCF = &XG40_CRCF;
-    pVBInfo->pXGINew_DRAMTypeDefinition = &XG40_DRAMTypeDefinition;
+    (void) memcpy(pVBInfo->CR89, XGI340_CR89, sizeof(XGI340_CR89));
+    (void) memcpy(pVBInfo->AGPReg, XGI340_AGPReg, sizeof(XGI340_AGPReg));
+    (void) memcpy(pVBInfo->SR16, XGI340_SR16, sizeof(XGI340_SR16));
+    pVBInfo->CRCF = XG40_CRCF;
+    pVBInfo->DRAMTypeDefinition = XG40_DRAMTypeDefinition;
 
 
-    pVBInfo->CR49 = XGI330_CR49;
-    pVBInfo->pSR1F = &XGI330_SR1F;
-    pVBInfo->pSR21 = &XGI330_SR21;
-    pVBInfo->pSR22 = &XGI330_SR22;
-    pVBInfo->pSR23 = &XGI330_SR23;
-    pVBInfo->pSR24 = &XGI330_SR24;
-    pVBInfo->pSR33 = &XGI330_SR33;
+    (void) memcpy(pVBInfo->CR49, XGI330_CR49, sizeof(XGI330_CR49));
+    pVBInfo->SR1F = XGI330_SR1F;
+    pVBInfo->SR21 = XGI330_SR21;
+    pVBInfo->SR22 = XGI330_SR22;
+    pVBInfo->SR23 = XGI330_SR23;
+    pVBInfo->SR24 = XGI330_SR24;
+    pVBInfo->SR33 = XGI330_SR33;
 
 
 
-    pVBInfo->pCRT2Data_1_2 = &XGI330_CRT2Data_1_2;
-    pVBInfo->pCRT2Data_4_D = &XGI330_CRT2Data_4_D;
-    pVBInfo->pCRT2Data_4_E = &XGI330_CRT2Data_4_E;
-    pVBInfo->pCRT2Data_4_10 = &XGI330_CRT2Data_4_10;
+    pVBInfo->CRT2Data_1_2 = XGI330_CRT2Data_1_2;
+    pVBInfo->CRT2Data_4_D = XGI330_CRT2Data_4_D;
+    pVBInfo->CRT2Data_4_E = XGI330_CRT2Data_4_E;
+    pVBInfo->CRT2Data_4_10 = XGI330_CRT2Data_4_10;
     pVBInfo->pRGBSenseData = &XGI330_RGBSenseData;
     pVBInfo->pVideoSenseData = &XGI330_VideoSenseData;
     pVBInfo->pYCSenseData = &XGI330_YCSenseData;
@@ -393,8 +393,8 @@ InitTo330Pointer(UCHAR ChipType, PVB_DEVICE_INFO pVBInfo)
     pVBInfo->Ren750pGroup3 = XGI330_Ren750pGroup3;
 
 
-    pVBInfo->TimingH = XGI_TimingH;
-    pVBInfo->TimingV = XGI_TimingV;
+    (void) memcpy(& pVBInfo->TimingH, XGI_TimingH, sizeof(XGI_TimingH));
+    (void) memcpy(& pVBInfo->TimingV, XGI_TimingV, sizeof(XGI_TimingV));
 
     pVBInfo->CHTVVCLKUNTSC = XGI330_CHTVVCLKUNTSC;
     pVBInfo->CHTVVCLKONTSC = XGI330_CHTVVCLKONTSC;
@@ -411,10 +411,10 @@ InitTo330Pointer(UCHAR ChipType, PVB_DEVICE_INFO pVBInfo)
     pVBInfo->XGI_TVDelayList2 = XGI301TVDelayList2;
 
 
-    pVBInfo->pXGINew_I2CDefinition = &XG40_I2CDefinition;
+    pVBInfo->I2CDefinition = XG40_I2CDefinition;
 
     if (ChipType == XG20)
-        pVBInfo->pXGINew_CR97 = &XG20_CR97;
+        pVBInfo->CR97 = XG20_CR97;
 }
 
 
@@ -1086,11 +1086,11 @@ XGI_SetCRT1CRTC(USHORT ModeNo, USHORT ModeIdIndex,
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4, 0x11, data);       /* Unlock CRTC */
 
     for (i = 0; i < 8; i++)
-        pVBInfo->TimingH[0].data[i] =
+        pVBInfo->TimingH.data[i] =
             pVBInfo->XGINEWUB_CRT1Table[index].CR[i];
 
     for (i = 0; i < 7; i++)
-        pVBInfo->TimingV[0].data[i] =
+        pVBInfo->TimingV.data[i] =
             pVBInfo->XGINEWUB_CRT1Table[index].CR[i + 8];
 
     XGI_SetCRT1Timing_H(pVBInfo, HwDeviceExtension);
@@ -1126,22 +1126,22 @@ XGI_SetCRT1Timing_H(PVB_DEVICE_INFO pVBInfo,
     data &= 0x7F;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4, 0x11, data);
 
-    data = pVBInfo->TimingH[0].data[0];
+    data = pVBInfo->TimingH.data[0];
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4, 0, data);
 
     for (i = 0x01; i <= 0x04; i++) {
-        data = pVBInfo->TimingH[0].data[i];
+        data = pVBInfo->TimingH.data[i];
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4, (USHORT) (i + 1), data);
     }
 
     for (i = 0x05; i <= 0x06; i++) {
-        data = pVBInfo->TimingH[0].data[i];
+        data = pVBInfo->TimingH.data[i];
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, (USHORT) (i + 6), data);
     }
 
     j = (UCHAR) XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x0e);
     j &= 0x1F;
-    data = pVBInfo->TimingH[0].data[7];
+    data = pVBInfo->TimingH.data[7];
     data &= 0xE0;
     data |= j;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x0e, data);
@@ -1193,28 +1193,28 @@ XGI_SetCRT1Timing_V(USHORT ModeIdIndex, USHORT ModeNo,
     /* XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3d4 , 0x11 , 0x7f , 0x00 ) ; */
 
     for (i = 0x00; i <= 0x01; i++) {
-        data = pVBInfo->TimingV[0].data[i];
+        data = pVBInfo->TimingV.data[i];
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4, (USHORT) (i + 6), data);
     }
 
     for (i = 0x02; i <= 0x03; i++) {
-        data = pVBInfo->TimingV[0].data[i];
+        data = pVBInfo->TimingV.data[i];
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4, (USHORT) (i + 0x0e), data);
     }
 
     for (i = 0x04; i <= 0x05; i++) {
-        data = pVBInfo->TimingV[0].data[i];
+        data = pVBInfo->TimingV.data[i];
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4, (USHORT) (i + 0x11), data);
     }
 
     j = (UCHAR) XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x0a);
     j &= 0xC0;
-    data = pVBInfo->TimingV[0].data[6];
+    data = pVBInfo->TimingV.data[6];
     data &= 0x3F;
     data |= j;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x0a, data);
 
-    data = pVBInfo->TimingV[0].data[6];
+    data = pVBInfo->TimingV.data[6];
     data &= 0x80;
     data = data >> 2;
 
@@ -2003,7 +2003,7 @@ XGI_ModCRT1Regs(USHORT ModeNo, USHORT ModeIdIndex,
                                                           pVBInfo);
 
             for (i = 0; i < 8; i++)
-                pVBInfo->TimingH[0].data[i] = LCDPtr[0].Reg[i];
+                pVBInfo->TimingH.data[i] = LCDPtr[0].Reg[i];
         }
 
         XGI_SetCRT1Timing_H(pVBInfo, HwDeviceExtension);
@@ -2017,7 +2017,7 @@ XGI_ModCRT1Regs(USHORT ModeNo, USHORT ModeIdIndex,
                                                           RefreshRateTableIndex,
                                                           pVBInfo);
             for (i = 0; i < 7; i++)
-                pVBInfo->TimingV[0].data[i] = LCDPtr1[0].Reg[i];
+                pVBInfo->TimingV.data[i] = LCDPtr1[0].Reg[i];
         }
 
         XGI_SetCRT1Timing_V(ModeIdIndex, ModeNo, pVBInfo);
@@ -2480,9 +2480,6 @@ XGI_GetVBInfo(USHORT ModeNo, USHORT ModeIdIndex,
               PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT tempax, push, tempbx, temp, modeflag;
-#ifndef LINUX_XF86
-    UCHAR OutputSelect = *pVBInfo->pOutputSelect;
-#endif
 
     if (ModeNo <= 0x13) {
         modeflag = pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag;
@@ -2671,9 +2668,6 @@ void
 XGI_GetTVInfo(USHORT ModeNo, USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT temp, tempbx = 0, resinfo = 0, modeflag, index1;
-#ifndef LINUX_XF86
-    USHORT temp2, OutputSelect = *pVBInfo->pOutputSelect;
-#endif
 
     tempbx = 0;
     resinfo = 0;

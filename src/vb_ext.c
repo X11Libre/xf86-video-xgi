@@ -113,7 +113,7 @@ BOOLEAN XGINew_Sense(USHORT tempbx, USHORT tempcx, PVB_DEVICE_INFO pVBInfo)
 void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO pVBInfo)
 {
     USHORT tempax = 0 , tempbx , tempcx , temp ,
-           P2reg0 = 0 , SenseModeNo = 0 , OutputSelect = *pVBInfo->pOutputSelect ,
+           P2reg0 = 0 , SenseModeNo = 0 , OutputSelect = pVBInfo->OutputSelect,
            ModeIdIndex , i ;
     pVBInfo->BaseAddr = ( USHORT )HwDeviceExtension->pjIOAddress ;
 
