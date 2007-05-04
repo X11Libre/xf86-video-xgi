@@ -423,12 +423,12 @@ struct _VB_DEVICE_INFO
     UCHAR  SoftSetting;
     UCHAR  OutputSelect;
 
-    USHORT *pRGBSenseData;
-    USHORT *pRGBSenseData2; /*301b*/
-    USHORT *pVideoSenseData;
-    USHORT *pVideoSenseData2;
-    USHORT *pYCSenseData;
-    USHORT *pYCSenseData2;
+    const USHORT *pRGBSenseData;
+    const USHORT *pRGBSenseData2; /*301b*/
+    const USHORT *pVideoSenseData;
+    const USHORT *pVideoSenseData2;
+    const USHORT *pYCSenseData;
+    const USHORT *pYCSenseData2;
 
     UCHAR  SR07;
     UCHAR  CR49[2];
@@ -451,46 +451,46 @@ struct _VB_DEVICE_INFO
     XGI_MCLKDataStruct  *MCLKData;
     XGI_ECLKDataStruct  *ECLKData;
 
-    UCHAR   *XGI_TVDelayList;
-    UCHAR   *XGI_TVDelayList2;
-    UCHAR   *CHTVVCLKUNTSC;
-    UCHAR   *CHTVVCLKONTSC;
-    UCHAR   *CHTVVCLKUPAL;
-    UCHAR   *CHTVVCLKOPAL;
-    UCHAR   *NTSCTiming;
-    UCHAR   *PALTiming;
-    UCHAR   *HiTVExtTiming;
-    UCHAR   *HiTVSt1Timing;
-    UCHAR   *HiTVSt2Timing;
-    UCHAR   *HiTVTextTiming;
-    UCHAR   *YPbPr750pTiming;
-    UCHAR   *YPbPr525pTiming;
-    UCHAR   *YPbPr525iTiming;
-    UCHAR   *HiTVGroup3Data;
-    UCHAR   *HiTVGroup3Simu;
-    UCHAR   *HiTVGroup3Text;
-    UCHAR   *Ren525pGroup3;
-    UCHAR   *Ren750pGroup3;
-    UCHAR   *ScreenOffset;
+    const UCHAR   *XGI_TVDelayList;
+    const UCHAR   *XGI_TVDelayList2;
+    const UCHAR   *CHTVVCLKUNTSC;
+    const UCHAR   *CHTVVCLKONTSC;
+    const UCHAR   *CHTVVCLKUPAL;
+    const UCHAR   *CHTVVCLKOPAL;
+    const UCHAR   *NTSCTiming;
+    const UCHAR   *PALTiming;
+    const UCHAR   *HiTVExtTiming;
+    const UCHAR   *HiTVSt1Timing;
+    const UCHAR   *HiTVSt2Timing;
+    const UCHAR   *HiTVTextTiming;
+    const UCHAR   *YPbPr750pTiming;
+    const UCHAR   *YPbPr525pTiming;
+    const UCHAR   *YPbPr525iTiming;
+    const UCHAR   *HiTVGroup3Data;
+    const UCHAR   *HiTVGroup3Simu;
+    const UCHAR   *HiTVGroup3Text;
+    const UCHAR   *Ren525pGroup3;
+    const UCHAR   *Ren750pGroup3;
+    const UCHAR   *ScreenOffset;
     UCHAR   DRAMTypeDefinition;
     UCHAR   I2CDefinition;
     UCHAR   CR97;
 
-    XGI330_LCDCapStruct  *LCDCapList;
+    const XGI330_LCDCapStruct  *LCDCapList;
 
     XGI_TimingHStruct  TimingH;
     XGI_TimingVStruct  TimingV;
 
-    XGI_StStruct          *SModeIDTable;
-    XGI_StandTableStruct  *StandTable;
-    XGI_ExtStruct         *EModeIDTable;
-    XGI_Ext2Struct        *RefIndex;
+    const XGI_StStruct          *SModeIDTable;
+    const XGI_StandTableStruct  *StandTable;
+    const XGI_ExtStruct         *EModeIDTable;
+    const XGI_Ext2Struct        *RefIndex;
     /* XGINew_CRT1TableStruct *CRT1Table; */
-    XGI_CRT1TableStruct    *XGINEWUB_CRT1Table;
-    XGI_VCLKDataStruct    *VCLKData;
-    XGI_VBVCLKDataStruct  *VBVCLKData;
-    XGI_StResInfoStruct   *StResInfo;
-    XGI_ModeResInfoStruct *ModeResInfo;
+    const XGI_CRT1TableStruct    *XGINEWUB_CRT1Table;
+    const XGI_VCLKDataStruct    *VCLKData;
+    const XGI_VBVCLKDataStruct  *VBVCLKData;
+    const XGI_StResInfoStruct   *StResInfo;
+    const XGI_ModeResInfoStruct *ModeResInfo;
 };  /* _VB_DEVICE_INFO */
 
 #define _VB_STRUCT_

@@ -115,9 +115,9 @@ void XGI_SetGroup4(USHORT ModeNo, USHORT ModeIdIndex,
                    PVB_DEVICE_INFO pVBInfo);
 void XGI_SetGroup5(USHORT ModeNo, USHORT ModeIdIndex,
                    PVB_DEVICE_INFO pVBInfo);
-void *XGI_GetLcdPtr(USHORT BX, USHORT ModeNo, USHORT ModeIdIndex,
+static const void *XGI_GetLcdPtr(USHORT BX, USHORT ModeNo, USHORT ModeIdIndex,
                     USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo);
-void *XGI_GetTVPtr(USHORT BX, USHORT ModeNo, USHORT ModeIdIndex,
+static const void *XGI_GetTVPtr(USHORT BX, USHORT ModeNo, USHORT ModeIdIndex,
                    USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo);
 void XGI_FirePWDEnable(PVB_DEVICE_INFO pVBInfo);
 void XGI_EnableGatingCRT(PXGI_HW_DEVICE_INFO HwDeviceExtension,
@@ -5241,7 +5241,7 @@ void
 XGI_SetGroup3(USHORT ModeNo, USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT i;
-    UCHAR *tempdi;
+    const UCHAR *tempdi;
     USHORT modeflag;
 
     if (ModeNo <= 0x13) {
@@ -5571,7 +5571,7 @@ XGI_SetGroup5(USHORT ModeNo, USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo)
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void *
+const void *
 XGI_GetLcdPtr(USHORT BX, USHORT ModeNo, USHORT ModeIdIndex,
               USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo)
 {
@@ -6076,12 +6076,12 @@ XGI_GetLcdPtr(USHORT BX, USHORT ModeNo, USHORT ModeIdIndex,
 /* Output : */
 /* Description : */
 /* --------------------------------------------------------------------- */
-void *
+const void *
 XGI_GetTVPtr(USHORT BX, USHORT ModeNo, USHORT ModeIdIndex,
              USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT i, tempdx, tempbx, tempal, modeflag, table;
-    XGI330_TVDataTablStruct *tempdi = 0;
+    const XGI330_TVDataTablStruct *tempdi = NULL;
 
     tempbx = BX;
 
@@ -7299,7 +7299,8 @@ XGI_SetYFilter(USHORT ModeNo, USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT tempbx, index;
 
-    UCHAR tempcl, tempch, tempal, *filterPtr;
+    UCHAR tempcl, tempch, tempal;
+    const UCHAR *filterPtr;
 
     XGI_GetTVPtrIndex2(&tempbx, &tempcl, &tempch, pVBInfo);     /* bx, cl, ch */
 
