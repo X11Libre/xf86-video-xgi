@@ -451,27 +451,6 @@ XGI_HandleCRT1(VB_DEVICE_INFO *XGI_Pr)
 }
 
 /*********************************************/
-/*           HELPER: GetColorDepth           */
-/*********************************************/
-
-USHORT
-XGI_New_GetColorDepth(VB_DEVICE_INFO *XGI_Pr, USHORT ModeNo, USHORT ModeIdIndex)
-{
-  USHORT ColorDepth[6] = { 1, 2, 4, 4, 6, 8};
-  SHORT  index;
-  USHORT modeflag;
-
-    if(ModeNo <= 0x13)
-        modeflag = XGI_Pr->SModeIDTable[ModeIdIndex].St_ModeFlag;
-    else
-        modeflag = XGI_Pr->EModeIDTable[ModeIdIndex].Ext_ModeFlag;
-
-  index = (modeflag & ModeInfoFlag) - ModeEGA;
-  if(index < 0) index = 0;
-  return(ColorDepth[index]);
-}
-
-/*********************************************/
 /*             HELPER: GetOffset             */
 /*********************************************/
 
@@ -484,7 +463,7 @@ XGI_New_GetOffset(VB_DEVICE_INFO *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
   infoflag = XGI_Pr->RefIndex[RefreshRateTableIndex].Ext_InfoFlag;
   xres = XGI_Pr->RefIndex[RefreshRateTableIndex].XRes;
 
-  colordepth = XGI_New_GetColorDepth(XGI_Pr,ModeNo,ModeIdIndex);
+  colordepth = XGI_GetColorDepth(ModeNo, ModeIdIndex, XGI_Pr);
 
   temp = xres / 16;
   if(infoflag & InterlaceMode) temp <<= 1;

@@ -79,8 +79,6 @@ USHORT XGI_GetRatePtrCRT2(USHORT ModeNo, USHORT ModeIdIndex,
                           PVB_DEVICE_INFO pVBInfo);
 static USHORT XGI_GetResInfo(USHORT ModeNo, USHORT ModeIdIndex,
                              PVB_DEVICE_INFO pVBInfo);
-USHORT XGI_GetColorDepth(USHORT ModeNo, USHORT ModeIdIndex,
-                         PVB_DEVICE_INFO pVBInfo);
 USHORT XGI_GetVGAHT2(PVB_DEVICE_INFO pVBInfo);
 static unsigned XGI_GetVCLK2Ptr(USHORT ModeNo, USHORT ModeIdIndex,
                                 USHORT RefreshRateTableIndex,
@@ -7743,7 +7741,8 @@ XGI_GetRAMDAC2DATA(USHORT ModeNo, USHORT ModeIdIndex,
 /* Description : */
 /* --------------------------------------------------------------------- */
 USHORT
-XGI_GetColorDepth(USHORT ModeNo, USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo)
+XGI_GetColorDepth(USHORT ModeNo, USHORT ModeIdIndex,
+                  const VB_DEVICE_INFO *pVBInfo)
 {
     USHORT ColorDepth[6] = { 1, 2, 4, 4, 6, 8 };
     SHORT index;
