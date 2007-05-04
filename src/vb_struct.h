@@ -379,6 +379,8 @@ typedef struct _VB_DEVICE_INFO  VB_DEVICE_INFO,*PVB_DEVICE_INFO;
 #define CR6F_SIZE    8
 #define CR89_SIZE    8
 #define SR15_SIZE    4
+#define MCLK_SIZE    8
+#define ECLK_SIZE    8
 
 struct _VB_DEVICE_INFO
 {
@@ -448,8 +450,8 @@ struct _VB_DEVICE_INFO
     UCHAR  CRT2Data_4_D;
     UCHAR  CRT2Data_4_E;
     UCHAR  CRT2Data_4_10;
-    XGI_MCLKDataStruct  *MCLKData;
-    XGI_ECLKDataStruct  *ECLKData;
+    XGI_MCLKDataStruct  MCLKData[MCLK_SIZE];
+    XGI_ECLKDataStruct  ECLKData[ECLK_SIZE];
 
     const UCHAR   *XGI_TVDelayList;
     const UCHAR   *XGI_TVDelayList2;

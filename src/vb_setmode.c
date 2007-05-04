@@ -311,12 +311,12 @@ InitTo330Pointer(UCHAR ChipType, PVB_DEVICE_INFO pVBInfo)
 
 
     if (ChipType >= XG40) {
-        pVBInfo->MCLKData = XGI340New_MCLKData;
-        pVBInfo->ECLKData = XGI340_ECLKData;
+        (void) memcpy(pVBInfo->MCLKData, XGI340New_MCLKData, sizeof(XGI340New_MCLKData));
+        (void) memcpy(pVBInfo->ECLKData, XGI340_ECLKData, sizeof(XGI340_ECLKData));
     }
     else {
-        pVBInfo->MCLKData = XGI330New_MCLKData;
-        pVBInfo->ECLKData = XGI330_ECLKData;
+        (void) memcpy(pVBInfo->MCLKData, XGI330New_MCLKData, sizeof(XGI330New_MCLKData));
+        (void) memcpy(pVBInfo->ECLKData, XGI330_ECLKData, sizeof(XGI330_ECLKData));
     }
 
     pVBInfo->VCLKData = XGI_VCLKData;

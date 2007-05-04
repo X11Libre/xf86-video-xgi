@@ -26,7 +26,7 @@
  
  
 #define  Tap4
-static XGI_ECLKDataStruct XGI330_ECLKData[]=
+static const XGI_ECLKDataStruct XGI330_ECLKData[ECLK_SIZE]=
 {
  { 0x5c,0x23,0x01,166},
  { 0x5c,0x23,0x01,166},
@@ -38,7 +38,7 @@ static XGI_ECLKDataStruct XGI330_ECLKData[]=
  { 0x29,0x01,0x81,300}
 };
 
-static XGI_ECLKDataStruct XGI340_ECLKData[]=
+static const XGI_ECLKDataStruct XGI340_ECLKData[ECLK_SIZE]=
 {
  { 0x7c,0x08,0x01,200},
  { 0x7c,0x08,0x01,200},
@@ -2864,7 +2864,7 @@ static const XGI_Ext2Struct XGI330_RefIndex[]=
 {Support32Bpp + SupportRAMDAC2 + SyncPN,			RES1024x768x160, VCLK139_054,0x30,0x47,0x37,1024, 768},/* 48 1024x768x160Hz */
 };
 
-static XGI_MCLKDataStruct XGI330New_MCLKData[]=
+static const XGI_MCLKDataStruct XGI330New_MCLKData[MCLK_SIZE]=
 {
  { 0x5c,0x23,0x01,166},
  { 0x5c,0x23,0x01,166},
@@ -2876,7 +2876,7 @@ static XGI_MCLKDataStruct XGI330New_MCLKData[]=
  { 0x29,0x01,0x81,300}
 };
 
-static XGI_MCLKDataStruct XGI340New_MCLKData[]=
+static const XGI_MCLKDataStruct XGI340New_MCLKData[MCLK_SIZE]=
 {
  { 0x79,0x06,0x01,250},
  { 0x7c,0x08,0x01,200},
