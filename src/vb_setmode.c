@@ -135,7 +135,6 @@ void XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
                       USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
 static void XGI_WaitDisplay(PVB_DEVICE_INFO pVBInfo);
 void XGI_SenseCRT1(PVB_DEVICE_INFO pVBInfo);
-void XGI_SetGRCRegs(USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo);
 void XGI_ClearExt1Regs(PVB_DEVICE_INFO pVBInfo);
 
 void XGI_SetSync(USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo);
@@ -783,20 +782,20 @@ XGI_SetATTRegs(unsigned ModeNo, unsigned StandTableIndex, unsigned ModeIdIndex,
 /* Description : */
 /* --------------------------------------------------------------------- */
 void
-XGI_SetGRCRegs(USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo)
+XGI_SetGRCRegs(unsigned StandTableIndex, const VB_DEVICE_INFO *pVBInfo)
 {
-    UCHAR GRdata;
-    USHORT i;
+    unsigned i;
 
-    for (i = 0; i <= 0x08; i++) {
-        GRdata = pVBInfo->StandTable[StandTableIndex].GRC[i];   /* Get GR from file */
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3ce, i, GRdata);    /* Set GR(3ce) */
+    for (i = 0; i <= 8; i++) {
+        /* Get GR from file and set GR (3ce)
+         */
+        const unsigned GRdata = pVBInfo->StandTable[StandTableIndex].GRC[i];
+        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3ce, i, GRdata);
     }
 
     if (pVBInfo->ModeType > ModeVGA) {
-        GRdata = (UCHAR) XGI_GetReg((XGIIOADDRESS) pVBInfo->P3ce, 0x05);
-        GRdata &= 0xBF;         /* 256 color disable */
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3ce, 0x05, GRdata);
+        /* 256 color disable */
+        XGI_SetRegAND((XGIIOADDRESS) pVBInfo->P3ce, 0x05, 0xBF);
     }
 }
 

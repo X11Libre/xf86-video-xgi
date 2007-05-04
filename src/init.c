@@ -477,27 +477,6 @@ XGI_New_GetOffset(VB_DEVICE_INFO *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
 }
 
 /*********************************************/
-/*                   GRC                     */
-/*********************************************/
-
-static void
-XGI_New_SetGRCRegs(VB_DEVICE_INFO *XGI_Pr, USHORT StandTableIndex)
-{
-   UCHAR GRdata;
-   USHORT i;
-
-   for(i = 0; i <= 0x08; i++) {
-      GRdata = XGI_Pr->StandTable[StandTableIndex].GRC[i];
-      XGI_SetReg(XGI_Pr->P3ce,i,GRdata);
-   }
-
-   if(XGI_Pr->ModeType > ModeVGA) {
-      /* 256 color disable */
-      XGI_SetRegAND(XGI_Pr->P3ce,0x05,0xBF);
-   }
-}
-
-/*********************************************/
 /*          CLEAR EXTENDED REGISTERS         */
 /*********************************************/
 
@@ -871,7 +850,7 @@ XGI_New_SetCRT1Group(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
   XGI_SetMiscRegs(StandTableIndex, XGI_Pr);
   XGI_SetCRTCRegs(StandTableIndex, XGI_Pr);
   XGI_SetATTRegs(ModeNo, StandTableIndex, ModeIdIndex, XGI_Pr);
-  XGI_New_SetGRCRegs(XGI_Pr, StandTableIndex);
+  XGI_SetGRCRegs(StandTableIndex, XGI_Pr);
   XGI_New_ClearExt1Regs(XGI_Pr, HwInfo, ModeNo);
   XGI_ResetCRT1VCLK(XGI_Pr, HwInfo);
 
