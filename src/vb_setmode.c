@@ -1466,46 +1466,53 @@ XGI_SetCRT1VCLK(USHORT ModeNo, USHORT ModeIdIndex,
                 PXGI_HW_DEVICE_INFO HwDeviceExtension,
                 USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo)
 {
-    UCHAR index, data;
+    unsigned index;
+    unsigned clka;
+    unsigned clkb;
 
-    if ((pVBInfo->
-         VBType & (VB_XGI301B | VB_XGI302B | VB_XGI301LV | VB_XGI302LV |
-                   VB_XGI301C)) && (pVBInfo->VBInfo & SetCRT2ToLCDA)) {
-        const unsigned vclkindex =
-            XGI_GetVCLK2Ptr(ModeNo, ModeIdIndex, RefreshRateTableIndex,
-                            pVBInfo);
-        data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x31) & 0xCF;
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x31, data);
-        data = pVBInfo->VBVCLKData[vclkindex].Part4_A;
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2B, data);
-        data = pVBInfo->VBVCLKData[vclkindex].Part4_B;
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2C, data);
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2D, 0x01);
+    if ((pVBInfo->VBType & VB_XGI301BLV302BLV)
+        && (pVBInfo->VBInfo & SetCRT2ToLCDA)) {
+        index = XGI_GetVCLK2Ptr(ModeNo, ModeIdIndex, RefreshRateTableIndex,
+                                pVBInfo);
+
+        clka = pVBInfo->VBVCLKData[index].Part4_A;
+        clkb = pVBInfo->VBVCLKData[index].Part4_B;
     }
     else {
         index = pVBInfo->RefIndex[RefreshRateTableIndex].Ext_CRTVCLK;
-        data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x31) & 0xCF;
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x31, data);
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2B,
-                   pVBInfo->VCLKData[index].SR2B);
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2C,
-                   pVBInfo->VCLKData[index].SR2C);
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2D, 0x01);
+
+        clka = pVBInfo->VCLKData[index].SR2B;
+        clkb = pVBInfo->VCLKData[index].SR2C;
     }
 
-    if (HwDeviceExtension->jChipType == XG20) {
-        if (pVBInfo->EModeIDTable[ModeIdIndex].Ext_ModeFlag & HalfDCLK) {
-            data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2B);
-            XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2B, data);
-            data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2C);
-            index = data;
-            index &= 0xE0;
-            data &= 0x1F;
-            data = data << 1;
-            data += 1;
-            data |= index;
-            XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2C, data);
-        }
+    XGI_SetRegAND((XGIIOADDRESS) pVBInfo->P3c4, 0x31, 0xCF);
+    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2B, clka);
+    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2C, clkb);
+    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2D, 0x01);
+
+    if ((HwDeviceExtension->jChipType == XG20) 
+         && (pVBInfo->EModeIDTable[ModeIdIndex].Ext_ModeFlag & HalfDCLK)) {
+        UCHAR data;
+
+        /* FIXME: Does this actually serve any purpose?  This register is
+         * FIXME: already written above.
+         */
+        data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2B);
+        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2B, data);
+
+        /* FIXME: The logic here seems wrong.  It looks like its possible
+         * FIXME: for the (data << 1) to cause a bit to creep into the index
+         * FIXME: part.  THere's no documentation for this register, so I have
+         * FIXME: no way of knowing. :(
+         */
+        data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2C);
+        index = data;
+        index &= 0xE0;
+        data &= 0x1F;
+        data = data << 1;
+        data += 1;
+        data |= index;
+        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x2C, data);
     }
 }
 
