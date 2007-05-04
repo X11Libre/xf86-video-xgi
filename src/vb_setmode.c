@@ -135,7 +135,6 @@ void XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
                       USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
 static void XGI_WaitDisplay(PVB_DEVICE_INFO pVBInfo);
 void XGI_SenseCRT1(PVB_DEVICE_INFO pVBInfo);
-void XGI_SetMiscRegs(USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo);
 void XGI_SetCRTCRegs(PXGI_HW_DEVICE_INFO HwDeviceExtension,
                      USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo);
 void XGI_SetATTRegs(USHORT ModeNo, USHORT StandTableIndex, USHORT ModeIdIndex,
@@ -688,7 +687,7 @@ XGI_SetSeqRegs(USHORT StandTableIndex, const VB_DEVICE_INFO *pVBInfo)
 /* Description : */
 /* --------------------------------------------------------------------- */
 void
-XGI_SetMiscRegs(USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo)
+XGI_SetMiscRegs(USHORT StandTableIndex, const VB_DEVICE_INFO *pVBInfo)
 {
     UCHAR Miscdata;
 

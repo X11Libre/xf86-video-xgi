@@ -59,4 +59,6 @@ extern USHORT XGI_GetColorDepth(USHORT ModeNo, USHORT ModeIdIndex,
 extern void XGI_SetSeqRegs(USHORT StandTableIndex,
     const VB_DEVICE_INFO *pVBInfo);
 
+extern void XGI_SetMiscRegs(USHORT StandTableIndex,
+    const VB_DEVICE_INFO *pVBInfo);
 #endif

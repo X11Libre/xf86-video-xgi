@@ -477,20 +477,6 @@ XGI_New_GetOffset(VB_DEVICE_INFO *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
 }
 
 /*********************************************/
-/*                  MISC                     */
-/*********************************************/
-
-static void
-XGI_New_SetMiscRegs(VB_DEVICE_INFO *XGI_Pr, USHORT StandTableIndex, PXGI_HW_DEVICE_INFO HwInfo)
-{
-   UCHAR Miscdata;
-
-   Miscdata = XGI_Pr->StandTable[StandTableIndex].MISC;
-
-   XGI_SetRegByte(XGI_Pr->P3c2,Miscdata);
-}
-
-/*********************************************/
 /*                  CRTC                     */
 /*********************************************/
 
@@ -937,7 +923,7 @@ XGI_New_SetCRT1Group(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
   }
 */
   XGI_SetSeqRegs(StandTableIndex, XGI_Pr);
-  XGI_New_SetMiscRegs(XGI_Pr, StandTableIndex, HwInfo);
+  XGI_SetMiscRegs(StandTableIndex, XGI_Pr);
   XGI_New_SetCRTCRegs(XGI_Pr, HwInfo, StandTableIndex);
   XGI_New_SetATTRegs(XGI_Pr, StandTableIndex, HwInfo);
   XGI_New_SetGRCRegs(XGI_Pr, StandTableIndex);
