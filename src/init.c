@@ -477,41 +477,6 @@ XGI_New_GetOffset(VB_DEVICE_INFO *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
 }
 
 /*********************************************/
-/*                   ATT                     */
-/*********************************************/
-
-static void
-XGI_New_SetATTRegs(VB_DEVICE_INFO *XGI_Pr, USHORT StandTableIndex,
-               PXGI_HW_DEVICE_INFO HwInfo)
-{
-   UCHAR ARdata;
-   USHORT i;
-
-   for(i = 0; i <= 0x13; i++) {
-      ARdata = XGI_Pr->StandTable[StandTableIndex].ATTR[i];
-
-      if(i == 0x13) {
-         /* Pixel shift. If screen on LCD or TV is shifted left or right,
-          * this might be the cause.
-          */
-         if(XGI_Pr->VBType & VB_XGI301BLV302BLV) {
-            if(XGI_Pr->VBInfo & SetCRT2ToLCDA)  ARdata=0;
-         }
-      }
-      XGI_GetRegByte(XGI_Pr->P3da);                         /* reset 3da  */
-      XGI_SetRegByte(XGI_Pr->P3c0,i);                       /* set index  */
-      XGI_SetRegByte(XGI_Pr->P3c0,ARdata);                  /* set data   */
-   }
-   XGI_GetRegByte(XGI_Pr->P3da);                            /* reset 3da  */
-   XGI_SetRegByte(XGI_Pr->P3c0,0x14);                       /* set index  */
-   XGI_SetRegByte(XGI_Pr->P3c0,0x00);                       /* set data   */
-
-   XGI_GetRegByte(XGI_Pr->P3da);
-   XGI_SetRegByte(XGI_Pr->P3c0,0x20);			/* Enable Attribute  */
-   XGI_GetRegByte(XGI_Pr->P3da);
-}
-
-/*********************************************/
 /*                   GRC                     */
 /*********************************************/
 
