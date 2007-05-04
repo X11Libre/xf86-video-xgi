@@ -477,26 +477,6 @@ XGI_New_GetOffset(VB_DEVICE_INFO *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
 }
 
 /*********************************************/
-/*                  CRTC                     */
-/*********************************************/
-
-static void
-XGI_New_SetCRTCRegs(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
-                USHORT StandTableIndex)
-{
-  UCHAR CRTCdata;
-  USHORT i;
-
-  XGI_SetRegAND(XGI_Pr->P3d4,0x11,0x7f);                       /* Unlock CRTC */
-
-  for(i = 0; i <= 0x18; i++) {
-     CRTCdata = XGI_Pr->StandTable[StandTableIndex].CRTC[i];
-     XGI_SetReg(XGI_Pr->P3d4,i,CRTCdata);                     /* Set CRTC(3d4) */
-  }
-
-}
-
-/*********************************************/
 /*                   ATT                     */
 /*********************************************/
 
@@ -924,7 +904,7 @@ XGI_New_SetCRT1Group(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 */
   XGI_SetSeqRegs(StandTableIndex, XGI_Pr);
   XGI_SetMiscRegs(StandTableIndex, XGI_Pr);
-  XGI_New_SetCRTCRegs(XGI_Pr, HwInfo, StandTableIndex);
+  XGI_SetCRTCRegs(StandTableIndex, XGI_Pr);
   XGI_New_SetATTRegs(XGI_Pr, StandTableIndex, HwInfo);
   XGI_New_SetGRCRegs(XGI_Pr, StandTableIndex);
   XGI_New_ClearExt1Regs(XGI_Pr, HwInfo, ModeNo);

@@ -135,8 +135,6 @@ void XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
                       USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
 static void XGI_WaitDisplay(PVB_DEVICE_INFO pVBInfo);
 void XGI_SenseCRT1(PVB_DEVICE_INFO pVBInfo);
-void XGI_SetCRTCRegs(PXGI_HW_DEVICE_INFO HwDeviceExtension,
-                     USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo);
 void XGI_SetATTRegs(USHORT ModeNo, USHORT StandTableIndex, USHORT ModeIdIndex,
                     PVB_DEVICE_INFO pVBInfo);
 void XGI_SetGRCRegs(USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo);
@@ -580,7 +578,7 @@ XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
     /* XGINew_CRT1Mode = ModeNo ; // SaveModeID */
     XGI_SetSeqRegs(StandTableIndex, pVBInfo);
     XGI_SetMiscRegs(StandTableIndex, pVBInfo);
-    XGI_SetCRTCRegs(HwDeviceExtension, StandTableIndex, pVBInfo);
+    XGI_SetCRTCRegs(StandTableIndex, pVBInfo);
     XGI_SetATTRegs(ModeNo, StandTableIndex, ModeIdIndex, pVBInfo);
     XGI_SetGRCRegs(StandTableIndex, pVBInfo);
     XGI_ClearExt1Regs(pVBInfo);
@@ -713,19 +711,20 @@ XGI_SetMiscRegs(USHORT StandTableIndex, const VB_DEVICE_INFO *pVBInfo)
 /* Description : */
 /* --------------------------------------------------------------------- */
 void
-XGI_SetCRTCRegs(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT StandTableIndex,
-                PVB_DEVICE_INFO pVBInfo)
+XGI_SetCRTCRegs(unsigned StandTableIndex, const VB_DEVICE_INFO *pVBInfo)
 {
-    UCHAR CRTCdata;
-    USHORT i;
+    unsigned i;
 
-    CRTCdata = (UCHAR) XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4, 0x11);
-    CRTCdata &= 0x7f;
-    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4, 0x11, CRTCdata);   /* Unlock CRTC */
+    /* Unlock CRTC */
+    XGI_SetRegAND((XGIIOADDRESS) pVBInfo->P3d4, 0x11, 0x7f);
 
     for (i = 0; i <= 0x18; i++) {
-        CRTCdata = pVBInfo->StandTable[StandTableIndex].CRTC[i];        /* Get CRTC from file */
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4, i, CRTCdata);  /* Set CRTC( 3d4 ) */
+        /* Get CRTC from file */
+        const unsigned CRTCdata = 
+            pVBInfo->StandTable[StandTableIndex].CRTC[i];
+
+        /* Set CRTC( 3d4 ) */
+        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4, i, CRTCdata);
     }
 }
 

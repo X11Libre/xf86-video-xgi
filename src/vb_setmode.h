@@ -61,4 +61,7 @@ extern void XGI_SetSeqRegs(USHORT StandTableIndex,
 
 extern void XGI_SetMiscRegs(USHORT StandTableIndex,
     const VB_DEVICE_INFO *pVBInfo);
+
+extern void XGI_SetCRTCRegs(unsigned StandTableIndex,
+    const VB_DEVICE_INFO *pVBInfo);
 #endif
