@@ -108,7 +108,7 @@ static const USHORT XGINew_DDRDRAM_TYPE340[4][5]=
 static void XGINew_SetDRAMSize_340(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static void XGINew_SetDRAMSize_XG45(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static void XGINew_SetMemoryClock(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
-static void XGINew_SetDRAMModeRegister340(PXGI_HW_DEVICE_INFO);
+static void XGINew_SetDRAMModeRegister340(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static void XGINew_SetDRAMDefaultRegister340(PXGI_HW_DEVICE_INFO, USHORT,
     PVB_DEVICE_INFO);
 static void XGINew_SetDRAMDefaultRegisterXG45(PXGI_HW_DEVICE_INFO, USHORT, 
@@ -172,7 +172,7 @@ static void XGINew_EnableRefresh(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static void XGINew_Delay15us(ULONG);
 static void SetPowerConsume(PXGI_HW_DEVICE_INFO, USHORT);
 static void XGINew_DDR1x_MRS_XG20(USHORT, PVB_DEVICE_INFO);
-static void XGINew_SetDRAMModeRegister_XG20(PXGI_HW_DEVICE_INFO);
+static void XGINew_SetDRAMModeRegister_XG20(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static void XGINew_ChkSenseStatus(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 
 static int XGINew_ReadWriteRest( USHORT StopAddr, USHORT StartAddr, 
@@ -1458,7 +1458,7 @@ void XGINew_SetDRAMSize_XG45( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE
 /* Description : */
 /* --------------------------------------------------------------------- */
 
-void XGINew_SetDRAMModeRegister340(PXGI_HW_DEVICE_INFO HwDeviceExtension
+void XGINew_SetDRAMModeRegister340(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 				   PVB_DEVICE_INFO pVBInfo)
 {
     UCHAR data ;
