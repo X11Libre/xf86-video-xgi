@@ -135,8 +135,6 @@ void XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
                       USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
 static void XGI_WaitDisplay(PVB_DEVICE_INFO pVBInfo);
 void XGI_SenseCRT1(PVB_DEVICE_INFO pVBInfo);
-void XGI_SetATTRegs(USHORT ModeNo, USHORT StandTableIndex, USHORT ModeIdIndex,
-                    PVB_DEVICE_INFO pVBInfo);
 void XGI_SetGRCRegs(USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo);
 void XGI_ClearExt1Regs(PVB_DEVICE_INFO pVBInfo);
 
@@ -736,21 +734,22 @@ XGI_SetCRTCRegs(unsigned StandTableIndex, const VB_DEVICE_INFO *pVBInfo)
 /* Description : */
 /* --------------------------------------------------------------------- */
 void
-XGI_SetATTRegs(USHORT ModeNo, USHORT StandTableIndex, USHORT ModeIdIndex,
-               PVB_DEVICE_INFO pVBInfo)
+XGI_SetATTRegs(unsigned ModeNo, unsigned StandTableIndex, unsigned ModeIdIndex,
+               const VB_DEVICE_INFO *pVBInfo)
 {
-    UCHAR ARdata;
-    USHORT i, modeflag;
-
-    if (ModeNo <= 0x13)
-        modeflag = pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag;
-    else
-        modeflag = pVBInfo->EModeIDTable[ModeIdIndex].Ext_ModeFlag;
+    unsigned i;
+    const unsigned modeflag = (ModeNo <= 0x13)
+        ? pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag
+        : pVBInfo->EModeIDTable[ModeIdIndex].Ext_ModeFlag;
 
     for (i = 0; i <= 0x13; i++) {
-        ARdata = pVBInfo->StandTable[StandTableIndex].ATTR[i];
+        UCHAR ARdata = pVBInfo->StandTable[StandTableIndex].ATTR[i];
+
         if (modeflag & Charx8Dot) {     /* ifndef Dot9 */
             if (i == 0x13) {
+                /* Pixel shift. If screen on LCD or TV is shifted left or
+                 * right, this might be the cause.
+                 */
                 if (pVBInfo->VBInfo & SetCRT2ToLCDA)
                     ARdata = 0;
                 else {
@@ -770,8 +769,10 @@ XGI_SetATTRegs(USHORT ModeNo, USHORT StandTableIndex, USHORT ModeIdIndex,
     XGI_GetRegByte((XGIIOADDRESS) pVBInfo->P3da);       /* reset 3da */
     XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0, 0x14); /* set index */
     XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0, 0x00); /* set data */
+
     XGI_GetRegByte((XGIIOADDRESS) pVBInfo->P3da);       /* Enable Attribute */
     XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c0, 0x20);
+    XGI_GetRegByte((XGIIOADDRESS) pVBInfo->P3da);
 }
 
 

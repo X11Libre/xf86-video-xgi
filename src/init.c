@@ -890,8 +890,8 @@ XGI_New_SetCRT1Group(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
                  USHORT ModeNo, USHORT ModeIdIndex)
 {
     const USHORT StandTableIndex = XGI_GetModePtr(XGI_Pr->SModeIDTable,
-						  XGI_Pr->ModeType,
-						  ModeNo, ModeIdIndex);
+                                                  XGI_Pr->ModeType,
+                                                  ModeNo, ModeIdIndex);
     USHORT RefreshRateTableIndex = 0;
 
 
@@ -905,7 +905,7 @@ XGI_New_SetCRT1Group(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
   XGI_SetSeqRegs(StandTableIndex, XGI_Pr);
   XGI_SetMiscRegs(StandTableIndex, XGI_Pr);
   XGI_SetCRTCRegs(StandTableIndex, XGI_Pr);
-  XGI_New_SetATTRegs(XGI_Pr, StandTableIndex, HwInfo);
+  XGI_SetATTRegs(ModeNo, StandTableIndex, ModeIdIndex, XGI_Pr);
   XGI_New_SetGRCRegs(XGI_Pr, StandTableIndex);
   XGI_New_ClearExt1Regs(XGI_Pr, HwInfo, ModeNo);
   XGI_ResetCRT1VCLK(XGI_Pr, HwInfo);

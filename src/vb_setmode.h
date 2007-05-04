@@ -64,4 +64,7 @@ extern void XGI_SetMiscRegs(USHORT StandTableIndex,
 
 extern void XGI_SetCRTCRegs(unsigned StandTableIndex,
     const VB_DEVICE_INFO *pVBInfo);
+
+extern void XGI_SetATTRegs(unsigned ModeNo, unsigned StandTableIndex,
+    unsigned ModeIdIndex, const VB_DEVICE_INFO *pVBInfo);
 #endif
