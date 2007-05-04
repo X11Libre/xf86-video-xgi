@@ -72,4 +72,7 @@ extern void XGI_SetGRCRegs(unsigned StandTableIndex,
     const VB_DEVICE_INFO *pVBInfo);
 
 extern void XGI_ClearExt1Regs(unsigned ModeNo, const VB_DEVICE_INFO *pVBInfo);
+
+extern void XGI_SetSync(unsigned RefreshRateTableIndex,
+    const VB_DEVICE_INFO *pVBInfo);
 #endif

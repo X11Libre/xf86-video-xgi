@@ -494,21 +494,6 @@ XGI_ResetCRT1VCLK(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
 }
 
 /*********************************************/
-/*                  SYNC                     */
-/*********************************************/
-
-static void
-XGI_SetCRT1Sync(VB_DEVICE_INFO *XGI_Pr, USHORT RefreshRateTableIndex)
-{
-  USHORT sync;
-
-  sync = XGI_Pr->RefIndex[RefreshRateTableIndex].Ext_InfoFlag >> 8;
-  sync &= 0xC0;
-  sync |= 0x2f;
-  XGI_SetRegByte(XGI_Pr->P3c2,sync);
-}
-
-/*********************************************/
 /*                  CRTC/2                   */
 /*********************************************/
 
@@ -855,7 +840,7 @@ XGI_New_SetCRT1Group(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
   }
 
   if(RefreshRateTableIndex != 0xFFFF) {
-     XGI_SetCRT1Sync(XGI_Pr, RefreshRateTableIndex);
+     XGI_SetSync(RefreshRateTableIndex, XGI_Pr);
      XGI_New_SetCRT1CRTC(XGI_Pr, ModeNo, ModeIdIndex, RefreshRateTableIndex, HwInfo);
      XGI_New_SetCRT1Offset(XGI_Pr, ModeNo, ModeIdIndex, RefreshRateTableIndex, HwInfo);
      XGI_New_SetCRT1VCLK(XGI_Pr, ModeNo, ModeIdIndex, HwInfo, RefreshRateTableIndex);

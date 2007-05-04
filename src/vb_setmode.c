@@ -136,7 +136,6 @@ void XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
 static void XGI_WaitDisplay(PVB_DEVICE_INFO pVBInfo);
 void XGI_SenseCRT1(PVB_DEVICE_INFO pVBInfo);
 
-void XGI_SetSync(USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo);
 void XGI_SetCRT1CRTC(USHORT ModeNo, USHORT ModeIdIndex,
                      USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo,
                      PXGI_HW_DEVICE_INFO HwDeviceExtension);
@@ -1053,15 +1052,13 @@ XGI_AjustCRT2Rate(USHORT ModeNo, USHORT ModeIdIndex,
 /* Description : */
 /* --------------------------------------------------------------------- */
 void
-XGI_SetSync(USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo)
+XGI_SetSync(unsigned RefreshRateTableIndex, const VB_DEVICE_INFO *pVBInfo)
 {
-    USHORT sync, temp;
+    const unsigned sync =
+	(pVBInfo->RefIndex[RefreshRateTableIndex].Ext_InfoFlag >> 8) & 0xC0;
 
-    sync = pVBInfo->RefIndex[RefreshRateTableIndex].Ext_InfoFlag >> 8;  /* di+0x00 */
-    sync &= 0xC0;
-    temp = 0x2F;
-    temp |= sync;
-    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c2, temp); /* Set Misc(3c2) */
+    /* Set Misc(3c2) */
+    XGI_SetRegByte((XGIIOADDRESS) pVBInfo->P3c2, sync | 0x2F);
 }
 
 
