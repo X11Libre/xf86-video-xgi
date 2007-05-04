@@ -477,27 +477,6 @@ XGI_New_GetOffset(VB_DEVICE_INFO *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
 }
 
 /*********************************************/
-/*          CLEAR EXTENDED REGISTERS         */
-/*********************************************/
-
-static void
-XGI_New_ClearExt1Regs(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, USHORT ModeNo)
-{
-  USHORT i;
-
-  for(i = 0x0A; i <= 0x0E; i++) {
-     XGI_SetReg(XGI_Pr->P3c4,i,0x00);
-  }
-
-    XGI_SetRegAND(XGI_Pr->P3c4,0x37,0xFE);
-    if(ModeNo <= 0x13) {
-        if(ModeNo == 0x06 || ModeNo >= 0x0e) {
-	    XGI_SetReg(XGI_Pr->P3c4,0x0e,0x20);
-	}
-    }
-}
-
-/*********************************************/
 /*                 RESET VCLK                */
 /*********************************************/
 
@@ -851,7 +830,7 @@ XGI_New_SetCRT1Group(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
   XGI_SetCRTCRegs(StandTableIndex, XGI_Pr);
   XGI_SetATTRegs(ModeNo, StandTableIndex, ModeIdIndex, XGI_Pr);
   XGI_SetGRCRegs(StandTableIndex, XGI_Pr);
-  XGI_New_ClearExt1Regs(XGI_Pr, HwInfo, ModeNo);
+  XGI_ClearExt1Regs(ModeNo, XGI_Pr);
   XGI_ResetCRT1VCLK(XGI_Pr, HwInfo);
 
   XGI_Pr->SetFlag &= (~ProgrammingCRT2);

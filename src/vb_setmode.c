@@ -135,7 +135,6 @@ void XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
                       USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
 static void XGI_WaitDisplay(PVB_DEVICE_INFO pVBInfo);
 void XGI_SenseCRT1(PVB_DEVICE_INFO pVBInfo);
-void XGI_ClearExt1Regs(PVB_DEVICE_INFO pVBInfo);
 
 void XGI_SetSync(USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo);
 void XGI_SetCRT1CRTC(USHORT ModeNo, USHORT ModeIdIndex,
@@ -578,7 +577,7 @@ XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
     XGI_SetCRTCRegs(StandTableIndex, pVBInfo);
     XGI_SetATTRegs(ModeNo, StandTableIndex, ModeIdIndex, pVBInfo);
     XGI_SetGRCRegs(StandTableIndex, pVBInfo);
-    XGI_ClearExt1Regs(pVBInfo);
+    XGI_ClearExt1Regs(ModeNo, pVBInfo);
 
     temp = ~ProgrammingCRT2;
     pVBInfo->SetFlag &= temp;
@@ -807,12 +806,29 @@ XGI_SetGRCRegs(unsigned StandTableIndex, const VB_DEVICE_INFO *pVBInfo)
 /* Description : */
 /* --------------------------------------------------------------------- */
 void
-XGI_ClearExt1Regs(PVB_DEVICE_INFO pVBInfo)
+XGI_ClearExt1Regs(unsigned ModeNo, const VB_DEVICE_INFO *pVBInfo)
 {
-    USHORT i;
+    unsigned i;
 
-    for (i = 0x0A; i <= 0x0E; i++)
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, i, 0x00);      /* Clear SR0A-SR0E */
+    /* Clear SR0A-SR0E */
+    for (i = 0x0A; i <= 0x0E; i++) {
+        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, i, 0x00);
+    }
+
+    /* This code came from the old XGI_New_ClearExt1Regs in init.c.  Since
+     * it wasn't included in the newer code drop from XGI, I'm not sure if
+     * it's necessary on the Volari chips.  I've included it here, ifdefed
+     * out, for future reference.
+     * - idr
+     */
+#if 0
+    XGI_SetRegAND(pVBInfo->P3c4, 0x37, 0xFE);
+    if ((ModeNo == 0x06) || ((ModeNo >= 0x0e) && (ModeNo <= 0x13))) {
+        XGI_SetReg(pVBInfo->P3c4, 0x0e, 0x20);
+    }
+#else
+    (void) ModeNo;
+#endif
 }
 
 
