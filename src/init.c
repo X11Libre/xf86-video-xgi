@@ -477,42 +477,6 @@ XGI_New_GetOffset(VB_DEVICE_INFO *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
 }
 
 /*********************************************/
-/*                   SEQ                     */
-/*********************************************/
-
-static void
-XGI_New_SetSeqRegs(VB_DEVICE_INFO *XGI_Pr, USHORT StandTableIndex, PXGI_HW_DEVICE_INFO HwInfo)
-{
-   UCHAR SRdata;
-   USHORT i;
-
-   XGI_SetReg(XGI_Pr->P3c4,0x00,0x03);           	/* Set SR0  */
-
-   SRdata = XGI_Pr->StandTable[StandTableIndex].SR[0];
-
-   if(XGI_Pr->VBType & VB_XGI301BLV302BLV) {
-      if(XGI_Pr->VBInfo & SetCRT2ToLCDA) {
-         SRdata |= 0x01;
-      }
-
-       if(XGI_Pr->VBInfo & (SetCRT2ToLCD | SetCRT2ToTV)) {
-	   if(XGI_Pr->VBInfo & SetInSlaveMode) {
-               SRdata |= 0x01;          		/* 8 dot clock  */
-	   }
-       }
-   }
-
-   SRdata |= 0x20;                			/* screen off  */
-
-   XGI_SetReg(XGI_Pr->P3c4,0x01,SRdata);
-
-   for(i = 2; i <= 4; i++) {
-      SRdata = XGI_Pr->StandTable[StandTableIndex].SR[i-1];
-      XGI_SetReg(XGI_Pr->P3c4,i,SRdata);
-   }
-}
-
-/*********************************************/
 /*                  MISC                     */
 /*********************************************/
 
@@ -972,7 +936,7 @@ XGI_New_SetCRT1Group(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
      }
   }
 */
-  XGI_New_SetSeqRegs(XGI_Pr, StandTableIndex, HwInfo);
+  XGI_SetSeqRegs(StandTableIndex, XGI_Pr);
   XGI_New_SetMiscRegs(XGI_Pr, StandTableIndex, HwInfo);
   XGI_New_SetCRTCRegs(XGI_Pr, HwInfo, StandTableIndex);
   XGI_New_SetATTRegs(XGI_Pr, StandTableIndex, HwInfo);

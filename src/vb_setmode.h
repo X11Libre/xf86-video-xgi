@@ -56,4 +56,7 @@ extern   USHORT   XGI_GetRatePtrCRT2( USHORT ModeNo,USHORT ModeIdIndex, PVB_DEVI
 extern USHORT XGI_GetColorDepth(USHORT ModeNo, USHORT ModeIdIndex,
     const VB_DEVICE_INFO *pVBInfo);
 
+extern void XGI_SetSeqRegs(USHORT StandTableIndex,
+    const VB_DEVICE_INFO *pVBInfo);
+
 #endif

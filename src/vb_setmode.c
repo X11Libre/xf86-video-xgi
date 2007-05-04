@@ -135,8 +135,6 @@ void XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
                       USHORT ModeIdIndex, PVB_DEVICE_INFO pVBInfo);
 static void XGI_WaitDisplay(PVB_DEVICE_INFO pVBInfo);
 void XGI_SenseCRT1(PVB_DEVICE_INFO pVBInfo);
-void XGI_SetSeqRegs(USHORT ModeNo, USHORT StandTableIndex, USHORT ModeIdIndex,
-                    PVB_DEVICE_INFO pVBInfo);
 void XGI_SetMiscRegs(USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo);
 void XGI_SetCRTCRegs(PXGI_HW_DEVICE_INFO HwDeviceExtension,
                      USHORT StandTableIndex, PVB_DEVICE_INFO pVBInfo);
@@ -581,7 +579,7 @@ XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
 #endif
 
     /* XGINew_CRT1Mode = ModeNo ; // SaveModeID */
-    XGI_SetSeqRegs(ModeNo, StandTableIndex, ModeIdIndex, pVBInfo);
+    XGI_SetSeqRegs(StandTableIndex, pVBInfo);
     XGI_SetMiscRegs(StandTableIndex, pVBInfo);
     XGI_SetCRTCRegs(HwDeviceExtension, StandTableIndex, pVBInfo);
     XGI_SetATTRegs(ModeNo, StandTableIndex, ModeIdIndex, pVBInfo);
@@ -653,38 +651,32 @@ XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
 /* Description : */
 /* --------------------------------------------------------------------- */
 void
-XGI_SetSeqRegs(USHORT ModeNo, USHORT StandTableIndex, USHORT ModeIdIndex,
-               PVB_DEVICE_INFO pVBInfo)
+XGI_SetSeqRegs(USHORT StandTableIndex, const VB_DEVICE_INFO *pVBInfo)
 {
-    UCHAR tempah, SRdata;
-
-    USHORT i, modeflag;
-
-    if (ModeNo <= 0x13)
-        modeflag = pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag;
-    else
-        modeflag = pVBInfo->EModeIDTable[ModeIdIndex].Ext_ModeFlag;
+    unsigned SRdata;
+    unsigned i;
 
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x00, 0x03);       /* Set SR0 */
-    tempah = pVBInfo->StandTable[StandTableIndex].SR[0];
+    SRdata = pVBInfo->StandTable[StandTableIndex].SR[0];
 
-    i = SetCRT2ToLCDA;
     if (pVBInfo->VBInfo & SetCRT2ToLCDA) {
-        tempah |= 0x01;
+        SRdata |= 0x01;
     }
     else {
         if (pVBInfo->VBInfo & (SetCRT2ToTV | SetCRT2ToLCD)) {
             if (pVBInfo->VBInfo & SetInSlaveMode)
-                tempah |= 0x01;
+                SRdata |= 0x01;
         }
     }
 
-    tempah |= 0x20;             /* screen off */
-    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x01, tempah);     /* Set SR1 */
+    SRdata |= 0x20;             /* screen off */
+    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x01, SRdata);     /* Set SR1 */
 
-    for (i = 02; i <= 04; i++) {
-        SRdata = pVBInfo->StandTable[StandTableIndex].SR[i - 1];        /* Get SR2,3,4 from file */
-        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, i, SRdata);    /* Set SR2 3 4 */
+    /* Get SR2, SR3, and SR4 from table and set in hardware.
+     */
+    for (i = 2; i <= 4; i++) {
+        SRdata = pVBInfo->StandTable[StandTableIndex].SR[i - 1];
+        XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, i, SRdata);
     }
 }
 
