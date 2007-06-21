@@ -4272,15 +4272,21 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
         else
 #endif
             /* Force the initialization of the context */
-        if ((FbDevExist) && (pXGI->Chipset != PCI_CHIP_XGIXG20)) {
-            pXGI->directRenderingEnabled = XGIDRIScreenInit(pScreen);
-            PDEBUG(ErrorF("--- DRI supported   \n"));
+        if (!FbDevExist) {
+            PDEBUG(ErrorF("--- DRI not supported   \n"));
+            xf86DrvMsg(pScrn->scrnIndex, X_NOT_IMPLEMENTED,
+                       "DRI requires kernel fbdev driver\n");
+            pXGI->directRenderingEnabled = FALSE;
         }
-        else {
+        else if (pXGI->Chipset == PCI_CHIP_XGIXG20) {
             PDEBUG(ErrorF("--- DRI not supported   \n"));
             xf86DrvMsg(pScrn->scrnIndex, X_NOT_IMPLEMENTED,
                        "DRI not supported on this chipset\n");
             pXGI->directRenderingEnabled = FALSE;
+        }
+        else {
+            pXGI->directRenderingEnabled = XGIDRIScreenInit(pScreen);
+            PDEBUG(ErrorF("--- DRI supported   \n"));
         }
     }
 #endif
