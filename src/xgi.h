@@ -407,7 +407,6 @@ typedef struct {
 } XGIFBLayout;
 
 /* Dual head private entity structure */
-#ifdef XGIDUALHEAD
 typedef struct {
     ScrnInfoPtr         pScrn_1;
     ScrnInfoPtr         pScrn_2;
@@ -475,7 +474,6 @@ typedef struct {
     XGI_CP_H_ENT
 #endif
 } XGIEntRec, *XGIEntPtr;
-#endif
 
 #define XGIPTR(p)       ((XGIPtr)((p)->driverPrivate))
 #define XAAPTR(p)       ((XAAInfoRecPtr)(XGIPTR(p)->AccelInfoPtr))
@@ -524,9 +522,7 @@ typedef struct {
     long                availMem;       /* Really available Fb mem (minus TQ, HWCursor) */
     unsigned long	maxxfbmem;      /* limit fb memory X is to use to this (KB) */
     unsigned long       xgifbMem;       /* heapstart of xgifb (if running) */
-#ifdef XGIDUALHEAD
     unsigned long	dhmOffset;	/* Offset to memory for each head (0 or ..) */
-#endif
     DGAModePtr          DGAModes;
     int                 numDGAModes;
     Bool                DGAactive;
@@ -766,6 +762,15 @@ typedef struct {
     int			v4l_devnum;	/* v4l device number, 0,1,2....*/
 //~::::    
 } XGIRec, *XGIPtr;
+
+#ifdef XGIDUALHEAD
+# define IS_DUAL_HEAD(x)      ((x)->DualHeadMode)
+# define IS_SECOND_HEAD(x)    ((x)->SecondHead)
+#else
+# define IS_DUAL_HEAD(x)      FALSE
+# define IS_SECOND_HEAD(x)    FALSE
+#endif
+
 
 #define SEQ_ADDRESS_PORT  0x0014
 #define MISC_OUTPUT_REG_WRITE_PORT  0x0012

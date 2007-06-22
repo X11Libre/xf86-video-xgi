@@ -933,15 +933,16 @@ BOOLEAN
 XGIBIOSSetModeCRT1(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 		   ScrnInfoPtr pScrn, DisplayModePtr mode)
 {
-   XGIPtr  pXGI = XGIPTR(pScrn);
-   USHORT  ModeIdIndex, ModeNo=0;
-   UCHAR backupreg=0;
+    XGIPtr  pXGI = XGIPTR(pScrn);
+    USHORT  ModeIdIndex, ModeNo=0;
+    UCHAR backupreg=0;
     unsigned vga_info;
-#ifdef XGIDUALHEAD
-   XGIEntPtr pXGIEnt = pXGI->entityPrivate;
-   UCHAR backupcr30, backupcr31, backupcr38, backupcr35, backupp40d=0;
-#endif
+    XGIEntPtr pXGIEnt = NULL;
+    UCHAR backupcr30, backupcr31, backupcr38, backupcr35, backupp40d=0;
 
+#ifdef XGIDUALHEAD
+   pXGIEnt = pXGI->entityPrivate;
+#endif
 
     ModeNo = XGI_CalcModeIndex(pScrn, mode, pXGI->VBFlags);
     if(!ModeNo) return FALSE;
@@ -981,8 +982,7 @@ XGIBIOSSetModeCRT1(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 
 
    /* Reset CRT2 if changing mode on CRT1 */
-#ifdef XGIDUALHEAD
-   if(pXGI->DualHeadMode) {
+   if(IS_DUAL_HEAD(pXGI)) {
       if(pXGIEnt->CRT2ModeNo != -1) {
          xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
 				"(Re-)Setting mode for CRT2\n");
@@ -1012,7 +1012,6 @@ XGIBIOSSetModeCRT1(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 	 }
       }
    }
-#endif
 
    /* Warning: From here, the custom mode entries in XGI_Pr are
     * possibly overwritten

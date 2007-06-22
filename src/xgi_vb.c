@@ -110,10 +110,7 @@ void XGICRT1PreInit(ScrnInfoPtr pScrn)
     unsigned char CR32;
     unsigned char CRT1Detected;
 
-    if(!(pXGI->XGI_Pr->VBType & VB_XGIVB)
-#ifdef XGIDUALHEAD
-       || pXGI->DualHeadMode
-#endif
+    if (!(pXGI->XGI_Pr->VBType & VB_XGIVB) || IS_DUAL_HEAD(pXGI)
 #ifdef XGIMERGED
        || ((pXGI->MergedFB) && (!(pXGI->MergedFBAuto)))
 #endif
@@ -179,13 +176,9 @@ void XGILCDPreInit(ScrnInfoPtr pScrn)
      * is waaaay better, we prefer it instead of the primitive
      * and buggy BIOS method.
      */
-#ifdef XGIDUALHEAD
-    if((!pXGI->DualHeadMode) || (!pXGI->SecondHead)) {
-#endif
+    if (!IS_DUAL_HEAD(pXGI) || !IS_SECOND_HEAD(pXGI)) {
 
-#ifdef XGIDUALHEAD
     }
-#endif
 }
 
 /* Detect CRT2-TV connector type and PAL/NTSC flag */

@@ -301,8 +301,7 @@ xgiOptions(ScrnInfoPtr pScrn)
      *
      */
 #ifdef XGIMERGED
-#ifdef XGIDUALHEAD
-    if(pXGI->DualHeadMode) {
+    if (IS_DUAL_HEAD(pXGI)) {
        Bool val;
        if(xf86GetOptValBool(pXGI->Options, OPTION_MERGEDFB, &val)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
@@ -310,13 +309,11 @@ xgiOptions(ScrnInfoPtr pScrn)
        }
     } else
 #endif
-#endif
 
     /* Some options can only be specified in the Master Head's Device
      * section. Here we give the user a hint in the log.
      */
-#ifdef XGIDUALHEAD
-    if((pXGI->DualHeadMode) && (pXGI->SecondHead)) {
+    if (IS_DUAL_HEAD(pXGI) && IS_SECOND_HEAD(pXGI)) {
        static const char *mystring = "Option \"%s\" is only accepted in Master Head's device section\n";
        Bool val;
 
@@ -362,9 +359,8 @@ xgiOptions(ScrnInfoPtr pScrn)
 #ifdef XGI_CP
        XGI_CP_OPT_DH_WARN
 #endif
-    } else
-#endif
-    {
+    }
+    else {
 	  /* TurboQueue */
 
           from = X_DEFAULT;

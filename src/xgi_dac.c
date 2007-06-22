@@ -522,18 +522,18 @@ XGILoadPalette(ScrnInfoPtr pScrn, int numColors, int *indices, LOCO *colors,
      unsigned char SR7;
      Bool    dogamma1 = pXGI->CRT1gamma;
 /*     Bool    resetxvgamma = FALSE; */
-#ifdef XGIDUALHEAD
-     XGIEntPtr pXGIEnt = pXGI->entityPrivate;
 
-     if(pXGI->DualHeadMode) dogamma1 = pXGIEnt->CRT1gamma;
+#ifdef XGIDUALHEAD
+     if (IS_DUAL_HEAD(pXGI)) {
+	 XGIEntPtr pXGIEnt = pXGI->entityPrivate;
+
+	 dogamma1 = pXGIEnt->CRT1gamma;
+     }
 #endif
 
      PDEBUG(ErrorF("xgiLoadPalette(%d)\n", numColors));
 
-#ifdef XGIDUALHEAD
-     if((!pXGI->DualHeadMode) || (pXGI->SecondHead)) {
-#endif
-
+     if (!IS_DUAL_HEAD(pXGI) || IS_SECOND_HEAD(pXGI)) {
         switch(pXGI->CurrentLayout.depth) {
 #ifdef XGIGAMMA
           case 15:
@@ -605,15 +605,11 @@ PDEBUG(ErrorF("\ndogamma1 SR7=%x ", SR7));
              }
 	}
 
-#ifdef XGIDUALHEAD
     }
 
-    if((!pXGI->DualHeadMode) || (!pXGI->SecondHead)) {
-#endif
+    if (!IS_DUAL_HEAD(pXGI) || !IS_SECOND_HEAD(pXGI)) {
 
-#ifdef XGIDUALHEAD
     }
-#endif
 }
 
 void

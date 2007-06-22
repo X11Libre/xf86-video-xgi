@@ -699,9 +699,7 @@ static Bool XGICloseScreen(int scrnIndex, ScreenPtr pScreen);
 static Bool XGISaveScreen(ScreenPtr pScreen, int mode);
 static Bool XGISwitchMode(int scrnIndex, DisplayModePtr mode, int flags);
 static void XGIAdjustFrame(int scrnIndex, int x, int y, int flags);
-#ifdef XGIDUALHEAD
 static Bool XGISaveScreenDH(ScreenPtr pScreen, int mode);
-#endif
 
 /* Optional functions */
 static void       XGIFreeScreen(int scrnIndex, int flags);

@@ -471,9 +471,7 @@ static void
 XGIFreeRec(ScrnInfoPtr pScrn)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
-#ifdef XGIDUALHEAD
     XGIEntPtr pXGIEnt = NULL;
-#endif
 
     /* Just to make sure... */
     if (!pXGI)
@@ -484,9 +482,8 @@ XGIFreeRec(ScrnInfoPtr pScrn)
 #endif
 
 
-#ifdef XGIDUALHEAD
     if (pXGIEnt) {
-        if (!pXGI->SecondHead) {
+        if (!IS_SECOND_HEAD(pXGI)) {
             /* Free memory only if we are first head; in case of an error
              * during init of the second head, the server will continue -
              * and we need the BIOS image and VB_DEVICE_INFO for the first
@@ -509,7 +506,6 @@ XGIFreeRec(ScrnInfoPtr pScrn)
         }
     }
     else {
-#endif
         if (pXGI->BIOS)
             xfree(pXGI->BIOS);
         pXGI->BIOS = NULL;
@@ -519,11 +515,9 @@ XGIFreeRec(ScrnInfoPtr pScrn)
         if (pXGI->RenderAccelArray)
             xfree(pXGI->RenderAccelArray);
         pXGI->RenderAccelArray = NULL;
-#ifdef XGIDUALHEAD
     }
-#endif
-#ifdef XGIMERGED
 
+#ifdef XGIMERGED
     if (pXGI->MetaModes)
         xfree(pXGI->MetaModes);
     pXGI->MetaModes = NULL;
@@ -569,14 +563,12 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
     xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
                    "XGIDisplayPowerManagementSet(%d)\n", PowerManagementMode);
 
-#ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode) {
-        if (pXGI->SecondHead)
+    if (IS_DUAL_HEAD(pXGI)) {
+        if (IS_SECOND_HEAD(pXGI))
             docrt2 = FALSE;
         else
             docrt1 = FALSE;
     }
-#endif
 
 #ifdef UNLOCK_ALWAYS
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
@@ -591,6 +583,7 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
         else
             pXGI->BlankCRT2 = FALSE;
 #endif
+
         sr1 = 0x00;
         cr17 = 0x80;
         pmreg = 0x00;
@@ -1468,10 +1461,9 @@ XGIDoPrivateDDC(ScrnInfoPtr pScrn, int *crtnum)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
 
-#ifdef XGIDUALHEAD
-    if(pXGI->DualHeadMode) 
+    if(IS_DUAL_HEAD(pXGI)) 
     {
-       if(pXGI->SecondHead) 
+       if(IS_SECOND_HEAD(pXGI)) 
        {
           *crtnum = 1;
       return(XGIInternalDDC(pScrn, 0));
@@ -1482,9 +1474,7 @@ XGIDoPrivateDDC(ScrnInfoPtr pScrn, int *crtnum)
       return(XGIInternalDDC(pScrn, 1));
        }
     }
-    else
-#endif
-    if(pXGI->CRT1off) 
+    else if(pXGI->CRT1off) 
     {
        *crtnum = 2;
        return(XGIInternalDDC(pScrn, 1));
@@ -1922,11 +1912,9 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
     pXGI->pVbe = NULL;
     didddc2 = FALSE;
 
-#ifdef XGIDUALHEAD
     /* In dual head mode, probe DDC using VBE only for CRT1 (second head) */
-    if ((pXGI->DualHeadMode) && (!didddc2) && (!pXGI->SecondHead))
+    if (IS_DUAL_HEAD(pXGI) && (!didddc2) && !IS_SECOND_HEAD(pXGI))
         didddc2 = TRUE;
-#endif
 
     if (!didddc2) {
         /* If CRT1 is off or LCDA, skip DDC via VBE */
@@ -2196,11 +2184,8 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     int pix24flags;
     int fd;
     struct fb_fix_screeninfo fix;
-
-
-#ifdef XGIDUALHEAD
     XGIEntPtr pXGIEnt = NULL;
-#endif
+
 #if defined(XGIMERGED) || defined(XGIDUALHEAD)
     DisplayModePtr first, p, n;
 #endif
@@ -2361,10 +2346,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     /* The ramdac module should be loaded here when needed */
     if (!xf86LoadSubModule(pScrn, "ramdac")) {
         XGIErrorLog(pScrn, "Could not load ramdac module\n");
-#ifdef XGIDUALHEAD
+
         if (pXGIEnt)
             pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
         if (pXGI->pInt)
             xf86FreeInt10(pXGI->pInt);
         XGIFreeRec(pScrn);
@@ -2423,10 +2408,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     if (pScrn->chipset == NULL) {
         XGIErrorLog(pScrn, "ChipID 0x%04X is not recognised\n",
                     pXGI->Chipset);
-#ifdef XGIDUALHEAD
+
         if (pXGIEnt)
             pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
         if (pXGI->pInt)
             xf86FreeInt10(pXGI->pInt);
         XGIFreeRec(pScrn);
@@ -2436,10 +2421,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     if (pXGI->Chipset < 0) {
         XGIErrorLog(pScrn, "Chipset \"%s\" is not recognised\n",
                     pScrn->chipset);
-#ifdef XGIDUALHEAD
+
         if (pXGIEnt)
             pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
         if (pXGI->pInt)
             xf86FreeInt10(pXGI->pInt);
         XGIFreeRec(pScrn);
@@ -2538,29 +2523,26 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     /* Allocate VB_DEVICE_INFO (for mode switching code) and initialize it */
     pXGI->XGI_Pr = NULL;
-#ifdef XGIDUALHEAD
-    if (pXGIEnt) {
-        if (pXGIEnt->XGI_Pr)
-            pXGI->XGI_Pr = pXGIEnt->XGI_Pr;
+    if (pXGIEnt && pXGIEnt->XGI_Pr) {
+        pXGI->XGI_Pr = pXGIEnt->XGI_Pr;
     }
-#endif
+
     if (!pXGI->XGI_Pr) {
         if (!(pXGI->XGI_Pr = xnfcalloc(sizeof(VB_DEVICE_INFO), 1))) {
             XGIErrorLog(pScrn,
                         "Could not allocate memory for XGI_Pr private\n");
-#ifdef XGIDUALHEAD
+
             if (pXGIEnt)
                 pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
             if (pXGI->pInt)
                 xf86FreeInt10(pXGI->pInt);
             XGIFreeRec(pScrn);
             return FALSE;
         }
-#ifdef XGIDUALHEAD
+
         if (pXGIEnt)
             pXGIEnt->XGI_Pr = pXGI->XGI_Pr;
-#endif
+
         memset(pXGI->XGI_Pr, 0, sizeof(VB_DEVICE_INFO));
     }
 
@@ -2573,10 +2555,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     if (!xf86SetDepthBpp(pScrn, 0, 0, 0, pix24flags)) {
         XGIErrorLog(pScrn, "xf86SetDepthBpp() error\n");
-#ifdef XGIDUALHEAD
+
         if (pXGIEnt)
             pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
         if (pXGI->pInt)
             xf86FreeInt10(pXGI->pInt);
         XGIFreeRec(pScrn);
@@ -2624,10 +2606,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
         if (!xf86SetWeight(pScrn, zeros, zeros)) {
             XGIErrorLog(pScrn, "xf86SetWeight() error\n");
-#ifdef XGIDUALHEAD
+
             if (pXGIEnt)
                 pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
             if (pXGI->pInt)
                 xf86FreeInt10(pXGI->pInt);
             XGIFreeRec(pScrn);
@@ -2658,10 +2640,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                             (int) pScrn->weight.red,
                             (int) pScrn->weight.green,
                             (int) pScrn->weight.blue, pScrn->depth);
-#ifdef XGIDUALHEAD
+
                 if (pXGIEnt)
                     pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
                 if (pXGI->pInt)
                     xf86FreeInt10(pXGI->pInt);
                 XGIFreeRec(pScrn);
@@ -2677,10 +2659,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     if (!xf86SetDefaultVisual(pScrn, -1)) {
         XGIErrorLog(pScrn, "xf86SetDefaultVisual() error\n");
-#ifdef XGIDUALHEAD
+
         if (pXGIEnt)
             pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
         if (pXGI->pInt)
             xf86FreeInt10(pXGI->pInt);
         XGIFreeRec(pScrn);
@@ -2693,10 +2675,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                         "Given default visual (%s) is not supported at depth %d\n",
                         xf86GetVisualName(pScrn->defaultVisual),
                         pScrn->depth);
-#ifdef XGIDUALHEAD
+
             if (pXGIEnt)
                 pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
             if (pXGI->pInt)
                 xf86FreeInt10(pXGI->pInt);
             XGIFreeRec(pScrn);
@@ -2704,9 +2686,8 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         }
     }
 
-#ifdef XGIDUALHEAD
     /* Due to palette & timing problems we don't support 8bpp in DHM */
-    if ((pXGI->DualHeadMode) && (pScrn->bitsPerPixel == 8)) {
+    if ((IS_DUAL_HEAD(pXGI)) && (pScrn->bitsPerPixel == 8)) {
         XGIErrorLog(pScrn,
                     "Color depth 8 not supported in Dual Head mode.\n");
         if (pXGIEnt)
@@ -2716,7 +2697,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         XGIFreeRec(pScrn);
         return FALSE;
     }
-#endif
 
     /*
      * The cmap layer needs this to be initialised.
@@ -2726,10 +2706,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
         if (!xf86SetGamma(pScrn, zeros)) {
             XGIErrorLog(pScrn, "xf86SetGamma() error\n");
-#ifdef XGIDUALHEAD
+
             if (pXGIEnt)
                 pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
             if (pXGI->pInt)
                 xf86FreeInt10(pXGI->pInt);
             XGIFreeRec(pScrn);
@@ -2786,15 +2766,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     pXGI->realFbAddress = pXGI->FbAddress;
 
-#ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode)
-        xf86DrvMsg(pScrn->scrnIndex, from,
-                   "Global linear framebuffer at 0x%lX\n",
-                   (unsigned long) pXGI->FbAddress);
-    else
-#endif
-        xf86DrvMsg(pScrn->scrnIndex, from, "Linear framebuffer at 0x%lX\n",
-                   (unsigned long) pXGI->FbAddress);
+    xf86DrvMsg(pScrn->scrnIndex, from,
+               "%sinear framebuffer at 0x%lX\n",
+               IS_DUAL_HEAD(pXGI) ? "Global l" : "L",
+               (unsigned long) pXGI->FbAddress);
 
     if (pXGI->pEnt->device->IOBase != 0) {
         /*
@@ -2817,10 +2792,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     if (xf86RegisterResources(pXGI->pEnt->index, NULL, ResExclusive)) {
         XGIErrorLog(pScrn,
                     "xf86RegisterResources() found resource conflicts\n");
-#ifdef XGIDUALHEAD
+
         if (pXGIEnt)
             pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
         if (pXGI->pInt)
             xf86FreeInt10(pXGI->pInt);
         xgiRestoreExtRegisterLock(pXGI, srlockReg, crlockReg);
@@ -2862,27 +2837,23 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     pXGI->availMem -= (pXGI->TurboQueue) ? (64 * 1024) : pXGI->CursorSize;
 
 
-#ifdef XGIDUALHEAD
     /* In dual head mode, we share availMem equally - so align it
      * to 8KB; this way, the address of the FB of the second
      * head is aligned to 4KB for mapping.
+     *
+     * Check MaxXFBMem setting.  Since DRI is not supported in dual head
+     * mode, we don't need the MaxXFBMem setting.
      */
-    if (pXGI->DualHeadMode)
-        pXGI->availMem &= 0xFFFFE000;
-
-    /* Check MaxXFBMem setting */
-    /* Since DRI is not supported in dual head mode, we
-     * don't need the MaxXFBMem setting. */
-    if (pXGI->DualHeadMode) {
+    if (IS_DUAL_HEAD(pXGI)) {
         if (pXGI->maxxfbmem) {
             xf86DrvMsg(pScrn->scrnIndex, X_INFO,
                        "MaxXFBMem not used in Dual Head mode. Using all VideoRAM.\n");
         }
+
+        pXGI->availMem &= 0xFFFFE000;
         pXGI->maxxfbmem = pXGI->availMem;
     }
-    else
-#endif
-    if (pXGI->maxxfbmem) {
+    else if (pXGI->maxxfbmem) {
         if (pXGI->maxxfbmem > pXGI->availMem) {
             if (pXGI->xgifbMem) {
                 pXGI->maxxfbmem = pXGI->xgifbMem * 1024;
@@ -3006,16 +2977,11 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #endif
 
 
-#ifdef XGIDUALHEAD
-    if ((!pXGI->DualHeadMode) || (pXGI->SecondHead)) {
-#endif
+    if (!IS_DUAL_HEAD(pXGI) || IS_SECOND_HEAD(pXGI)) {
         xf86DrvMsg(pScrn->scrnIndex, pXGI->CRT1gammaGiven ? X_CONFIG : X_INFO,
                    "CRT1 gamma correction is %s\n",
                    pXGI->CRT1gamma ? "enabled" : "disabled");
-
-#ifdef XGIDUALHEAD
     }
-#endif
 
     /* Eventually overrule TV Type (SVIDEO, COMPOSITE, SCART, HIVISION, YPBPR) */
     if (pXGI->XGI_Pr->VBType & VB_XGIVB) {
@@ -3087,8 +3053,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      */
     if (pXGI->VBFlags & DISPTYPE_DISP2) {
         if (pXGI->CRT1off) {    /* CRT2 only ------------------------------- */
-#ifdef XGIDUALHEAD
-            if (pXGI->DualHeadMode) {
+            if (IS_DUAL_HEAD(pXGI)) {
                 XGIErrorLog(pScrn,
                             "CRT1 not detected or forced off. Dual Head mode can't initialize.\n");
                 if (pXGIEnt)
@@ -3102,7 +3067,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                 XGIFreeRec(pScrn);
                 return FALSE;
             }
-#endif
 #ifdef XGIMERGED
             if (pXGI->MergedFB) {
                 if (pXGI->MergedFBAuto) {
@@ -3120,26 +3084,17 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #endif
             pXGI->VBFlags |= VB_DISPMODE_SINGLE;
         }
-        else                    /* CRT1 and CRT2 - mirror or dual head ----- */
-#ifdef XGIDUALHEAD
-        if (pXGI->DualHeadMode) {
+        /* CRT1 and CRT2 - mirror or dual head ----- */
+        else if (IS_DUAL_HEAD(pXGI)) {
             pXGI->VBFlags |= (VB_DISPMODE_DUAL | DISPTYPE_CRT1);
             if (pXGIEnt)
                 pXGIEnt->DisableDual = FALSE;
         }
         else
-#endif
-#ifdef XGIMERGED
-        if (pXGI->MergedFB) {
-            pXGI->VBFlags |= (VB_DISPMODE_MIRROR | DISPTYPE_CRT1);
-        }
-        else
-#endif
             pXGI->VBFlags |= (VB_DISPMODE_MIRROR | DISPTYPE_CRT1);
     }
     else {                      /* CRT1 only ------------------------------- */
-#ifdef XGIDUALHEAD
-        if (pXGI->DualHeadMode) {
+        if (IS_DUAL_HEAD(pXGI)) {
             XGIErrorLog(pScrn,
                         "No CRT2 output selected or no bridge detected. "
                         "Dual Head mode can't initialize.\n");
@@ -3152,7 +3107,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             XGIFreeRec(pScrn);
             return FALSE;
         }
-#endif
+
 #ifdef XGIMERGED
         if (pXGI->MergedFB) {
             if (pXGI->MergedFBAuto) {
@@ -3181,23 +3136,17 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     pXGI->VBFlags_backup = pXGI->VBFlags;
 
     /* Find out about paneldelaycompensation and evaluate option */
-#ifdef XGIDUALHEAD
-    if ((!pXGI->DualHeadMode) || (!pXGI->SecondHead)) {
-#endif
+    if (!IS_DUAL_HEAD(pXGI) || !IS_SECOND_HEAD(pXGI)) {
 
-
-#ifdef XGIDUALHEAD
     }
-#endif
 
-#ifdef XGIDUALHEAD
     /* In dual head mode, both heads (currently) share the maxxfbmem equally.
      * If memory sharing is done differently, the following has to be changed;
      * the other modules (eg. accel and Xv) use dhmOffset for hardware
      * pointer settings relative to VideoRAM start and won't need to be changed.
      */
-    if (pXGI->DualHeadMode) {
-        if (pXGI->SecondHead == FALSE) {
+    if (IS_DUAL_HEAD(pXGI)) {
+        if (!IS_SECOND_HEAD(pXGI)) {
             /* ===== First head (always CRT2) ===== */
             /* We use only half of the memory available */
             pXGI->maxxfbmem /= 2;
@@ -3227,7 +3176,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
     else
         pXGI->dhmOffset = 0;
-#endif
 
     /* Note: Do not use availMem for anything from now. Use
      * maxxfbmem instead. (availMem does not take dual head
@@ -3236,14 +3184,8 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     pXGI->DRIheapstart = pXGI->maxxfbmem;
     pXGI->DRIheapend = pXGI->availMem;
-#ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode) {
-        pXGI->DRIheapstart = pXGI->DRIheapend = 0;
-    }
-    else
-#endif
-    if (pXGI->DRIheapstart == pXGI->DRIheapend) {
 
+    if (IS_DUAL_HEAD(pXGI) || (pXGI->DRIheapstart == pXGI->DRIheapend)) {
         pXGI->DRIheapstart = pXGI->DRIheapend = 0;
     }
 #if !defined(__powerpc__)
@@ -3334,10 +3276,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     if (i == -1) {
         XGIErrorLog(pScrn, "xf86ValidateModes() error\n");
-#ifdef XGIDUALHEAD
+
         if (pXGIEnt)
             pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
         if (pXGI->pInt)
             xf86FreeInt10(pXGI->pInt);
         xgiRestoreExtRegisterLock(pXGI, srlockReg, crlockReg);
@@ -3355,10 +3297,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             XGIErrorLog(pScrn,
                         "Virtual screen too big for memory; %ldK needed, %ldK available\n",
                         memreq / 1024, pXGI->maxxfbmem / 1024);
-#ifdef XGIDUALHEAD
+
             if (pXGIEnt)
                 pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
             if (pXGI->pInt)
                 xf86FreeInt10(pXGI->pInt);
             pXGI->pInt = NULL;
@@ -3373,46 +3315,40 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      *    which are unsuitable for dual head mode.
      * -) Find the highest used pixelclock on the master head.
      */
-#ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode) {
+    if (IS_DUAL_HEAD(pXGI) && !IS_SECOND_HEAD(pXGI)) {
+        pXGIEnt->maxUsedClock = 0;
 
-        if (!pXGI->SecondHead) {
+        if ((p = first = pScrn->modes)) {
+            do {
+                n = p->next;
 
-            pXGIEnt->maxUsedClock = 0;
+                /* Modes that require the bridge to operate in SlaveMode
+                 * are not suitable for Dual Head mode.
+                 */
 
-            if ((p = first = pScrn->modes)) {
-                do {
-                    n = p->next;
+                /* Search for the highest clock on first head in order to calculate
+                 * max clock for second head (CRT1)
+                 */
+                if ((p->status == MODE_OK)
+                    && (p->Clock > pXGIEnt->maxUsedClock)) {
+                    pXGIEnt->maxUsedClock = p->Clock;
+                }
 
-                    /* Modes that require the bridge to operate in SlaveMode
-                     * are not suitable for Dual Head mode.
-                     */
+                p = n;
 
-                    /* Search for the highest clock on first head in order to calculate
-                     * max clock for second head (CRT1)
-                     */
-                    if ((p->status == MODE_OK)
-                        && (p->Clock > pXGIEnt->maxUsedClock)) {
-                        pXGIEnt->maxUsedClock = p->Clock;
-                    }
-
-                    p = n;
-
-                } while (p != NULL && p != first);
-            }
+            } while (p != NULL && p != first);
         }
     }
-#endif
 
     /* Prune the modes marked as invalid */
     xf86PruneDriverModes(pScrn);
 
     if (i == 0 || pScrn->modes == NULL) {
         XGIErrorLog(pScrn, "No valid modes found\n");
-#ifdef XGIDUALHEAD
+
         if (pXGIEnt)
             pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
         if (pXGI->pInt)
             xf86FreeInt10(pXGI->pInt);
         xgiRestoreExtRegisterLock(pXGI, srlockReg, crlockReg);
@@ -3585,10 +3521,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     case 32:
         if (!xf86LoadSubModule(pScrn, "fb")) {
             XGIErrorLog(pScrn, "Failed to load fb module");
-#ifdef XGIDUALHEAD
+
             if (pXGIEnt)
                 pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
             if (pXGI->pInt)
                 xf86FreeInt10(pXGI->pInt);
             xgiRestoreExtRegisterLock(pXGI, srlockReg, crlockReg);
@@ -3599,10 +3535,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     default:
         XGIErrorLog(pScrn, "Unsupported framebuffer bpp (%d)\n",
                     pScrn->bitsPerPixel);
-#ifdef XGIDUALHEAD
+
         if (pXGIEnt)
             pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
         if (pXGI->pInt)
             xf86FreeInt10(pXGI->pInt);
         xgiRestoreExtRegisterLock(pXGI, srlockReg, crlockReg);
@@ -3616,10 +3552,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         xf86DrvMsg(pScrn->scrnIndex, X_INFO, "Accel enabled\n");
         if (!xf86LoadSubModule(pScrn, "xaa")) {
             XGIErrorLog(pScrn, "Could not load xaa module\n");
-#ifdef XGIDUALHEAD
+
             if (pXGIEnt)
                 pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
             if (pXGI->pInt)
                 xf86FreeInt10(pXGI->pInt);
             xgiRestoreExtRegisterLock(pXGI, srlockReg, crlockReg);
@@ -3633,10 +3569,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     if (pXGI->ShadowFB) {
         if (!xf86LoadSubModule(pScrn, "shadowfb")) {
             XGIErrorLog(pScrn, "Could not load shadowfb module\n");
-#ifdef XGIDUALHEAD
+
             if (pXGIEnt)
                 pXGIEnt->ErrorAfterFirst = TRUE;
-#endif
+
             if (pXGI->pInt)
                 xf86FreeInt10(pXGI->pInt);
             xgiRestoreExtRegisterLock(pXGI, srlockReg, crlockReg);
@@ -3654,9 +3590,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             xf86LoaderReqSymLists(driSymbols, drmSymbols, NULL);
         }
         else {
-#ifdef XGIDUALHEAD
-            if (!pXGI->DualHeadMode)
-#endif
+            if (!IS_DUAL_HEAD(pXGI))
                 xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
                            "Remove >Load \"dri\"< from the Module section of your XF86Config file\n");
         }
@@ -3680,10 +3614,9 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         xf86FreeInt10(pXGI->pInt);
     pXGI->pInt = NULL;
 
-#ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode) {
+    if (IS_DUAL_HEAD(pXGI)) {
         pXGI->XGI_SD_Flags |= XGI_SD_ISDUALHEAD;
-        if (pXGI->SecondHead)
+        if (IS_SECOND_HEAD(pXGI))
             pXGI->XGI_SD_Flags |= XGI_SD_ISDHSECONDHEAD;
         else
             pXGI->XGI_SD_Flags &= ~(XGI_SD_SUPPORTXVGAMMA1);
@@ -3694,7 +3627,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         }
 #endif
     }
-#endif
 
 #ifdef XGIMERGED
     if (pXGI->MergedFB)
@@ -3770,22 +3702,17 @@ XGIMapMem(ScrnInfoPtr pScrn)
 static Bool
 XGIUnmapMem(ScrnInfoPtr pScrn)
 {
-    XGIPtr pXGI;
-#ifdef XGIDUALHEAD
+    XGIPtr pXGI = XGIPTR(pScrn);
     XGIEntPtr pXGIEnt = NULL;
-#endif
-
-    pXGI = XGIPTR(pScrn);
 
 #ifdef XGIDUALHEAD
     pXGIEnt = pXGI->entityPrivate;
 #endif
 
-/* In dual head mode, we must not unmap if the other head still
- * assumes memory as mapped
- */
-#ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode) {
+    /* In dual head mode, we must not unmap if the other head still
+     * assumes memory as mapped
+     */
+    if (IS_DUAL_HEAD(pXGI)) {
         if (pXGIEnt->MapCountIOBase) {
             pXGIEnt->MapCountIOBase--;
             if ((pXGIEnt->MapCountIOBase == 0) || (pXGIEnt->forceUnmapIOBase)) {
@@ -3826,7 +3753,6 @@ XGIUnmapMem(ScrnInfoPtr pScrn)
         }
     }
     else {
-#endif
         xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGI->IOBase,
                         (pXGI->mmioSize * 1024));
         pXGI->IOBase = NULL;
@@ -3838,9 +3764,8 @@ XGIUnmapMem(ScrnInfoPtr pScrn)
         xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGI->FbBase,
                         pXGI->FbMapSize);
         pXGI->FbBase = NULL;
-#ifdef XGIDUALHEAD
     }
-#endif
+
     return TRUE;
 }
 
@@ -3858,11 +3783,9 @@ XGISave(ScrnInfoPtr pScrn)
 
     pXGI = XGIPTR(pScrn);
 
-#ifdef XGIDUALHEAD
     /* We always save master & slave */
-    if (pXGI->DualHeadMode && pXGI->SecondHead)
+    if (IS_DUAL_HEAD(pXGI) && IS_SECOND_HEAD(pXGI))
         return;
-#endif
 
     vgaReg = &VGAHWPTR(pScrn)->SavedReg;
     xgiReg = &pXGI->SavedReg;
@@ -3895,9 +3818,8 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 #ifdef __powerpc__
     unsigned char tmpval;
 #endif
-#ifdef XGIDUALHEAD
     XGIEntPtr pXGIEnt = NULL;
-#endif
+
 
     /* PDEBUG(ErrorF("XGIModeInit(). \n")); */
     PDEBUG(ErrorF
@@ -3916,8 +3838,7 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
     XGIModifyModeInfo(mode);    /* Quick check of the mode parameters */
 
 
-#ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode) {
+    if (IS_DUAL_HEAD(pXGI)) {
 	if (!(*pXGI->ModeInit) (pScrn, mode)) {
 	    XGIErrorLog(pScrn, "ModeInit() failed\n");
 	    return FALSE;
@@ -3925,7 +3846,9 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 
 	pScrn->vtSema = TRUE;
 
-	pXGIEnt = pXGI->entityPrivate;
+#ifdef XGIDUALHEAD
+        pXGIEnt = pXGI->entityPrivate;
+#endif
 
 	/* Head 2 (slave) is always CRT1 */
 	XGIPreSetMode(pScrn, mode, XGI_MODE_CRT1);
@@ -3939,7 +3862,6 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 		       pXGIEnt->pScrn_1->frameY0, 0);
     }
     else
-#endif
     {
 	/* For other chipsets, use the old method */
 
@@ -4100,9 +4022,8 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
     unsigned long OnScreenSize;
     int height, width, displayWidth;
     unsigned char *FBStart;
-#ifdef XGIDUALHEAD
     XGIEntPtr pXGIEnt = NULL;
-#endif
+
     ErrorF("XGIScreenInit\n");
     pScrn = xf86Screens[pScreen->myNum];
 
@@ -4110,10 +4031,8 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 
     pXGI = XGIPTR(pScrn);
 
-#ifdef XGIDUALHEAD
-    if ((!pXGI->DualHeadMode) || (!pXGI->SecondHead)) {
-#endif
 #if !defined(__powerpc__)
+    if (!IS_DUAL_HEAD(pXGI) || !IS_SECOND_HEAD(pXGI)) {
         if (xf86LoadSubModule(pScrn, "vbe")) {
             xf86LoaderReqSymLists(vbeSymbols, NULL);
             pXGI->pVbe = VBEExtendedInit(NULL, pXGI->pEnt->index,
@@ -4123,13 +4042,11 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
         else {
             XGIErrorLog(pScrn, "Failed to load VBE submodule\n");
         }
-#endif /* if !defined(__powerpc__)  */
-#ifdef XGIDUALHEAD
     }
-#endif
+#endif /* if !defined(__powerpc__)  */
 
 #ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode) {
+    if (IS_DUAL_HEAD(pXGI)) {
         pXGIEnt = pXGI->entityPrivate;
         pXGIEnt->refCount++;
     }
@@ -4250,11 +4167,9 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
     /* Point cmdQueuePtr to pXGIEnt for shared usage
      * (same technique is then eventually used in DRIScreeninit).
      */
-#ifdef XGIDUALHEAD
-    if (pXGI->SecondHead)
+    if (IS_SECOND_HEAD(pXGI))
         pXGI->cmdQueueLenPtr = &(XGIPTR(pXGIEnt->pScrn_1)->cmdQueueLen);
     else
-#endif
         pXGI->cmdQueueLenPtr = &(pXGI->cmdQueueLen);
 
     pXGI->cmdQueueLen = 0;      /* Force an EngineIdle() at start */
@@ -4262,17 +4177,13 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 #ifdef XF86DRI
     /*if(pXGI->loadDRI) */
     {
-#ifdef XGIDUALHEAD
         /* No DRI in dual head mode */
-        if (pXGI->DualHeadMode) {
+        if (IS_DUAL_HEAD(pXGI)) {
             pXGI->directRenderingEnabled = FALSE;
             xf86DrvMsg(pScrn->scrnIndex, X_INFO,
                        "DRI not supported in Dual Head mode\n");
         }
-        else
-#endif
-            /* Force the initialization of the context */
-        if (!FbDevExist) {
+        else if (!FbDevExist) {
             PDEBUG(ErrorF("--- DRI not supported   \n"));
             xf86DrvMsg(pScrn->scrnIndex, X_NOT_IMPLEMENTED,
                        "DRI requires kernel fbdev driver\n");
@@ -4424,11 +4335,9 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 
     pXGI->CloseScreen = pScreen->CloseScreen;
     pScreen->CloseScreen = XGICloseScreen;
-#ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode)
+    if (IS_DUAL_HEAD(pXGI))
         pScreen->SaveScreen = XGISaveScreenDH;
     else
-#endif
         pScreen->SaveScreen = XGISaveScreen;
 
     /* Install BlockHandler */
@@ -4453,9 +4362,8 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 
     /* Turn on the screen now */
     /* We do this in dual head mode after second head is finished */
-#ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode) {
-        if (pXGI->SecondHead) {
+    if (IS_DUAL_HEAD(pXGI)) {
+        if (IS_SECOND_HEAD(pXGI)) {
             bzero(pXGI->FbBase, OnScreenSize);
             bzero(pXGIEnt->FbBase1, pXGIEnt->OnScreenSize1);
             XGISaveScreen(pScreen, SCREEN_SAVER_OFF);
@@ -4466,12 +4374,9 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
         }
     }
     else {
-#endif
         XGISaveScreen(pScreen, SCREEN_SAVER_OFF);
         bzero(pXGI->FbBase, OnScreenSize);
-#ifdef XGIDUALHEAD
     }
-#endif
 
     pXGI->XGI_SD_Flags &= ~XGI_SD_ISDEPTH8;
     if (pXGI->CurrentLayout.bitsPerPixel == 8) {
@@ -4855,11 +4760,7 @@ XGIEnterVT(int scrnIndex, int flags)
     }
 #endif
 
-    if (
-#ifdef XGIDUALHEAD
-           ((!pXGI->DualHeadMode) || (!pXGI->SecondHead)) &&
-#endif
-           (pXGI->ResetXv)) {
+    if ((!IS_DUAL_HEAD(pXGI) || !IS_SECOND_HEAD(pXGI)) && (pXGI->ResetXv)) {
         (pXGI->ResetXv) (pScrn);
     }
 
@@ -4887,17 +4788,13 @@ XGILeaveVT(int scrnIndex, int flags)
     }
 #endif
 
-#ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode && pXGI->SecondHead)
+    if (IS_DUAL_HEAD(pXGI) && IS_SECOND_HEAD(pXGI))
         return;
-#endif
 
     if (pXGI->CursorInfoPtr) {
-#ifdef XGIDUALHEAD
         /* Because of the test and return above, we know that this is not
          * the second head.
          */
-#endif
         pXGI->CursorInfoPtr->HideCursor(pScrn);
         XGI_WaitBeginRetrace(pXGI->RelIO);
     }
@@ -4937,10 +4834,7 @@ XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
 
     if (pScrn->vtSema) {
         if (pXGI->CursorInfoPtr
-#ifdef XGIDUALHEAD
-            && (!pXGI->DualHeadMode || !pXGI->SecondHead)
-#endif
-            ) {
+            && (!IS_DUAL_HEAD(pXGI) || !IS_SECOND_HEAD(pXGI))) {
             pXGI->CursorInfoPtr->HideCursor(pScrn);
             XGI_WaitBeginRetrace(pXGI->RelIO);
         }
@@ -4961,7 +4855,7 @@ XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
     vgaHWUnmapMem(pScrn);
 
 #ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode) {
+    if (IS_DUAL_HEAD(pXGI)) {
         pXGIEnt = pXGI->entityPrivate;
         pXGIEnt->refCount--;
     }
@@ -5119,11 +5013,11 @@ XGISaveScreen(ScreenPtr pScreen, int mode)
     return vgaHWSaveScreen(pScreen, mode);
 }
 
-#ifdef XGIDUALHEAD
 /* SaveScreen for dual head mode */
 static Bool
 XGISaveScreenDH(ScreenPtr pScreen, int mode)
 {
+#ifdef XGIDUALHEAD
     ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
     Bool checkit = FALSE;
 
@@ -5131,7 +5025,7 @@ XGISaveScreenDH(ScreenPtr pScreen, int mode)
 
         XGIPtr pXGI = XGIPTR(pScrn);
 
-        if ((pXGI->SecondHead)
+        if ((IS_SECOND_HEAD(pXGI))
             && ((!(pXGI->VBFlags & CRT1_LCDA))
                 || (pXGI->XGI_Pr->VBType & VB_XGI301C))) {
 
@@ -5156,7 +5050,7 @@ XGISaveScreenDH(ScreenPtr pScreen, int mode)
             xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
 #endif
             if (checkit) {
-                if (!pXGI->SecondHead)
+                if (!IS_SECOND_HEAD(pXGI))
                     pXGI->BlankCRT2 = xf86IsUnblank(mode) ? FALSE : TRUE;
                 else if (pXGI->VBFlags & CRT1_LCDA)
                     pXGI->Blank = xf86IsUnblank(mode) ? FALSE : TRUE;
@@ -5165,8 +5059,8 @@ XGISaveScreenDH(ScreenPtr pScreen, int mode)
         }
     }
     return TRUE;
-}
 #endif
+}
 
 #ifdef DEBUG
 static void
@@ -5403,9 +5297,8 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
     CR31 &= ~0x06;              /* Disable SlaveMode, disable SimuMode in SlaveMode */
     crt1rateindex = XGISearchCRT1Rate(pScrn, mymode);
 
-#ifdef XGIDUALHEAD
-    if (pXGI->DualHeadMode) {
-        if (pXGI->SecondHead) {
+    if (IS_DUAL_HEAD(pXGI)) {
+        if (IS_SECOND_HEAD(pXGI)) {
             /* CRT1 */
             CR33 &= 0xf0;
             if (!(vbflag & CRT1_LCDA)) {
@@ -5421,7 +5314,6 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
         }
     }
     else
-#endif
 #ifdef XGIMERGED
     if (pXGI->MergedFB) {
         CR33 = 0;
@@ -5429,7 +5321,7 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
             CR33 |= (crt1rateindex & 0x0f);
         }
         if (vbflag & CRT2_VGA) {
-	    CR33 |= (XGISearchCRT1Rate(pScrn, mymode2) << 4);
+            CR33 |= (XGISearchCRT1Rate(pScrn, mymode2) << 4);
         }
     }
     else
@@ -5483,9 +5375,6 @@ static void
 XGIPostSetMode(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
-/* #ifdef XGIDUALHEAD
-    XGIEntPtr pXGIEnt = pXGI->entityPrivate;
-#endif */
 /*    unsigned char usScratchCR17;
     Bool flag = FALSE;
     Bool doit = TRUE; */
@@ -5520,9 +5409,7 @@ XGIPostSetMode(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
        }
        */
         if (!(pXGI->MiscFlags & MISC_CRT1OVERLAY)) {
-#ifdef XGIDUALHEAD
-            if ((!pXGI->DualHeadMode) || (pXGI->SecondHead))
-#endif
+            if (!IS_DUAL_HEAD(pXGI) || IS_SECOND_HEAD(pXGI))
                 xf86DrvMsgVerb(pScrn->scrnIndex, X_WARNING, 3,
                                "Current dotclock (%dMhz) too high for video overlay on CRT1\n",
                                myclock);
