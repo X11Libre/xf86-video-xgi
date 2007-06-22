@@ -234,6 +234,8 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
   XGIPtr pXGI = XGIPTR(pScrn);
   DRIInfoPtr pDRIInfo;
   XGIDRIPtr pXGIDRI;
+    drm_xgi_fb_t  fb;
+    int major, minor, patch;
 
 
    /* Check that the GLX, DRI, and DRM modules have been loaded by testing
@@ -247,34 +249,33 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
       return FALSE;
    }
 
-   /* Check the DRI version */
-   /* { */
-   /* int major, minor, patch; */
-   /* DRIQueryVersion(&major, &minor, &patch); */
-   /* if (major != 3 || minor != 0 || patch < 0) { */
-   /* xf86DrvMsg(pScreen->myNum, X_ERROR, */
-   /* "[drm] XGIDRIScreenInit failed (DRI version = %d.%d.%d, expected 3.0.x). Disabling DRI.\n", */
-   /* major, minor, patch); */
-   /* return FALSE; */
-   /* } */
-   /* } */
+    /* Make sure the server's DRI extension version matches the version the
+     * driver was built against.
+     */
+    DRIQueryVersion(&major, &minor, &patch);
+    if ((major != DRIINFO_MAJOR_VERSION) || (minor < DRIINFO_MINOR_VERSION)) {
+        xf86DrvMsg(pScreen->myNum, X_ERROR,
+                   "[drm] XGIDRIScreenInit failed (DRI version = %d.%d.%d, "
+                   "expected %d.%d.x). Disabling DRI.\n",
+                   major, minor, patch,
+                   DRIINFO_MAJOR_VERSION, DRIINFO_MINOR_VERSION);
+        return FALSE;
+    }
 
-  pDRIInfo = DRICreateInfoRec();
-  if (!pDRIInfo) return FALSE;
-  pXGI->pDRIInfo = pDRIInfo;
+    pDRIInfo = DRICreateInfoRec();
+    if (!pDRIInfo) {
+        return FALSE;
+    }
 
-  pDRIInfo->drmDriverName = XGIKernelDriverName;
-  pDRIInfo->clientDriverName = XGIClientDriverName;
-  pDRIInfo->busIdString = xalloc(64);
-  sprintf(pDRIInfo->busIdString, "PCI:%d:%d:%d",
-	  ((pciConfigPtr)pXGI->PciInfo->thisCard)->busnum,
-	  ((pciConfigPtr)pXGI->PciInfo->thisCard)->devnum,
-	  ((pciConfigPtr)pXGI->PciInfo->thisCard)->funcnum);
-  pDRIInfo->ddxDriverMajorVersion = 0;
-  pDRIInfo->ddxDriverMinorVersion = 1;
-  pDRIInfo->ddxDriverPatchVersion = 0;
-  pDRIInfo->frameBufferPhysicalAddress = pXGI->FbAddress;
-  pDRIInfo->frameBufferSize = pXGI->FbMapSize;
+    pXGI->pDRIInfo = pDRIInfo;
+    pDRIInfo->drmDriverName = XGIKernelDriverName;
+    pDRIInfo->clientDriverName = XGIClientDriverName;
+    pDRIInfo->busIdString = DRICreatePCIBusID(pXGI->PciInfo);
+    pDRIInfo->ddxDriverMajorVersion = 0;
+    pDRIInfo->ddxDriverMinorVersion = 1;
+    pDRIInfo->ddxDriverPatchVersion = 0;
+    pDRIInfo->frameBufferPhysicalAddress = pXGI->FbAddress;
+    pDRIInfo->frameBufferSize = pXGI->FbMapSize;
 
   /* ?? */
   pDRIInfo->frameBufferStride = pXGI->scrnOffset;
