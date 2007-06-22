@@ -5031,12 +5031,8 @@ XGISaveScreenDH(ScreenPtr pScreen, int mode)
             xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
 #endif
             if (checkit) {
-                if (!IS_SECOND_HEAD(pXGI))
-                    pXGI->BlankCRT2 = xf86IsUnblank(mode) ? FALSE : TRUE;
-                else if (pXGI->VBFlags & CRT1_LCDA)
-                    pXGI->Blank = xf86IsUnblank(mode) ? FALSE : TRUE;
+                pXGI->BlankCRT2 = xf86IsUnblank(mode) ? FALSE : TRUE;
             }
-
         }
     }
     return TRUE;
