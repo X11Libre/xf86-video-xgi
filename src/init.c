@@ -937,12 +937,9 @@ XGIBIOSSetModeCRT1(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
     USHORT  ModeIdIndex, ModeNo=0;
     UCHAR backupreg=0;
     unsigned vga_info;
-    XGIEntPtr pXGIEnt = NULL;
+    XGIEntPtr pXGIEnt = ENTITY_PRIVATE(pXGI);
     UCHAR backupcr30, backupcr31, backupcr38, backupcr35, backupp40d=0;
 
-#ifdef XGIDUALHEAD
-   pXGIEnt = pXGI->entityPrivate;
-#endif
 
     ModeNo = XGI_CalcModeIndex(pScrn, mode, pXGI->VBFlags);
     if(!ModeNo) return FALSE;

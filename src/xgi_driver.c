@@ -477,11 +477,7 @@ XGIFreeRec(ScrnInfoPtr pScrn)
     if (!pXGI)
         return;
 
-#ifdef XGIDUALHEAD
-    pXGIEnt = pXGI->entityPrivate;
-#endif
-
-
+    pXGIEnt = ENTITY_PRIVATE(pXGI);
     if (pXGIEnt) {
         if (!IS_SECOND_HEAD(pXGI)) {
             /* Free memory only if we are first head; in case of an error
@@ -3703,11 +3699,8 @@ static Bool
 XGIUnmapMem(ScrnInfoPtr pScrn)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
-    XGIEntPtr pXGIEnt = NULL;
+    XGIEntPtr pXGIEnt = ENTITY_PRIVATE(pXGI);
 
-#ifdef XGIDUALHEAD
-    pXGIEnt = pXGI->entityPrivate;
-#endif
 
     /* In dual head mode, we must not unmap if the other head still
      * assumes memory as mapped
@@ -3818,7 +3811,6 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 #ifdef __powerpc__
     unsigned char tmpval;
 #endif
-    XGIEntPtr pXGIEnt = NULL;
 
 
     /* PDEBUG(ErrorF("XGIModeInit(). \n")); */
@@ -3839,16 +3831,14 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 
 
     if (IS_DUAL_HEAD(pXGI)) {
+        XGIEntPtr pXGIEnt = ENTITY_PRIVATE(pXGI);
+
 	if (!(*pXGI->ModeInit) (pScrn, mode)) {
 	    XGIErrorLog(pScrn, "ModeInit() failed\n");
 	    return FALSE;
 	}
 
 	pScrn->vtSema = TRUE;
-
-#ifdef XGIDUALHEAD
-        pXGIEnt = pXGI->entityPrivate;
-#endif
 
 	/* Head 2 (slave) is always CRT1 */
 	XGIPreSetMode(pScrn, mode, XGI_MODE_CRT1);
@@ -4045,12 +4035,10 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
     }
 #endif /* if !defined(__powerpc__)  */
 
-#ifdef XGIDUALHEAD
     if (IS_DUAL_HEAD(pXGI)) {
-        pXGIEnt = pXGI->entityPrivate;
+        pXGIEnt = ENTITY_PRIVATE(pXGI);
         pXGIEnt->refCount++;
     }
-#endif
 
     /* Map the VGA memory and get the VGA IO base */
     if (pXGI->Primary) {
@@ -4821,9 +4809,7 @@ XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
     ScrnInfoPtr pScrn = xf86Screens[scrnIndex];
     vgaHWPtr hwp = VGAHWPTR(pScrn);
     XGIPtr pXGI = XGIPTR(pScrn);
-#ifdef XGIDUALHEAD
-    XGIEntPtr pXGIEnt = pXGI->entityPrivate;
-#endif
+
 
 #ifdef XF86DRI
     if (pXGI->directRenderingEnabled) {
@@ -4854,12 +4840,10 @@ XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
     XGIUnmapMem(pScrn);
     vgaHWUnmapMem(pScrn);
 
-#ifdef XGIDUALHEAD
     if (IS_DUAL_HEAD(pXGI)) {
-        pXGIEnt = pXGI->entityPrivate;
+        XGIEntPtr pXGIEnt = ENTITY_PRIVATE(pXGI);
         pXGIEnt->refCount--;
     }
-#endif
 
     if (pXGI->pInt) {
         xf86FreeInt10(pXGI->pInt);
@@ -5022,10 +5006,9 @@ XGISaveScreenDH(ScreenPtr pScreen, int mode)
     Bool checkit = FALSE;
 
     if ((pScrn != NULL) && pScrn->vtSema) {
-
         XGIPtr pXGI = XGIPTR(pScrn);
 
-        if ((IS_SECOND_HEAD(pXGI))
+        if (IS_SECOND_HEAD(pXGI)
             && ((!(pXGI->VBFlags & CRT1_LCDA))
                 || (pXGI->XGI_Pr->VBType & VB_XGI301C))) {
 
@@ -5034,10 +5017,8 @@ XGISaveScreenDH(ScreenPtr pScreen, int mode)
                 pXGI->Blank = xf86IsUnblank(mode) ? FALSE : TRUE;
 
             return vgaHWSaveScreen(pScreen, mode);
-
         }
         else {
-
             /* Master head is always CRT2 */
             /* But we land here if CRT1 is LCDA, too */
 

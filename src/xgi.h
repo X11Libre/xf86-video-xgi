@@ -766,9 +766,11 @@ typedef struct {
 #ifdef XGIDUALHEAD
 # define IS_DUAL_HEAD(x)      ((x)->DualHeadMode)
 # define IS_SECOND_HEAD(x)    ((x)->SecondHead)
+# define ENTITY_PRIVATE(x)    ((x)->entityPrivate)
 #else
 # define IS_DUAL_HEAD(x)      FALSE
 # define IS_SECOND_HEAD(x)    FALSE
+# define ENTITY_PRIVATE(x)    NULL
 #endif
 
 

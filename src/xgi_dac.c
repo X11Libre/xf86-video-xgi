@@ -523,13 +523,10 @@ XGILoadPalette(ScrnInfoPtr pScrn, int numColors, int *indices, LOCO *colors,
      Bool    dogamma1 = pXGI->CRT1gamma;
 /*     Bool    resetxvgamma = FALSE; */
 
-#ifdef XGIDUALHEAD
-     if (IS_DUAL_HEAD(pXGI)) {
-	 XGIEntPtr pXGIEnt = pXGI->entityPrivate;
-
-	 dogamma1 = pXGIEnt->CRT1gamma;
-     }
-#endif
+    if (IS_DUAL_HEAD(pXGI)) {
+        XGIEntPtr pXGIEnt = ENTITY_PRIVATE(pXGI);
+        dogamma1 = pXGIEnt->CRT1gamma;
+    }
 
      PDEBUG(ErrorF("xgiLoadPalette(%d)\n", numColors));
 
