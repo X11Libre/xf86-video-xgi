@@ -5031,8 +5031,8 @@ XGISaveScreenDH(ScreenPtr pScreen, int mode)
 #endif
         }
     }
-    return TRUE;
 #endif
+    return TRUE;
 }
 
 #ifdef DEBUG
