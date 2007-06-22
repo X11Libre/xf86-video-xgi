@@ -660,9 +660,6 @@ typedef struct {
      * \bug This field is used but never initialized.
      */
     unsigned char 	LCDon;
-#ifdef XGIDUALHEAD
-    Bool		BlankCRT2;
-#endif
     Bool 		Blank;
     int 		CRT1off;		/* 1=CRT1 off, 0=CRT1 on */
     CARD16 		LCDheight;		/* Vertical resolution of LCD panel */

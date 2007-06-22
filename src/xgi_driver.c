@@ -575,10 +575,6 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
     case DPMSModeOn:           /* HSync: On, VSync: On */
         if (docrt1)
             pXGI->Blank = FALSE;
-#ifdef XGIDUALHEAD
-        else
-            pXGI->BlankCRT2 = FALSE;
-#endif
 
         sr1 = 0x00;
         cr17 = 0x80;
@@ -594,10 +590,7 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
     case DPMSModeSuspend:      /* HSync: On, VSync: Off */
         if (docrt1)
             pXGI->Blank = TRUE;
-#ifdef XGIDUALHEAD
-        else
-            pXGI->BlankCRT2 = TRUE;
-#endif
+
         sr1 = 0x20;
         cr17 = 0x80;
         pmreg = 0x80;
@@ -612,10 +605,7 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
     case DPMSModeStandby:      /* HSync: Off, VSync: On */
         if (docrt1)
             pXGI->Blank = TRUE;
-#ifdef XGIDUALHEAD
-        else
-            pXGI->BlankCRT2 = TRUE;
-#endif
+
         sr1 = 0x20;
         cr17 = 0x80;
         pmreg = 0x40;
@@ -630,10 +620,7 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
     case DPMSModeOff:          /* HSync: Off, VSync: Off */
         if (docrt1)
             pXGI->Blank = TRUE;
-#ifdef XGIDUALHEAD
-        else
-            pXGI->BlankCRT2 = TRUE;
-#endif
+
         sr1 = 0x20;
         cr17 = 0x00;
         pmreg = 0xc0;
