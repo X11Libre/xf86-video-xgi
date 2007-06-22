@@ -5003,7 +5003,6 @@ XGISaveScreenDH(ScreenPtr pScreen, int mode)
 {
 #ifdef XGIDUALHEAD
     ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
-    Bool checkit = FALSE;
 
     if ((pScrn != NULL) && pScrn->vtSema) {
         XGIPtr pXGI = XGIPTR(pScrn);
@@ -5030,9 +5029,6 @@ XGISaveScreenDH(ScreenPtr pScreen, int mode)
 #ifdef UNLOCK_ALWAYS
             xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
 #endif
-            if (checkit) {
-                pXGI->BlankCRT2 = xf86IsUnblank(mode) ? FALSE : TRUE;
-            }
         }
     }
     return TRUE;
