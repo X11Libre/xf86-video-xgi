@@ -126,76 +126,7 @@ extern unsigned int CurrentHDisplay;
 extern unsigned int CurrentVDisplay;
 extern unsigned int CurrentColorDepth;
 
-/* Jong; 08222005 */
-
-#define Volari_Idle \
-    {\
-	int  i; \
-	unsigned int WaitCount;\
-\
-	WaitCount=65535;\
-	if(pXGI->Chipset == PCI_CHIP_XGIXG20)\
-	{\
-		WaitCount=1;\
-		switch (CurrentHDisplay) {\
-		case 640:\
-		    if(CurrentColorDepth == 8)\
-			WaitCount=1;\
-		    else if(CurrentColorDepth == 16)\
-			WaitCount=1000;\
-		    else if(CurrentColorDepth == 24)\
-			WaitCount=3000;\
-		    break;\
-\
-		case 800:\
-		    if(CurrentColorDepth == 8)\
-			WaitCount=160;\
-		    else if(CurrentColorDepth == 16)\
-			WaitCount=1200;\
-		    else if(CurrentColorDepth == 24)\
-			WaitCount=4000;\
-		    break;\
-\
-		case 1024:\
-		    if(CurrentColorDepth == 8)\
-			WaitCount=200;\
-		    else if(CurrentColorDepth == 16)\
-			WaitCount=1600;\
-		    else if(CurrentColorDepth == 24)\
-			WaitCount=6000;\
-		    break;\
-\
-		case 1280:\
-		    if(CurrentColorDepth == 8)\
-			WaitCount=500;\
-		    else if(CurrentColorDepth == 16)\
-			WaitCount=2000;\
-		    else if(CurrentColorDepth == 24)\
-			WaitCount=8000;\
-		    break;\
-\
-		default:\
-		    break;\
-		}\
-	}\
-\
-        do {\
-	    bool bIdle = 0;\
-	    for (i=0; i<WaitCount; i++) {\
-		ulong ulTemp = MMIO_IN32(pXGI->IOBase, 0x85CC); \
-  	    	if (ulTemp & 0x80000000) {\
-		    bIdle=1; \
-		    break;\
-		}\
-	    }\
-	    if (bIdle == 1) \
-		break; \
-\
-	    if (pXGI->Chipset == PCI_CHIP_XGIXG20)\
-		usleep(1);\
-        } while(1);\
-    }
-
+extern void Volari_Idle(XGIPtr pXGI);
 
 #define Volari_GetSwWP() (unsigned long)(*(pXGI->pCQ_shareWritePort))
 #define Volari_GetHwRP() (unsigned long)(MMIO_IN32(pXGI->IOBase, 0x85c8))
@@ -326,7 +257,7 @@ extern unsigned int CurrentColorDepth;
 
 /**********************************************************************
 #define Volari_SetupSRCBase(base) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(0), base);\
                 G2CmdQueLen --;
  **********************************************************************/
@@ -359,7 +290,7 @@ extern unsigned int CurrentColorDepth;
 
 /***********************************************************************
 #define Volari_SetupSRCPitch(pitch) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT16(pXGI->IOBase, BR(1), pitch);\
                 G2CmdQueLen --;
 
@@ -392,7 +323,7 @@ extern unsigned int CurrentColorDepth;
 
 /***********************************************************************
 #define Volari_SetupSRCXY(x,y) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(2), (x)<<16 | (y) );\
                 G2CmdQueLen --;
 ***********************************************************************/
@@ -424,7 +355,7 @@ extern unsigned int CurrentColorDepth;
 
 /***********************************************************************
 #define Volari_SetupDSTBase(base) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(4), base);\
                 G2CmdQueLen --;
 
@@ -457,7 +388,7 @@ extern unsigned int CurrentColorDepth;
 
 /***********************************************************************
 #define Volari_SetupDSTXY(x,y) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(3), (x)<<16 | (y) );\
                 G2CmdQueLen --;
 
@@ -490,7 +421,7 @@ extern unsigned int CurrentColorDepth;
 
 /***********************************************************************
 #define Volari_SetupDSTRect(x,y) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(5), (y)<<16 | (x) );\
                 G2CmdQueLen --;
 
@@ -524,7 +455,7 @@ extern unsigned int CurrentColorDepth;
 
 /***********************************************************************
 #define Volari_SetupDSTColorDepth(bpp) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT16(pXGI->IOBase, BR(1)+2, bpp);\
                 G2CmdQueLen --;
 ***********************************************************************/
@@ -534,7 +465,7 @@ extern unsigned int CurrentColorDepth;
 
 /***********************************************************************
 #define Volari_SetupRect(w,h) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(6), (h)<<16 | (w) );\
                 G2CmdQueLen --;
 ***********************************************************************/
@@ -566,25 +497,25 @@ extern unsigned int CurrentColorDepth;
 
 /***********************************************************************
 #define Volari_SetupPATFG(color) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(7), color);\
                 G2CmdQueLen --;
 ***********************************************************************/
 /***********************************************************************
 #define Volari_SetupPATBG(color) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(8), color);\
                 G2CmdQueLen --;
 ***********************************************************************/
 /***********************************************************************
 #define Volari_SetupSRCFG(color) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(9), color);\
                 G2CmdQueLen --;
 ***********************************************************************/
 /***********************************************************************
 #define Volari_SetupSRCBG(color) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(10), color);\
                 G2CmdQueLen --;
 ***********************************************************************/
@@ -692,7 +623,7 @@ extern unsigned int CurrentColorDepth;
 
 /***********************************************************************
 #define Volari_SetupMONOPAT(p0,p1) \
-                if (G2CmdQueLen <= 1)  Volari_Idle;\
+                if (G2CmdQueLen <= 1)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(11), p0);\
                 MMIO_OUT32(pXGI->IOBase, BR(12), p1);\
                 G2CmdQueLen =G2CmdQueLen-2;
@@ -749,13 +680,13 @@ extern unsigned int CurrentColorDepth;
     }
 /***********************************************************************
 #define Volari_SetupClipLT(left,top) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(13), ((left) & 0xFFFF) | (top)<<16 );\
                 G2CmdQueLen--;
 ***********************************************************************/
 /***********************************************************************
 #define Volari_SetupClipRB(right,bottom) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(14), ((right) & 0xFFFF) | (bottom)<<16 );\
                 G2CmdQueLen --;
 ***********************************************************************/
@@ -843,7 +774,7 @@ extern unsigned int CurrentColorDepth;
         pXGI->CommandReg |= (flags);
 
 #define Volari_DoCMD \
-                if (G2CmdQueLen <= 1)  Volari_Idle;\
+                if (G2CmdQueLen <= 1)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(15), pXGI->CommandReg); \
                 MMIO_OUT32(pXGI->IOBase, BR(16), 0);\
                 G2CmdQueLen =G2CmdQueLen-2;
@@ -851,27 +782,27 @@ extern unsigned int CurrentColorDepth;
 
 /***********************************************************************
 #define Volari_SetupX0Y0(x,y) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(2), (y)<<16 | (x) );\
                 G2CmdQueLen --;
 #define Volari_SetupX1Y1(x,y) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(3), (y)<<16 | (x) );\
                 G2CmdQueLen --;
 #define Volari_SetupLineCount(c) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT16(pXGI->IOBase, BR(6), c);\
                 G2CmdQueLen --;
 #define Volari_SetupStylePeriod(p) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT16(pXGI->IOBase, BR(6)+2, p);\
                 G2CmdQueLen --;
 #define Volari_SetupStyleLow(ls) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(11), ls);\
                 G2CmdQueLen --;
 #define Volari_SetupStyleHigh(ls) \
-                if (G2CmdQueLen <= 0)  Volari_Idle;\
+                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
                 MMIO_OUT32(pXGI->IOBase, BR(12), ls);\
                 G2CmdQueLen --;
 ***********************************************************************/

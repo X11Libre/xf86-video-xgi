@@ -47,6 +47,7 @@
 #include "xgi_accel.h"
 #include "xgi_regs.h"
 #include "xgi.h"
+#include "vb_def.h"
 
 #include "xaarop.h"
 #include <xaa.h>
@@ -103,7 +104,111 @@ static CARD32 BE_SWAP32 (CARD32 val)
 #endif
 
 
+#ifdef DEBUG
+static void dump_cq_read_pointer(unsigned int cqrp)
+{
+    static const char *const field_name[8] = {
+        "all idle",
+        "hardware queues empty",
+        "2D idle",
+        "3D idle",
+        "hardware command queue empty",
+        "2D queue empty",
+        "3D queue empty",
+        "software command queue empty",
+    };
+    unsigned i;
 
+    xf86DrvMsg(0, X_INFO, "IO(0x85CC) = 0x%08x\n", cqrp);
+    for (i = 31; i > 23; i--) {
+        if ((cqrp & (1U << i)) != 0) {
+            xf86DrvMsg(0, X_INFO, "    %s\n", field_name[31 - i]);
+        }
+    }
+}
+#endif /* DEBUG */
+
+
+void Volari_Idle(XGIPtr pXGI)
+{
+    int  i;
+    unsigned int WaitCount = 65535;
+#ifdef DEBUG
+    unsigned int last_cqrp = 0;
+#endif /* DEBUG */
+
+    if (pXGI->Chipset == PCI_CHIP_XGIXG20) {
+        WaitCount = 1;
+        switch (CurrentHDisplay) {
+        case 640:
+            if(CurrentColorDepth == 8)
+                WaitCount=1;
+            else if(CurrentColorDepth == 16)
+                WaitCount=1000;
+            else if(CurrentColorDepth == 24)
+                WaitCount=3000;
+            break;
+
+        case 800:
+            if(CurrentColorDepth == 8)
+                WaitCount=160;
+            else if(CurrentColorDepth == 16)
+                WaitCount=1200;
+            else if(CurrentColorDepth == 24)
+                WaitCount=4000;
+            break;
+
+        case 1024:
+            if(CurrentColorDepth == 8)
+                WaitCount=200;
+            else if(CurrentColorDepth == 16)
+                WaitCount=1600;
+            else if(CurrentColorDepth == 24)
+                WaitCount=6000;
+            break;
+
+        case 1280:
+            if(CurrentColorDepth == 8)
+                WaitCount=500;
+            else if(CurrentColorDepth == 16)
+                WaitCount=2000;
+            else if(CurrentColorDepth == 24)
+                WaitCount=8000;
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    do {
+        int bIdle = 0;
+        unsigned int cqrp;
+
+        for (i = 0; i < WaitCount; i++) {
+            cqrp = MMIO_IN32(pXGI->IOBase, 0x85CC);
+            if (cqrp & IDLE_ALL) {
+                bIdle = 1;
+                break;
+            }
+        }
+
+        if (bIdle)
+            break;
+
+#ifdef DEBUG
+        if (last_cqrp != cqrp) {
+            dump_cq_read_pointer(cqrp);
+            last_cqrp = cqrp;
+        }
+
+        sleep(1);
+#endif /* DEBUG */
+
+        if (pXGI->Chipset == PCI_CHIP_XGIXG20)
+            usleep(1);
+    } while (1);
+}
 
 
 void
@@ -280,9 +385,9 @@ Volari_InitCmdQueue(ScrnInfoPtr pScrn)
 
     if(pXGI->Chipset == PCI_CHIP_XGIXG40)
     {
-        Volari_Idle ;
+        Volari_Idle(pXGI);
         Volari_DisableDualPipe(pScrn) ;
-        Volari_Idle ;
+        Volari_Idle(pXGI);
 
     }
     PDEBUG(ErrorF("Volari_InitCmdQueue() done.\n")) ;
@@ -322,7 +427,7 @@ Volari_DisableAccelerator(ScrnInfoPtr pScrn)
 
     PDEBUG(ErrorF("Volari_DisableAccelerator(pScrn)\n")) ;
 
-    Volari_Idle ;
+    Volari_Idle(pXGI);
 
     if( pXGI->TurboQueue )
     {
@@ -509,7 +614,7 @@ Volari_Sync(ScrnInfoPtr pScrn)
 
         PDEBUG1(ErrorF("Volari_Sync()\n"));
         pXGI->DoColorExpand = FALSE;
-        Volari_Idle ;
+        Volari_Idle(pXGI);
 }
 
 static int xgiG2_ALUConv[] =
@@ -745,7 +850,7 @@ Volari_SubsequentMonoPatternFill(ScrnInfoPtr pScrn,
     Volari_SetupDSTXY(x,y) ;
     Volari_SetupRect(w,h) ;
     Volari_DoCMD ;
-    /*Volari_Idle*/;
+    /*Volari_Idle(pXGI)*/;
 }
 
 /************************************************************************/

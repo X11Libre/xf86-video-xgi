@@ -1047,4 +1047,20 @@
 #define		RES1280x960x120              0x47
 
 #define 	LFBDRAMTrap                  0x30
+
+/**
+ * MMIO 8C55 - command queue read pointer
+ */
+#define IDLE_ALL            (1 << 31)    /**< 3D & 2D idle, HQ & SQ empty */
+#define EMPTY_HQ            (1 << 30)    /**< HQ empty */
+#define IDLE_2D             (1 << 29)    /**< 2D idle */
+#define IDLE_3D             (1 << 28)    /**< 3D idle */
+#define EMPTY_HW_CQ         (1 << 27)    /**< Hardware command queue empty */
+#define EMPTY_2D            (1 << 26)    /**< 2D queue empty */
+#define EMPTY_3D            (1 << 25)    /**< 3D queue empty */
+#define EMPTY_SW_CQ         (1 << 24)    /**< Software command queue empty */
+#define COUNTER_3_MASK      (0xff << 16)
+#define COUNTER_2_MASK      (0xff <<  8)
+#define COUNTER_1_MASK      (0xff <<  0)
+
 #endif

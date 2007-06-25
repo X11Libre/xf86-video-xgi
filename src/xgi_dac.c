@@ -370,30 +370,14 @@ PDEBUG(ErrorF("--- Volari_Restore(). \n")) ;
 
 #if 1
 /* Volari_DisableAccelerator(pScrn) ; */
-
-#ifdef DEBUG
-/*    
-    PDEBUG(ErrorF("--- MMIO Info. \n")) ;
-	for( i = 0x85c0 ;i <= 0x85CC ; i+=4 )
-	{
-		ErrorF("MMIO[0x%04lX] = 0x%08X\n", i, MMIO_IN32(pXGI->IOBase,i)) ;
-	}
-*/
-#endif
 #else
     inXGIIDXREG(XGISR, 0x1E, temp);
 
     if (temp & 0x42)  {
-        while( (MMIO_IN32(pXGI->IOBase, 0x85CC) & 0x80000000) != 0x80000000){};
-        while( (MMIO_IN32(pXGI->IOBase, 0x85CC) & 0x80000000) != 0x80000000){};
-        while( (MMIO_IN32(pXGI->IOBase, 0x85CC) & 0x80000000) != 0x80000000){};
+        Volari_Idle(pXGI);
     }
 
     PDEBUG(XGIDumpRegs(pScrn)) ;
-    temp = MMIO_IN32(pXGI->IOBase,0x85CC) ;
-/* ErrorF( "\npXGI->IOBase = 0x%lX, [85CC] = 0x%lX\n", */
-        (unsigned long)(pXGI->IOBase), temp ) ;
-
 
     outXGIIDXREG(XGICR, 0x55, 0) ;
     andXGIIDXREG(XGISR, 0x1E, ~0xC2) ;

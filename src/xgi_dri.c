@@ -568,7 +568,7 @@ XGIDRIFinishScreenInit(ScreenPtr pScreen)
 
 
 
-    Volari_Idle
+    Volari_Idle(pXGI);
   }
 
   return DRIFinishScreenInit(pScreen);
@@ -592,7 +592,7 @@ XGIDRISwapContext(ScreenPtr pScreen, DRISyncType syncType,
   *(unsigned int *)(pXGI->IOBase + 0x8B60) = -1;
   */
 
-  Volari_Idle
+  Volari_Idle(pXGI);
 }
 
 static void
@@ -602,7 +602,7 @@ XGIDRIInitBuffers(WindowPtr pWin, RegionPtr prgn, CARD32 index)
   ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
   XGIPtr pXGI = XGIPTR(pScrn);
 
-  Volari_Idle
+  Volari_Idle(pXGI);
 }
 
 static void
@@ -613,7 +613,7 @@ XGIDRIMoveBuffers(WindowPtr pParent, DDXPointRec ptOldOrg,
   ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
   XGIPtr pXGI = XGIPTR(pScrn);
 
-  Volari_Idle
+  Volari_Idle(pXGI);
 }
 
 /******************************************************************************* 	
