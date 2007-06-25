@@ -72,8 +72,6 @@ extern void GlxSetVisualConfigs(
 #define AGP_BUS_TYPE	1
 #define PCI_BUS_TYPE	0
 
-#define XGIIdle Volari_Idle
-
 #define AGP_PAGE_SIZE 4096     /* Texture memory 8M  */
 /*#define AGP_PAGE_SIZE 5120*/ /* Texture memory 10M */
 #define AGP_PAGES 2048
@@ -570,7 +568,7 @@ XGIDRIFinishScreenInit(ScreenPtr pScreen)
 
 
 
-    XGIIdle
+    Volari_Idle
   }
 
   return DRIFinishScreenInit(pScreen);
@@ -594,7 +592,7 @@ XGIDRISwapContext(ScreenPtr pScreen, DRISyncType syncType,
   *(unsigned int *)(pXGI->IOBase + 0x8B60) = -1;
   */
 
-  XGIIdle
+  Volari_Idle
 }
 
 static void
@@ -604,7 +602,7 @@ XGIDRIInitBuffers(WindowPtr pWin, RegionPtr prgn, CARD32 index)
   ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
   XGIPtr pXGI = XGIPTR(pScrn);
 
-  XGIIdle
+  Volari_Idle
 }
 
 static void
@@ -615,7 +613,7 @@ XGIDRIMoveBuffers(WindowPtr pParent, DDXPointRec ptOldOrg,
   ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
   XGIPtr pXGI = XGIPTR(pScrn);
 
-  XGIIdle
+  Volari_Idle
 }
 
 /******************************************************************************* 	
