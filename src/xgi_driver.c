@@ -326,11 +326,6 @@ static const char *modesforstr =
 static const char *crtsetupstr =
     "------------------------ CRT%d setup -------------------------\n";
 #endif
-/*
-#if defined(XGIDUALHEAD) || defined(XGIMERGED)
-static const char *notsuitablestr = "Not using mode \"%s\" (not suitable for %s mode)\n";
-#endif
-*/
 
 typedef struct
 {
@@ -4157,12 +4152,6 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
             pXGI->directRenderingEnabled = FALSE;
             xf86DrvMsg(pScrn->scrnIndex, X_INFO,
                        "DRI not supported in Dual Head mode\n");
-        }
-        else if (!FbDevExist) {
-            PDEBUG(ErrorF("--- DRI not supported   \n"));
-            xf86DrvMsg(pScrn->scrnIndex, X_NOT_IMPLEMENTED,
-                       "DRI requires kernel fbdev driver\n");
-            pXGI->directRenderingEnabled = FALSE;
         }
         else if (pXGI->Chipset == PCI_CHIP_XGIXG20) {
             PDEBUG(ErrorF("--- DRI not supported   \n"));

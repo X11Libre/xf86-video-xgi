@@ -342,6 +342,17 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
   xf86DrvMsg(pScreen->myNum, X_INFO, "[drm] Registers = 0x%08lx\n",
 	     (unsigned long) pXGIDRI->regs.handle);
 
+    /* Initialize the framebuffer memory manager.
+     */
+    fb.offset = pXGI->DRIheapstart;
+    fb.size = pXGI->DRIheapend - pXGI->DRIheapstart;
+    drmCommandWrite(pXGI->drmSubFD, DRM_XGI_FB_INIT, &fb, sizeof(fb));
+    xf86DrvMsg(pScreen->myNum, X_INFO,
+               "[dri] Video RAM memory heap: 0x%0x to 0x%0x (%dKB)\n",
+               pXGI->DRIheapstart, pXGI->DRIheapend,
+               (int)((pXGI->DRIheapend - pXGI->DRIheapstart) >> 10));
+
+
   /* AGP */
   do{
     pXGI->agpSize = 0;
