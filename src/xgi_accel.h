@@ -35,6 +35,9 @@
 
 #ifndef _XGI_315_ACCEL_H_
 #define _XGI_315_ACCEL_H_
+
+#include "xgi.h"
+
 /* Definitions for the XGI engine communication. */
 
 #define PATREGSIZE 256
