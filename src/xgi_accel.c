@@ -129,63 +129,47 @@ static void dump_cq_read_pointer(unsigned int cqrp)
 #endif /* DEBUG */
 
 
+void Volari_SetDefaultIdleWait(XGIPtr pXGI, unsigned HDisplay, 
+                               unsigned depth)
+{
+    static const unsigned wait_table[5][4] = {
+        {     1,   1,    1,    1 },
+        { 65535,   1, 1000, 3000 },
+        { 65535, 160, 1200, 4000 },
+        { 65535, 200, 1600, 6000 },
+        { 65535, 500, 2000, 8000 }
+    };
+
+    if (pXGI->Chipset == PCI_CHIP_XGIXG20) {
+        unsigned i;
+
+        switch (HDisplay) {
+        case 640:  i = 1; break;
+        case 800:  i = 2; break;
+        case 1024: i = 3; break;
+        case 1280: i = 4; break;
+        default:   i = 0; break;
+        }
+
+        pXGI->idle_wait_count = wait_table[i][3 & (depth / 8)];
+    }
+    else {
+        pXGI->idle_wait_count = 65535;
+    }
+}
+
 void Volari_Idle(XGIPtr pXGI)
 {
     int  i;
-    unsigned int WaitCount = 65535;
 #ifdef DEBUG
     unsigned int last_cqrp = 0;
 #endif /* DEBUG */
-
-    if (pXGI->Chipset == PCI_CHIP_XGIXG20) {
-        WaitCount = 1;
-        switch (CurrentHDisplay) {
-        case 640:
-            if(CurrentColorDepth == 8)
-                WaitCount=1;
-            else if(CurrentColorDepth == 16)
-                WaitCount=1000;
-            else if(CurrentColorDepth == 24)
-                WaitCount=3000;
-            break;
-
-        case 800:
-            if(CurrentColorDepth == 8)
-                WaitCount=160;
-            else if(CurrentColorDepth == 16)
-                WaitCount=1200;
-            else if(CurrentColorDepth == 24)
-                WaitCount=4000;
-            break;
-
-        case 1024:
-            if(CurrentColorDepth == 8)
-                WaitCount=200;
-            else if(CurrentColorDepth == 16)
-                WaitCount=1600;
-            else if(CurrentColorDepth == 24)
-                WaitCount=6000;
-            break;
-
-        case 1280:
-            if(CurrentColorDepth == 8)
-                WaitCount=500;
-            else if(CurrentColorDepth == 16)
-                WaitCount=2000;
-            else if(CurrentColorDepth == 24)
-                WaitCount=8000;
-            break;
-
-        default:
-            break;
-        }
-    }
 
     do {
         int bIdle = 0;
         unsigned int cqrp;
 
-        for (i = 0; i < WaitCount; i++) {
+        for (i = 0; i < pXGI->idle_wait_count; i++) {
             cqrp = MMIO_IN32(pXGI->IOBase, 0x85CC);
             if (cqrp & IDLE_ALL) {
                 bIdle = 1;

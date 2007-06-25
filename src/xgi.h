@@ -754,6 +754,11 @@ typedef struct {
     XGI_DSReg           SRList[ExtRegSize] ;
     XGI_DSReg           CRList[ExtRegSize] ;
     
+    /**
+     * Total number of iterations to wait in \c Volari_Idle.
+     */
+    unsigned int        idle_wait_count;
+
 //:::: for capture
     Bool		v4l_videoin;
     int			v4l_devnum;	/* v4l device number, 0,1,2....*/

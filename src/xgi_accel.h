@@ -124,11 +124,8 @@ int     G2CmdQueLen;
 int 	Alignment ;
 /* int    GBCount = 0 ; */
 
-/* Jong Lin 08-26-2005 */
-extern unsigned int CurrentHDisplay;
-extern unsigned int CurrentVDisplay;
-extern unsigned int CurrentColorDepth;
-
+extern void Volari_SetDefaultIdleWait(XGIPtr pXGI, unsigned HDisplay, 
+    unsigned depth);
 extern void Volari_Idle(XGIPtr pXGI);
 
 #define Volari_GetSwWP() (unsigned long)(*(pXGI->pCQ_shareWritePort))

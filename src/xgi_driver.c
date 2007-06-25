@@ -106,11 +106,6 @@ void Volari_EnableAccelerator(ScrnInfoPtr pScrn);
 static int XGIEntityIndex = -1;
 #endif
 
-/* Jong Lin 08-26-2005; keep current mode info */
-unsigned int CurrentHDisplay;
-unsigned int CurrentVDisplay;
-unsigned int CurrentColorDepth;
-
 /*
  * This is intentionally screen-independent.  It indicates the binding
  * choice made in the first PreInit.
@@ -3803,9 +3798,7 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
     PDEBUG(ErrorF("XGIModeInit Color Depth (%d) \n", pScrn->depth));
 
     /* Jong Lin 08-26-2005; save current mode */
-    CurrentHDisplay = mode->HDisplay;
-    CurrentVDisplay = mode->VDisplay;
-    CurrentColorDepth = pScrn->depth;
+    Volari_SetDefaultIdleWait(pXGI, mode->HDisplay, pScrn->depth);
 
     andXGIIDXREG(XGICR, 0x11, 0x7f);    /* Unlock CRTC registers */
 
