@@ -218,11 +218,15 @@ Volari_EnableAccelerator(ScrnInfoPtr pScrn)
 
     PDEBUG(ErrorF("Volari_EnableAccelerator()\n")) ;
 
-    switch( pXGI->Chipset )
-    {
-	case PCI_CHIP_XGIXG40:
-	default:
-    	orXGIIDXREG(XGISR, 0x1E, 0xDA) ;
+    switch (pXGI->Chipset) {
+    case PCI_CHIP_XGIXG40:
+    default:
+        orXGIIDXREG(XGISR, 0x1E,
+                    SR1E_ENABLE_3D_TRANSFORM_ENGINE
+                    | SR1E_ENABLE_2D
+                    | SR1E_ENABLE_3D_AGP_VERTEX_FETCH
+                    | SR1E_ENABLE_3D_COMMAND_PARSER
+                    | SR1E_ENABLE_3D);
     }
 
 
@@ -434,7 +438,12 @@ Volari_DisableAccelerator(ScrnInfoPtr pScrn)
         Volari_DisableCmdQueue(pScrn) ;
     }
 
-    andXGIIDXREG(XGISR, 0x1E, ~0xDA) ;
+    andXGIIDXREG(XGISR, 0x1E, 
+                 ~(SR1E_ENABLE_3D_TRANSFORM_ENGINE
+                   | SR1E_ENABLE_2D
+                   | SR1E_ENABLE_3D_AGP_VERTEX_FETCH
+                   | SR1E_ENABLE_3D_COMMAND_PARSER
+                   | SR1E_ENABLE_3D));
 /*    PDEBUG(ErrorF("Volari_DisableAccelerator(pScrn) Done, GBCount = %ld\n",GBCount)) ; */
 }
 

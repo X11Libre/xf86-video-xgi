@@ -6665,7 +6665,8 @@ XGI_EnableBridge(PXGI_HW_DEVICE_INFO HwDeviceExtension,
                         tempah |= 0x20;
                 }
                 XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x32, tempah);
-                XGI_SetRegOR((XGIIOADDRESS) pVBInfo->P3c4, 0x1E, 0x20);
+                XGI_SetRegOR((XGIIOADDRESS) pVBInfo->P3c4, 0x1E, 
+			     SR1E_ENABLE_CRT2);
 
 
                 tempah =
@@ -7812,7 +7813,7 @@ XGI_LockCRT2(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo)
 void
 XGINew_EnableCRT2(PVB_DEVICE_INFO pVBInfo)
 {
-    XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3c4, 0x1E, 0xFF, 0x20);
+    XGI_SetRegOR((XGIIOADDRESS) pVBInfo->P3c4, 0x1E, SR1E_ENABLE_CRT2);
 }
 
 

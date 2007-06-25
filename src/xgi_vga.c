@@ -46,6 +46,8 @@
 #include "xgi_regs.h"
 #include "xgi_dac.h"
 
+#include "vb_def.h"
+
 Bool    XG40Init(ScrnInfoPtr pScrn, DisplayModePtr mode);
 
 #define Midx    0
@@ -229,7 +231,7 @@ PDEBUG(ErrorF("XG40Init()\n"));
     if (!pXGI->NoAccel) {
 	/* Enable 2D accelerator. 
 	 */
-        pReg->xgiRegs3C4[0x1E] |= 0x42;
+        pReg->xgiRegs3C4[0x1E] |= (SR1E_ENABLE_2D | SR1E_ENABLE_3D);
     }
 
     /* set threshold value */

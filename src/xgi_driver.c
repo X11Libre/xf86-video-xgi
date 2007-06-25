@@ -3894,7 +3894,6 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
         Volari_EnableAccelerator(pScrn);
         /* XGIPostSetMode(pScrn, &pXGI->ModeReg); */
         /* outXGIIDXREG(XGISR, 0x20, 0xA1) ; */
-        /* outXGIIDXREG(XGISR, 0x1E, 0xDA) ; */
         /* PDEBUG(XGIDumpRegs(pScrn)) ; */
     }
 

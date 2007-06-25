@@ -1049,6 +1049,18 @@
 #define 	LFBDRAMTrap                  0x30
 
 /**
+ * SR1E - Module enable register
+ */
+#define SR1E_ENABLE_3D_TRANSFORM_ENGINE     (1<<7)
+#define SR1E_ENABLE_2D                      (1<<6)
+#define SR1E_ENABLE_CRT2                    (1<<5)
+#define SR1E_ENABLE_3D_AGP_VERTEX_FETCH     (1<<4)
+#define SR1E_ENABLE_3D_COMMAND_PARSER       (1<<3)
+#define SR1E_ENABLE_VGA_BIOS_WRITE          (1<<2)
+#define SR1E_ENABLE_3D                      (1<<1)
+#define SR1E_ENABLE_MPEG                    (1<<0)
+
+/**
  * MMIO 8C55 - command queue read pointer
  */
 #define IDLE_ALL            (1 << 31)    /**< 3D & 2D idle, HQ & SQ empty */

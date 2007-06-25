@@ -298,7 +298,12 @@ XGIInitPCIetc(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
        *  - Enable 3D command parser (0x08)
        *  - Enable 3D G/L transformation engine (0x80)
        */
-      XGI_SetRegOR(XGI_Pr->P3c4,0x1E,0xDA);
+      XGI_SetRegOR(XGI_Pr->P3c4, 0x1E, 
+		   SR1E_ENABLE_3D_TRANSFORM_ENGINE
+		   | SR1E_ENABLE_2D
+		   | SR1E_ENABLE_3D_AGP_VERTEX_FETCH
+		   | SR1E_ENABLE_3D_COMMAND_PARSER
+		   | SR1E_ENABLE_3D);
       break;
    }
 }

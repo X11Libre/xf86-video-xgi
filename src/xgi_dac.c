@@ -373,16 +373,18 @@ PDEBUG(ErrorF("--- Volari_Restore(). \n")) ;
 #else
     inXGIIDXREG(XGISR, 0x1E, temp);
 
-    if (temp & 0x42)  {
+    if (temp & (SR1E_ENABLE_2D | SR1E_ENABLE_3D)) {
         Volari_Idle(pXGI);
     }
 
-    PDEBUG(XGIDumpRegs(pScrn)) ;
+    PDEBUG(XGIDumpRegs(pScrn));
 
-    outXGIIDXREG(XGICR, 0x55, 0) ;
-    andXGIIDXREG(XGISR, 0x1E, ~0xC2) ;
-
-    PDEBUG(XGIDumpRegs(pScrn)) ;
+    outXGIIDXREG(XGICR, 0x55, 0);
+    andXGIIDXREG(XGISR, 0x1E,
+                 ~(SR1E_ENABLE_3D_TRANSFORM_ENGINE
+                   | SR1E_ENABLE_2D
+                   | SR1E_ENABLE_3D));
+    PDEBUG(XGIDumpRegs(pScrn));
 #endif
  PDEBUG(XGIDumpRegs(pScrn)) ; //yilin
     for (i = 0x19; i < 0x5C; i++)  {
