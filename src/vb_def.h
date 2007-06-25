@@ -1061,7 +1061,7 @@
 #define SR1E_ENABLE_MPEG                    (1<<0)
 
 /**
- * MMIO 8C55 - command queue read pointer
+ * MMIO 85CC - command queue read pointer
  */
 #define IDLE_ALL            (1 << 31)    /**< 3D & 2D idle, HQ & SQ empty */
 #define EMPTY_HQ            (1 << 30)    /**< HQ empty */
