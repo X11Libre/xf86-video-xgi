@@ -79,8 +79,15 @@ extern void GlxSetVisualConfigs(
 #define AGP_VTXBUF_PAGES 512
 #define AGP_VTXBUF_SIZE (AGP_PAGE_SIZE * AGP_VTXBUF_PAGES)
 
-static char XGIKernelDriverName[] = "xgi";
-static char XGIClientDriverName[] = "xgi";
+/**
+ * Base name of kernel DRM driver.
+ * 
+ * Support for XG40 chips is included in the SiS DRM because the DMA and
+ * interrupt handling for the chips is identical.
+ */
+static const char XGIKernelDriverName[] = "sis";
+
+static const char XGIClientDriverName[] = "xgi";
 
 static Bool XGIInitVisualConfigs(ScreenPtr pScreen);
 static Bool XGICreateContext(ScreenPtr pScreen, VisualPtr visual,
@@ -234,6 +241,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
   XGIDRIPtr pXGIDRI;
     drm_xgi_fb_t  fb;
     int major, minor, patch;
+    drmVersionPtr drm_ver;
 
 
    /* Check that the GLX, DRI, and DRM modules have been loaded by testing
@@ -326,6 +334,35 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
     pXGI->drmSubFD = -1;
     return FALSE;
   }
+
+    drm_ver = drmGetVersion(pXGI->drmSubFD);
+    if (drm_ver != NULL) {
+        major = drm_ver->version_major;
+        minor = drm_ver->version_minor;
+        patch = drm_ver->version_patchlevel;
+
+        drmFreeVersion(drm_ver);
+        drm_ver = NULL;
+    }
+    else {
+        major = 0;
+        minor = 0;
+        patch = 0;
+    }
+
+    if ((major != 1) || (minor < 3)) {
+        xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
+                   "[drm] Incorrect kernel module version.  Expected 1.3.x, got %d.%d.%d\n",
+                   major, minor, patch);
+
+        XGIDRICloseScreen(pScreen);
+        return FALSE;
+    }
+    else {
+        xf86DrvMsg(pScrn->scrnIndex, X_INFO,
+                   "[drm] Kernel module version is %d.%d.%d\n",
+                   major, minor, patch);
+    }
 
   pXGIDRI->regs.size = XGIIOMAPSIZE;
   pXGIDRI->regs.map = 0;
