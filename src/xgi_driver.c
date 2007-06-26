@@ -2158,6 +2158,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     int fd;
     struct fb_fix_screeninfo fix;
     XGIEntPtr pXGIEnt = NULL;
+    size_t memreq;
 
 #if defined(XGIMERGED) || defined(XGIDUALHEAD)
     DisplayModePtr first, p, n;
@@ -3155,12 +3156,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      * mode into account.)
      */
 
-    pXGI->DRIheapstart = pXGI->maxxfbmem;
-    pXGI->DRIheapend = pXGI->availMem;
-
-    if (IS_DUAL_HEAD(pXGI) || (pXGI->DRIheapstart == pXGI->DRIheapend)) {
-        pXGI->DRIheapstart = pXGI->DRIheapend = 0;
-    }
 #if !defined(__powerpc__)
     /* Now load and initialize VBE module. */
     if (xf86LoadSubModule(pScrn, "vbe")) {
@@ -3261,27 +3256,40 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 
     /* Check the virtual screen against the available memory */
-    {
-        unsigned long memreq =
-            (pScrn->virtualX * ((pScrn->bitsPerPixel + 7) / 8)) *
-            pScrn->virtualY;
 
-        if (memreq > pXGI->maxxfbmem) {
-            XGIErrorLog(pScrn,
-                        "Virtual screen too big for memory; %ldK needed, %ldK available\n",
-                        memreq / 1024, pXGI->maxxfbmem / 1024);
+    memreq = (pScrn->virtualX * ((pScrn->bitsPerPixel + 7) / 8)) 
+	* pScrn->virtualY;
 
-            if (pXGIEnt)
-                pXGIEnt->ErrorAfterFirst = TRUE;
+    if (memreq > pXGI->maxxfbmem) {
+	XGIErrorLog(pScrn,
+		    "Virtual screen too big for memory; %ldK needed, %ldK available\n",
+		    memreq / 1024, pXGI->maxxfbmem / 1024);
 
-            if (pXGI->pInt)
-                xf86FreeInt10(pXGI->pInt);
-            pXGI->pInt = NULL;
-            xgiRestoreExtRegisterLock(pXGI, srlockReg, crlockReg);
-            XGIFreeRec(pScrn);
-            return FALSE;
-        }
+	if (pXGIEnt)
+	    pXGIEnt->ErrorAfterFirst = TRUE;
+
+	if (pXGI->pInt)
+	    xf86FreeInt10(pXGI->pInt);
+	pXGI->pInt = NULL;
+	xgiRestoreExtRegisterLock(pXGI, srlockReg, crlockReg);
+	XGIFreeRec(pScrn);
+	return FALSE;
     }
+    else if (pXGI->loadDRI && !IS_DUAL_HEAD(pXGI)) {
+	pXGI->maxxfbmem = memreq;
+	pXGI->DRIheapstart = pXGI->DRIheapend = 0;
+
+	if (pXGI->maxxfbmem == pXGI->availMem) {
+	    xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
+		       "All video memory used for framebuffer.  DRI will be disabled.\n");
+	    pXGI->loadDRI = FALSE;
+	}
+	else {
+	    pXGI->DRIheapstart = pXGI->maxxfbmem;
+	    pXGI->DRIheapend = pXGI->availMem;
+	}
+    }
+
 
     /* Dual Head:
      * -) Go through mode list and mark all those modes as bad,
@@ -3557,8 +3565,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     /* Load the dri module if requested. */
 #ifdef XF86DRI
-    /*if(pXGI->loadDRI) */
-    {
+    if(pXGI->loadDRI) {
         if (xf86LoadSubModule(pScrn, "dri")) {
             xf86LoaderReqSymLists(driSymbols, drmSymbols, NULL);
         }
@@ -4137,8 +4144,7 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
     pXGI->cmdQueueLen = 0;      /* Force an EngineIdle() at start */
 
 #ifdef XF86DRI
-    /*if(pXGI->loadDRI) */
-    {
+    if(pXGI->loadDRI) {
         /* No DRI in dual head mode */
         if (IS_DUAL_HEAD(pXGI)) {
             pXGI->directRenderingEnabled = FALSE;
@@ -4264,24 +4270,18 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 #endif
 
 #ifdef XF86DRI
-    /*if(pXGI->loadDRI) */
-    {
-        if (pXGI->directRenderingEnabled) {
-            /* Now that mi, drm and others have done their thing,
-             * complete the DRI setup.
-             */
-            pXGI->directRenderingEnabled = XGIDRIFinishScreenInit(pScreen);
-        }
-        if (pXGI->directRenderingEnabled) {
-            xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-                       "Direct rendering enabled\n");
-            /* TODO */
-            /* XGISetLFBConfig(pXGI); */
-        }
-        else {
-            xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-                       "Direct rendering disabled\n");
-        }
+    if (pXGI->directRenderingEnabled) {
+	/* Now that mi, drm and others have done their thing,
+	 * complete the DRI setup.
+	 */
+	pXGI->directRenderingEnabled = XGIDRIFinishScreenInit(pScreen);
+    }
+
+    xf86DrvMsg(pScrn->scrnIndex, X_INFO, "Direct rendering %sabled\n",
+	       (pXGI->directRenderingEnabled) ? "en" : "dis");
+    if (pXGI->directRenderingEnabled) {
+	/* TODO */
+	/* XGISetLFBConfig(pXGI); */
     }
 #endif
 

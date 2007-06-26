@@ -201,7 +201,7 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->HWCursor = TRUE;
     pXGI->Rotate = FALSE;
     pXGI->ShadowFB = FALSE;
-    pXGI->loadDRI = FALSE;
+    pXGI->loadDRI = TRUE;
     pXGI->agpWantedPages = AGP_PAGES;
     pXGI->NoXvideo = FALSE;
     pXGI->maxxfbmem = 0;
