@@ -22,9 +22,10 @@
 
 AC_PREREQ(2.57)
 AC_INIT([xf86-video-xgi],
-        1.4.9,
+        1.5.0,
         [https://bugs.freedesktop.org/enter_bug.cgi?product=xorg],
         xf86-video-xgi)
+RELEASE_DATE="27 August 2007"
 
 AC_CONFIG_SRCDIR([Makefile.am])
 AM_CONFIG_HEADER([config.h])
@@ -108,7 +109,7 @@ AM_CONDITIONAL(XSERVER_LIBPCIACCESS, test "x$XSERVER_LIBPCIACCESS" = xyes)
 AC_SUBST([DRI_CFLAGS])
 AC_SUBST([XORG_CFLAGS])
 AC_SUBST([moduledir])
-
+AC_DEFINE_UNQUOTED(XGI_RELEASE_DATE, ["$RELEASE_DATE"], [Driver release])
 DRIVER_NAME=xgi
 AC_SUBST([DRIVER_NAME])
 

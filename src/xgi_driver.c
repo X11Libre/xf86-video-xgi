@@ -326,7 +326,7 @@ static XF86ModuleVersionInfo xgiVersRec = {
 #else
     XF86_VERSION_CURRENT,
 #endif
-    XGI_MAJOR_VERSION, XGI_MINOR_VERSION, XGI_PATCHLEVEL,
+    PACKAGE_VERSION_MAJOR, PACKAGE_VERSION_MINOR, PACKAGE_VERSION_PATCHLEVEL,
     ABI_CLASS_VIDEODRV,         /* This is a video driver */
 #ifdef ABI_VIDEODRV_VERSION
     ABI_VIDEODRV_VERSION,
@@ -2286,9 +2286,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      */
 
     xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-               "XGI driver (%d/%02d/%02d-%d)\n",
-               XGIDRIVERVERSIONYEAR + 2000, XGIDRIVERVERSIONMONTH,
-               XGIDRIVERVERSIONDAY, XGIDRIVERREVISION);
+               "XGI driver (%s)\n", XGI_RELEASE_DATE);
 
     xf86DrvMsg(pScrn->scrnIndex, X_INFO,
                "Copyright (C) 2001-2004 Thomas Winischhofer <thomas@winischhofer.net> and others\n");

@@ -79,20 +79,8 @@
 #define PDEBUG5(p)
 #endif
 
-#include "xgi_ver.h"
-
 /* Always unlock the registers (should be set!) */
 #define UNLOCK_ALWAYS
-/*
-#define XGIDRIVERVERSIONYEAR    4
-#define XGIDRIVERVERSIONMONTH   2
-#define XGIDRIVERVERSIONDAY     26
-#define XGIDRIVERREVISION       1
-*/
-#define XGIDRIVERIVERSION (XGIDRIVERVERSIONYEAR << 16) |  \
-			  (XGIDRIVERVERSIONMONTH << 8) |  \
-                          XGIDRIVERVERSIONDAY 	       |  \
-			  (XGIDRIVERREVISION << 24)
 
 #undef XGI_CP
 
@@ -201,13 +189,9 @@
 
 #define XGI_NAME                "XGI"
 #define XGI_DRIVER_NAME         "xgi"
-/*
-#define XGI_MAJOR_VERSION       1
-#define XGI_MINOR_VERSION       1
-#define XGI_PATCHLEVEL          4
-*/
-#define XGI_CURRENT_VERSION     ((XGI_MAJOR_VERSION << 16) | \
-                                 (XGI_MINOR_VERSION << 8) | XGI_PATCHLEVEL )
+#define XGI_CURRENT_VERSION     ((PACKAGE_VERSION_MAJOR << 16) | \
+                                 (PACKAGE_VERSION_MINOR << 8) | \
+				 PACKAGE_VERSION_PATCHLEVEL)
 
 /* pXGI->Flags (old series only) */
 #define SYNCDRAM                0x00000001
