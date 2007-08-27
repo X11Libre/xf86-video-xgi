@@ -96,7 +96,11 @@
 
 #undef XGI_CP
 
+#ifdef XSERVER_LIBPCIACCESS
+#include <pciaccess.h>
+#else
 #include "xf86Pci.h"
+#endif
 #include "xf86Cursor.h"
 #include "xf86xv.h"
 #include "compiler.h"
@@ -126,6 +130,18 @@
 #include "dri.h"
 #include "GL/glxint.h"
 #include "xgi_dri.h"
+#endif
+
+#ifdef XSERVER_LIBPCIACCESS
+#define VENDOR_ID(p)      (p)->vendor_id
+#define DEVICE_ID(p)      (p)->device_id
+#define SUBSYS_ID(p)      (p)->subdevice_id
+#define CHIP_REVISION(p)  (p)->revision
+#else
+#define VENDOR_ID(p)      (p)->vendor
+#define DEVICE_ID(p)      (p)->chipType
+#define SUBSYS_ID(p)      (p)->subsysCard
+#define CHIP_REVISION(p)  (p)->chipRev
 #endif
 
 #if 1 
@@ -496,8 +512,12 @@ typedef struct MonitorRange {
 
 typedef struct {
     ScrnInfoPtr         pScrn;		/* -------------- DON'T INSERT ANYTHING HERE --------------- */
+#ifdef XSERVER_LIBPCIACCESS
+    struct pci_device * PciInfo;
+#else 
     pciVideoPtr         PciInfo;	/* -------- OTHERWISE xgi_dri.so MUST BE RECOMPILED -------- */
     PCITAG              PciTag;
+#endif
     EntityInfoPtr       pEnt;
     int                 Chipset;
     int                 ChipRev;

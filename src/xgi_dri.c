@@ -485,9 +485,17 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
 
   /* enable IRQ */
   pXGI->irq = drmGetInterruptFromBusID(pXGI->drmSubFD,
+#ifdef XSERVER_LIBPCIACCESS
+				       ((pXGI->PciInfo->domain << 8)
+					| pXGI->PciInfo->bus),
+				       pXGI->PciInfo->dev,
+				       pXGI->PciInfo->func
+#else
 	       ((pciConfigPtr)pXGI->PciInfo->thisCard)->busnum,
 	       ((pciConfigPtr)pXGI->PciInfo->thisCard)->devnum,
-	       ((pciConfigPtr)pXGI->PciInfo->thisCard)->funcnum);
+	       ((pciConfigPtr)pXGI->PciInfo->thisCard)->funcnum
+#endif
+				       );
 
   if((drmCtlInstHandler(pXGI->drmSubFD, pXGI->irq)) != 0)
     {
@@ -653,11 +661,10 @@ XGIDRIMoveBuffers(WindowPtr pParent, DDXPointRec ptOldOrg,
   Volari_Idle(pXGI);
 }
 
-/******************************************************************************* 	
- *	CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink)
- *	Use this function to check AGP slot
- *	Jill, 2006/6/24								
- *******************************************************************************/
+#ifndef XSERVER_LIBPCIACCESS
+/**
+ * Use this function to check AGP slot
+ */
 ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink)
 {
 	ULONG uBuffer = 0, uLink = 0, uValue = 0 ;
@@ -680,17 +687,23 @@ ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink)
 
     return uValue;		
 }	
+#endif
 
-/******************************************************************************* 	
- *	IsXGIAGPCard(ScreenPtr pScreen)
- *	Use this function to check if the current card is agp or pci card
- *	Jill, 2006/6/24								
- *******************************************************************************/
- ULONG IsXGIAGPCard(ScreenPtr pScreen)
+/** 	
+ * Use this function to check if the current card is AGP or PCI.
+ */
+ULONG IsXGIAGPCard(ScreenPtr pScreen)
 {
-	ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
-	XGIPtr pXGI = XGIPTR(pScrn);
-	
+    ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+    XGIPtr pXGI = XGIPTR(pScrn);
+
+
+#ifdef XSERVER_LIBPCIACCESS
+    const struct pci_agp_info *agp_info =
+	pci_device_get_agp_info(pXGI->PciInfo);
+    
+    return (agp_info == NULL) ? PCI_BUS_TYPE : AGP_BUS_TYPE;
+#else
 	ULONG u34h = pciReadLong(pXGI->PciTag,0x34);
 	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] u34h=0x%lx\n", __FUNCTION__, u34h);
 	
@@ -717,4 +730,5 @@ ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink)
 		xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] This Card Type is PCIExpress\n", __FUNCTION__);    	
 	
 	return uType;	
+#endif
 }
