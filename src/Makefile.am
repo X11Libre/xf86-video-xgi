@@ -60,7 +60,6 @@ xgi_drv_la_SOURCES = \
 	xgi_setup.c \
 	xgi_vb.c \
 	xgi_vb.h \
-	xgi_ver.h \
 	xgi_vga.c \
 	xgi_video.c \
 	xgi_video.h \
