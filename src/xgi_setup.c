@@ -164,7 +164,7 @@ xgiXG40_Setup(ScrnInfoPtr pScrn)
          * chips encode the DRAM channel count differently than other
          * revisions.
          */
-        if ((pciReadLong(pXGI->PciTag, 0x08) & 0xFF) == 2) {
+        if (pXGI->ChipRev == 2) {
             switch ((ulMemConfig >> 2) & 0x1) {
             case 1:
                 /* Dual channel */
@@ -306,15 +306,9 @@ XGI_IsXG21(ScrnInfoPtr pScrn)
 void
 XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
 {
-    XGIPtr pXGI  ;
-    PXGI_HW_DEVICE_INFO pHwDevInfo ;
-    PCITAG NBridge ;
-    ULONG ulTemp ;
-    int i ;
-
-    pXGI = XGIPTR(pScrn ) ;
-    pHwDevInfo = &pXGI->xgi_HwDevExt ;
-    NBridge = pciTag(0,0,0) ;
+    XGIPtr pXGI = XGIPTR(pScrn);
+    PXGI_HW_DEVICE_INFO pHwDevInfo = &pXGI->xgi_HwDevExt;
+    int i;
 
     pHwDevInfo->pDevice = pXGI ;
     pHwDevInfo->pjVirtualRomBase = pXGI->BIOS ;
@@ -323,12 +317,9 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
     PDEBUG(ErrorF("pXGI->FbBase = 0x%08lx\n",(ULONG)(pXGI->FbBase))) ;
     PDEBUG(ErrorF("pHwDevInfo->pjVideoMemoryAddress = 0x%08lx\n",(ULONG)(pHwDevInfo->pjVideoMemoryAddress))) ;
     pHwDevInfo->ulVideoMemorySize = pXGI->FbMapSize ;
-/*    pHwDevInfo->pjIOAddress = (PUCHAR)((ULONG)(pXGI->RelIO) + 0x30) ; */
     pHwDevInfo->pjIOAddress = pXGI->RelIO + 0x30 ;
-    pHwDevInfo->jChipType = XGI_VGALegacy ;
 
-
-    switch( pXGI->Chipset ){
+    switch (pXGI->Chipset) {
     case PCI_CHIP_XGIXG40:
         pHwDevInfo->jChipType = XG40 ;
         break ;
@@ -340,8 +331,7 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
         break ;
     }
 
-    ulTemp = pciReadLong(pXGI->PciTag, 0x08) ;
-    pHwDevInfo->jChipRevision = (UCHAR)(ulTemp & 0xff) ;
+    pHwDevInfo->jChipRevision = pXGI->ChipRev;
     pHwDevInfo->ujVBChipID = VB_CHIP_UNKNOWN ;
     pHwDevInfo->ulExternalChip = 0 ;
 
@@ -352,7 +342,6 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
     pHwDevInfo->pSR = pXGI->SRList ;
     pHwDevInfo->pCR = pXGI->CRList ;
     pHwDevInfo->pQueryVGAConfigSpace = (PXGI_QUERYSPACE) bAccessVGAPCIInfo;
-    pHwDevInfo->pQueryNorthBridgeSpace = (PXGI_QUERYSPACE) bAccessNBridgePCIInfo;
 
     for( i = 0 ; i < ExtRegSize ; i++ ){
         pHwDevInfo->pSR[i].jIdx = 0xFF ;
@@ -397,47 +386,36 @@ Bool
 bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset, ULONG ulSet, ULONG *pulValue)
 {
     XGIPtr pXGI ;
-    PCITAG pciDev ;
+#ifdef XSERVER_LIBPCIACCESS
+    int err;
+#else
+    PCITAG pciDev;
+#endif
 
-    if( (!pHwDevInfo) || (!pulValue) )
-    {
-        return FALSE ;
+    if (!pHwDevInfo || !pulValue) {
+        return FALSE;
     }
 
     pXGI = (XGIPtr)pHwDevInfo->pDevice ;
+#ifdef XSERVER_LIBPCIACCESS
+    if (ulSet) {
+	err = pci_device_cfg_write_u32(pXGI->PciInfo, *pulValue,
+				       ulOffset & ~3);
+    } else {
+	err = pci_device_cfg_write_u32(pXGI->PciInfo, pulValue,
+				       ulOffset & ~3);
+    }
+
+    return (err == 0);
+#else
     pciDev = pXGI->PciTag ;
 
-    if( ulSet )
-    {
-        pciWriteLong(pciDev, ulOffset&0xFFFFFFFc, *pulValue ) ;
-    }
-    else
-    {
-        *pulValue = pciReadLong(pciDev, ulOffset&0xFFFFFFFc ) ;
+    if (ulSet) {
+        pciWriteLong(pciDev, ulOffset&0xFFFFFFFc, *pulValue);
+    } else {
+        *pulValue = pciReadLong(pciDev, ulOffset&0xFFFFFFFc);
     }
 
     return TRUE ;
-}
-
-
-Bool
-bAccessNBridgePCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset, ULONG ulSet, ULONG *pulValue)
-{
-    PCITAG pciDev = pciTag(0,0,0);
-
-    if( (!pulValue) )
-    {
-        return FALSE ;
-    }
-
-    if( ulSet )
-    {
-        pciWriteLong(pciDev, ulOffset&0xFFFFFFFc, *pulValue ) ;
-    }
-    else
-    {
-        *pulValue = pciReadLong(pciDev, ulOffset&0xFFFFFFFc ) ;
-    }
-
-    return TRUE ;
+#endif
 }

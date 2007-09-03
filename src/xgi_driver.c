@@ -99,6 +99,13 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
+#ifdef XSERVER_LIBPCIACCESS
+static Bool XGIPciProbe(DriverPtr drv, int entity_num,
+    struct pci_device *dev, intptr_t match_data);
+#else
+static Bool XGIProbe(DriverPtr drv, int flags);
+#endif
+
 void Volari_EnableAccelerator(ScrnInfoPtr pScrn);
 /* Globals (yes, these ARE really required to be global) */
 
@@ -136,6 +143,18 @@ struct fb_fix_screeninfo
     unsigned short reserved[3]; /* Reserved for future compatibility */
 };
 
+#ifdef XSERVER_LIBPCIACCESS
+#define XGI_DEVICE_MATCH(d, i) \
+    { 0x18ca, (d), PCI_MATCH_ANY, PCI_MATCH_ANY, 0, 0, (i) }
+
+static const struct pci_id_match xgi_device_match[] = {
+    XGI_DEVICE_MATCH(PCI_CHIP_XGIXG40, 0),
+    XGI_DEVICE_MATCH(PCI_CHIP_XGIXG20, 1),
+
+    { 0, 0, 0 },
+};
+#endif
+
 /*
  * This contains the functions needed by the server after loading the driver
  * module.  It must be supplied, and gets passed back by the SetupProc
@@ -148,10 +167,20 @@ DriverRec XGI = {
     XGI_CURRENT_VERSION,
     XGI_DRIVER_NAME,
     XGIIdentify,
+#ifdef XSERVER_LIBPCIACCESS
+    NULL,
+#else
     XGIProbe,
+#endif
     XGIAvailableOptions,
     NULL,
-    0
+    0,
+    NULL,
+
+#ifdef XSERVER_LIBPCIACCESS
+    xgi_device_match,
+    XGIPciProbe
+#endif
 };
 
 static SymTabRec XGIChipsets[] = {
@@ -297,7 +326,7 @@ static XF86ModuleVersionInfo xgiVersRec = {
 #else
     XF86_VERSION_CURRENT,
 #endif
-    XGI_MAJOR_VERSION, XGI_MINOR_VERSION, XGI_PATCHLEVEL,
+    PACKAGE_VERSION_MAJOR, PACKAGE_VERSION_MINOR, PACKAGE_VERSION_PATCHLEVEL,
     ABI_CLASS_VIDEODRV,         /* This is a video driver */
 #ifdef ABI_VIDEODRV_VERSION
     ABI_VIDEODRV_VERSION,
@@ -419,7 +448,7 @@ xgiSetup(pointer module, pointer opts, int *errmaj, int *errmin)
 
     if (!setupDone) {
         setupDone = TRUE;
-        xf86AddDriver(&XGI, module, 0);
+        xf86AddDriver(&XGI, module, HaveDriverFuncs);
         LoaderRefSymLists(vgahwSymbols, fbSymbols, xaaSymbols,
                           shadowSymbols, ramdacSymbols, ddcSymbols,
                           vbeSymbols, int10Symbols,
@@ -676,6 +705,46 @@ XGIErrorLog(ScrnInfoPtr pScrn, const char *format, ...)
     xf86DrvMsg(pScrn->scrnIndex, X_ERROR, str);
 }
 
+#ifdef XSERVER_LIBPCIACCESS
+static Bool XGIPciProbe(DriverPtr drv, int entity_num,
+                        struct pci_device *dev, intptr_t match_data)
+{
+    ScrnInfoPtr pScrn;
+
+
+    pScrn = xf86ConfigPciEntity(NULL, 0, entity_num, NULL,
+                                NULL, NULL, NULL, NULL, NULL);
+    if (pScrn != NULL) {
+        XGIPtr pXGI;
+
+        /* Fill in what we can of the ScrnInfoRec */
+        pScrn->driverVersion = XGI_CURRENT_VERSION;
+        pScrn->driverName = XGI_DRIVER_NAME;
+        pScrn->name = XGI_NAME;
+        pScrn->Probe = NULL;
+        pScrn->PreInit = XGIPreInit;
+        pScrn->ScreenInit = XGIScreenInit;
+        pScrn->SwitchMode = XGISwitchMode;
+        pScrn->AdjustFrame = XGIAdjustFrame;
+        pScrn->EnterVT = XGIEnterVT;
+        pScrn->LeaveVT = XGILeaveVT;
+        pScrn->FreeScreen = XGIFreeScreen;
+        pScrn->ValidMode = XGIValidMode;
+
+
+        pXGI = XGIGetRec(pScrn);
+        if (pXGI == NULL) {
+            return FALSE;
+        }
+
+        pXGI->PciInfo = dev;
+    }
+
+    return (pScrn != NULL);
+}
+
+#else
+
 /* Mandatory */
 static Bool
 XGIProbe(DriverPtr drv, int flags)
@@ -784,6 +853,7 @@ XGIProbe(DriverPtr drv, int flags)
 
     return foundScreen;
 }
+#endif
 
 
 /* Some helper functions for MergedFB mode */
@@ -2216,9 +2286,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      */
 
     xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-               "XGI driver (%d/%02d/%02d-%d)\n",
-               XGIDRIVERVERSIONYEAR + 2000, XGIDRIVERVERSIONMONTH,
-               XGIDRIVERVERSIONDAY, XGIDRIVERREVISION);
+               "XGI driver (%s)\n", XGI_RELEASE_DATE);
 
     xf86DrvMsg(pScrn->scrnIndex, X_INFO,
                "Copyright (C) 2001-2004 Thomas Winischhofer <thomas@winischhofer.net> and others\n");
@@ -2265,11 +2333,11 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #endif
 
     /* Find the PCI info for this screen */
+#ifndef XSERVER_LIBPCIACCESS
     pXGI->PciInfo = xf86GetPciInfoForEntity(pXGI->pEnt->index);
-    pXGI->PciTag =
-        pXGI->xgi_HwDevExt.PciTag =
-        pciTag(pXGI->PciInfo->bus,
-               pXGI->PciInfo->device, pXGI->PciInfo->func);
+    pXGI->PciTag = pciTag(pXGI->PciInfo->bus, pXGI->PciInfo->device,
+                          pXGI->PciInfo->func);
+#endif
 
     pXGI->Primary = xf86IsPrimaryPci(pXGI->PciInfo);
     xf86DrvMsg(pScrn->scrnIndex, X_PROBED,
@@ -2289,8 +2357,13 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     /* We "patch" the PIOOffset inside vgaHW in order to force
      * the vgaHW module to use our relocated i/o ports.
      */
-    VGAHWPTR(pScrn)->PIOOffset =
-        pXGI->IODBase + (pXGI->PciInfo->ioBase[2] & 0xFFFC) - 0x380;
+    VGAHWPTR(pScrn)->PIOOffset = pXGI->IODBase - 0x380 +
+#ifdef XSERVER_LIBPCIACCESS
+        (pXGI->PciInfo->regions[2].base_addr & 0xFFFC)
+#else
+        (pXGI->PciInfo->ioBase[2] & 0xFFFC)
+#endif
+        ;
 
     pXGI->pInt = NULL;
     if (!pXGI->Primary) {
@@ -2358,7 +2431,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     else {
         PDEBUG(ErrorF(" --- Chipset 3 \n"));
         from = X_PROBED;
-        pXGI->Chipset = pXGI->PciInfo->chipType;
+        pXGI->Chipset = DEVICE_ID(pXGI->PciInfo);
         pScrn->chipset =
             (char *) xf86TokenToString(XGIChipsets, pXGI->Chipset);
     }
@@ -2368,7 +2441,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                    pXGI->ChipRev);
     }
     else {
-        pXGI->ChipRev = pXGI->PciInfo->chipRev;
+        pXGI->ChipRev = CHIP_REVISION(pXGI->PciInfo);
     }
     pXGI->xgi_HwDevExt.jChipRevision = pXGI->ChipRev;
 
@@ -2521,8 +2594,13 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 
     /* Get our relocated IO registers */
-    pXGI->RelIO =
-        (XGIIOADDRESS) ((pXGI->PciInfo->ioBase[2] & 0xFFFC) + pXGI->IODBase);
+    pXGI->RelIO = (XGIIOADDRESS) (pXGI->IODBase |
+#ifdef XSERVER_LIBPCIACCESS
+                                  (pXGI->PciInfo->regions[2].base_addr & 0xFFFC) 
+#else
+                                  (pXGI->PciInfo->ioBase[2] & 0xFFFC) 
+#endif
+                                  );
     pXGI->xgi_HwDevExt.pjIOAddress = (XGIIOADDRESS) (pXGI->RelIO + 0x30);
     xf86DrvMsg(pScrn->scrnIndex, from, "Relocated IO registers at 0x%lX\n",
                (unsigned long) pXGI->RelIO);
@@ -2726,6 +2804,9 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     XGISetup(pScrn);
 
     from = X_PROBED;
+#ifdef XSERVER_LIBPCIACCESS
+        pXGI->FbAddress = pXGI->PciInfo->regions[0].base_addr & 0xFFFFFFF0;
+#else
     if (pXGI->pEnt->device->MemBase != 0) {
         /*
          * XXX Should check that the config file value matches one of the
@@ -2737,6 +2818,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     else {
         pXGI->FbAddress = pXGI->PciInfo->memBase[0] & 0xFFFFFFF0;
     }
+#endif
 
     pXGI->realFbAddress = pXGI->FbAddress;
 
@@ -2745,6 +2827,9 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                IS_DUAL_HEAD(pXGI) ? "Global l" : "L",
                (unsigned long) pXGI->FbAddress);
 
+#ifdef XSERVER_LIBPCIACCESS
+        pXGI->IOAddress = pXGI->PciInfo->regions[1].base_addr & 0xFFFFFFF0;
+#else
     if (pXGI->pEnt->device->IOBase != 0) {
         /*
          * XXX Should check that the config file value matches one of the
@@ -2756,6 +2841,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     else {
         pXGI->IOAddress = pXGI->PciInfo->memBase[1] & 0xFFFFFFF0;
     }
+#endif
 
     xf86DrvMsg(pScrn->scrnIndex, from,
                "MMIO registers at 0x%lX (size %ldK)\n",
@@ -3627,10 +3713,26 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 static Bool
 XGIMapMem(ScrnInfoPtr pScrn)
 {
-    XGIPtr pXGI;
-    int mmioFlags;
+    XGIPtr pXGI = XGIPTR(pScrn);;
 
-    pXGI = XGIPTR(pScrn);
+#ifdef XSERVER_LIBPCIACCESS
+    unsigned i;
+
+    for (i = 0; i < 2; i++) {
+        int err;
+        
+        err = pci_device_map_region(pXGI->PciInfo, i, TRUE);
+        if (err) {
+            xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
+                       "Internal error: cound not map PCI region %u\n", i);
+            return FALSE;
+        }
+    }
+
+    pXGI->FbBase = pXGI->PciInfo->regions[0].memory;
+    pXGI->IOBase = pXGI->PciInfo->regions[1].memory;
+#else
+    int mmioFlags;
 
     /*
      * Map IO registers to virtual address space
@@ -3670,6 +3772,7 @@ XGIMapMem(ScrnInfoPtr pScrn)
 
     if (pXGI->FbBase == NULL)
         return FALSE;
+#endif
 
     return TRUE;
 }
@@ -3693,8 +3796,12 @@ XGIUnmapMem(ScrnInfoPtr pScrn)
         if (pXGIEnt->MapCountIOBase) {
             pXGIEnt->MapCountIOBase--;
             if ((pXGIEnt->MapCountIOBase == 0) || (pXGIEnt->forceUnmapIOBase)) {
+#ifdef XSERVER_LIBPCIACCESS
+                pci_device_unmap_region(pXGI->PciInfo, 1);
+#else
                 xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGIEnt->IOBase,
                                 (pXGI->mmioSize * 1024));
+#endif
                 pXGIEnt->IOBase = NULL;
                 pXGIEnt->MapCountIOBase = 0;
                 pXGIEnt->forceUnmapIOBase = FALSE;
@@ -3702,6 +3809,9 @@ XGIUnmapMem(ScrnInfoPtr pScrn)
             pXGI->IOBase = NULL;
         }
 #ifdef __alpha__
+#ifdef XSERVER_LIBPCIACCESS
+#error "How to do dense mapping on Alpha?"
+#else
         if (pXGIEnt->MapCountIOBaseDense) {
             pXGIEnt->MapCountIOBaseDense--;
             if ((pXGIEnt->MapCountIOBaseDense == 0)
@@ -3715,12 +3825,17 @@ XGIUnmapMem(ScrnInfoPtr pScrn)
             }
             pXGI->IOBaseDense = NULL;
         }
+#endif
 #endif /* __alpha__ */
         if (pXGIEnt->MapCountFbBase) {
             pXGIEnt->MapCountFbBase--;
             if ((pXGIEnt->MapCountFbBase == 0) || (pXGIEnt->forceUnmapFbBase)) {
+#ifdef XSERVER_LIBPCIACCESS
+                pci_device_unmap_region(pXGI->PciInfo, 0);
+#else
                 xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGIEnt->FbBase,
                                 pXGI->FbMapSize);
+#endif
                 pXGIEnt->FbBase = NULL;
                 pXGIEnt->MapCountFbBase = 0;
                 pXGIEnt->forceUnmapFbBase = FALSE;
@@ -3730,17 +3845,27 @@ XGIUnmapMem(ScrnInfoPtr pScrn)
         }
     }
     else {
+#ifdef XSERVER_LIBPCIACCESS
+        pci_device_unmap_region(pXGI->PciInfo, 0);
+        pci_device_unmap_region(pXGI->PciInfo, 1);
+#else
         xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGI->IOBase,
                         (pXGI->mmioSize * 1024));
+        xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGI->FbBase,
+                        pXGI->FbMapSize);
+#endif
         pXGI->IOBase = NULL;
+        pXGI->FbBase = NULL;
+
 #ifdef __alpha__
+#ifdef XSERVER_LIBPCIACCESS
+#error "How to do dense mapping on Alpha?"
+#else
         xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGI->IOBaseDense,
                         (pXGI->mmioSize * 1024));
         pXGI->IOBaseDense = NULL;
 #endif
-        xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGI->FbBase,
-                        pXGI->FbMapSize);
-        pXGI->FbBase = NULL;
+#endif
     }
 
     return TRUE;
@@ -3844,8 +3969,13 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 	}
 
 	/* Reset our PIOOffset as vgaHWInit might have reset it */
-	VGAHWPTR(pScrn)->PIOOffset =
-	    pXGI->IODBase + (pXGI->PciInfo->ioBase[2] & 0xFFFC) - 0x380;
+    VGAHWPTR(pScrn)->PIOOffset = pXGI->IODBase - 0x380 +
+#ifdef XSERVER_LIBPCIACCESS
+        (pXGI->PciInfo->regions[2].base_addr & 0xFFFC)
+#else
+        (pXGI->PciInfo->ioBase[2] & 0xFFFC)
+#endif
+        ;
 
 	/* Prepare the register contents */
 	if (!(*pXGI->ModeInit) (pScrn, mode)) {
@@ -4034,8 +4164,13 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
     /* Patch the PIOOffset inside vgaHW to use
      * our relocated IO ports.
      */
-    VGAHWPTR(pScrn)->PIOOffset =
-        pXGI->IODBase + (pXGI->PciInfo->ioBase[2] & 0xFFFC) - 0x380;
+    VGAHWPTR(pScrn)->PIOOffset = pXGI->IODBase - 0x380 +
+#ifdef XSERVER_LIBPCIACCESS
+        (pXGI->PciInfo->regions[2].base_addr & 0xFFFC)
+#else
+        (pXGI->PciInfo->ioBase[2] & 0xFFFC)
+#endif
+        ;
 
     /* Map the XGI memory and MMIO areas */
     if (!XGIMapMem(pScrn)) {

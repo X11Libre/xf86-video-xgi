@@ -217,10 +217,6 @@ struct _XGI_HW_DEVICE_INFO
 {
     ULONG  ulExternalChip;       /* NO VB or other video bridge*/
                                  /* if ujVBChipID = VB_CHIP_UNKNOWN, */
-#ifdef LINUX_XF86
-    PCITAG PciTag;		 /* PCI Tag */
-#endif
-
     PUCHAR  pjVirtualRomBase;    /* ROM image */
 
     BOOLEAN UseROM;		 /* Use the ROM image if provided */
@@ -280,8 +276,6 @@ struct _XGI_HW_DEVICE_INFO
 */
 
     PXGI_QUERYSPACE  pQueryVGAConfigSpace;
-
-    PXGI_QUERYSPACE  pQueryNorthBridgeSpace;
 
     UCHAR  szVBIOSVer[VBIOS_VER_MAX_LENGTH];
 

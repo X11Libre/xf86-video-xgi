@@ -690,7 +690,6 @@ static const unsigned char XGI301CScaling[] = {
 
 /* Mandatory functions */
 static void XGIIdentify(int flags);
-static Bool XGIProbe(DriverPtr drv, int flags);
 static Bool XGIPreInit(ScrnInfoPtr pScrn, int flags);
 static Bool XGIScreenInit(int Index, ScreenPtr pScreen, int argc, char **argv);
 static Bool XGIEnterVT(int scrnIndex, int flags);

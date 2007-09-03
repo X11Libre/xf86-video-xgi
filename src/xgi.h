@@ -79,24 +79,16 @@
 #define PDEBUG5(p)
 #endif
 
-#include "xgi_ver.h"
-
 /* Always unlock the registers (should be set!) */
 #define UNLOCK_ALWAYS
-/*
-#define XGIDRIVERVERSIONYEAR    4
-#define XGIDRIVERVERSIONMONTH   2
-#define XGIDRIVERVERSIONDAY     26
-#define XGIDRIVERREVISION       1
-*/
-#define XGIDRIVERIVERSION (XGIDRIVERVERSIONYEAR << 16) |  \
-			  (XGIDRIVERVERSIONMONTH << 8) |  \
-                          XGIDRIVERVERSIONDAY 	       |  \
-			  (XGIDRIVERREVISION << 24)
 
 #undef XGI_CP
 
+#ifdef XSERVER_LIBPCIACCESS
+#include <pciaccess.h>
+#else
 #include "xf86Pci.h"
+#endif
 #include "xf86Cursor.h"
 #include "xf86xv.h"
 #include "compiler.h"
@@ -126,6 +118,18 @@
 #include "dri.h"
 #include "GL/glxint.h"
 #include "xgi_dri.h"
+#endif
+
+#ifdef XSERVER_LIBPCIACCESS
+#define VENDOR_ID(p)      (p)->vendor_id
+#define DEVICE_ID(p)      (p)->device_id
+#define SUBSYS_ID(p)      (p)->subdevice_id
+#define CHIP_REVISION(p)  (p)->revision
+#else
+#define VENDOR_ID(p)      (p)->vendor
+#define DEVICE_ID(p)      (p)->chipType
+#define SUBSYS_ID(p)      (p)->subsysCard
+#define CHIP_REVISION(p)  (p)->chipRev
 #endif
 
 #if 1 
@@ -185,13 +189,9 @@
 
 #define XGI_NAME                "XGI"
 #define XGI_DRIVER_NAME         "xgi"
-/*
-#define XGI_MAJOR_VERSION       1
-#define XGI_MINOR_VERSION       1
-#define XGI_PATCHLEVEL          4
-*/
-#define XGI_CURRENT_VERSION     ((XGI_MAJOR_VERSION << 16) | \
-                                 (XGI_MINOR_VERSION << 8) | XGI_PATCHLEVEL )
+#define XGI_CURRENT_VERSION     ((PACKAGE_VERSION_MAJOR << 16) | \
+                                 (PACKAGE_VERSION_MINOR << 8) | \
+				 PACKAGE_VERSION_PATCHLEVEL)
 
 /* pXGI->Flags (old series only) */
 #define SYNCDRAM                0x00000001
@@ -496,8 +496,12 @@ typedef struct MonitorRange {
 
 typedef struct {
     ScrnInfoPtr         pScrn;		/* -------------- DON'T INSERT ANYTHING HERE --------------- */
+#ifdef XSERVER_LIBPCIACCESS
+    struct pci_device * PciInfo;
+#else 
     pciVideoPtr         PciInfo;	/* -------- OTHERWISE xgi_dri.so MUST BE RECOMPILED -------- */
     PCITAG              PciTag;
+#endif
     EntityInfoPtr       pEnt;
     int                 Chipset;
     int                 ChipRev;
