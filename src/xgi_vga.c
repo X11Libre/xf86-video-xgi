@@ -50,6 +50,9 @@
 
 Bool    XG40Init(ScrnInfoPtr pScrn, DisplayModePtr mode);
 
+/* Jong 01/07/2008; force to disable 2D */
+extern Bool ForceToDisable2DEngine(ScrnInfoPtr pScrn);
+
 #define Midx    0
 #define Nidx    1
 #define VLDidx  2
@@ -231,7 +234,15 @@ PDEBUG(ErrorF("XG40Init()\n"));
     if (!pXGI->NoAccel) {
 	/* Enable 2D accelerator. 
 	 */
-        pReg->xgiRegs3C4[0x1E] |= (SR1E_ENABLE_2D | SR1E_ENABLE_3D);
+		/* Jong 01/07/2008; disable 2D engine depend on  SR3A[6]:1-> force to siable 2D */
+		if(pXGI->Chipset != PCI_CHIP_XGIXG21)
+			pReg->xgiRegs3C4[0x1E] |= 0x42;
+		else
+		{
+			if(ForceToDisable2DEngine(pScrn))
+				pReg->xgiRegs3C4[0x1E] |= 0x02;
+		}
+
     }
 
     /* set threshold value */
@@ -253,6 +264,8 @@ void XGIVGAPreInit(ScrnInfoPtr pScrn)
     switch (pXGI->Chipset) {
         case PCI_CHIP_XGIXG40:
         case PCI_CHIP_XGIXG20:
+        case PCI_CHIP_XGIXG21:
+        case PCI_CHIP_XGIXG27:
           default:
             pXGI->ModeInit = XG40Init;
             break;
