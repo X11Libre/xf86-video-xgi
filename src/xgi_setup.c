@@ -172,10 +172,19 @@ xgiXG2X_Setup(ScrnInfoPtr pScrn)
         ulMemSize = 8*1024 ;
     }
 
-    if( pXGI->Chipset == PCI_CHIP_XGIXG40)
-    {
-        if ( (pciReadLong(pXGI->PciTag, 0x08) & 0xFF ) == 2 )
-        {
+    if (pXGI->Chipset == PCI_CHIP_XGIXG40) {
+	const unsigned revision =
+#ifdef XSERVER_LIBPCIACCESS
+	    pXGI->PciInfo->revision
+#else
+	    pciReadLong(pXGI->PciTag, 0x08) & 0x0FF
+#endif
+	    ;
+
+	/* Revision 2 cards encode the memory config bits slightly differently
+	 * from revision 1 cards.
+	 */
+        if (revision == 2) {
             switch((ulMemConfig>>2)&0x1)
             {
             case 0:
