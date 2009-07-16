@@ -56,8 +56,13 @@
 #include <X11/extensions/xf86dgastr.h>
 
 #include "globals.h"
+#ifdef HAVE_XEXTPROTO_71
+#include <X11/extensions/dpmsconst.h>
+#else
 #define DPMS_SERVER
 #include <X11/extensions/dpms.h>
+#endif
+
 
 #include "vb_def.h"
 extern  int  FbDevExist;
