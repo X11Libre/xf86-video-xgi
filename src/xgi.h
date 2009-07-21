@@ -107,7 +107,7 @@
 #ifdef XF86DRI
 #define XGINEWDRI
 #undef XGINEWDRI2
-#if XF86_VERSION_CURRENT >= XF86_VERSION_NUMERIC(4,4,99,99,0)	/* Adapt this when the time has come */
+#if XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(4,4,99,99,0)	/* Adapt this when the time has come */
 #define XGINEWDRI2
 #endif
 #include "xf86drm.h"
