@@ -40,7 +40,6 @@
 #include "xf86.h"
 #include "fb.h"
 #include "xf86_OSproc.h"
-#include "xf86Resources.h"
 #include "xorgVersion.h"
 
 #include "xf86cmap.h"
