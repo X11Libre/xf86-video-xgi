@@ -2590,7 +2590,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     FbDevExist = FALSE;
    if((pXGI->Chipset != PCI_CHIP_XGIXG20)&&(pXGI->Chipset != PCI_CHIP_XGIXG21)&&( pXGI->Chipset != PCI_CHIP_XGIXG27 ))
    {
-        if ((fd = open("/dev/fb", 'r')) != -1) {
+        if ((fd = open("/dev/fb", O_RDONLY)) != -1) {
             PDEBUG(ErrorF("--- open /dev/fb....   \n"));
             ioctl(fd, FBIOGET_FSCREENINFO, &fix);
             if (fix.accel == FB_ACCEL_XGI_GLAMOUR) {
