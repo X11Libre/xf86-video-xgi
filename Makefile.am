@@ -21,8 +21,6 @@
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = src man
 
-CLEANFILES = ChangeLog
-EXTRA_DIST = ChangeLog
 
 .PHONY: ChangeLog
 
