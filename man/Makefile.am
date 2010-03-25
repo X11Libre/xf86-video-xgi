@@ -32,39 +32,23 @@ EXTRA_DIST = @DRIVER_NAME@.man
 
 CLEANFILES = $(driverman_DATA)
 
-SED = sed
-
 # Strings to replace in man pages
 XORGRELSTRING = @PACKAGE_STRING@
   XORGMANNAME = X Version 11
 
-MANDEFS =  \
-	-D__vendorversion__="\"$(XORGRELSTRING)\" \"$(XORGMANNAME)\"" \
-	-D__appmansuffix__=$(APP_MAN_SUFFIX) \
-	-D__filemansuffix__=$(FILE_MAN_SUFFIX) \
-	-D__libmansuffix__=$(LIB_MAN_SUFFIX) \
-	-D__miscmansuffix__=$(MISC_MAN_SUFFIX) \
-	-D__drivermansuffix__=$(DRIVER_MAN_SUFFIX) \
-	-D__adminmansuffix__=$(ADMIN_MAN_SUFFIX) \
-	-D__xconfigfile__=xorg.conf \
-	-D__xservername__=Xorg
-
-# Translate XCOMM into pound sign with sed, rather than passing -DXCOMM=XCOMM
-# to cpp, because that trick does not work on all ANSI C preprocessors.
-# Delete line numbers from the cpp output (-P is not portable, I guess).
-# Allow XCOMM to be preceded by whitespace and provide a means of generating
-# output lines with trailing backslashes.
-# Allow XHASH to always be substituted, even in cases where XCOMM isn't.
-
-CPP_SED_MAGIC = $(SED) -e '/^\#  *[0-9][0-9]*  *.*$$/d' \
-                       -e '/^\#line  *[0-9][0-9]*  *.*$$/d' \
-                       -e '/^[         ]*XCOMM$$/s/XCOMM/\#/' \
-                       -e '/^[         ]*XCOMM[^a-zA-Z0-9_]/s/XCOMM/\#/' \
-                       -e '/^[         ]*XHASH/s/XHASH/\#/' \
-                       -e '/\@\@$$/s/\@\@$$/\\/'
+MAN_SUBSTS = \
+	-e 's|__vendorversion__|"$(XORGRELSTRING)" "$(XORGMANNAME)"|' \
+	-e 's|__xorgversion__|"$(XORGRELSTRING)" "$(XORGMANNAME)"|' \
+	-e 's|__xservername__|Xorg|g' \
+	-e 's|__xconfigfile__|xorg.conf|g' \
+	-e 's|__projectroot__|$(prefix)|g' \
+	-e 's|__appmansuffix__|$(APP_MAN_SUFFIX)|g' \
+	-e 's|__drivermansuffix__|$(DRIVER_MAN_SUFFIX)|g' \
+	-e 's|__adminmansuffix__|$(ADMIN_MAN_SUFFIX)|g' \
+	-e 's|__miscmansuffix__|$(MISC_MAN_SUFFIX)|g' \
+	-e 's|__filemansuffix__|$(FILE_MAN_SUFFIX)|g'
 
 SUFFIXES = .$(DRIVER_MAN_SUFFIX) .man
 
 .man.$(DRIVER_MAN_SUFFIX):
-	$(RAWCPP) $(RAWCPPFLAGS) $(MANDEFS) $(EXTRAMANDEFS) < $< | $(CPP_SED_MAGIC) > $@
-
+	$(AM_V_GEN)$(SED) $(MAN_SUBSTS) < $< > $@
