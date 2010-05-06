@@ -56,7 +56,7 @@
 #include "osdef.h"
 
 #ifdef LINUX_XF86
-#include "xorgVersion.h"
+#include "xf86Version.h"
 #include "xf86Pci.h"
 #endif
 
@@ -299,6 +299,13 @@ struct _XGI_HW_DEVICE_INFO
     double  DCLK;
     UCHAR   Interlace; /* Alan 08/10/2007; specify interlace or not */
     /* --------------------------------------------------------------------- */
+
+	/* Jong 08/03/2009; support I2C */
+	unsigned long	I2CDelay;
+	UCHAR		ucI2cCRT;
+	UCHAR		ucI2cDVI;
+	UCHAR		ucI2cFCNT;
+	int			crtno;			 
 };
 #endif
 
