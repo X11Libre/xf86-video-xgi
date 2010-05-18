@@ -52,7 +52,6 @@
 #define  PACKAGE_VERSION_PATCHLEVEL   6803
 
 #include "fb.h"
-#include "mibank.h"
 #include "micmap.h"
 #include "xf86.h"
 #include "xf86Priv.h"
