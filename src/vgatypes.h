@@ -56,7 +56,7 @@
 #include "osdef.h"
 
 #ifdef LINUX_XF86
-#include "xf86Version.h"
+#include "xorgVersion.h"
 #include "xf86Pci.h"
 #endif
 

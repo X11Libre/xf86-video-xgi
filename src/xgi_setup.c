@@ -39,11 +39,8 @@
 #include "xf86Pci.h"
 #include "xf86.h"
 #include "fb.h"
-#include "xf1bpp.h"
-#include "xf4bpp.h"
 #include "xf86_OSproc.h"
-#include "xf86Resources.h"
-#include "xf86Version.h"
+#include "xorgVersion.h"
 
 #include "xf86cmap.h"
 
@@ -56,8 +53,13 @@
 #include <X11/extensions/xf86dgastr.h>
 
 #include "globals.h"
+#ifdef HAVE_XEXTPROTO_71
+#include <X11/extensions/dpmsconst.h>
+#else
 #define DPMS_SERVER
 #include <X11/extensions/dpms.h>
+#endif
+
 
 #include "vb_def.h"
 extern  int  FbDevExist;
@@ -172,10 +174,19 @@ xgiXG2X_Setup(ScrnInfoPtr pScrn)
         ulMemSize = 8*1024 ;
     }
 
-    if( pXGI->Chipset == PCI_CHIP_XGIXG40)
-    {
-        if ( (pciReadLong(pXGI->PciTag, 0x08) & 0xFF ) == 2 )
-        {
+    if (pXGI->Chipset == PCI_CHIP_XGIXG40) {
+	const unsigned revision =
+#ifdef XSERVER_LIBPCIACCESS
+	    pXGI->PciInfo->revision
+#else
+	    pciReadLong(pXGI->PciTag, 0x08) & 0x0FF
+#endif
+	    ;
+
+	/* Revision 2 cards encode the memory config bits slightly differently
+	 * from revision 1 cards.
+	 */
+        if (revision == 2) {
             switch((ulMemConfig>>2)&0x1)
             {
             case 0:
@@ -571,15 +582,12 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
 
     pHwDevInfo->pDevice = pXGI ;
     pHwDevInfo->pjVirtualRomBase = pXGI->BIOS ;
-    PDEBUG(ErrorF("pHwDevInfo->pjVirtualRomBase = pXGI->BIOS = 0x%08lx\n",(ULONG)(pXGI->BIOS))) ;
-
     pHwDevInfo->pjCustomizedROMImage = NULL ;
     pHwDevInfo->pjVideoMemoryAddress = (UCHAR*)(pXGI->FbBase) ;
     PDEBUG(ErrorF("pXGI->FbBase = 0x%08lx\n",(ULONG)(pXGI->FbBase))) ;
     PDEBUG(ErrorF("pHwDevInfo->pjVideoMemoryAddress = 0x%08lx\n",(ULONG)(pHwDevInfo->pjVideoMemoryAddress))) ;
     pHwDevInfo->ulVideoMemorySize = pXGI->FbMapSize ;
     pHwDevInfo->pjIOAddress = pXGI->RelIO + 0x30 ;
-    PDEBUG(ErrorF("pHwDevInfo->pjIOAddress  = 0x%08lx\n",(ULONG)(pHwDevInfo->pjIOAddress ))) ;
 
     switch (pXGI->Chipset) {
     case PCI_CHIP_XGIXG40:
