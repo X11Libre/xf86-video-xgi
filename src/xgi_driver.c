@@ -2769,7 +2769,11 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
 		  xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3, 
 				  "VGA memory map from 0x%x to 0x%x \n", 
+#ifdef XSERVER_LIBPCIACCESS
+				  pXGI->PciInfo->regions[2].base_addr, VGAHWPTR(pScrn)->Base);
+#else
 				  pXGI->PciInfo->ioBase[2], VGAHWPTR(pScrn)->Base);
+#endif
         }
     }
     vgaHWGetIOBase(VGAHWPTR(pScrn));
@@ -2804,12 +2808,14 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #endif /* !defined(__alpha__) */
     }
 
+#ifndef XSERVER_LIBPCIACCESS
     xf86SetOperatingState(resVgaMem, pXGI->pEnt->index, ResUnusedOpr);
 
     /* Operations for which memory access is required */
     pScrn->racMemFlags = RAC_FB | RAC_COLORMAP | RAC_CURSOR | RAC_VIEWPORT;
     /* Operations for which I/O access is required */
     pScrn->racIoFlags = RAC_COLORMAP | RAC_CURSOR | RAC_VIEWPORT;
+#endif
 
     /* The ramdac module should be loaded here when needed */
     if (!xf86LoadSubModule(pScrn, "ramdac")) {
@@ -3289,6 +3295,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                (unsigned long) pXGI->IOAddress, pXGI->mmioSize);
     pXGI->xgi_HwDevExt.bIntegratedMMEnabled = TRUE;
 
+#ifndef XSERVER_LIBPCIACCESS
     /* Register the PCI-assigned resources. */
     if (xf86RegisterResources(pXGI->pEnt->index, NULL, ResExclusive)) {
         XGIErrorLog(pScrn,
@@ -3303,6 +3310,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         XGIFreeRec(pScrn);
         return FALSE;
     }
+#endif
 
     from = X_PROBED;
     if (pXGI->pEnt->device->videoRam != 0) {
