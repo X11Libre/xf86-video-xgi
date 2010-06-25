@@ -198,9 +198,11 @@ extern BOOL g_bRunTimeDebug;
 #define XGINEWDRI
 #undef XGINEWDRI2
 
+#ifdef XF86_VERSION_CURRENT
 #if XF86_VERSION_CURRENT >= XF86_VERSION_NUMERIC(4,4,99,99,0)	/* Adapt this when the time has come */
 #define XGINEWDRI2
 #endif
+#endif /* XF86_VERSION_CURRENT */
 
 #include "xf86drm.h"
 #include "sarea.h"
