@@ -20,6 +20,7 @@
 #
 # Process this file with autoconf to produce a configure script
 
+# Initialize Autoconf
 AC_PREREQ([2.60])
 AC_INIT([xf86-video-xgi],
         [1.5.1],
@@ -37,17 +38,19 @@ m4_ifndef([XORG_MACROS_VERSION],
 XORG_MACROS_VERSION(1.8)
 XORG_DEFAULT_OPTIONS
 
+# Initialize Automake
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
 
 AM_MAINTAINER_MODE
 
-# Checks for programs.
+# Initialize libtool
 AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 AC_PROG_SED
 
 AH_TOP([#include "xorg-server.h"])
 
+# Define a configure option for an alternate module directory
 AC_ARG_WITH(xorg-module-dir,
             AS_HELP_STRING([--with-xorg-module-dir=DIR],
                            [Default xorg module directory [[default=$libdir/xorg/modules]]]),
@@ -59,14 +62,14 @@ AC_ARG_ENABLE(dri, AS_HELP_STRING([--disable-dri],
               [DRI="$enableval"],
               [DRI=auto])
 
-# Checks for extensions
+# Store the list of server defined optional extensions in REQUIRED_MODULES
 XORG_DRIVER_CHECK_EXT(XINERAMA, xineramaproto)
 XORG_DRIVER_CHECK_EXT(RANDR, randrproto)
 XORG_DRIVER_CHECK_EXT(RENDER, renderproto)
 XORG_DRIVER_CHECK_EXT(XV, videoproto)
 XORG_DRIVER_CHECK_EXT(DPMSExtension, xextproto)
 
-# Checks for pkg-config packages
+# Obtain compiler/linker options for the driver dependencies
 PKG_CHECK_MODULES(XORG, [xorg-server >= 1.1.0 xproto fontsproto $REQUIRED_MODULES])
 PKG_CHECK_MODULES(XEXT, [xextproto >= 7.0.99.1],
                   HAVE_XEXTPROTO_71="yes"; AC_DEFINE(HAVE_XEXTPROTO_71, 1, [xextproto 7.1 available]),
