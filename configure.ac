@@ -22,9 +22,9 @@
 
 AC_PREREQ([2.60])
 AC_INIT([xf86-video-xgi],
-        1.5.1,
+        [1.5.1],
         [https://bugs.freedesktop.org/enter_bug.cgi?product=xorg],
-        xf86-video-xgi)
+        [xf86-video-xgi])
 RELEASE_DATE="27 August 2007"
 
 AC_CONFIG_SRCDIR([Makefile.am])
