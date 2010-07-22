@@ -40,13 +40,11 @@ XORG_DEFAULT_OPTIONS
 
 # Initialize Automake
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
-
 AM_MAINTAINER_MODE
 
 # Initialize libtool
 AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
-AC_PROG_SED
 
 AH_TOP([#include "xorg-server.h"])
 
@@ -78,7 +76,6 @@ AM_CONDITIONAL(HAVE_XEXTPROTO_71, [ test "$HAVE_XEXTPROTO_71" = "yes" ])
 sdkdir=`$PKG_CONFIG --variable=sdkdir xorg-server`
 
 # Checks for libraries.
-
 
 if test "x$DRI" = xauto; then
         AC_CHECK_FILE([${sdkdir}/dri.h],
