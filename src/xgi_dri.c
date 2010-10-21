@@ -145,13 +145,13 @@ XGIInitVisualConfigs(ScreenPtr pScreen)
     }
     if (!(pXGIConfigs = (XGIConfigPrivPtr)xnfcalloc(sizeof(XGIConfigPrivRec),
 						    numConfigs))) {
-      xfree(pConfigs);
+      free(pConfigs);
       return FALSE;
     }
     if (!(pXGIConfigPtrs = (XGIConfigPrivPtr*)xnfcalloc(sizeof(XGIConfigPrivPtr),
 							  numConfigs))) {
-      xfree(pConfigs);
-      xfree(pXGIConfigs);
+      free(pConfigs);
+      free(pXGIConfigs);
       return FALSE;
     }
     for (i=0; i<numConfigs; i++)
@@ -333,7 +333,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
   pDRIInfo->bufferRequests = DRI_ALL_WINDOWS;
 
   if (!DRIScreenInit(pScreen, pDRIInfo, &pXGI->drmSubFD)) {
-    xfree(pDRIInfo->devPrivate);
+    free(pDRIInfo->devPrivate);
     pDRIInfo->devPrivate=0;
     DRIDestroyInfoRec(pXGI->pDRIInfo);
     pXGI->pDRIInfo=0;
@@ -537,14 +537,14 @@ XGIDRICloseScreen(ScreenPtr pScreen)
 
   if (pXGI->pDRIInfo) {
     if (pXGI->pDRIInfo->devPrivate) {
-      xfree(pXGI->pDRIInfo->devPrivate);
+      free(pXGI->pDRIInfo->devPrivate);
       pXGI->pDRIInfo->devPrivate=0;
     }
     DRIDestroyInfoRec(pXGI->pDRIInfo);
     pXGI->pDRIInfo=0;
   }
-  if (pXGI->pVisualConfigs) xfree(pXGI->pVisualConfigs);
-  if (pXGI->pVisualConfigsPriv) xfree(pXGI->pVisualConfigsPriv);
+  if (pXGI->pVisualConfigs) free(pXGI->pVisualConfigs);
+  if (pXGI->pVisualConfigsPriv) free(pXGI->pVisualConfigsPriv);
 
   if(pXGI->agpSize){
 /* ErrorF("Freeing agp memory\n"); */

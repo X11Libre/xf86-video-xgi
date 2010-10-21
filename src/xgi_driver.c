@@ -556,13 +556,13 @@ XGIFreeRec(ScrnInfoPtr pScrn)
              * head.
              */
             if (pXGIEnt->BIOS)
-                xfree(pXGIEnt->BIOS);
+                free(pXGIEnt->BIOS);
             pXGIEnt->BIOS = pXGI->BIOS = NULL;
             if (pXGIEnt->XGI_Pr)
-                xfree(pXGIEnt->XGI_Pr);
+                free(pXGIEnt->XGI_Pr);
             pXGIEnt->XGI_Pr = pXGI->XGI_Pr = NULL;
             if (pXGIEnt->RenderAccelArray)
-                xfree(pXGIEnt->RenderAccelArray);
+                free(pXGIEnt->RenderAccelArray);
             pXGIEnt->RenderAccelArray = pXGI->RenderAccelArray = NULL;
         }
         else {
@@ -573,19 +573,19 @@ XGIFreeRec(ScrnInfoPtr pScrn)
     }
     else {
         if (pXGI->BIOS)
-            xfree(pXGI->BIOS);
+            free(pXGI->BIOS);
         pXGI->BIOS = NULL;
         if (pXGI->XGI_Pr)
-            xfree(pXGI->XGI_Pr);
+            free(pXGI->XGI_Pr);
         pXGI->XGI_Pr = NULL;
         if (pXGI->RenderAccelArray)
-            xfree(pXGI->RenderAccelArray);
+            free(pXGI->RenderAccelArray);
         pXGI->RenderAccelArray = NULL;
     }
 
 #ifdef XGIMERGED
     if (pXGI->MetaModes)
-        xfree(pXGI->MetaModes);
+        free(pXGI->MetaModes);
     pXGI->MetaModes = NULL;
 
     if (pXGI->CRT1Modes) {
@@ -595,8 +595,8 @@ XGIFreeRec(ScrnInfoPtr pScrn)
                 do {
                     DisplayModePtr p = pScrn->currentMode->next;
                     if (pScrn->currentMode->Private)
-                        xfree(pScrn->currentMode->Private);
-                    xfree(pScrn->currentMode);
+                        free(pScrn->currentMode->Private);
+                    free(pScrn->currentMode);
                     pScrn->currentMode = p;
                 } while (pScrn->currentMode != pScrn->modes);
             }
@@ -612,7 +612,7 @@ XGIFreeRec(ScrnInfoPtr pScrn)
     pXGI->pVbe = NULL;
     if (pScrn->driverPrivate == NULL)
         return;
-    xfree(pScrn->driverPrivate);
+    free(pScrn->driverPrivate);
     pScrn->driverPrivate = NULL;
 }
 
@@ -975,7 +975,7 @@ XGIProbe(DriverPtr drv, int flags)
                                     numDevSections, drv, &usedChips);
 
     /* Free it since we don't need that list after this */
-    xfree(devSections);
+    free(devSections);
     if (numUsed <= 0)
         return FALSE;
 
@@ -1015,7 +1015,7 @@ XGIProbe(DriverPtr drv, int flags)
 
 #endif
         }
-    xfree(usedChips);
+    free(usedChips);
 
     return foundScreen;
 }
@@ -1044,11 +1044,11 @@ XGICopyModeNLink(ScrnInfoPtr pScrn, DisplayModePtr dest,
 
 	ErrorF("XGICopyModeNLink()...Use Virtual Size-1\n");
 
-    if (!((mode = xalloc(sizeof(DisplayModeRec)))))
+    if (!((mode = alloc(sizeof(DisplayModeRec)))))
         return dest;
     memcpy(mode, i, sizeof(DisplayModeRec));
-    if (!((mode->Private = xalloc(sizeof(XGIMergedDisplayModeRec))))) {
-        xfree(mode);
+    if (!((mode->Private = alloc(sizeof(XGIMergedDisplayModeRec))))) {
+        free(mode);
         return dest;
     }
     ((XGIMergedDisplayModePtr) mode->Private)->CRT1 = i;
@@ -1125,8 +1125,8 @@ XGICopyModeNLink(ScrnInfoPtr pScrn, DisplayModePtr dest,
         xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
                    "Skipped %dx%d, not enough video RAM or beyond hardware specs\n",
                    mode->HDisplay, mode->VDisplay);
-        xfree(mode->Private);
-        xfree(mode);
+        free(mode->Private);
+        free(mode);
 
         return dest;
     }
@@ -1559,10 +1559,10 @@ XGIFreeCRT2Structs(XGIPtr pXGI)
                                    pXGI->CRT2pScrn->monitor->Modes);
             }
             if (pXGI->CRT2pScrn->monitor->DDC)
-                xfree(pXGI->CRT2pScrn->monitor->DDC);
-            xfree(pXGI->CRT2pScrn->monitor);
+                free(pXGI->CRT2pScrn->monitor->DDC);
+            free(pXGI->CRT2pScrn->monitor);
         }
-        xfree(pXGI->CRT2pScrn);
+        free(pXGI->CRT2pScrn);
         pXGI->CRT2pScrn = NULL;
     }
 }
@@ -2438,7 +2438,7 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
 
 #ifdef XGIMERGED
     if (pXGI->MergedFB) {
-        pXGI->CRT2pScrn->monitor = xalloc(sizeof(MonRec));
+        pXGI->CRT2pScrn->monitor = alloc(sizeof(MonRec));
         if (pXGI->CRT2pScrn->monitor) {
             DisplayModePtr tempm = NULL, currentm = NULL, newm = NULL;
             memcpy(pXGI->CRT2pScrn->monitor, pScrn->monitor, sizeof(MonRec));
@@ -2446,11 +2446,11 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
             pXGI->CRT2pScrn->monitor->Modes = NULL;
             tempm = pScrn->monitor->Modes;
             while (tempm) {
-                if (!(newm = xalloc(sizeof(DisplayModeRec))))
+                if (!(newm = alloc(sizeof(DisplayModeRec))))
                     break;
                 memcpy(newm, tempm, sizeof(DisplayModeRec));
-                if (!(newm->name = xalloc(strlen(tempm->name) + 1))) {
-                    xfree(newm);
+                if (!(newm->name = alloc(strlen(tempm->name) + 1))) {
+                    free(newm);
                     break;
                 }
                 strcpy(newm->name, tempm->name);
@@ -2490,7 +2490,7 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
                         "Failed to allocate memory for CRT2 monitor, %s.\n",
                         mergeddisstr);
             if (pXGI->CRT2pScrn)
-                xfree(pXGI->CRT2pScrn);
+                free(pXGI->CRT2pScrn);
             pXGI->CRT2pScrn = NULL;
             pXGI->MergedFB = FALSE;
         }
@@ -3540,7 +3540,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         /* Do some MergedFB mode initialisation */
 #ifdef XGIMERGED
         if (pXGI->MergedFB) {
-        pXGI->CRT2pScrn = xalloc(sizeof(ScrnInfoRec));
+        pXGI->CRT2pScrn = alloc(sizeof(ScrnInfoRec));
         if (!pXGI->CRT2pScrn) {
             XGIErrorLog(pScrn,
                         "Failed to allocate memory for 2nd pScrn, %s\n",
@@ -3586,7 +3586,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                     XGIErrorLog(pScrn, mergednocrt1, mergeddisstr);
                 }
                 if (pXGI->CRT2pScrn)
-                    xfree(pXGI->CRT2pScrn);
+                    free(pXGI->CRT2pScrn);
                 pXGI->CRT2pScrn = NULL;
                 pXGI->MergedFB = FALSE;
             }
@@ -3627,7 +3627,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                 XGIErrorLog(pScrn, mergednocrt2, mergeddisstr);
             }
             if (pXGI->CRT2pScrn)
-                xfree(pXGI->CRT2pScrn);
+                free(pXGI->CRT2pScrn);
             pXGI->CRT2pScrn = NULL;
             pXGI->MergedFB = FALSE;
         }
@@ -4901,7 +4901,7 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 
     if (pXGI->ShadowFB) {
         pXGI->ShadowPitch = BitmapBytePad(pScrn->bitsPerPixel * width);
-        pXGI->ShadowPtr = xalloc(pXGI->ShadowPitch * height);
+        pXGI->ShadowPtr = alloc(pXGI->ShadowPitch * height);
         displayWidth = pXGI->ShadowPitch / (pScrn->bitsPerPixel >> 3);
         FBStart = pXGI->ShadowPtr;
     }
@@ -5777,17 +5777,17 @@ XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
     }
 
     if (pXGI->ShadowPtr) {
-        xfree(pXGI->ShadowPtr);
+        free(pXGI->ShadowPtr);
         pXGI->ShadowPtr = NULL;
     }
 
     if (pXGI->DGAModes) {
-        xfree(pXGI->DGAModes);
+        free(pXGI->DGAModes);
         pXGI->DGAModes = NULL;
     }
 
     if (pXGI->adaptor) {
-        xfree(pXGI->adaptor);
+        free(pXGI->adaptor);
         pXGI->adaptor = NULL;
         pXGI->ResetXv = pXGI->ResetXvGamma = NULL;
     }
