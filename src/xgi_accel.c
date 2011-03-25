@@ -200,20 +200,7 @@ extern int FbDevExist;
 #endif
 
 #if X_BYTE_ORDER == X_BIG_ENDIAN
-static CARD32 BE_SWAP32 (CARD32 val)
-{
-	PDEBUG(ErrorF("X_BIG_ENDIAN...\n"));
-    if (CurrentColorDepth == 8)
-	    return   ((((val) & 0x000000ff) << 24) | \
-                  (((val) & 0x0000ff00) << 8) |  \
-                  (((val) & 0x00ff0000) >> 8) |  \
-                  (((val) & 0xff000000) >> 24));
-    if (CurrentColorDepth == 24)
-        return val;
-    if (CurrentColorDepth == 16)
-        return ((((val) & 0x0000ffff) << 16) | \
-		         (((val) & 0xffff0000) >> 16));
-}    
+#define BE_SWAP32(x) swapl(x)
 #else 
 static CARD32 BE_SWAP32 (CARD32 val)
 {

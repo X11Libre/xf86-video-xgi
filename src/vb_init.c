@@ -131,6 +131,8 @@ static void XGINew_SetDRAMDefaultRegister340(PXGI_HW_DEVICE_INFO, USHORT,
 static void XGINew_SetDRAMDefaultRegisterXG45(PXGI_HW_DEVICE_INFO, USHORT, 
     PVB_DEVICE_INFO);
 static UCHAR XGINew_Get340DRAMType(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
+/* horrible */
+#define XGINew_GetXG20DRAMType XGINew_Get340DRAMType
 
 static int XGINew_SetDDRChannel(int index, UCHAR ChannelNo,
     UCHAR XGINew_ChannelAB, const USHORT DRAMTYPE_TABLE[][5],
@@ -1451,7 +1453,7 @@ void XGINew_SetDRAMDefaultRegister340( PXGI_HW_DEVICE_INFO HwDeviceExtension ,  
     }
 
     temp3 = 0 ;
-    for( k = 0 ; k < 4 ; k++ )
+    for( k = 1 ; k < 4 ; k++ )
     {
         XGI_SetRegANDOR((XGIIOADDRESS) P3d4 , 0x6E , 0xFC , temp3 ) ;		/* CR6E_D[1:0] select channel */
         temp2 = 0 ;

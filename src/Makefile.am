@@ -36,6 +36,8 @@ xgi_drv_la_SOURCES = \
 	vb_def.h \
 	vb_ext.c \
 	vb_ext.h \
+	vb_i2c.c \
+	vb_i2c.h \
 	vb_init.c \
 	vb_init.h \
 	vb_setmode.c \
