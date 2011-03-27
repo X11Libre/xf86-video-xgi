@@ -200,7 +200,7 @@ extern int FbDevExist;
 #endif
 
 #if X_BYTE_ORDER == X_BIG_ENDIAN
-#define BE_SWAP32(x) swapl(x)
+#define BE_SWAP32(x) lswapl(x)
 #else 
 static CARD32 BE_SWAP32 (CARD32 val)
 {
