@@ -981,6 +981,7 @@ int compute_vclk(int Clock, int *out_n, int *out_dn, int *out_div,
 void XGI_WaitBeginRetrace(XGIIOADDRESS RelIO);
 void XGI_WaitEndRetrace(XGIIOADDRESS RelIO);
 
+#include <unistd.h>
 /* 2005/11/21 added by jjtseng */
 #define DelayS(sec) usleep((sec)*1000000)
 #define DelayMS(millisec) usleep((millisec)*1000)
