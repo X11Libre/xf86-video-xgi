@@ -54,7 +54,7 @@
 #include "fb.h"
 #include "micmap.h"
 #include "xf86.h"
-#include "xf86Priv.h"
+#include "xf86Module.h"
 #include "xf86_OSproc.h"
 #if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 6
 #include "xf86Resources.h"
@@ -104,6 +104,10 @@
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+
+#ifndef DEFAULT_DPI
+#define DEFAULT_DPI 96
 #endif
 
 /* Jong 01/22/2009; compiler error; type conflict */
