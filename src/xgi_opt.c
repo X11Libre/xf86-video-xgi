@@ -195,7 +195,7 @@ xgiOptions(ScrnInfoPtr pScrn)
     xf86CollectOptions(pScrn, NULL);
 
     /* Process the options */
-    if(!(pXGI->Options = alloc(sizeof(XGIOptions)))) return;
+    if(!(pXGI->Options = malloc(sizeof(XGIOptions)))) return;
 
     memcpy(pXGI->Options, XGIOptions, sizeof(XGIOptions));
 

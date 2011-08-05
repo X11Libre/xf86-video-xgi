@@ -1048,10 +1048,10 @@ XGICopyModeNLink(ScrnInfoPtr pScrn, DisplayModePtr dest,
 
 	ErrorF("XGICopyModeNLink()...Use Virtual Size-1\n");
 
-    if (!((mode = alloc(sizeof(DisplayModeRec)))))
+    if (!((mode = malloc(sizeof(DisplayModeRec)))))
         return dest;
     memcpy(mode, i, sizeof(DisplayModeRec));
-    if (!((mode->Private = alloc(sizeof(XGIMergedDisplayModeRec))))) {
+    if (!((mode->Private = malloc(sizeof(XGIMergedDisplayModeRec))))) {
         free(mode);
         return dest;
     }
@@ -2442,7 +2442,7 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
 
 #ifdef XGIMERGED
     if (pXGI->MergedFB) {
-        pXGI->CRT2pScrn->monitor = alloc(sizeof(MonRec));
+        pXGI->CRT2pScrn->monitor = malloc(sizeof(MonRec));
         if (pXGI->CRT2pScrn->monitor) {
             DisplayModePtr tempm = NULL, currentm = NULL, newm = NULL;
             memcpy(pXGI->CRT2pScrn->monitor, pScrn->monitor, sizeof(MonRec));
@@ -2450,10 +2450,10 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
             pXGI->CRT2pScrn->monitor->Modes = NULL;
             tempm = pScrn->monitor->Modes;
             while (tempm) {
-                if (!(newm = alloc(sizeof(DisplayModeRec))))
+                if (!(newm = malloc(sizeof(DisplayModeRec))))
                     break;
                 memcpy(newm, tempm, sizeof(DisplayModeRec));
-                if (!(newm->name = alloc(strlen(tempm->name) + 1))) {
+                if (!(newm->name = malloc(strlen(tempm->name) + 1))) {
                     free(newm);
                     break;
                 }
@@ -3544,7 +3544,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         /* Do some MergedFB mode initialisation */
 #ifdef XGIMERGED
         if (pXGI->MergedFB) {
-        pXGI->CRT2pScrn = alloc(sizeof(ScrnInfoRec));
+        pXGI->CRT2pScrn = malloc(sizeof(ScrnInfoRec));
         if (!pXGI->CRT2pScrn) {
             XGIErrorLog(pScrn,
                         "Failed to allocate memory for 2nd pScrn, %s\n",
@@ -4905,7 +4905,7 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 
     if (pXGI->ShadowFB) {
         pXGI->ShadowPitch = BitmapBytePad(pScrn->bitsPerPixel * width);
-        pXGI->ShadowPtr = alloc(pXGI->ShadowPitch * height);
+        pXGI->ShadowPtr = malloc(pXGI->ShadowPitch * height);
         displayWidth = pXGI->ShadowPitch / (pScrn->bitsPerPixel >> 3);
         FBStart = pXGI->ShadowPtr;
     }

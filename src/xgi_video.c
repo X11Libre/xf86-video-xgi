@@ -142,7 +142,7 @@ void XGIInitVideo(ScreenPtr pScreen)
             adaptors = &newAdaptor;
         } else {
             newAdaptors =  /* need to free this someplace */
-                alloc((num_adaptors + 1) * sizeof(XF86VideoAdaptorPtr*));
+                malloc((num_adaptors + 1) * sizeof(XF86VideoAdaptorPtr*));
             if(newAdaptors) {
                 memcpy(newAdaptors, adaptors, num_adaptors *
                                         sizeof(XF86VideoAdaptorPtr));
