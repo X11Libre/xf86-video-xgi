@@ -678,7 +678,7 @@ bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset, ULONG ulSet, U
 	err = pci_device_cfg_write_u32(pXGI->PciInfo, *pulValue,
 				       ulOffset & ~3);
     } else {
-	err = pci_device_cfg_write_u32(pXGI->PciInfo, pulValue,
+	err = pci_device_cfg_read_u32(pXGI->PciInfo, pulValue,
 				       ulOffset & ~3);
     }
 
