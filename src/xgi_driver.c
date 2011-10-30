@@ -3038,7 +3038,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     /* Get our relocated IO registers */
 #if defined(__arm__) 
-	pXGI->RelIO = (XGIIOADDRESS)(((IOADDRESS)VGAHWPTR(pScrn)->Base & 0xFFFFFFFC) + pXGI->IODBase); 	
+	pXGI->RelIO = (XGIIOADDRESS)(((unsigned long)VGAHWPTR(pScrn)->Base & 0xFFFFFFFC) + pXGI->IODBase); 	
 
 #else
     pXGI->RelIO = (XGIIOADDRESS) (pXGI->IODBase |

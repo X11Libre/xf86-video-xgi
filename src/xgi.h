@@ -623,7 +623,7 @@ typedef struct {
     unsigned char *     FbBase;         /* VRAM virtual linear address */
     CARD32              IOAddress;      /* MMIO physical address */
     unsigned char *     IOBase;         /* MMIO linear address */
-    IOADDRESS           IODBase;        /* Base of PIO memory area */
+    unsigned long           IODBase;        /* Base of PIO memory area */
 #ifdef __alpha__
     unsigned char *     IOBaseDense;    /* MMIO for Alpha platform */
 #endif

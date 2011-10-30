@@ -131,7 +131,7 @@ typedef unsigned long XGIIOADDRESS;
 #endif
 
 #ifdef LINUX_XF86
-typedef IOADDRESS XGIIOADDRESS;
+typedef unsigned long XGIIOADDRESS;
 #endif
 
 #ifndef VBIOS_VER_MAX_LENGTH
