@@ -3050,7 +3050,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                                   );
 #endif
 
-    pXGI->xgi_HwDevExt.pjIOAddress = (XGIIOADDRESS) (pXGI->RelIO + 0x30);
+    pXGI->xgi_HwDevExt.pjIOAddress = (pointer)((XGIIOADDRESS) (pXGI->RelIO + 0x30));
     xf86DrvMsg(pScrn->scrnIndex, from, "Relocated IO registers at 0x%lX\n",
                (unsigned long) pXGI->RelIO);
 	ErrorF("xgi_driver.c-pXGI->xgi_HwDevExt.pjIOAddress=0x%x...\n", pXGI->xgi_HwDevExt.pjIOAddress);

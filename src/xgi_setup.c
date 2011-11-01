@@ -587,7 +587,7 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
     PDEBUG(ErrorF("pXGI->FbBase = 0x%08lx\n",(ULONG)(pXGI->FbBase))) ;
     PDEBUG(ErrorF("pHwDevInfo->pjVideoMemoryAddress = 0x%08lx\n",(ULONG)(pHwDevInfo->pjVideoMemoryAddress))) ;
     pHwDevInfo->ulVideoMemorySize = pXGI->FbMapSize ;
-    pHwDevInfo->pjIOAddress = pXGI->RelIO + 0x30 ;
+    pHwDevInfo->pjIOAddress = (pointer)(pXGI->RelIO + 0x30);
 
     switch (pXGI->Chipset) {
     case PCI_CHIP_XGIXG40:

@@ -285,7 +285,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
     pDRIInfo->ddxDriverMajorVersion = PACKAGE_VERSION_MAJOR;
     pDRIInfo->ddxDriverMinorVersion = PACKAGE_VERSION_MINOR;
     pDRIInfo->ddxDriverPatchVersion = PACKAGE_VERSION_PATCHLEVEL;
-    pDRIInfo->frameBufferPhysicalAddress = pXGI->FbAddress;
+    pDRIInfo->frameBufferPhysicalAddress = (pointer) pXGI->FbAddress;
     pDRIInfo->frameBufferSize = pXGI->FbMapSize;
 
   /* ?? */

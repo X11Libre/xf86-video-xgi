@@ -945,6 +945,7 @@ Volari_AccelInit(ScreenPtr pScreen)
             return TRUE;
 	}
 #endif /* EXA */
+    return TRUE;
 }
 
 void
