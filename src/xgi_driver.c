@@ -228,136 +228,6 @@ static PciChipsets XGIPciChipsets[] = {
     {-1, -1, RES_UNDEFINED}
 };
 
-static const char *xaaSymbols[] = {
-    "XAACopyROP",
-    "XAACreateInfoRec",
-    "XAADestroyInfoRec",
-    "XAAFillMono8x8PatternRects",
-    "XAAPatternROP",
-    "XAAHelpPatternROP",
-    "XAAInit",
-    NULL
-};
-
-#ifdef XGI_USE_EXA
-static const char *exaSymbols[] = {
-    "exaGetVersion",
-    "exaDriverInit",
-    "exaDriverFini",
-    "exaOffscreenAlloc",
-    "exaOffscreenFree",
-    NULL
-};
-#endif
-
-static const char *vgahwSymbols[] = {
-    "vgaHWFreeHWRec",
-    "vgaHWGetHWRec",
-    "vgaHWGetIOBase",
-    "vgaHWGetIndex",
-    "vgaHWInit",
-    "vgaHWLock",
-    "vgaHWMapMem",
-    "vgaHWUnmapMem",
-    "vgaHWProtect",
-    "vgaHWRestore",
-    "vgaHWSave",
-    "vgaHWSaveScreen",
-    "vgaHWUnlock",
-    NULL
-};
-
-static const char *fbSymbols[] = {
-    "fbPictureInit",
-    "fbScreenInit",
-    NULL
-};
-
-static const char *shadowSymbols[] = {
-    "ShadowFBInit",
-    NULL
-};
-
-static const char *ramdacSymbols[] = {
-    "xf86CreateCursorInfoRec",
-    "xf86DestroyCursorInfoRec",
-    "xf86InitCursor",
-    NULL
-};
-
-
-static const char *ddcSymbols[] = {
-    "xf86PrintEDID",
-    "xf86SetDDCproperties",
-    "xf86InterpretEDID",
-    NULL
-};
-
-
-/* static const char *i2cSymbols[] = {
-    "xf86I2CBusInit",
-    "xf86CreateI2CBusRec",
-    NULL
-}; */
-
-static const char *int10Symbols[] = {
-    "xf86FreeInt10",
-    "xf86InitInt10",
-    "xf86ExecX86int10",
-    NULL
-};
-
-static const char *vbeSymbols[] = {
-    "VBEExtendedInit",
-    "vbeDoEDID",
-    "vbeFree",
-    "VBEGetVBEInfo",
-    "VBEFreeVBEInfo",
-    "VBEGetModeInfo",
-    "VBEFreeModeInfo",
-    "VBESaveRestore",
-    "VBESetVBEMode",
-    "VBEGetVBEMode",
-    "VBESetDisplayStart",
-    "VBESetGetLogicalScanlineLength",
-    NULL
-};
-
-#ifdef XF86DRI
-static const char *drmSymbols[] = {
-    "drmAddMap",
-    "drmAgpAcquire",
-    "drmAgpAlloc",
-    "drmAgpBase",
-    "drmAgpBind",
-    "drmAgpEnable",
-    "drmAgpFree",
-    "drmAgpGetMode",
-    "drmAgpRelease",
-    "drmCtlInstHandler",
-    "drmGetInterruptFromBusID",
-    "drmXGIAgpInit",
-    NULL
-};
-
-static const char *driSymbols[] = {
-    "DRICloseScreen",
-    "DRICreateInfoRec",
-    "DRIDestroyInfoRec",
-    "DRIFinishScreenInit",
-    "DRIGetSAREAPrivate",
-    "DRILock",
-    "DRIQueryVersion",
-    "DRIScreenInit",
-    "DRIUnlock",
-#ifdef XGINEWDRI2
-    "GlxSetVisualConfigs",
-    "DRICreatePCIBusID",
-#endif
-    NULL
-};
-#endif
-
 static MODULESETUPPROTO(xgiSetup);
 
 static XF86ModuleVersionInfo xgiVersRec = {
@@ -504,13 +374,6 @@ xgiSetup(pointer module, pointer opts, int *errmaj, int *errmin)
         xf86AddDriver(&XGI, module, 0);
 #endif
 
-        LoaderRefSymLists(vgahwSymbols, fbSymbols, xaaSymbols,
-                          shadowSymbols, ramdacSymbols, ddcSymbols,
-                          vbeSymbols, int10Symbols,
-#ifdef XF86DRI
-                          drmSymbols, driSymbols,
-#endif
-                          NULL);
         return (pointer) TRUE;
     }
 
@@ -1619,7 +1482,6 @@ XGIInternalDDC(ScrnInfoPtr pScrn, int crtno)
     ErrorF("get EDID with VBIOS call...\n");
     if (xf86LoadSubModule(pScrn, "int10")) 
 	{
-        xf86LoaderReqSymLists(int10Symbols, NULL);
         pInt = xf86InitInt10(pXGI->pEnt->index);
         if (pInt == NULL) {
             xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
@@ -1680,8 +1542,6 @@ XGIInternalDDC(ScrnInfoPtr pScrn, int crtno)
 
 			g_DVI_I_SignalType = (buffer[20] & 0x80) >> 7;
 			ErrorF("DVI-I : %s signal ...\n", (g_DVI_I_SignalType == 0x01) ? "DVI" : "CRT" );
-
-            xf86LoaderReqSymLists(ddcSymbols, NULL);
 
 			/* Jong 09/04/2007; Alan fixed abnormal EDID data */
 			/* pMonitor = xf86InterpretEDID(pScrn->scrnIndex, buffer) ; */
@@ -2223,8 +2083,6 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
         if (xf86LoadSubModule(pScrn, "ddc")) 
 		{
 
-            xf86LoaderReqSymLists(ddcSymbols, NULL);
-
             if (pXGI->xgi_HwDevExt.jChipType == XG27) 
 			{
 				ErrorF("Getting CRT EDID (DAC1-CRT1)...\n");
@@ -2689,8 +2547,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         return FALSE;
     }
 
-    xf86LoaderReqSymLists(vgahwSymbols, NULL);
-
     /* Due to the liberal license terms this is needed for
      * keeping the copyright notice readable and intact in
      * binary distributions. Removing this is a copyright
@@ -2802,7 +2658,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                    "Initializing display adapter through int10\n");
 
         if (xf86LoadSubModule(pScrn, "int10")) {
-            xf86LoaderReqSymLists(int10Symbols, NULL);
             pXGI->pInt = xf86InitInt10(pXGI->pEnt->index);
         }
         else {
@@ -2833,8 +2688,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         XGIFreeRec(pScrn);
         return FALSE;
     }
-
-    xf86LoaderReqSymLists(ramdacSymbols, NULL);
 
     /* Set pScrn->monitor */
     pScrn->monitor = pScrn->confScreen->monitor;
@@ -3699,7 +3552,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #if !defined(__powerpc__)
     /* Now load and initialize VBE module. */
     if (xf86LoadSubModule(pScrn, "vbe")) {
-        xf86LoaderReqSymLists(vbeSymbols, NULL);
         pXGI->pVbe = VBEExtendedInit(pXGI->pInt, pXGI->pEnt->index,
                                      SET_BIOS_SCRATCH | RESTORE_BIOS_SCRATCH);
         if (!pXGI->pVbe) {
@@ -4121,7 +3973,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         XGIFreeRec(pScrn);
         return FALSE;
     }
-    xf86LoaderReqSymLists(fbSymbols, NULL);
 
     /* Load XAA if needed */
     if (!pXGI->NoAccel) 
@@ -4143,7 +3994,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 				XGIFreeRec(pScrn);
 				return FALSE;
 			}
-			xf86LoaderReqSymLists(xaaSymbols, NULL);
 		}
 #endif
 
@@ -4154,7 +4004,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 			  XGIErrorLog(pScrn, "Could not load exa module\n");
 			  return FALSE;
 		   }
-		   xf86LoaderReqSymLists(exaSymbols, NULL);
 		}
 #endif
 	}
@@ -4173,16 +4022,12 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             XGIFreeRec(pScrn);
             return FALSE;
         }
-        xf86LoaderReqSymLists(shadowSymbols, NULL);
     }
 
     /* Load the dri module if requested. */
 #ifdef XF86DRI
     if(pXGI->loadDRI) {
-        if (xf86LoadSubModule(pScrn, "dri")) {
-            xf86LoaderReqSymLists(driSymbols, drmSymbols, NULL);
-        }
-        else {
+        if (!xf86LoadSubModule(pScrn, "dri")) {
             if (!IS_DUAL_HEAD(pXGI))
                 xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
                            "Remove >Load \"dri\"< from the Module section of your XF86Config file\n");
@@ -4775,7 +4620,6 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 #if !defined(__powerpc__)
     if (!IS_DUAL_HEAD(pXGI) || !IS_SECOND_HEAD(pXGI)) {
         if (xf86LoadSubModule(pScrn, "vbe")) {
-            xf86LoaderReqSymLists(vbeSymbols, NULL);
             pXGI->pVbe = VBEExtendedInit(NULL, pXGI->pEnt->index,
                                          SET_BIOS_SCRATCH |
                                          RESTORE_BIOS_SCRATCH);
