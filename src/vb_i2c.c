@@ -1606,8 +1606,8 @@ VOID vWriteClockLine(PXGI_HW_DEVICE_INFO pHWDE, UCHAR data)
 		vWriteClockLineDVI(pHWDE, data);
 	else if(pHWDE->crtno == 2)
 		vWriteClockLineFCNT(pHWDE, data);
-	else
-		ErrorF("Error(XGI) : Unkonwn output device! \n");
+
+	ErrorF("Error(XGI) : Unknown output device!\n");
 }
 
 VOID vWriteDataLine(PXGI_HW_DEVICE_INFO pHWDE, UCHAR data)
@@ -1618,8 +1618,8 @@ VOID vWriteDataLine(PXGI_HW_DEVICE_INFO pHWDE, UCHAR data)
 	   vWriteDataLineDVI(pHWDE, data);
 	else if(pHWDE->crtno == 2)
 		vWriteDataLineFCNT(pHWDE, data);
-	else
-		ErrorF("Error(XGI) : Unkonwn output device! \n");
+
+	ErrorF("Error(XGI) : Unknown output device!\n");
 }
 
 BOOLEAN bReadClockLine(PXGI_HW_DEVICE_INFO pHWDE)
@@ -1630,8 +1630,9 @@ BOOLEAN bReadClockLine(PXGI_HW_DEVICE_INFO pHWDE)
 		return(bReadClockLineDVI(pHWDE));
 	else if(pHWDE->crtno == 2)
 		return(bReadClockLineFCNT(pHWDE));
-	else
-		ErrorF("Error(XGI) : Unkonwn output device! \n");
+
+	ErrorF("Error(XGI) : Unknown output device!\n");
+	return FALSE;
 }
 
 BOOLEAN bReadDataLine(PXGI_HW_DEVICE_INFO pHWDE)
@@ -1642,8 +1643,9 @@ BOOLEAN bReadDataLine(PXGI_HW_DEVICE_INFO pHWDE)
 		return(bReadDataLineDVI(pHWDE));
 	else if(pHWDE->crtno == 2)
 		return(bReadDataLineFCNT(pHWDE));
-	else
-		ErrorF("Error(XGI) : Unkonwn output device! \n");
+
+	ErrorF("Error(XGI) : Unknown output device!\n");
+	return FALSE;
 }
 
 BOOLEAN bEDIDCheckSum(PUCHAR  pjEDIDBuf,ULONG   ulBufSize)
