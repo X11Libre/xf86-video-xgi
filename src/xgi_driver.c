@@ -3986,14 +3986,8 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 			if (!xf86LoadSubModule(pScrn, "xaa")) {
 				XGIErrorLog(pScrn, "Could not load xaa module\n");
 
-				if (pXGIEnt)
-					pXGIEnt->ErrorAfterFirst = TRUE;
-
-				if (pXGI->pInt)
-					xf86FreeInt10(pXGI->pInt);
-				xgiRestoreExtRegisterLock(pXGI, srlockReg, crlockReg);
-				XGIFreeRec(pScrn);
-				return FALSE;
+				pXGI->NoAccel = TRUE;
+				pXGI->ShadowFB = TRUE;
 			}
 		}
 #endif
