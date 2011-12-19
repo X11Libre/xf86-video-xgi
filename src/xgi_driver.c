@@ -2564,6 +2564,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         XGIErrorLog(pScrn, "Could not allocate VGA private\n");
         return FALSE;
     }
+    vgaHWSetStdFuncs(VGAHWPTR(pScrn));
 
     /* Allocate the XGIRec driverPrivate */
     pXGI = XGIGetRec(pScrn);
