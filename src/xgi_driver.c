@@ -2573,7 +2573,9 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         return FALSE;
     }
 
+#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 12
     pXGI->IODBase = pScrn->domainIOBase;
+#endif
 
 
     /* Get the entity, and make sure it is PCI. */
@@ -2639,6 +2641,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
     vgaHWGetIOBase(VGAHWPTR(pScrn));
 
+#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 12
 	/* Jong@08262009; why not to modify ??? */
     /* We "patch" the PIOOffset inside vgaHW in order to force
      * the vgaHW module to use our relocated i/o ports.
@@ -2650,6 +2653,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         (pXGI->PciInfo->ioBase[2] & 0xFFFC)
 #endif
         ;
+#endif
 
     pXGI->pInt = NULL;
     if (!pXGI->Primary) {
@@ -4362,6 +4366,7 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 			return FALSE;
 		}
 
+#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 12
 		/* Reset our PIOOffset as vgaHWInit might have reset it */
 		VGAHWPTR(pScrn)->PIOOffset = pXGI->IODBase - 0x380 +
 #ifdef XSERVER_LIBPCIACCESS
@@ -4370,6 +4375,7 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
         (pXGI->PciInfo->ioBase[2] & 0xFFFC)
 #endif
         ;
+#endif
 
 		/* Prepare the register contents */
 		if (!(*pXGI->ModeInit) (pScrn, mode)) {
@@ -4641,6 +4647,7 @@ XGIScreenInit(SCREEN_INIT_ARGS_DECL)
     }
     vgaHWGetIOBase(hwp);
 
+#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 12
     /* Patch the PIOOffset inside vgaHW to use
      * our relocated IO ports.
      */
@@ -4651,6 +4658,7 @@ XGIScreenInit(SCREEN_INIT_ARGS_DECL)
         (pXGI->PciInfo->ioBase[2] & 0xFFFC)
 #endif
         ;
+#endif
 
     /* Map the XGI memory and MMIO areas */
     if (!XGIMapMem(pScrn)) {
