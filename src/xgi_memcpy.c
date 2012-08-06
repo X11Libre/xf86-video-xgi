@@ -1177,7 +1177,7 @@ static unsigned int XGI_GetCpuFeatures(ScrnInfoPtr pScrn)
 static vidCopyFunc
 XGIVidCopyInitGen(ScreenPtr pScreen, XGIMCFuncData *MCFunctions, vidCopyFunc *UMemCpy, Bool from)
 {
-    ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+    ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     XGIPtr pXGI = XGIPTR(pScrn);
     void *fbhandle = NULL;
     char  *frqBuf = NULL;

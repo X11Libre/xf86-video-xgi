@@ -117,7 +117,7 @@ ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink);
 static Bool
 XGIInitVisualConfigs(ScreenPtr pScreen)
 {
-  ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+  ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
   XGIPtr pXGI = XGIPTR(pScrn);
   int numConfigs = 0;
   __GLXvisualConfig *pConfigs = 0;
@@ -240,7 +240,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
   return FALSE;
 #else /* linux */
 
-  ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+  ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
   XGIPtr pXGI = XGIPTR(pScrn);
   DRIInfoPtr pDRIInfo;
   XGIDRIPtr pXGIDRI;
@@ -529,7 +529,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
 void
 XGIDRICloseScreen(ScreenPtr pScreen)
 {
-  ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+  ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
   XGIPtr pXGI = XGIPTR(pScrn);
 
   DRICloseScreen(pScreen);
@@ -573,7 +573,7 @@ XGIDestroyContext(ScreenPtr pScreen, drm_context_t hwContext,
 Bool
 XGIDRIFinishScreenInit(ScreenPtr pScreen)
 {
-  ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+  ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
   XGIPtr pXGI = XGIPTR(pScrn);
 /*  XGIPtr pXGI = XGIPTR(pScrn); */
   XGIDRIPtr pXGIDRI;
@@ -629,7 +629,7 @@ XGIDRISwapContext(ScreenPtr pScreen, DRISyncType syncType,
 		   DRIContextType oldContextType, void *oldContext,
 		   DRIContextType newContextType, void *newContext)
 {
-  ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+  ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
   XGIPtr pXGI = XGIPTR(pScrn);
 
   /* mEndPrimitive */
@@ -649,7 +649,7 @@ static void
 XGIDRIInitBuffers(WindowPtr pWin, RegionPtr prgn, CARD32 index)
 {
   ScreenPtr pScreen = pWin->drawable.pScreen;
-  ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+  ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
   XGIPtr pXGI = XGIPTR(pScrn);
 
   Volari_Idle(pXGI);
@@ -660,7 +660,7 @@ XGIDRIMoveBuffers(WindowPtr pParent, DDXPointRec ptOldOrg,
 		   RegionPtr prgnSrc, CARD32 index)
 {
   ScreenPtr pScreen = pParent->drawable.pScreen;
-  ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+  ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
   XGIPtr pXGI = XGIPTR(pScrn);
 
   Volari_Idle(pXGI);
@@ -673,7 +673,7 @@ XGIDRIMoveBuffers(WindowPtr pParent, DDXPointRec ptOldOrg,
 ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink)
 {
 	ULONG uBuffer = 0, uLink = 0, uValue = 0 ;
-	ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+	ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
 		
 	uBuffer = pciReadLong(pXGI->PciTag, uNextLink);
@@ -699,7 +699,7 @@ ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink)
  */
 ULONG IsXGIAGPCard(ScreenPtr pScreen)
 {
-    ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+    ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     XGIPtr pXGI = XGIPTR(pScrn);
 
 

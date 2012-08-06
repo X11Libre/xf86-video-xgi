@@ -128,7 +128,7 @@ static Atom xvBrightness, xvContrast, xvColorKey, xvSaturation, xvHue, xvmcUncom
 
 void XGIInitVideo(ScreenPtr pScreen)
 {
-    ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+    ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     XF86VideoAdaptorPtr *adaptors, *newAdaptors = NULL;
     XF86VideoAdaptorPtr newAdaptor = NULL;
     int num_adaptors;
@@ -387,7 +387,7 @@ XGISetPortDefaults(ScrnInfoPtr pScrn, XGIPortPrivPtr pPriv)
 static XF86VideoAdaptorPtr
 XGISetupImageVideo(ScreenPtr pScreen)
 {
-    ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+    ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     XGIPtr pXGI = XGIPTR(pScrn);
     XF86VideoAdaptorPtr adapt;
     XGIPortPrivPtr pPriv;

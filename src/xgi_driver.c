@@ -4349,8 +4349,8 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 		}
 
 		XGIPostSetMode(pScrn, &pXGI->ModeReg);
-		XGIAdjustFrame(pXGIEnt->pScrn_1->scrnIndex, pXGIEnt->pScrn_1->frameX0,
-				   pXGIEnt->pScrn_1->frameY0, 0);
+		XGIAdjustFrame(ADJUST_FRAME_ARGS(pXGIEnt->pScrn_1, pXGIEnt->pScrn_1->frameX0,
+				   pXGIEnt->pScrn_1->frameY0));
     }
     else
     {
@@ -4495,14 +4495,14 @@ XGIRestore(ScrnInfoPtr pScrn)
 
 /* Our generic BlockHandler for Xv */
 static void
-XGIBlockHandler(int i, pointer blockData, pointer pTimeout, pointer pReadmask)
+XGIBlockHandler(BLOCKHANDLER_ARGS_DECL)
 {
-    ScreenPtr pScreen = screenInfo.screens[i];
-    ScrnInfoPtr pScrn = xf86Screens[i];
+    SCREEN_PTR(arg);
+    ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     XGIPtr pXGI = XGIPTR(pScrn);
 
     pScreen->BlockHandler = pXGI->BlockHandler;
-    (*pScreen->BlockHandler) (i, blockData, pTimeout, pReadmask);
+    (*pScreen->BlockHandler) (BLOCKHANDLER_ARGS);
     pScreen->BlockHandler = XGIBlockHandler;
 
     if (pXGI->VideoTimerCallback) {
@@ -4542,7 +4542,7 @@ void xgiRestoreVirtual(ScrnInfoPtr pScrn)
  * pScrn->displayWidth : memory pitch
  */
 static Bool
-XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
+XGIScreenInit(SCREEN_INIT_ARGS_DECL)
 {
     ScrnInfoPtr pScrn;
     vgaHWPtr hwp;
@@ -4555,7 +4555,7 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
     XGIEntPtr pXGIEnt = NULL;
 
     ErrorF("XGIScreenInit\n");
-    pScrn = xf86Screens[pScreen->myNum];
+    pScrn = xf86ScreenToScrn(pScreen);
 
     PDEBUG(ErrorF("pScrn->currentMode->HDisplay = %d\n", pScrn->currentMode->HDisplay));
     PDEBUG(ErrorF("pScrn->currentMode->VDisplay = %d\n", pScrn->currentMode->VDisplay));
@@ -4689,7 +4689,8 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
     XGISaveScreen(pScreen, SCREEN_SAVER_ON);
 
     /* Set the viewport */
-    XGIAdjustFrame(scrnIndex, pScrn->frameX0, pScrn->frameY0, 0); 
+    XGIAdjustFrame(ADJUST_FRAME_ARGS(pScrn, pScrn->frameX0, pScrn->frameY0)); 
+
     /* XGIAdjustFrame(scrnIndex, 0, 0, 0); */
 
 	/* xgiRestoreVirtual(pScrn); */
@@ -5011,7 +5012,7 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 	PDEBUG(XGIDumpRegs(pScrn));
 
 	/* xgiRestoreVirtual(); */
-    XGIAdjustFrame(scrnIndex, 0, 0, 0); 
+    XGIAdjustFrame(ADJUST_FRAME_ARGS(pScrn, 0, 0)); 
 	pScrn->frameX0 = 0;
 	pScrn->frameY0 = 0; 
 	pScrn->frameX1 = pScrn->currentMode->HDisplay - 1 ;
@@ -5022,9 +5023,9 @@ XGIScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 
 /* Usually mandatory */
 Bool
-XGISwitchMode(int scrnIndex, DisplayModePtr mode, int flags)
+XGISwitchMode(SWITCH_MODE_ARGS_DECL)
 {
-    ScrnInfoPtr pScrn = xf86Screens[scrnIndex];
+    SCRN_INFO_PTR(arg);
     XGIPtr pXGI = XGIPTR(pScrn);
 
 	if(pXGI->TargetRefreshRate)
@@ -5068,10 +5069,10 @@ XGISwitchMode(int scrnIndex, DisplayModePtr mode, int flags)
 
 #if 1
     /* Jong 07/29/2009; Set the viewport; still not working */
-    XGIAdjustFrame(scrnIndex, pScrn->frameX0, pScrn->frameY0, 0);
+    XGIAdjustFrame(ADJUST_FRAME_ARGS(pScrn, pScrn->frameX0, pScrn->frameY0));
 #endif
 
-    if (!(XGIModeInit(xf86Screens[scrnIndex], mode)))
+    if (!(XGIModeInit(pScrn, mode)))
         return FALSE;
 
 
@@ -5421,14 +5422,14 @@ XGIAdjustFrameMerged(int scrnIndex, int x, int y, int flags)
  * Usually mandatory
  */
 void
-XGIAdjustFrame(int scrnIndex, int x, int y, int flags)
+XGIAdjustFrame(ADJUST_FRAME_ARGS_DECL)
 {
-    ScrnInfoPtr pScrn = xf86Screens[scrnIndex];
+    SCRN_INFO_PTR(arg);
     XGIPtr pXGI = XGIPTR(pScrn);
     unsigned long base;
     unsigned char ucSR5Stat, ucTemp;
 
-    ErrorF("AdjustFrame %d\n", scrnIndex);
+    ErrorF("AdjustFrame %d\n", pScrn->scrnIndex);
     inXGIIDXREG(XGISR, 0x05, ucSR5Stat);
     if (ucSR5Stat == 0xA1)
         ucSR5Stat = 0x86;
@@ -5480,9 +5481,9 @@ XGIAdjustFrame(int scrnIndex, int x, int y, int flags)
  * Mandatory!
  */
 static Bool
-XGIEnterVT(int scrnIndex, int flags)
+XGIEnterVT(VT_FUNC_ARGS_DECL)
 {
-    ScrnInfoPtr pScrn = xf86Screens[scrnIndex];
+    SCRN_INFO_PTR(arg);
     XGIPtr pXGI = XGIPTR(pScrn);
 
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
@@ -5492,11 +5493,11 @@ XGIEnterVT(int scrnIndex, int flags)
         return FALSE;
     }
 
-    XGIAdjustFrame(scrnIndex, pScrn->frameX0, pScrn->frameY0, 0);
+    XGIAdjustFrame(ADJUST_FRAME_ARGS(pScrn, pScrn->frameX0, pScrn->frameY0));
 
 #ifdef XF86DRI
     if (pXGI->directRenderingEnabled) {
-        DRIUnlock(screenInfo.screens[scrnIndex]);
+        DRIUnlock(xf86ScrnToScreen(pScrn));
     }
 #endif
 
@@ -5513,9 +5514,9 @@ XGIEnterVT(int scrnIndex, int flags)
  * Mandatory!
  */
 static void
-XGILeaveVT(int scrnIndex, int flags)
+XGILeaveVT(VT_FUNC_ARGS_DECL)
 {
-    ScrnInfoPtr pScrn = xf86Screens[scrnIndex];
+    SCRN_INFO_PTR(arg);
     vgaHWPtr hwp = VGAHWPTR(pScrn);
     XGIPtr pXGI = XGIPTR(pScrn);
 #ifdef XF86DRI
@@ -5523,7 +5524,7 @@ XGILeaveVT(int scrnIndex, int flags)
 
     PDEBUG(ErrorF("XGILeaveVT()\n"));
     if (pXGI->directRenderingEnabled) {
-        pScreen = screenInfo.screens[scrnIndex];
+        pScreen = xf86ScrnToScreen(pScrn);
         DRILock(pScreen, 0);
     }
 #endif
@@ -5556,9 +5557,9 @@ XGILeaveVT(int scrnIndex, int flags)
  * Mandatory!
  */
 static Bool
-XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
+XGICloseScreen(CLOSE_SCREEN_ARGS_DECL)
 {
-    ScrnInfoPtr pScrn = xf86Screens[scrnIndex];
+    ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     vgaHWPtr hwp = VGAHWPTR(pScrn);
     XGIPtr pXGI = XGIPTR(pScrn);
 
@@ -5642,7 +5643,7 @@ XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
 
     pScreen->CloseScreen = pXGI->CloseScreen;
 
-    return (*pScreen->CloseScreen) (scrnIndex, pScreen);
+    return (*pScreen->CloseScreen) (CLOSE_SCREEN_ARGS);
 }
 
 
@@ -5650,13 +5651,14 @@ XGICloseScreen(int scrnIndex, ScreenPtr pScreen)
 
 /* Optional */
 static void
-XGIFreeScreen(int scrnIndex, int flags)
+XGIFreeScreen(FREE_SCREEN_ARGS_DECL)
 {
+    SCRN_INFO_PTR(arg);
     if (xf86LoaderCheckSymbol("vgaHWFreeHWRec")) {
-        vgaHWFreeHWRec(xf86Screens[scrnIndex]);
+        vgaHWFreeHWRec(pScrn);
     }
 
-    XGIFreeRec(xf86Screens[scrnIndex]);
+    XGIFreeRec(pScrn);
 }
 
 
@@ -5858,7 +5860,7 @@ XGIValidMode(int scrnIndex, DisplayModePtr mode, Bool verbose, int flags)
 static Bool
 XGISaveScreen(ScreenPtr pScreen, int mode)
 {
-    ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+    ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
 
     if ((pScrn != NULL) && pScrn->vtSema) {
 
@@ -5877,7 +5879,7 @@ static Bool
 XGISaveScreenDH(ScreenPtr pScreen, int mode)
 {
 #ifdef XGIDUALHEAD
-    ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+    ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
 
     if ((pScrn != NULL) && pScrn->vtSema) {
         XGIPtr pXGI = XGIPTR(pScrn);

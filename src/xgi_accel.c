@@ -626,7 +626,7 @@ Volari_AccelInit(ScreenPtr pScreen)
     XAAInfoRecPtr     infoPtr;
 #endif
 
-    ScrnInfoPtr       pScrn = xf86Screens[pScreen->myNum];
+    ScrnInfoPtr       pScrn = xf86ScreenToScrn(pScreen);
     XGIPtr            pXGI = XGIPTR(pScrn);
     int               reservedFbSize;
     long               UsableFbSize;
@@ -1232,7 +1232,7 @@ Volari_SubsequentMonoPatternFill(ScrnInfoPtr pScrn,
 #ifdef XGI_USE_EXA  /* ---------------------------- EXA -------------------------- */
 void XGIEXASync(ScreenPtr pScreen, int marker)
 {
-	XGIPtr pXGI = XGIPTR(xf86Screens[pScreen->myNum]);
+	XGIPtr pXGI = XGIPTR(xf86ScreenToScrn(pScreen));
 
 	PACCELDEBUG(ErrorF("XGIEXASync()...\n"));
 
@@ -1242,7 +1242,7 @@ void XGIEXASync(ScreenPtr pScreen, int marker)
 static Bool
 XGIPrepareSolid(PixmapPtr pPixmap, int alu, Pixel planemask, Pixel fg)
 {
-	ScrnInfoPtr pScrn = xf86Screens[pPixmap->drawable.pScreen->myNum];
+	ScrnInfoPtr pScrn = xf86ScreenToScrn(pPixmap->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
 	CARD16 pitch;
 
@@ -1287,7 +1287,7 @@ XGIPrepareSolid(PixmapPtr pPixmap, int alu, Pixel planemask, Pixel fg)
 static void
 XGISolid(PixmapPtr pPixmap, int x1, int y1, int x2, int y2)
 {
-	ScrnInfoPtr pScrn = xf86Screens[pPixmap->drawable.pScreen->myNum];
+	ScrnInfoPtr pScrn = xf86ScreenToScrn(pPixmap->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
 	CARD32  Command;
 
@@ -1311,7 +1311,7 @@ static Bool
 XGIPrepareCopy(PixmapPtr pSrcPixmap, PixmapPtr pDstPixmap, int xdir, int ydir,
 					int alu, Pixel planemask)
 {
-	ScrnInfoPtr pScrn = xf86Screens[pDstPixmap->drawable.pScreen->myNum];
+	ScrnInfoPtr pScrn = xf86ScreenToScrn(pDstPixmap->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
 	CARD32 srcbase, dstbase;
 	CARD16 srcpitch, dstpitch;
@@ -1371,7 +1371,7 @@ XGIPrepareCopy(PixmapPtr pSrcPixmap, PixmapPtr pDstPixmap, int xdir, int ydir,
 static void
 XGICopy(PixmapPtr pDstPixmap, int srcX, int srcY, int dstX, int dstY, int width, int height)
 {
-	ScrnInfoPtr pScrn = xf86Screens[pDstPixmap->drawable.pScreen->myNum];
+	ScrnInfoPtr pScrn = xf86ScreenToScrn(pDstPixmap->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
 	CARD32  Command;
 
@@ -1398,7 +1398,7 @@ static Bool
 XGICheckComposite(int op, PicturePtr pSrcPicture, PicturePtr pMaskPicture,
 				PicturePtr pDstPicture)
 {
-	ScrnInfoPtr pScrn = xf86Screens[pDstPicture->pDrawable->pScreen->myNum];
+	ScrnInfoPtr pScrn = xf86ScreenToScrn(pDstPicture->pDrawable->pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
 
 	PACCELDEBUG(ErrorF("XGICheckComposite()...\n"));
@@ -1424,7 +1424,7 @@ static Bool
 XGIPrepareComposite(int op, PicturePtr pSrcPicture, PicturePtr pMaskPicture,
 				PicturePtr pDstPicture, PixmapPtr pSrc, PixmapPtr pMask, PixmapPtr pDst)
 {
-	ScrnInfoPtr pScrn = xf86Screens[pDst->drawable.pScreen->myNum];
+	ScrnInfoPtr pScrn = xf86ScreenToScrn(pDst->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
 
 	PACCELDEBUG(ErrorF("XGIPrepareComposite()...\n"));
@@ -1439,7 +1439,7 @@ static void
 XGIComposite(PixmapPtr pDst, int srcX, int srcY, int maskX, int maskY, int dstX, int dstY,
 				int width, int height)
 {
-	ScrnInfoPtr pScrn = xf86Screens[pDst->drawable.pScreen->myNum];
+	ScrnInfoPtr pScrn = xf86ScreenToScrn(pDst->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
 
 	PACCELDEBUG(ErrorF("XGIComposite()...\n"));
@@ -1534,7 +1534,7 @@ void XGIMemCopyFromVideoRam(XGIPtr pXGI, unsigned char *to, unsigned char *from,
 Bool
 XGIUploadToScreen(PixmapPtr pDst, int x, int y, int w, int h, char *src, int src_pitch)
 {
-	ScrnInfoPtr pScrn = xf86Screens[pDst->drawable.pScreen->myNum];
+	ScrnInfoPtr pScrn = xf86ScreenToScrn(pDst->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
 	unsigned char *dst = pDst->devPrivate.ptr;
 	int dst_pitch = exaGetPixmapPitch(pDst);
@@ -1587,7 +1587,7 @@ XGIUploadToScreen(PixmapPtr pDst, int x, int y, int w, int h, char *src, int src
 Bool
 XGIUploadToScratch(PixmapPtr pSrc, PixmapPtr pDst)
 {
-	ScrnInfoPtr pScrn = xf86Screens[pSrc->drawable.pScreen->myNum];
+	ScrnInfoPtr pScrn = xf86ScreenToScrn(pSrc->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
 	unsigned char *src, *dst;
 	int src_pitch = exaGetPixmapPitch(pSrc);
@@ -1665,7 +1665,7 @@ XGIUploadToScratch(PixmapPtr pSrc, PixmapPtr pDst)
 Bool
 XGIDownloadFromScreen(PixmapPtr pSrc, int x, int y, int w, int h, char *dst, int dst_pitch)
 {
-	ScrnInfoPtr pScrn = xf86Screens[pSrc->drawable.pScreen->myNum];
+	ScrnInfoPtr pScrn = xf86ScreenToScrn(pSrc->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
 	unsigned char *src = pSrc->devPrivate.ptr;
 	int src_pitch = exaGetPixmapPitch(pSrc);
@@ -1708,7 +1708,7 @@ XGIDownloadFromScreen(PixmapPtr pSrc, int x, int y, int w, int h, char *dst, int
 
 void XGIScratchSave(ScreenPtr pScreen, ExaOffscreenArea *area)
 {
-	XGIPtr pXGI = XGIPTR(xf86Screens[pScreen->myNum]);
+	XGIPtr pXGI = XGIPTR(xf86ScreenToScrn(pScreen));
 	pXGI->exa_scratch = NULL;
 }
 #endif /* EXA */

@@ -172,7 +172,7 @@ Volari_LoadCursorImage(ScrnInfoPtr pScrn, unsigned char *src)
 static Bool
 Volari_UseHWCursor(ScreenPtr pScreen, CursorPtr pCurs)
 {
-    ScrnInfoPtr       pScrn = xf86Screens[pScreen->myNum];
+    ScrnInfoPtr       pScrn = xf86ScreenToScrn(pScreen);
     DisplayModePtr     mode = pScrn->currentMode;
 
     if (mode->Flags & V_INTERLACE)
@@ -186,7 +186,7 @@ Volari_UseHWCursor(ScreenPtr pScreen, CursorPtr pCurs)
 Bool
 Volari_UseHWCursorARGB(ScreenPtr pScreen, CursorPtr pCurs)
 {
-    ScrnInfoPtr       pScrn = xf86Screens[pScreen->myNum];
+    ScrnInfoPtr       pScrn = xf86ScreenToScrn(pScreen);
     DisplayModePtr     mode = pScrn->currentMode;
     XGIPtr pXGI = XGIPTR(pScrn);
 
@@ -245,7 +245,7 @@ Volari_LoadCursorARGB(ScrnInfoPtr pScrn, CursorPtr pCursor)
 Bool
 XGIHWCursorInit(ScreenPtr pScreen)
 {
-    ScrnInfoPtr pScrn = xf86Screens[pScreen->myNum];
+    ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     XGIPtr pXGI = XGIPTR(pScrn);
     xf86CursorInfoPtr infoPtr;
 

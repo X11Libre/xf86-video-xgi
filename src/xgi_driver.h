@@ -729,17 +729,17 @@ static const unsigned char XGI301CScaling[] = {
 /* Mandatory functions */
 static void XGIIdentify(int flags);
 static Bool XGIPreInit(ScrnInfoPtr pScrn, int flags);
-static Bool XGIScreenInit(int Index, ScreenPtr pScreen, int argc, char **argv);
-static Bool XGIEnterVT(int scrnIndex, int flags);
-static void XGILeaveVT(int scrnIndex, int flags);
-static Bool XGICloseScreen(int scrnIndex, ScreenPtr pScreen);
+static Bool XGIScreenInit(SCREEN_INIT_ARGS_DECL);
+static Bool XGIEnterVT(VT_FUNC_ARGS_DECL);
+static void XGILeaveVT(VT_FUNC_ARGS_DECL);
+static Bool XGICloseScreen(CLOSE_SCREEN_ARGS_DECL);
 static Bool XGISaveScreen(ScreenPtr pScreen, int mode);
-static Bool XGISwitchMode(int scrnIndex, DisplayModePtr mode, int flags);
-static void XGIAdjustFrame(int scrnIndex, int x, int y, int flags);
+static Bool XGISwitchMode(SWITCH_MODE_ARGS_DECL);
+static void XGIAdjustFrame(ADJUST_FRAME_ARGS_DECL);
 static Bool XGISaveScreenDH(ScreenPtr pScreen, int mode);
 
 /* Optional functions */
-static void       XGIFreeScreen(int scrnIndex, int flags);
+static void       XGIFreeScreen(FREE_SCREEN_ARGS_DECL);
 
 static int      XGIValidMode(int scrnIndex, DisplayModePtr mode, Bool verbose,
                              int flags);

@@ -196,6 +196,8 @@ extern BOOL g_bRunTimeDebug;
 #include "vgatypes.h"
 #include "vb_struct.h"
 
+#include "compat-api.h"
+
 #ifdef XF86DRI
 #define XGINEWDRI
 #undef XGINEWDRI2
