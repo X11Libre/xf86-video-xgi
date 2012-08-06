@@ -169,7 +169,9 @@ extern BOOL g_bRunTimeDebug;
 #endif
 
 /* Jong 01/13/2009; support EXA */
+#ifdef HAVE_XAA_H
 #define XGI_USE_XAA 
+#endif
 /* #define XGI_USE_EXA */
 
 #ifdef XGI_USE_XAA

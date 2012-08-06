@@ -40,11 +40,12 @@
 #include "xf86_OSproc.h"
 #include "xf86Pci.h"
 #include "xf86PciInfo.h"
-#include "xaa.h"
-#include "xaalocal.h"
 #include "xgi.h"
 #include "xgi_regs.h"
 #include "dgaproc.h"
+#ifdef HAVE_XAA_H
+#include "xaalocal.h"
+#endif
 
 #ifndef NEW_DGAOPENFRAMEBUFFER
 static Bool XGI_OpenFramebuffer(ScrnInfoPtr, char **, unsigned char **,

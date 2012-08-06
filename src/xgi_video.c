@@ -78,8 +78,9 @@
 #include "xgi.h"
 #include "xf86xv.h"
 #include <X11/extensions/Xv.h>
-#include "xaa.h"
+#ifdef HAVE_XAA_H
 #include "xaalocal.h"
+#endif
 #include "dixstruct.h"
 #include "fourcc.h"
 
