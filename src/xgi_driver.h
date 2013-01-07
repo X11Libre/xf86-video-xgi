@@ -741,7 +741,7 @@ static Bool XGISaveScreenDH(ScreenPtr pScreen, int mode);
 /* Optional functions */
 static void       XGIFreeScreen(FREE_SCREEN_ARGS_DECL);
 
-static int      XGIValidMode(int scrnIndex, DisplayModePtr mode, Bool verbose,
+static int      XGIValidMode(SCRN_ARG_TYPE arg, DisplayModePtr mode, Bool verbose,
                              int flags);
 /* Internally used functions */
 static Bool    XGIMapMem(ScrnInfoPtr pScrn);

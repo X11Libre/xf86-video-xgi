@@ -5707,9 +5707,9 @@ int XGIValidateUserDefMode(XGIPtr pXGI, DisplayModePtr mode)
 /* Checks if a mode is suitable for the selected chipset. */
 
 static int
-XGIValidMode(int scrnIndex, DisplayModePtr mode, Bool verbose, int flags)
+XGIValidMode(SCRN_ARG_TYPE arg, DisplayModePtr mode, Bool verbose, int flags)
 {
-    ScrnInfoPtr pScrn = xf86Screens[scrnIndex];
+    SCRN_INFO_PTR(arg);
     XGIPtr pXGI = XGIPTR(pScrn);
     int HDisplay = mode->HDisplay;
     int VDisplay = mode->VDisplay;
