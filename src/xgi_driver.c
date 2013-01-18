@@ -1563,7 +1563,6 @@ XGIInternalDDC(ScrnInfoPtr pScrn, int crtno)
                            "CRT%d DDC EDID corrupt\n", crtno + 1);
                 return (NULL);
             }
-            xf86UnloadSubModule("ddc");
         }
         else {
             xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
