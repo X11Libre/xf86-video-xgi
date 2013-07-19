@@ -741,90 +741,86 @@ Volari_AccelInit(ScreenPtr pScreen)
 #ifdef XGIISXORGPOST70
 		PDEBUG(ErrorF("--- Xorg7 and above - 2 ---\n" )) ;
 		pXGI->EXADriverPtr->offScreenBase = obase;
-		if(pXGI->EXADriverPtr->memorySize > pXGI->EXADriverPtr->offScreenBase) 
-		{
+		if (pXGI->EXADriverPtr->memorySize > pXGI->EXADriverPtr->offScreenBase) {
 			PDEBUG(ErrorF("--- Xorg7 and above - 3 ---\n" )) ;
 			pXGI->EXADriverPtr->flags = EXA_OFFSCREEN_PIXMAPS;
+		}
 #else
-			pXGI->EXADriverPtr->card.offScreenBase = obase;
-
-			if(pXGI->EXADriverPtr->card.memorySize > pXGI->EXADriverPtr->card.offScreenBase) 
-			{
-				pXGI->EXADriverPtr->card.flags = EXA_OFFSCREEN_PIXMAPS;
+		pXGI->EXADriverPtr->card.offScreenBase = obase;
+		if (pXGI->EXADriverPtr->card.memorySize > pXGI->EXADriverPtr->card.offScreenBase) 
+		    pXGI->EXADriverPtr->card.flags = EXA_OFFSCREEN_PIXMAPS;
 #endif
-			} 
-			else 
-			{
-				pXGI->NoXvideo = TRUE;
-				xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
-					"Not enough video RAM for offscreen memory manager. Xv disabled\n");
-			}
+		else {
+		    pXGI->NoXvideo = TRUE;
+		    xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
+			       "Not enough video RAM for offscreen memory manager. Xv disabled\n");
+		}
 
 #ifdef XGIISXORGPOST70
-			PDEBUG(ErrorF("--- Xorg7 and above - 4 ---\n" )) ;
-			pXGI->EXADriverPtr->pixmapOffsetAlign = 32; /* 16; */	/* src/dst: double quad word boundary */
-			pXGI->EXADriverPtr->pixmapPitchAlign = 4;	/* pitch:   double word boundary      */
-			pXGI->EXADriverPtr->maxX = 4095;
-			pXGI->EXADriverPtr->maxY = 4095;
+		PDEBUG(ErrorF("--- Xorg7 and above - 4 ---\n" )) ;
+		pXGI->EXADriverPtr->pixmapOffsetAlign = 32; /* 16; */	/* src/dst: double quad word boundary */
+		pXGI->EXADriverPtr->pixmapPitchAlign = 4;	/* pitch:   double word boundary      */
+		pXGI->EXADriverPtr->maxX = 4095;
+		pXGI->EXADriverPtr->maxY = 4095;
 #else
-			pXGI->EXADriverPtr->card.pixmapOffsetAlign = 32; /* 16; */	/* src/dst: double quad word boundary */
-			pXGI->EXADriverPtr->card.pixmapPitchAlign = 4;	/* pitch:   double word boundary      */
-			pXGI->EXADriverPtr->card.maxX = 4095;
-			pXGI->EXADriverPtr->card.maxY = 4095;
+		pXGI->EXADriverPtr->card.pixmapOffsetAlign = 32; /* 16; */	/* src/dst: double quad word boundary */
+		pXGI->EXADriverPtr->card.pixmapPitchAlign = 4;	/* pitch:   double word boundary      */
+		pXGI->EXADriverPtr->card.maxX = 4095;
+		pXGI->EXADriverPtr->card.maxY = 4095;
 #endif
 
 #ifdef XGIISXORGPOST70
 
-			PDEBUG(ErrorF("Use EXA for HW acceleration for Xorg7 and above...\n"));
+		PDEBUG(ErrorF("Use EXA for HW acceleration for Xorg7 and above...\n"));
 
-			/* Sync */
-			pXGI->EXADriverPtr->WaitMarker = XGIEXASync;
+		/* Sync */
+		pXGI->EXADriverPtr->WaitMarker = XGIEXASync;
 
-			/* Solid fill */
-			pXGI->EXADriverPtr->PrepareSolid = XGIPrepareSolid;
-			pXGI->EXADriverPtr->Solid = XGISolid;
-			pXGI->EXADriverPtr->DoneSolid = XGIDoneSolid;
+		/* Solid fill */
+		pXGI->EXADriverPtr->PrepareSolid = XGIPrepareSolid;
+		pXGI->EXADriverPtr->Solid = XGISolid;
+		pXGI->EXADriverPtr->DoneSolid = XGIDoneSolid;
 
-			/* Copy */
-			pXGI->EXADriverPtr->PrepareCopy = XGIPrepareCopy;
-			pXGI->EXADriverPtr->Copy = XGICopy;
-			pXGI->EXADriverPtr->DoneCopy = XGIDoneCopy;
+		/* Copy */
+		pXGI->EXADriverPtr->PrepareCopy = XGIPrepareCopy;
+		pXGI->EXADriverPtr->Copy = XGICopy;
+		pXGI->EXADriverPtr->DoneCopy = XGIDoneCopy;
 
-			/* Upload, download to/from Screen */
-			pXGI->EXADriverPtr->UploadToScreen = XGIUploadToScreen;
-			pXGI->EXADriverPtr->DownloadFromScreen = XGIDownloadFromScreen;
+		/* Upload, download to/from Screen */
+		pXGI->EXADriverPtr->UploadToScreen = XGIUploadToScreen;
+		pXGI->EXADriverPtr->DownloadFromScreen = XGIDownloadFromScreen;
 
 #ifdef XGI_HAVE_COMPOSITE
-			 pXGI->EXADriverPtr->CheckComposite = XGICheckComposite;
-			 pXGI->EXADriverPtr->PrepareComposite = XGIPrepareComposite;
-			 pXGI->EXADriverPtr->Composite = XGIComposite;
-			 pXGI->EXADriverPtr->DoneComposite = XGIDoneComposite;
+		pXGI->EXADriverPtr->CheckComposite = XGICheckComposite;
+		pXGI->EXADriverPtr->PrepareComposite = XGIPrepareComposite;
+		pXGI->EXADriverPtr->Composite = XGIComposite;
+		pXGI->EXADriverPtr->DoneComposite = XGIDoneComposite;
 #endif
 #else
-			PDEBUG(ErrorF("Use EXA for HW acceleration for Xorg6.9...\n"));
+		PDEBUG(ErrorF("Use EXA for HW acceleration for Xorg6.9...\n"));
 
-			/* Sync */
-			pXGI->EXADriverPtr->accel.WaitMarker = XGIEXASync;
+		/* Sync */
+		pXGI->EXADriverPtr->accel.WaitMarker = XGIEXASync;
 
-			/* Solid fill */
-			pXGI->EXADriverPtr->accel.PrepareSolid = XGIPrepareSolid;
-			pXGI->EXADriverPtr->accel.Solid = XGISolid;
-			pXGI->EXADriverPtr->accel.DoneSolid = XGIDoneSolid;
+		/* Solid fill */
+		pXGI->EXADriverPtr->accel.PrepareSolid = XGIPrepareSolid;
+		pXGI->EXADriverPtr->accel.Solid = XGISolid;
+		pXGI->EXADriverPtr->accel.DoneSolid = XGIDoneSolid;
 
-			/* Copy */
-			pXGI->EXADriverPtr->accel.PrepareCopy = XGIPrepareCopy;
-			pXGI->EXADriverPtr->accel.Copy = XGICopy;
-			pXGI->EXADriverPtr->accel.DoneCopy = XGIDoneCopy;
+		/* Copy */
+		pXGI->EXADriverPtr->accel.PrepareCopy = XGIPrepareCopy;
+		pXGI->EXADriverPtr->accel.Copy = XGICopy;
+		pXGI->EXADriverPtr->accel.DoneCopy = XGIDoneCopy;
 
-			/* Upload, download to/from Screen */
-			pXGI->EXADriverPtr->accel.UploadToScreen = XGIUploadToScreen;
-			pXGI->EXADriverPtr->accel.DownloadFromScreen = XGIDownloadFromScreen;
+		/* Upload, download to/from Screen */
+		pXGI->EXADriverPtr->accel.UploadToScreen = XGIUploadToScreen;
+		pXGI->EXADriverPtr->accel.DownloadFromScreen = XGIDownloadFromScreen;
 
 #ifdef XGI_HAVE_COMPOSITE
-			 pXGI->EXADriverPtr->accel.CheckComposite = XGICheckComposite;
-			 pXGI->EXADriverPtr->accel.PrepareComposite = XGIPrepareComposite;
-			 pXGI->EXADriverPtr->accel.Composite = XGIComposite;
-			 pXGI->EXADriverPtr->accel.DoneComposite = XGIDoneComposite;
+		pXGI->EXADriverPtr->accel.CheckComposite = XGICheckComposite;
+		pXGI->EXADriverPtr->accel.PrepareComposite = XGIPrepareComposite;
+		pXGI->EXADriverPtr->accel.Composite = XGIComposite;
+		pXGI->EXADriverPtr->accel.DoneComposite = XGIDoneComposite;
 #endif
 #endif /* POST70 */
 	   }
