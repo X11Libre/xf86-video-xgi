@@ -70,7 +70,6 @@
 #include "vbe.h"
 
 #include "mipointer.h"
-#include "mibstore.h"
 
 #include "xgi.h"
 #include "xgi_regs.h"
