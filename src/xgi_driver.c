@@ -4894,7 +4894,6 @@ XGIScreenInit(SCREEN_INIT_ARGS_DECL)
     PDEBUG(ErrorF("--- AccelInit ---  \n"));
     PDEBUG(XGIDumpRegs(pScrn));
 
-    miInitializeBackingStore(pScreen);
     xf86SetBackingStore(pScreen);
     xf86SetSilkenMouse(pScreen);
 
