@@ -110,11 +110,8 @@
 #define DEFAULT_DPI 96
 #endif
 
-/* Jong 01/22/2009; compiler error; type conflict */
-/*
 #include <fcntl.h>
 #include <sys/ioctl.h>
-*/
 
 #ifdef XSERVER_LIBPCIACCESS
 static Bool XGIPciProbe(DriverPtr drv, int entity_num,
