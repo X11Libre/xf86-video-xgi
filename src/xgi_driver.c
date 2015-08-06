@@ -622,7 +622,7 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
 
 typedef struct 
 {
-	unsigned char   name[10];
+    char   name[10];
     unsigned int    DCLK;
     unsigned int    HDisplay;
     unsigned int    HSyncStart;
