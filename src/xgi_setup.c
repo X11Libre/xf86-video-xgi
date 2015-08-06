@@ -50,7 +50,7 @@
 /* #include "valid_mode.h" */
 
 #define _XF86DGA_SERVER_
-#include <X11/extensions/xf86dgastr.h>
+#include <X11/extensions/xf86dgaproto.h>
 
 #include "globals.h"
 #ifdef HAVE_XEXTPROTO_71
