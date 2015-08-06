@@ -7,7 +7,9 @@
 #endif 
 #ifndef u32
 #define u32 unsigned long
-#define u8 unsigned long
+#endif
+#ifndef u8
+#define u8 uint8_t
 #endif
 
 /* Jong@08052009 */
@@ -82,7 +84,9 @@
 // set bits as 1 between bit(a) and bit(b)
 #define MASK(n)         ( BITS(LARGE(n)-SMALL(n)+1) << SMALL(n) )
 // get bits [a:b]'s binary value
+#ifndef GETBITS
 #define GETBITS(b,n)    ( ((b) & MASK(n)) >> SMALL(n) ) /* Jong@08032009 */
+#endif
 // set binary value from [a:0] to [c:d]
 #define SETBITS(b, n)   ( ( (b) << ((1?n) > (0?n) ? (0?n) : (1?n)) ) & MASK(n) )
 // move bits value from [a:b] to [c:d]
