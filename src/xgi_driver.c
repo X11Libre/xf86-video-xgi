@@ -136,7 +136,7 @@ xf86MonPtr  g_pMonitorDVI=NULL; /* Jong 12/04/2007; used for filtering of CRT1 m
 
 /* Jong 07/27/2009; use run-time debug instead except for HW acceleration routines */
 /* Set Option "RunTimeDebug" to "true" in X configuration file */
-BOOL g_bRunTimeDebug=0;
+Bool g_bRunTimeDebug=0;
 
 /* Jong@09072009 */
 unsigned char g_DVI_I_SignalType = 0x00;

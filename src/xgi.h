@@ -51,7 +51,7 @@
 
 #ifndef XGI_VIDEO_HW /* avoid compile error in xgi_videohw.c; weird!  */
 /* Jong 07/27/2009; use run-time debug instead except for HW acceleration routines */
-extern BOOL g_bRunTimeDebug;
+extern Bool g_bRunTimeDebug;
 #define RUNTIMEDEBUG(p)		if(g_bRunTimeDebug)p;
 
 /* Jong@08052009 */
@@ -807,12 +807,12 @@ typedef struct {
     MonitorRangeRec CRT1Range,CRT2Range;
 
 #ifdef XGIDUALHEAD
-    BOOL 		DualHeadMode;		/* TRUE if we use dual head mode */
-    BOOL 		SecondHead;		/* TRUE is this is the second head */
+    Bool 		DualHeadMode;		/* TRUE if we use dual head mode */
+    Bool 		SecondHead;		/* TRUE is this is the second head */
     XGIEntPtr 		entityPrivate;		/* Ptr to private entity (see above) */
 #endif
     XGIFBLayout         CurrentLayout;		/* Current framebuffer layout */
-    BOOL		Primary;		/* Display adapter is primary */
+    Bool		Primary;		/* Display adapter is primary */
     xf86Int10InfoPtr    pInt;			/* Our int10 */
     
     /**
