@@ -39,11 +39,6 @@
 #include "config.h"
 #endif
 
-/* Jong 09/27/2007; added for PACKAGE_VERSION_MAJOR,... */
-#define  PACKAGE_VERSION_MAJOR   1
-#define  PACKAGE_VERSION_MINOR   1
-#define  PACKAGE_VERSION_PATCHLEVEL   0
-
 #include "xf86.h"
 #include "xf86_OSproc.h"
 

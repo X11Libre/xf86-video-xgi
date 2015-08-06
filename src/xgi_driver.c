@@ -47,10 +47,6 @@
 #include "config.h"
 #endif
 
-#define  PACKAGE_VERSION_MAJOR   6
-#define  PACKAGE_VERSION_MINOR   1
-#define  PACKAGE_VERSION_PATCHLEVEL   6803
-
 #include "fb.h"
 #include "micmap.h"
 #include "xf86.h"
