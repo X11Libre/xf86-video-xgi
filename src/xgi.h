@@ -32,13 +32,6 @@
 #ifndef _XGI_H_
 #define _XGI_H_
 
-#define DEBUG 
-#define DEBUG1
-#define DEBUG2
-#define DEBUG3
-#define DEBUG4
-#define DEBUG5
-
 /***************
 #define DEBUG 
 #define DEBUG1
