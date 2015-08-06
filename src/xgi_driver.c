@@ -78,6 +78,7 @@
 #include "vb_def.h"
 #include "xgi_driver.h"
 #include "valid_mode.h"
+#include "vb_i2c.h"
 
 #define _XF86DGA_SERVER_
 #include <X11/extensions/xf86dgaproto.h>
