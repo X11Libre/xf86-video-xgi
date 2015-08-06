@@ -65,7 +65,7 @@
 extern  int  FbDevExist;
 
 static Bool bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset,
-    ULONG ulSet, ULONG *pulValue);
+    ULONG ulSet, CARD32 *pulValue);
 static Bool bAccessNBridgePCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo,
     ULONG ulOffset, ULONG ulSet, ULONG *pulValue);
 static Bool XGI_IsXG21(ScrnInfoPtr pScrn);
@@ -659,7 +659,7 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
 }
 
 Bool
-bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset, ULONG ulSet, ULONG *pulValue)
+bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset, ULONG ulSet, CARD32 *pulValue)
 {
     XGIPtr pXGI ;
 #ifdef XSERVER_LIBPCIACCESS
