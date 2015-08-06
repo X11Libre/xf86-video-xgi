@@ -227,7 +227,7 @@ struct _XGI_HW_DEVICE_INFO
 
     ULONG  ulVideoMemorySize;    /* size, in bytes, of the memory on the board */
 
-    PUCHAR pjIOAddress;          /* base I/O address of VGA ports (0x3B0) */
+    XGIIOADDRESS pjIOAddress;          /* base I/O address of VGA ports (0x3B0) */
 
     PUCHAR pjCustomizedROMImage;
 
