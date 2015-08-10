@@ -6575,7 +6575,11 @@ XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned char value)
 #if (defined(i386) || defined(__i386) || defined(__i386__) || defined(__AMD64__))
     unsigned char *base;
 
+#ifdef XSERVER_LIBPCIACCESS
+    pci_device_map_legacy(XGIPTR(pScrn)->PciInfo, 0, 0x2000, 1, (void**)&base);
+#else
     base = xf86MapVidMem(pScrn->scrnIndex, VIDMEM_MMIO, 0, 0x2000);
+#endif
     if (!base) {
         XGIErrorLog(pScrn, "(Could not map BIOS scratch area)\n");
         return 0;
@@ -6587,7 +6591,11 @@ XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned char value)
     if (value != 0xff)
         *(base + offset) = value;
 
+#ifdef XSERVER_LIBPCIACCESS
+    pci_device_unmap_legacy(XGIPTR(pScrn)->PciInfo, (void*)base, 0x2000);
+#else
     xf86UnMapVidMem(pScrn->scrnIndex, base, 0x2000);
+#endif
 #endif
     return ret;
 }
