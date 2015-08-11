@@ -140,9 +140,7 @@ static void Volari_DisableClipping(ScrnInfoPtr pScrn);
 #ifdef XGI_USE_EXA		/* Jong 01/13/2009; support EXA */
 void XGIEXASync(ScreenPtr pScreen, int marker);
 void XGIScratchSave(ScreenPtr pScreen, ExaOffscreenArea *area);
-Bool XGIUploadToScreen(PixmapPtr pDst, int x, int y, int w, int h, char *src, int src_pitch);
 Bool XGIUploadToScratch(PixmapPtr pSrc, PixmapPtr pDst);
-Bool XGIDownloadFromScreen(PixmapPtr pSrc, int x, int y, int w, int h, char *dst, int dst_pitch);
 
 static Bool XGIPrepareSolid(PixmapPtr pPixmap, int alu, Pixel planemask, Pixel fg);
 static void XGISolid(PixmapPtr pPixmap, int x1, int y1, int x2, int y2);
@@ -787,10 +785,6 @@ Volari_AccelInit(ScreenPtr pScreen)
 		pXGI->EXADriverPtr->Copy = XGICopy;
 		pXGI->EXADriverPtr->DoneCopy = XGIDoneCopy;
 
-		/* Upload, download to/from Screen */
-		pXGI->EXADriverPtr->UploadToScreen = XGIUploadToScreen;
-		pXGI->EXADriverPtr->DownloadFromScreen = XGIDownloadFromScreen;
-
 #ifdef XGI_HAVE_COMPOSITE
 		pXGI->EXADriverPtr->CheckComposite = XGICheckComposite;
 		pXGI->EXADriverPtr->PrepareComposite = XGIPrepareComposite;
@@ -812,10 +806,6 @@ Volari_AccelInit(ScreenPtr pScreen)
 		pXGI->EXADriverPtr->accel.PrepareCopy = XGIPrepareCopy;
 		pXGI->EXADriverPtr->accel.Copy = XGICopy;
 		pXGI->EXADriverPtr->accel.DoneCopy = XGIDoneCopy;
-
-		/* Upload, download to/from Screen */
-		pXGI->EXADriverPtr->accel.UploadToScreen = XGIUploadToScreen;
-		pXGI->EXADriverPtr->accel.DownloadFromScreen = XGIDownloadFromScreen;
 
 #ifdef XGI_HAVE_COMPOSITE
 		pXGI->EXADriverPtr->accel.CheckComposite = XGICheckComposite;
@@ -1529,59 +1519,6 @@ void XGIMemCopyFromVideoRam(XGIPtr pXGI, unsigned char *to, unsigned char *from,
 }
 
 Bool
-XGIUploadToScreen(PixmapPtr pDst, int x, int y, int w, int h, char *src, int src_pitch)
-{
-	ScrnInfoPtr pScrn = xf86ScreenToScrn(pDst->drawable.pScreen);
-	XGIPtr pXGI = XGIPTR(pScrn);
-	unsigned char *dst = pDst->devPrivate.ptr;
-	int dst_pitch = exaGetPixmapPitch(pDst);
-
-	int width = w;
-	int height = h;
-
-	unsigned char * to;
-	unsigned char * from;
-	int size;
-
-	PACCELDEBUG(ErrorF("XGIUploadToScreen(dst=0x%x, x=%d, y=%d, w=%d, h=%d, src=0x%x, src_pitch=%d)...\n",
-		dst, x, y, w, h, src, src_pitch));
-	/* DisableDrawingFunctionDynamically(TRUE); */
-
-	Volari_Sync(pScrn);
-	DisableDrawingFunctionDynamically(TRUE); 
-
-	if(pDst->drawable.bitsPerPixel < 8)
-	   return FALSE;
-
-	dst += (x * pDst->drawable.bitsPerPixel / 8) + (y * dst_pitch);
-
-	size = src_pitch < dst_pitch ? src_pitch : dst_pitch;
-
-	int BytePerPixel = pDst->drawable.bitsPerPixel / 8;
-
-	/* DisableDrawingFunctionDynamically(TRUE); */
-
-	/* Jong Lin; It would be wrong if (x,y) != (0,0) */	
-	if((dst_pitch == src_pitch) && (dst_pitch/BytePerPixel == w) && (x == 0) && (y == 0))
-	{
-		   XGIMemCopyToVideoRam(pXGI, dst, (unsigned char *)src,
-				w*(pDst->drawable.bitsPerPixel/8)*h); 
-	}
-	else
-	{
-		while(h--) {
-		   XGIMemCopyToVideoRam(pXGI, dst, (unsigned char *)src,
-					(w * pDst->drawable.bitsPerPixel / 8)); 
-
-		   src += src_pitch;
-		   dst += dst_pitch;
-		}
-	}
-
-	return TRUE;
-}
-
-Bool
 XGIUploadToScratch(PixmapPtr pSrc, PixmapPtr pDst)
 {
 	ScrnInfoPtr pScrn = xf86ScreenToScrn(pSrc->drawable.pScreen);
@@ -1654,50 +1591,6 @@ XGIUploadToScratch(PixmapPtr pSrc, PixmapPtr pDst)
 	   XGIMemCopyToVideoRam(pXGI, dst, src, size); 
 	   src += src_pitch;
 	   dst += dst_pitch;
-	}
-
-	return TRUE;
-}
-
-Bool
-XGIDownloadFromScreen(PixmapPtr pSrc, int x, int y, int w, int h, char *dst, int dst_pitch)
-{
-	ScrnInfoPtr pScrn = xf86ScreenToScrn(pSrc->drawable.pScreen);
-	XGIPtr pXGI = XGIPTR(pScrn);
-	unsigned char *src = pSrc->devPrivate.ptr;
-	int src_pitch = exaGetPixmapPitch(pSrc);
-	int size = src_pitch < dst_pitch ? src_pitch : dst_pitch;
-
-	/* Jong 02/13/2009; quit X while opening console terminal */
-	/* return(FALSE); */
-	/* DisableDrawingFunctionDynamically(TRUE); */
-
-	Volari_Sync(pScrn);
-	DisableDrawingFunctionDynamically(TRUE); 
-
-	if(pSrc->drawable.bitsPerPixel < 8)
-	   return FALSE;
-
-	src += (x * pSrc->drawable.bitsPerPixel / 8) + (y * src_pitch);
-
-	int BytePerPixel = pSrc->drawable.bitsPerPixel / 8;
-
-	/* DisableDrawingFunctionDynamically(TRUE); */
-
-	if((src_pitch == dst_pitch) && (dst_pitch/BytePerPixel == w) && (x == 0) && (y == 0))
-	{
-		PDEBUG(ErrorF("src_pitch == dst_pitch...\n"));
-	   	XGIMemCopyFromVideoRam(pXGI, (unsigned char *)dst, src, 
-					(w * pSrc->drawable.bitsPerPixel / 8)*h); 
-	}
-	else 
-	{
-		while(h--) {
-	   		XGIMemCopyFromVideoRam(pXGI, (unsigned char *)dst, src,
-						(w * pSrc->drawable.bitsPerPixel / 8)); 
-		   src += src_pitch;
-		   dst += dst_pitch;
-		}
 	}
 
 	return TRUE;
