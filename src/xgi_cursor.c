@@ -208,7 +208,7 @@ Volari_LoadCursorARGB(ScrnInfoPtr pScrn, CursorPtr pCursor)
     unsigned long cursor_addr = pXGI->CursorOffset ;
     unsigned long cursor_base = pXGI->CursorOffset/1024 ;
     unsigned char *pCursorShape ;
-	int i , j ; CARD32 *pDest,*pSrc ;
+	int i , j ; uint32_t *pDest,*pSrc ;
 	CursorBitsPtr pCursorBits = pCursor->bits ;
 
 
@@ -223,7 +223,7 @@ Volari_LoadCursorARGB(ScrnInfoPtr pScrn, CursorPtr pCursor)
 
 	for( i = 64 - pCursorBits->height ; i< 64 ; i++ )
 	{
-		pDest = (CARD32 *)(pCursorShape + i*64*4 ) ;
+		pDest = (uint32_t *)(pCursorShape + i*64*4 ) ;
 		for( j = 64-pCursorBits->width ; j < 64 ; j++, pSrc++ )
 		{
 			pDest[j] = *pSrc ;

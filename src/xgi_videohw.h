@@ -33,39 +33,39 @@ typedef struct {
 
    int     pixelFormat;
 
-   CARD32  pitch;
+   uint32_t  pitch;
 
-   CARD8   keyOP;
-   CARD16  HUSF;
-   CARD16  VUSF;
-   CARD8   IntBit;
-   CARD8   wHPre;
+   uint8_t   keyOP;
+   uint16_t  HUSF;
+   uint16_t  VUSF;
+   uint8_t   IntBit;
+   uint8_t   wHPre;
    float   f_scale;
 
-   CARD16  srcW;
-   CARD16  srcH;
+   uint16_t  srcW;
+   uint16_t  srcH;
 
    BoxRec  dstBox;
 
-   CARD32  PSY;
-   CARD32  PSV;
-   CARD32  PSU;
-   CARD8   bobEnable;
+   uint32_t  PSY;
+   uint32_t  PSV;
+   uint32_t  PSU;
+   uint8_t   bobEnable;
 
-   CARD32  lineBufSize;
+   uint32_t  lineBufSize;
 
-   CARD32  dwContrastFactor;
-   CARD32  SamplePixel;
+   uint32_t  dwContrastFactor;
+   uint32_t  SamplePixel;
 
 } XGIOverlayRec, *XGIOverlayPtr;
 
 /******************************************************************************/
 /* BIT OPERATION */
 /******************************************************************************/
-#define LOBYTE(x)       ((CARD8)(x&0xFF))
-#define HIBYTE(x)       ((CARD8)((x>>8)&0xFF))
-#define LOWORD(x)   ((CARD16)(x&0xFFFF))
-#define HIWORD(x)   ((CARD16)((x>>16)&0xFFFF))
+#define LOBYTE(x)       ((uint8_t)(x&0xFF))
+#define HIBYTE(x)       ((uint8_t)((x>>8)&0xFF))
+#define LOWORD(x)   ((uint16_t)(x&0xFFFF))
+#define HIWORD(x)   ((uint16_t)((x>>16)&0xFFFF))
 
 /******************************************************************************/
 /* DEFINITIONS FOR VIDEO PORT */
@@ -339,10 +339,10 @@ typedef struct {
 /*******************************
 *       Function               *
 *******************************/
-/* static CARD8 vblank_active_CRT1(XGIPtr); */
+/* static uint8_t vblank_active_CRT1(XGIPtr); */
 void SetOverlayReg(XGIPtr, XGIOverlayPtr);
-void SetColorkeyReg(XGIPtr, CARD32);
-void SetSelectOverlayReg(XGIPtr, CARD8);
+void SetColorkeyReg(XGIPtr, uint32_t);
+void SetSelectOverlayReg(XGIPtr, uint8_t);
 void SetEnableOverlayReg(XGIPtr, Bool);
 void SetCloseOverlayReg(XGIPtr);
 

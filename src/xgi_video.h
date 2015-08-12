@@ -65,7 +65,7 @@ typedef struct {
 #endif
 
     int             fbSize;
-    CARD32          bufAddr[2];
+    uint32_t          bufAddr[2];
 
     unsigned char   currentBuf;
 
@@ -80,15 +80,15 @@ typedef struct {
     INT32   hue;
 
     RegionRec       clip;
-    CARD32          colorKey;
+    uint32_t          colorKey;
 
-    CARD32          videoStatus;
+    uint32_t          videoStatus;
     Time            offTime;
     Time            freeTime;
 	
 	short	 linebufMergeLimit;
 
-    CARD32                  displayMode;
+    uint32_t                  displayMode;
 
 	Bool            grabbedByV4L;  /*V4L stuff*/
 	int             pitch;

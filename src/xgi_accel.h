@@ -239,16 +239,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + 0x823C) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(pXGI->CommandReg) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + 0x823C) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(pXGI->CommandReg) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -274,16 +274,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 			g_srcbase = base; \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + 0x8200) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(base) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + 0x8200) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(base) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -311,16 +311,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + 0x8204) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(pitch) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + 0x8204) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(pitch) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -348,16 +348,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 				g_src_y = y; \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + 0x8208) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32((x<<16)+(y&0xFFFF)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + 0x8208) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32((x<<16)+(y&0xFFFF)) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -384,16 +384,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 				g_dstbase=base; \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + 0x8210) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(base) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + 0x8210) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(base) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -421,16 +421,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 				g_dst_y = y; \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + 0x820C) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(((x)<<16)+((y)&0xFFFF)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + 0x820C) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(((x)<<16)+((y)&0xFFFF)) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -458,16 +458,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 		g_DstRectY = y; \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + 0x8214) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(((y)<<16)|((x)&0xFFFF)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + 0x8214) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(((y)<<16)|((x)&0xFFFF)) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -506,16 +506,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 			g_height = h; \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + 0x8218) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(((h)<<16)|((w)&0xffff)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + 0x8218) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(((h)<<16)|((w)&0xffff)) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -559,16 +559,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 		g_MonoPatFgColor = color; \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(7)) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(color) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(7)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(color) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -589,16 +589,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 		g_MonoPatBgColor = color; \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(8)) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(color) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(8)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(color) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -615,16 +615,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(9)) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(color) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(9)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(color) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -640,16 +640,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(10)) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(color) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(10)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(color) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -673,16 +673,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + 0x822C) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(p0) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + 0x822C) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(p0) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -698,16 +698,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + 0x8230) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(p1) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + 0x8230) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(p1) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -735,16 +735,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(13)) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(((top)<<16)|((left)&0xffff)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(13)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(((top)<<16)|((left)&0xffff)) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -760,16 +760,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(13)) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(((top)<<16)|((left)&0xffff)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(13)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(((top)<<16)|((left)&0xffff)) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -785,16 +785,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(14)) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(((right) & 0xFFFF) | ((bottom)<<16))) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(14)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(((right) & 0xFFFF) | ((bottom)<<16))) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -860,16 +860,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 			g_src_y = x; \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(2)) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(((y)<<16) | ((x)&0xFFFF) ) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(2)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(((y)<<16) | ((x)&0xFFFF) ) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -889,16 +889,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 			g_dst_y = x; \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(3)) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(((y)<<16) | ((x)&0xFFFF) ) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(3)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(((y)<<16) | ((x)&0xFFFF) ) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -917,16 +917,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 		if(c != g_width) \
 		{ \
 			g_width = c; \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(6) + 0x30000 ) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(((c)&0xffff)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(6) + 0x30000 ) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(((c)&0xffff)) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -945,16 +945,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 			g_height = c; \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(6) + 0xC0000 ) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(((p)<<16)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(6) + 0xC0000 ) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(((p)<<16)) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -974,16 +974,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 			g_height = p; \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(6)) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(((p)<<16)|((c)&0xffff)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(6)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(((p)<<16)|((c)&0xffff)) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \
@@ -999,16 +999,16 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         \
         ulTemp = Volari_GetSwWP() ;\
         \
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = \
-            (CARD32)BE_SWAP32(GR_SKPC_HEADER + BR(11)) ;\
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) =\
-            (CARD32)BE_SWAP32(ls) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = \
+            (uint32_t)BE_SWAP32(GR_SKPC_HEADER + BR(11)) ;\
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) =\
+            (uint32_t)BE_SWAP32(ls) ;\
         if( pXGI->Chipset == PCI_CHIP_XGIXG40 ) \
         { \
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
-            *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = \
-                (CARD32)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
+            *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = \
+                (uint32_t)BE_SWAP32(GR_NIL_CMD) ;\
             ulTemp += 0x10 ;\
         } \
         else if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) \

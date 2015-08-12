@@ -345,7 +345,7 @@ XGI_BlitRect(
       int ydir = (srcy < dsty) ? -1 : 1;
 
       (*pXGI->AccelInfoPtr->SetupForScreenToScreenCopy)(
-          pScrn, xdir, ydir, GXcopy, (CARD32)~0, -1);
+          pScrn, xdir, ydir, GXcopy, (uint32_t)~0, -1);
       (*pXGI->AccelInfoPtr->SubsequentScreenToScreenCopy)(
           pScrn, srcx, srcy, dstx, dsty, w, h);
       SET_SYNC_FLAG(pXGI->AccelInfoPtr);

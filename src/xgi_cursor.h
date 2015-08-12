@@ -162,7 +162,7 @@
 /* Jill, read MMIO need swap, 2006/6/22*/
 #define xgiG2CRT1_EnableHWCursor(cursor_base,pat_id)\
 	{\
-	    CARD32 ulTemp ;\
+	    uint32_t ulTemp ;\
 		ulTemp = XGIMMIOLONG(0x8500) ;\
 		ulTemp = BE_SWAP32(ulTemp) ;\
 		ulTemp &= 0x00FC0000 ;\
@@ -180,7 +180,7 @@
 /* Jill, read MMIO need swap, 2006/6/22*/
 #define xgiG2CRT2_EnableHWCursor(cursor_base,pat_id)\
 	{\
-	    CARD32 ulTemp ;\
+	    uint32_t ulTemp ;\
 		ulTemp = XGIMMIOLONG(0x8520) ;\
 		ulTemp = BE_SWAP32(ulTemp) ;\
 		ulTemp &= 0x00FC0000 ;\
@@ -193,7 +193,7 @@
 /* Jong 09/19/2007; added for ??? */
 #define xgiG2CRT1_EnableARGBHWCursor(cursor_base,pat_id)\
 	{\
-	    CARD32 ulTemp ;\
+	    uint32_t ulTemp ;\
 		ulTemp = XGIMMIOLONG(0x8500) ;\
 		ulTemp &= 0x00FC0000 ;\
 		ulTemp |= 0xE<<28 ;\
@@ -204,7 +204,7 @@
 
 #define xgiG2CRT2_EnableARGBHWCursor(cursor_base,pat_id)\
 	{\
-	    CARD32 ulTemp ;\
+	    uint32_t ulTemp ;\
 		ulTemp = XGIMMIOLONG(0x8500) ;\
 		ulTemp &= 0x00FC0000 ;\
 		ulTemp |= 0xE<<28 ;\

@@ -32,10 +32,10 @@
 
 /* For calculating refresh rate index (CR33) */
 static const struct _xgi_vrate {
-    CARD16 idx;
-    CARD16 xres;
-    CARD16 yres;
-    CARD16 refresh;
+    uint16_t idx;
+    uint16_t xres;
+    uint16_t yres;
+    uint16_t refresh;
     BOOLEAN XGI730valid32bpp;
 } xgix_vrate[] = {
 	{1,  320,  200,  70,  TRUE},

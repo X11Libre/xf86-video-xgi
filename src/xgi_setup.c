@@ -533,7 +533,7 @@ Bool ForceToDisable2DEngine(ScrnInfoPtr pScrn)
 {
     XGIPtr pXGI ;
 	Bool   bReturn=FALSE;
-    CARD8  bForce;
+    uint8_t  bForce;
 
     pXGI = XGIPTR(pScrn); 
 

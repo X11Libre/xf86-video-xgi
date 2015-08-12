@@ -319,44 +319,44 @@ struct _XGI_HW_DEVICE_INFO
 typedef struct _XGIFB_INFO xgifb_info, *pxgifb_info;
 
 struct _XGIFB_INFO {
-	CARD32 	xgifb_id;         	/* for identifying xgifb */
+	uint32_t 	xgifb_id;         	/* for identifying xgifb */
 #ifndef XGIFB_ID
 #define XGIFB_ID	  0x53495346    /* Identify myself with 'XGIF' */
 #endif
- 	CARD32 	chip_id;		/* PCI ID of detected chip */
-	CARD32	memory;			/* video memory in KB which xgifb manages */
-	CARD32	heapstart;             	/* heap start (= xgifb "mem" argument) in KB */
-	CARD8 	fbvidmode;		/* current xgifb mode */
+	uint32_t 	chip_id;		/* PCI ID of detected chip */
+	uint32_t	memory;			/* video memory in KB which xgifb manages */
+	uint32_t	heapstart;             	/* heap start (= xgifb "mem" argument) in KB */
+	uint8_t 	fbvidmode;		/* current xgifb mode */
 
-	CARD8 	xgifb_version;
-	CARD8	xgifb_revision;
-	CARD8 	xgifb_patchlevel;
+	uint8_t 	xgifb_version;
+	uint8_t	xgifb_revision;
+	uint8_t 	xgifb_patchlevel;
 
-	CARD8 	xgifb_caps;		/* xgifb's capabilities */
+	uint8_t 	xgifb_caps;		/* xgifb's capabilities */
 
-	CARD32 	xgifb_tqlen;		/* turbo queue length (in KB) */
+	uint32_t 	xgifb_tqlen;		/* turbo queue length (in KB) */
 
-	CARD32 	xgifb_pcibus;      	/* The card's PCI ID */
-	CARD32 	xgifb_pcislot;
-	CARD32 	xgifb_pcifunc;
+	uint32_t 	xgifb_pcibus;      	/* The card's PCI ID */
+	uint32_t 	xgifb_pcislot;
+	uint32_t 	xgifb_pcifunc;
 
-	CARD8 	xgifb_lcdpdc;
+	uint8_t 	xgifb_lcdpdc;
 
-	CARD8	xgifb_lcda;
+	uint8_t	xgifb_lcda;
 
-	CARD32	xgifb_vbflags;
-	CARD32	xgifb_currentvbflags;
+	uint32_t	xgifb_vbflags;
+	uint32_t	xgifb_currentvbflags;
 
-	CARD32 	xgifb_scalelcd;
-	CARD32 	xgifb_specialtiming;
+	uint32_t 	xgifb_scalelcd;
+	uint32_t 	xgifb_specialtiming;
 
-	CARD8 	xgifb_haveemi;
-	CARD8 	xgifb_emi30,xgifb_emi31,xgifb_emi32,xgifb_emi33;
-	CARD8 	xgifb_haveemilcd;
+	uint8_t 	xgifb_haveemi;
+	uint8_t 	xgifb_emi30,xgifb_emi31,xgifb_emi32,xgifb_emi33;
+	uint8_t 	xgifb_haveemilcd;
 
-	CARD8 	xgifb_lcdpdca;
+	uint8_t 	xgifb_lcdpdca;
 
-	CARD8 reserved[212]; 		/* for future use */
+	uint8_t reserved[212]; 		/* for future use */
 };
 #endif
 

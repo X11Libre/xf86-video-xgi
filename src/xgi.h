@@ -618,7 +618,7 @@ typedef struct {
     unsigned long       FbAddress;      /* VRAM physical address (in DHM: for each Fb!) */
     unsigned long       realFbAddress;  /* For DHM/PCI mem mapping: store global FBAddress */
     unsigned char *     FbBase;         /* VRAM virtual linear address */
-    CARD32              IOAddress;      /* MMIO physical address */
+    uint32_t              IOAddress;    /* MMIO physical address */
     unsigned char *     IOBase;         /* MMIO linear address */
     unsigned long           IODBase;        /* Base of PIO memory area */
 #ifdef __alpha__
@@ -659,7 +659,7 @@ typedef struct {
     int                 CommandReg;
 
     Bool                HWCursor;
-    CARD16		        CursorSize;  		/* Size of HWCursor area (bytes) */
+    uint16_t		CursorSize;  		/* Size of HWCursor area (bytes) */
     xf86CursorInfoPtr   CursorInfoPtr;
     unsigned            CursorOffset;
 
@@ -677,10 +677,10 @@ typedef struct {
 #ifdef XGI_USE_EXA /* Jong 01/13/2009; support EXA */
     ExaDriverPtr		EXADriverPtr;
     int			fillPitch, fillBpp;
-    CARD32		fillDstBase;
+    uint32_t		fillDstBase;
     int			copyBpp;
     int			copySPitch, copyDPitch;
-    CARD32		copySrcBase, copyDstBase;
+    uint32_t		copySrcBase, copyDstBase;
     int			copyXdir, copyYdir;
     ExaOffscreenArea*	exa_scratch;
     unsigned int 		exa_scratch_next;
@@ -793,8 +793,8 @@ typedef struct {
     unsigned char 	LCDon;
     Bool 		Blank;
     int 		CRT1off;		/* 1=CRT1 off, 0=CRT1 on */
-    CARD16 		LCDheight;		/* Vertical resolution of LCD panel */
-    CARD16 		LCDwidth;		/* Horizontal resolution of LCD panel */
+    uint16_t 		LCDheight;		/* Vertical resolution of LCD panel */
+    uint16_t 		LCDwidth;		/* Horizontal resolution of LCD panel */
     vbeInfoPtr 		pVbe;			/* For VESA mode switching */
     UCHAR ScratchSet[16];
     MonitorRangeRec CRT1Range,CRT2Range;
@@ -842,10 +842,10 @@ typedef struct {
     BOOLEAN		XvDefDisableGfx, XvDefDisableGfxLR;
     BOOLEAN		XvUseMemcpy;
     int			XvGammaRed, XvGammaGreen, XvGammaBlue;
-    CARD8		XvGammaRampRed[256], XvGammaRampGreen[256], XvGammaRampBlue[256];
+    uint8_t		XvGammaRampRed[256], XvGammaRampGreen[256], XvGammaRampBlue[256];
     BOOLEAN		disablecolorkeycurrent;
-    CARD32		colorKey;
-    CARD32		MiscFlags;
+    uint32_t		colorKey;
+    uint32_t		MiscFlags;
 
 #ifdef XGI_USE_XAA
     FBLinearPtr		AccelLinearScratch;

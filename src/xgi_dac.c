@@ -577,17 +577,17 @@ void XGIAdjustGamma(ScrnInfoPtr pScrn, unsigned int gammaRed, unsigned int gamma
 	double red = 1.0 / (double)((double)gammaRed / 1000);
     double green = 1.0 / (double)((double)gammaGreen / 1000);
     double blue = 1.0 / (double)((double)gammaBlue / 1000);
-	CARD8  GammaRampRed[256], GammaRampGreen[256], GammaRampBlue[256];
+	uint8_t  GammaRampRed[256], GammaRampGreen[256], GammaRampBlue[256];
 
     for(i = 0; i <= num; i++) {
         GammaRampRed[i] =
-	    (red == 1.0) ? i : (CARD8)(pow((double)i / (double)num, red) * (double)num + 0.5);
+	    (red == 1.0) ? i : (uint8_t)(pow((double)i / (double)num, red) * (double)num + 0.5);
 
 		GammaRampGreen[i] =
-	    (green == 1.0) ? i : (CARD8)(pow((double)i / (double)num, green) * (double)num + 0.5);
+	    (green == 1.0) ? i : (uint8_t)(pow((double)i / (double)num, green) * (double)num + 0.5);
 
 		GammaRampBlue[i] =
-	    (blue == 1.0) ? i : (CARD8)(pow((double)i / (double)num, blue) * (double)num + 0.5);
+	    (blue == 1.0) ? i : (uint8_t)(pow((double)i / (double)num, blue) * (double)num + 0.5);
     }
 
 	/* set gamma ramp to HW */

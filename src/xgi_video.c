@@ -120,7 +120,7 @@ static int XGIOpenV4l(XGIPortPrivPtr pPriv);
 static void XGICloseV4l(XGIPortPrivPtr pPriv);           
 #endif //VC    
 
-extern void SetSRRegMask(XGIPtr, CARD8, CARD8, CARD8);
+extern void SetSRRegMask(XGIPtr, uint8_t, uint8_t, uint8_t);
 extern void XGIUpdateXvGamma(XGIPtr, XGIPortPrivPtr);
 #define MAKE_ATOM(a) MakeAtom(a, sizeof(a) - 1, TRUE)
 
@@ -708,7 +708,7 @@ set_scale_factor(XGIOverlayPtr pOverlay)
   float  f_temp;
   int   NewPitch, srcPitch;
 
-  CARD32 I=0;
+  uint32_t I=0;
 
   int dstW = pOverlay->dstBox.x2 - pOverlay->dstBox.x1;
   int dstH = pOverlay->dstBox.y2 - pOverlay->dstBox.y1;
@@ -752,7 +752,7 @@ set_scale_factor(XGIOverlayPtr pOverlay)
 	           I++;
 	     }
 
-	     pOverlay->wHPre = (CARD8)(I - 1);
+	     pOverlay->wHPre = (uint8_t)(I - 1);
 	     dstW <<= (I - 1);
 
 	     f_temp = srcW/dstW;
@@ -788,7 +788,7 @@ set_scale_factor(XGIOverlayPtr pOverlay)
 	/* downscale in vertical */
 	else {
 
-	        CARD32 realI;
+	        uint32_t realI;
 
 	        I = realI = srcH / dstH;
 	        pOverlay->IntBit |= 0x02;
@@ -819,20 +819,20 @@ set_scale_factor(XGIOverlayPtr pOverlay)
 	        }
 	}
 
-	pOverlay->pitch = (CARD16)(NewPitch);
+	pOverlay->pitch = (uint16_t)(NewPitch);
  }
 
 void
 set_contrast_factor(XGIPtr pXGI, XGIOverlayPtr pOverlay)
 {
    ScrnInfoPtr    pScrn = pXGI->pScrn;
-   CARD16         screenX = pScrn->currentMode->HDisplay;
-   CARD16         screenY = pScrn->currentMode->VDisplay;
+   uint16_t         screenX = pScrn->currentMode->HDisplay;
+   uint16_t         screenY = pScrn->currentMode->VDisplay;
 
-   CARD32         value, SamplePixel, dwTotalPixel;
+   uint32_t         value, SamplePixel, dwTotalPixel;
 
-   CARD16         top, left;
-   CARD16         bottom, right;
+   uint16_t         top, left;
+   uint16_t         bottom, right;
 
     top    = pOverlay->dstBox.y1;
     bottom = pOverlay->dstBox.y2;
@@ -872,9 +872,9 @@ set_contrast_factor(XGIPtr pXGI, XGIOverlayPtr pOverlay)
 static void
 set_line_buf_size(XGIOverlayPtr pOverlay)
 {
-    CARD8   preHIDF;
-    CARD32 dwI;
-    CARD32 dwSrcWidth = pOverlay->srcW;
+    uint8_t   preHIDF;
+    uint32_t dwI;
+    uint32_t dwSrcWidth = pOverlay->srcW;
     int	   pixelFormat = pOverlay->pixelFormat;
 
     if ((pixelFormat == PIXEL_FMT_YV12) ||

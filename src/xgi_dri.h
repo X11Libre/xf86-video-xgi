@@ -49,7 +49,7 @@ typedef struct {
   unsigned int FrameCount;
   
   unsigned long shareWPoffset;
-  /*CARD16*/
+  /*uint16_t*/
   /*unsigned short RelIO;*/
 
   /* 2001/12/16 added by jjtseng for some bala reasons .... */

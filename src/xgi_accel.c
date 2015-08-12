@@ -183,7 +183,7 @@ extern int FbDevExist;
 	{ \
 		/* Jong - Good method for performance evaluation */ \
 		/*-----------------------------------------------*/ \
-		CARD8   CR37=0x00; /* Jong 09/11/2008; [7] for disable/enable NULL function dynamically */ \
+		uint8_t   CR37=0x00; /* Jong 09/11/2008; [7] for disable/enable NULL function dynamically */ \
 		/* Jong 09/12/2008; disable NULL function of HW acceleration dynamically by CR37[7] */ \
 		/* After test, this extra IO doesn't have significant loading */ \
 		CR37=XGI_GetReg(pXGI->XGI_Pr->P3d4, 0x37); \
@@ -201,7 +201,7 @@ extern int FbDevExist;
 #if X_BYTE_ORDER == X_BIG_ENDIAN
 #define BE_SWAP32(x) lswapl(x)
 #else 
-static CARD32 BE_SWAP32 (CARD32 val)
+static uint32_t BE_SWAP32 (uint32_t val)
 {
 	PACCELDEBUG(ErrorF("X_LITTLE_ENDIAN...\n"));
 	return val;
@@ -558,13 +558,13 @@ Volari_DisableDualPipe(ScrnInfoPtr pScrn)
 
     ulTemp = Volari_GetSwWP() ;
 
-    *(CARD32 *)(pXGI->cmdQueueBase+ulTemp) = (CARD32)BE_SWAP32(GR_SKPC_HEADER + 0x8240) ;
-    *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+4) = (CARD32)BE_SWAP32(ulValue) ;
+    *(uint32_t *)(pXGI->cmdQueueBase+ulTemp) = (uint32_t)BE_SWAP32(GR_SKPC_HEADER + 0x8240) ;
+    *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+4) = (uint32_t)BE_SWAP32(ulValue) ;
 
     if( pXGI->Chipset == PCI_CHIP_XGIXG40 )
     {
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+8) = (CARD32)BE_SWAP32(GR_NIL_CMD) ;
-        *(CARD32 *)(pXGI->cmdQueueBase+ulTemp+12) = (CARD32)BE_SWAP32(GR_NIL_CMD) ;
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+8) = (uint32_t)BE_SWAP32(GR_NIL_CMD) ;
+        *(uint32_t *)(pXGI->cmdQueueBase+ulTemp+12) = (uint32_t)BE_SWAP32(GR_NIL_CMD) ;
 
         ulTemp += 0x10 ;
     }
@@ -1231,7 +1231,7 @@ XGIPrepareSolid(PixmapPtr pPixmap, int alu, Pixel planemask, Pixel fg)
 {
 	ScrnInfoPtr pScrn = xf86ScreenToScrn(pPixmap->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
-	CARD16 pitch;
+	uint16_t pitch;
 
 	PACCELDEBUG(ErrorF("XGIPrepareSolid...\n"));
 	/* DisableDrawingFunctionDynamically(TRUE); */
@@ -1265,7 +1265,7 @@ XGIPrepareSolid(PixmapPtr pPixmap, int alu, Pixel planemask, Pixel fg)
 	Volari_SetupROP(xgiG2_PatALUConv[alu])
 	Volari_SetupCMDFlag(PATFG | BITBLT)
 
-	pXGI->fillDstBase = (CARD32)exaGetPixmapOffset(pPixmap); /* FBOFFSET is not used for Z-series */
+	pXGI->fillDstBase = (uint32_t)exaGetPixmapOffset(pPixmap); /* FBOFFSET is not used for Z-series */
 	PACCELDEBUG(ErrorF("pXGI->fillDstBase=0x%x...\n", pXGI->fillDstBase));
 
 	return TRUE;
@@ -1276,7 +1276,7 @@ XGISolid(PixmapPtr pPixmap, int x1, int y1, int x2, int y2)
 {
 	ScrnInfoPtr pScrn = xf86ScreenToScrn(pPixmap->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
-	CARD32  Command;
+	uint32_t  Command;
 
 	PACCELDEBUG(ErrorF("XGISolid...\n"));
 	PACCELDEBUG(ErrorF("pXGI->CommandReg = 0x%x...\n", pXGI->CommandReg));
@@ -1300,8 +1300,8 @@ XGIPrepareCopy(PixmapPtr pSrcPixmap, PixmapPtr pDstPixmap, int xdir, int ydir,
 {
 	ScrnInfoPtr pScrn = xf86ScreenToScrn(pDstPixmap->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
-	CARD32 srcbase, dstbase;
-	CARD16 srcpitch, dstpitch;
+	uint32_t srcbase, dstbase;
+	uint16_t srcpitch, dstpitch;
 
 	PACCELDEBUG(ErrorF("XGIPrepareCopy()...\n"));
 	PACCELDEBUG(ErrorF("pSrcPixmap->devPrivate.ptr=0x%x, pDstPixmap->devPrivate.ptr=0x%x...\n", 
@@ -1330,9 +1330,9 @@ XGIPrepareCopy(PixmapPtr pSrcPixmap, PixmapPtr pDstPixmap, int xdir, int ydir,
 	if((dstpitch = exaGetPixmapPitch(pDstPixmap)) & 3)
 	   return FALSE;
 
-	srcbase = (CARD32)exaGetPixmapOffset(pSrcPixmap); /* FBOFFSET is not used for Z-series */;
+	srcbase = (uint32_t)exaGetPixmapOffset(pSrcPixmap); /* FBOFFSET is not used for Z-series */;
 
-	dstbase = (CARD32)exaGetPixmapOffset(pDstPixmap); /* FBOFFSET is not used for Z-series */
+	dstbase = (uint32_t)exaGetPixmapOffset(pDstPixmap); /* FBOFFSET is not used for Z-series */
 
 	/* TODO: Will there eventually be overlapping blits?
 	 * If so, good night. Then we must calculate new base addresses
@@ -1360,7 +1360,7 @@ XGICopy(PixmapPtr pDstPixmap, int srcX, int srcY, int dstX, int dstY, int width,
 {
 	ScrnInfoPtr pScrn = xf86ScreenToScrn(pDstPixmap->drawable.pScreen);
 	XGIPtr pXGI = XGIPTR(pScrn);
-	CARD32  Command;
+	uint32_t  Command;
 
 	PACCELDEBUG(ErrorF("XGICopy()...\n"));
 	PACCELDEBUG(ErrorF("srcX=%d, srcY=%d, dstX=%d, dstY=%d...\n", srcX, srcY, dstX, dstY));
@@ -1621,7 +1621,7 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn)
 	for( i = 0 ; i < SwWP ; i+=0x04 )
 	{
 		ErrorF("[%04X]: %08lX\n",i,
-		    (unsigned long)*(CARD32 *)(pXGI->cmdQueueBase+i));
+		    (unsigned long)*(uint32_t *)(pXGI->cmdQueueBase+i));
 	}
 }
 

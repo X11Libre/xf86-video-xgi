@@ -43,31 +43,31 @@
 
 #define  CAPTURE_340A1
 /*
-static CARD32 _XGIRead(XGIPtr pXGI, CARD32 reg)
+static uint32_t _XGIRead(XGIPtr pXGI, uint32_t reg)
 {
     return *(pXGI->IOBase + reg);
 }
 
-static void _XGIWrite(XGIPtr pXGI, CARD32 reg, CARD32 data)
+static void _XGIWrite(XGIPtr pXGI, uint32_t reg, uint32_t data)
 {
     *(pXGI->IOBase + reg) = data;
 }
 */
-static CARD8 GetVideoReg(XGIPtr pXGI, CARD8 reg)
+static uint8_t GetVideoReg(XGIPtr pXGI, uint8_t reg)
 {
     outb (pXGI->RelIO + vi_index_offset, reg);
     return inb(pXGI->RelIO + vi_data_offset);
 }
 
-static void SetVideoReg(XGIPtr pXGI, CARD8 reg, CARD8 data)
+static void SetVideoReg(XGIPtr pXGI, uint8_t reg, uint8_t data)
 {
     outb (pXGI->RelIO + vi_index_offset, reg);
     outb (pXGI->RelIO + vi_data_offset, data);
 }
 
-static void SetVideoRegMask(XGIPtr pXGI, CARD8 reg, CARD8 data, CARD8 mask)
+static void SetVideoRegMask(XGIPtr pXGI, uint8_t reg, uint8_t data, uint8_t mask)
 {
-    CARD8   old;
+    uint8_t   old;
 
     outb (pXGI->RelIO + vi_index_offset, reg);
     old = inb(pXGI->RelIO + vi_data_offset);
@@ -75,7 +75,7 @@ static void SetVideoRegMask(XGIPtr pXGI, CARD8 reg, CARD8 data, CARD8 mask)
     outb (pXGI->RelIO + vi_data_offset, data);
 }
 
-static CARD8 GetSRReg(XGIPtr pXGI, CARD8 reg)
+static uint8_t GetSRReg(XGIPtr pXGI, uint8_t reg)
 {
     outb (pXGI->RelIO + sr_index_offset, 0x05);
     if (inb (pXGI->RelIO + sr_data_offset) != 0xa1)
@@ -84,7 +84,7 @@ static CARD8 GetSRReg(XGIPtr pXGI, CARD8 reg)
     return inb(pXGI->RelIO + sr_data_offset);
 }
 
-static void SetSRReg(XGIPtr pXGI, CARD8 reg, CARD8 data)
+static void SetSRReg(XGIPtr pXGI, uint8_t reg, uint8_t data)
 {
     outb (pXGI->RelIO + sr_index_offset, 0x05);
     if (inb (pXGI->RelIO + sr_data_offset) != 0xa1)
@@ -93,9 +93,9 @@ static void SetSRReg(XGIPtr pXGI, CARD8 reg, CARD8 data)
     outb (pXGI->RelIO + sr_data_offset, data);
 }
 
-void SetSRRegMask(XGIPtr pXGI, CARD8 reg, CARD8 data, CARD8 mask)
+void SetSRRegMask(XGIPtr pXGI, uint8_t reg, uint8_t data, uint8_t mask)
 {
-    CARD8   old;
+    uint8_t   old;
 
     outb (pXGI->RelIO + sr_index_offset, 0x05);
     if (inb (pXGI->RelIO + sr_data_offset) != 0xa1)
@@ -106,15 +106,15 @@ void SetSRRegMask(XGIPtr pXGI, CARD8 reg, CARD8 data, CARD8 mask)
     outb (pXGI->RelIO + sr_data_offset, data);
 }
 /*
-static void SetVCReg(XGIPtr pXGI, CARD8 reg, CARD8 data)
+static void SetVCReg(XGIPtr pXGI, uint8_t reg, uint8_t data)
 {
     outb (pXGI->RelIO + vc_index_offset, reg);
     outb (pXGI->RelIO + vc_data_offset, data);
 }
 */
-static void SetVCRegMask(XGIPtr pXGI, CARD8 reg, CARD8 data, CARD8 mask)
+static void SetVCRegMask(XGIPtr pXGI, uint8_t reg, uint8_t data, uint8_t mask)
 {
-    CARD8   old;
+    uint8_t   old;
 
     outb (pXGI->RelIO + vc_index_offset, reg);
     old = inb(pXGI->RelIO + vc_data_offset);
@@ -122,13 +122,13 @@ static void SetVCRegMask(XGIPtr pXGI, CARD8 reg, CARD8 data, CARD8 mask)
     outb (pXGI->RelIO + vc_data_offset, data);
 }
 /*
-static CARD8 GetXGIReg(XGIPtr pXGI, CARD8 index_offset, CARD8 reg)
+static uint8_t GetXGIReg(XGIPtr pXGI, uint8_t index_offset, uint8_t reg)
 {
     outb (pXGI->RelIO + index_offset, reg);
     return inb(pXGI->RelIO + index_offset+1);
 }
 
-static void SetXGIReg(XGIPtr pXGI, CARD8 index_offset, CARD8 reg, CARD8 data)
+static void SetXGIReg(XGIPtr pXGI, uint8_t index_offset, uint8_t reg, uint8_t data)
 {
     outb (pXGI->RelIO + index_offset, reg);
     outb (pXGI->RelIO + index_offset+1, data);
@@ -208,13 +208,13 @@ XGIComputeXvGamma(XGIPtr pXGI)
 	
     for(i = 0; i <= num; i++) {
         pXGI->XvGammaRampRed[i] =
-	    (red == 1.0) ? i : (CARD8)(pow((double)i / (double)num, red) * (double)num + 0.5);
+	    (red == 1.0) ? i : (uint8_t)(pow((double)i / (double)num, red) * (double)num + 0.5);
 
 		pXGI->XvGammaRampGreen[i] =
-	    (green == 1.0) ? i : (CARD8)(pow((double)i / (double)num, green) * (double)num + 0.5);
+	    (green == 1.0) ? i : (uint8_t)(pow((double)i / (double)num, green) * (double)num + 0.5);
 
 		pXGI->XvGammaRampBlue[i] =
-	    (blue == 1.0) ? i : (CARD8)(pow((double)i / (double)num, blue) * (double)num + 0.5);
+	    (blue == 1.0) ? i : (uint8_t)(pow((double)i / (double)num, blue) * (double)num + 0.5);
     }
 }
 
@@ -509,7 +509,7 @@ SetMergeLineBufReg(XGIPtr pXGI, Bool enable)
 void
 SetVideoFormatReg(XGIPtr pXGI, int format)
 {
-    CARD8 fmt;
+    uint8_t fmt;
 
     switch (format)
     {
@@ -554,9 +554,9 @@ SetVideoFormatReg(XGIPtr pXGI, int format)
 }
 
 void
-SetColorkeyReg(XGIPtr pXGI, CARD32 colorkey)
+SetColorkeyReg(XGIPtr pXGI, uint32_t colorkey)
 {
-    CARD8 r, g, b;
+    uint8_t r, g, b;
 
     b = LOBYTE(LOWORD(colorkey));
     g = HIBYTE(LOWORD(colorkey));
@@ -575,7 +575,7 @@ SetColorkeyReg(XGIPtr pXGI, CARD32 colorkey)
 void
 SetVideoBrightnessReg(XGIPtr pXGI, INT32 value)
 {
-    CARD8   brightness;
+    uint8_t   brightness;
 
     brightness = LOBYTE(value);
 
@@ -585,9 +585,9 @@ SetVideoBrightnessReg(XGIPtr pXGI, INT32 value)
 void
 SetVideoContrastReg(XGIPtr pXGI, INT32 value)
 {
-    CARD8   contrast;
+    uint8_t   contrast;
 
-    contrast = (CARD8)(((value * 7) / 255) & 0x000F);
+    contrast = (uint8_t)(((value * 7) / 255) & 0x000F);
 
     SetVideoRegMask(pXGI, Index_VI_Contrast_Enh_Ctrl, contrast, 0x07);
 }
@@ -595,7 +595,7 @@ SetVideoContrastReg(XGIPtr pXGI, INT32 value)
 void
 SetVideoHueReg(XGIPtr pXGI, INT32 value)
 {
-    CARD8   hue;
+    uint8_t   hue;
 
     if ( value > 0 )
     {
@@ -608,7 +608,7 @@ SetVideoHueReg(XGIPtr pXGI, INT32 value)
        value = -value;
     }
 
-    hue = (CARD8)(((value * 7) / 180) & 0x0007);
+    hue = (uint8_t)(((value * 7) / 180) & 0x0007);
 
 
     SetVideoRegMask(pXGI, Index_VI_Hue, hue, 0x07);
@@ -617,7 +617,7 @@ SetVideoHueReg(XGIPtr pXGI, INT32 value)
 void
 SetVideoSaturationReg(XGIPtr pXGI, INT32 value)
 {
-    CARD8   saturation;
+    uint8_t   saturation;
 
     if ( value > 0 )
     {
@@ -632,7 +632,7 @@ SetVideoSaturationReg(XGIPtr pXGI, INT32 value)
        value = -value;
     }
 
-    saturation = (CARD8)(((value * 7) / 180) & 0x000F);
+    saturation = (uint8_t)(((value * 7) / 180) & 0x000F);
 
     SetVideoRegMask(pXGI, Index_VI_Saturation, saturation, 0x07);
     SetVideoRegMask(pXGI, Index_VI_Saturation, saturation << 4, 0x70);
@@ -645,12 +645,12 @@ SetOverlayReg(XGIPtr pXGI, XGIOverlayPtr pOverlay)
     ScrnInfoPtr pScrn = pXGI->pScrn;
 	XGIPortPrivPtr pPriv = GET_PORT_PRIVATE(pScrn);
 	
-    CARD32 tmpYPitch;
-    CARD16 top, left;
-    CARD16 bottom, right;
-    CARD32 PSY, PSU, PSV;
-    CARD16 screenX = pScrn->currentMode->HDisplay;
-    CARD16 screenY = pScrn->currentMode->VDisplay;
+    uint32_t tmpYPitch;
+    uint16_t top, left;
+    uint16_t bottom, right;
+    uint32_t PSY, PSU, PSV;
+    uint16_t screenX = pScrn->currentMode->HDisplay;
+    uint16_t screenY = pScrn->currentMode->VDisplay;
 
     top    = pOverlay->dstBox.y1;
     bottom = pOverlay->dstBox.y2;
@@ -721,7 +721,7 @@ SetOverlayReg(XGIPtr pXGI, XGIOverlayPtr pOverlay)
 		(pOverlay->pixelFormat == PIXEL_FMT_NV21))
     {
         /* set UV pitch */
-		CARD32  uvpitch = tmpYPitch;
+		uint32_t  uvpitch = tmpYPitch;
         BYTE    bYUV_Pitch_High;
 
 		if(pOverlay->pixelFormat == PIXEL_FMT_YV12)
@@ -777,7 +777,7 @@ SetCloseOverlayReg(XGIPtr pXGI)
 }
 
 void
-SetSelectOverlayReg(XGIPtr pXGI, CARD8 index)
+SetSelectOverlayReg(XGIPtr pXGI, uint8_t index)
 {
   SetVideoRegMask(pXGI, Index_VI_Control_Misc2, index, 0x01);
 }

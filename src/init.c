@@ -292,7 +292,7 @@ XGI_New_DisplayOff(VB_DEVICE_INFO *XGI_Pr)
 static void
 XGIInitPCIetc(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo)
 {
-   CARD8  bForce=0x00; /* Jong 01/07/2008; force to disable 2D */
+   uint8_t  bForce=0x00; /* Jong 01/07/2008; force to disable 2D */
 
    switch(HwInfo->jChipType) {
    case XG40:

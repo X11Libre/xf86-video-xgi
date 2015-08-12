@@ -5,12 +5,6 @@
 /* Jong@08052009 */
 // #include <linux/delay.h> /* udelay */
 #endif 
-#ifndef u32
-#define u32 unsigned long
-#endif
-#ifndef u8
-#define u8 uint8_t
-#endif
 
 /* Jong@08052009 */
 //#ifndef DelayUS
@@ -95,9 +89,9 @@
 
 typedef struct _I2CControl {
         ULONG Command;          /*  I2C_COMMAND_* */
-        u32   dwCookie;         /* Context identifier returned on Open */
-        u8    Data;             /* Data to write, or returned UCHAR */
-        u8    Reserved[3];      /* Filler */
+        uint32_t   dwCookie;         /* Context identifier returned on Open */
+        uint8_t    Data;             /* Data to write, or returned UCHAR */
+        uint8_t    Reserved[3];      /* Filler */
         ULONG Flags;            /*  I2C_FLAGS_* */
         ULONG Status;           /* I2C_STATUS_*  */
         ULONG ClockRate;        /* Bus clockrate in Hz. */
@@ -105,9 +99,9 @@ typedef struct _I2CControl {
 
 typedef struct _I2CContext
 {
-    u32 dwI2CPortAcquired;            /* port busy between start and stop */
-    u32 dwCookie;                  /* cookie image for this instance */
-    u32 dwCurCookie;                  /* cookie of current I2C channel owner */
+    uint32_t dwI2CPortAcquired;            /* port busy between start and stop */
+    uint32_t dwCookie;                     /* cookie image for this instance */
+    uint32_t dwCurCookie;                  /* cookie of current I2C channel owner */
 } I2C_CONTEXT, *PI2C_CONTEXT;
 
 

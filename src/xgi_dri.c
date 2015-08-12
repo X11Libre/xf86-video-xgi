@@ -100,9 +100,9 @@ static void XGIDRISwapContext(ScreenPtr pScreen, DRISyncType syncType,
 			       void *readContextStore,
 			       DRIContextType writeContextType,
 			       void *writeContextStore);
-static void XGIDRIInitBuffers(WindowPtr pWin, RegionPtr prgn, CARD32 index);
+static void XGIDRIInitBuffers(WindowPtr pWin, RegionPtr prgn, uint32_t index);
 static void XGIDRIMoveBuffers(WindowPtr pParent, DDXPointRec ptOldOrg,
-			       RegionPtr prgnSrc, CARD32 index);
+			       RegionPtr prgnSrc, uint32_t index);
 
 void xgiLostContext(ScreenPtr pScreen);
 
@@ -641,7 +641,7 @@ XGIDRISwapContext(ScreenPtr pScreen, DRISyncType syncType,
 }
 
 static void
-XGIDRIInitBuffers(WindowPtr pWin, RegionPtr prgn, CARD32 index)
+XGIDRIInitBuffers(WindowPtr pWin, RegionPtr prgn, uint32_t index)
 {
   ScreenPtr pScreen = pWin->drawable.pScreen;
   ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
@@ -652,7 +652,7 @@ XGIDRIInitBuffers(WindowPtr pWin, RegionPtr prgn, CARD32 index)
 
 static void
 XGIDRIMoveBuffers(WindowPtr pParent, DDXPointRec ptOldOrg,
-		   RegionPtr prgnSrc, CARD32 index)
+		   RegionPtr prgnSrc, uint32_t index)
 {
   ScreenPtr pScreen = pParent->drawable.pScreen;
   ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
