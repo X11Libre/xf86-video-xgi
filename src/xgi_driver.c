@@ -68,13 +68,16 @@
 #include "mipointer.h"
 
 #include "xgi.h"
+#include "xgi_accel.h"
 #include "xgi_regs.h"
 #include "xgi_vb.h"
 #include "xgi_dac.h"
 #include "vb_def.h"
+#include "vb_ext.h"
 #include "xgi_driver.h"
 #include "valid_mode.h"
 #include "vb_i2c.h"
+#include "vb_setmode.h"
 
 #define _XF86DGA_SERVER_
 #include <X11/extensions/xf86dgaproto.h>
