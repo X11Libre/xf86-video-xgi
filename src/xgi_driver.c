@@ -2612,7 +2612,11 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     if (pXGI->Primary) {
 #if defined(__arm__) 
+#ifdef XSERVER_LIBPCIACCESS
+        VGAHWPTR(pScrn)->MapPhys = pXGI->PciInfo->regions[2].base_addr + 0xf2000000;
+#else
         VGAHWPTR(pScrn)->MapPhys = pXGI->PciInfo->ioBase[2] + 0xf2000000; 	
+#endif
 #endif
 
         VGAHWPTR(pScrn)->MapSize = 0x10000;     /* Standard 64k VGA window */
