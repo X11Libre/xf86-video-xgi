@@ -247,7 +247,7 @@ static XF86ModuleVersionInfo xgiVersRec = {
     {0, 0, 0, 0}
 };
 
-XF86ModuleData xgiModuleData = { &xgiVersRec, xgiSetup, NULL };
+_X_EXPORT XF86ModuleData xgiModuleData = { &xgiVersRec, xgiSetup, NULL };
 
 /*** static string ***/
 #ifdef XGIMERGED
