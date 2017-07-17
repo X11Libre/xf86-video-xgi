@@ -104,11 +104,6 @@ typedef struct {
 typedef struct {
   /* Nothing here yet */
   int dummy;
-} XGIConfigPrivRec, *XGIConfigPrivPtr;
-
-typedef struct {
-  /* Nothing here yet */
-  int dummy;
 } XGIDRIContextRec, *XGIDRIContextPtr;
 
 Bool XGIDRIScreenInit(ScreenPtr pScreen);

@@ -53,20 +53,12 @@
 
 #include "miline.h"
 
-#include "GL/glxtokens.h"
-
 #include "xgi.h"
 #include "xgi_dri.h"
 
 #include "xgi_accel.h"
 #include "xgi_common.h"
 #include "drm.h"
-
-extern void GlxSetVisualConfigs(
-    int nconfigs,
-    __GLXvisualConfig *configs,
-    void **configprivs
-);
 
 #define PCIE_BUS_TYPE	2
 #define AGP_BUS_TYPE	1
@@ -89,7 +81,6 @@ static const char XGIKernelDriverName[] = "sis";
 
 static const char XGIClientDriverName[] = "xgi";
 
-static Bool XGIInitVisualConfigs(ScreenPtr pScreen);
 static Bool XGICreateContext(ScreenPtr pScreen, VisualPtr visual,
 			      drm_context_t hwContext, void *pVisualConfigPriv,
 			      DRIContextType contextStore);
@@ -109,126 +100,6 @@ void xgiLostContext(ScreenPtr pScreen);
 ULONG IsXGIAGPCard(ScreenPtr pScreen);
 ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink);
 
-static Bool
-XGIInitVisualConfigs(ScreenPtr pScreen)
-{
-  ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
-  XGIPtr pXGI = XGIPTR(pScrn);
-  int numConfigs = 0;
-  __GLXvisualConfig *pConfigs = 0;
-  XGIConfigPrivPtr pXGIConfigs = 0;
-  XGIConfigPrivPtr *pXGIConfigPtrs = 0;
-  int i, db, z_stencil, accum;
-  Bool useZ16 = FALSE;
-
-  if(getenv("XGI_FORCE_Z16")){
-    useZ16 = TRUE;
-  }
-
-  switch (pScrn->bitsPerPixel) {
-  case 8:
-  case 24:
-    break;
-  case 16:
-  case 32:
-    numConfigs = (useZ16)?8:16;
-
-    if (!(pConfigs = (__GLXvisualConfig*)xnfcalloc(sizeof(__GLXvisualConfig),
-						   numConfigs))) {
-      return FALSE;
-    }
-    if (!(pXGIConfigs = (XGIConfigPrivPtr)xnfcalloc(sizeof(XGIConfigPrivRec),
-						    numConfigs))) {
-      free(pConfigs);
-      return FALSE;
-    }
-    if (!(pXGIConfigPtrs = (XGIConfigPrivPtr*)xnfcalloc(sizeof(XGIConfigPrivPtr),
-							  numConfigs))) {
-      free(pConfigs);
-      free(pXGIConfigs);
-      return FALSE;
-    }
-    for (i=0; i<numConfigs; i++)
-      pXGIConfigPtrs[i] = &pXGIConfigs[i];
-
-    i = 0;
-    for (accum = 0; accum <= 1; accum++) {
-      for (z_stencil=0; z_stencil<(useZ16?2:4); z_stencil++) {
-        for (db = 0; db <= 1; db++) {
-          pConfigs[i].vid = -1;
-          pConfigs[i].class = -1;
-          pConfigs[i].rgba = TRUE;
-          pConfigs[i].redSize = -1;
-          pConfigs[i].greenSize = -1;
-          pConfigs[i].blueSize = -1;
-          pConfigs[i].redMask = -1;
-          pConfigs[i].greenMask = -1;
-          pConfigs[i].blueMask = -1;
-          pConfigs[i].alphaMask = 0;
-          if (accum) {
-            pConfigs[i].accumRedSize = 16;
-            pConfigs[i].accumGreenSize = 16;
-            pConfigs[i].accumBlueSize = 16;
-            pConfigs[i].accumAlphaSize = 16;
-          } else {
-            pConfigs[i].accumRedSize = 0;
-            pConfigs[i].accumGreenSize = 0;
-            pConfigs[i].accumBlueSize = 0;
-            pConfigs[i].accumAlphaSize = 0;
-          }
-          if (db)
-            pConfigs[i].doubleBuffer = TRUE;
-          else
-            pConfigs[i].doubleBuffer = FALSE;
-          pConfigs[i].stereo = FALSE;
-          pConfigs[i].bufferSize = -1;
-          switch (z_stencil){
-            case 0:
-              pConfigs[i].depthSize = 0;
-              pConfigs[i].stencilSize = 0;
-              break;
-            case 1:
-              pConfigs[i].depthSize = 16;
-              pConfigs[i].stencilSize = 0;
-              break;
-            case 2:
-              pConfigs[i].depthSize = 32;
-              pConfigs[i].stencilSize = 0;
-              break;
-            case 3:
-              pConfigs[i].depthSize = 24;
-              pConfigs[i].stencilSize = 8;
-              break;
-          }
-          pConfigs[i].auxBuffers = 0;
-          pConfigs[i].level = 0;
-          pConfigs[i].visualRating = GLX_NONE_EXT;
-          pConfigs[i].transparentPixel = 0;
-          pConfigs[i].transparentRed = 0;
-          pConfigs[i].transparentGreen = 0;
-          pConfigs[i].transparentBlue = 0;
-          pConfigs[i].transparentAlpha = 0;
-          pConfigs[i].transparentIndex = 0;
-          i++;
-        }
-      }
-    }
-    if (i != numConfigs) {
-      xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
-                 "[drm] Incorrect initialization of visuals\n");
-      return FALSE;
-    }
-    break;
-  }
-
-  pXGI->numVisualConfigs = numConfigs;
-  pXGI->pVisualConfigs = pConfigs;
-  pXGI->pVisualConfigsPriv = pXGIConfigs;
-  GlxSetVisualConfigs(numConfigs, pConfigs, (void**)pXGIConfigPtrs);
-
-  return TRUE;
-}
-
 Bool XGIDRIScreenInit(ScreenPtr pScreen)
 {
 #ifndef linux
@@ -244,9 +115,8 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
     drmVersionPtr drm_ver;
 
 
-   /* Check that the GLX, DRI, and DRM modules have been loaded by testing
+   /* Check that the DRI, and DRM modules have been loaded by testing
     * for canonical symbols in each module. */
-   if (!xf86LoaderCheckSymbol("GlxSetVisualConfigs")) return FALSE;
    if (!xf86LoaderCheckSymbol("DRIScreenInit"))       return FALSE;
    if (!xf86LoaderCheckSymbol("drmAvailable"))        return FALSE;
    if (!xf86LoaderCheckSymbol("DRIQueryVersion")) {
@@ -511,10 +381,6 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
 
   pXGIDRI->irqEnabled = pXGI->irqEnabled;
 
-  if (!(XGIInitVisualConfigs(pScreen))) {
-    XGIDRICloseScreen(pScreen);
-    return FALSE;
-  }
   xf86DrvMsg(pScrn->scrnIndex, X_INFO, "visual configs initialized\n" );
 
   return TRUE;
@@ -537,8 +403,6 @@ XGIDRICloseScreen(ScreenPtr pScreen)
     DRIDestroyInfoRec(pXGI->pDRIInfo);
     pXGI->pDRIInfo=0;
   }
-  if (pXGI->pVisualConfigs) free(pXGI->pVisualConfigs);
-  if (pXGI->pVisualConfigsPriv) free(pXGI->pVisualConfigsPriv);
 
   if(pXGI->agpSize){
 /* ErrorF("Freeing agp memory\n"); */

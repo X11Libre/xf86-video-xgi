@@ -215,7 +215,6 @@ extern Bool g_bRunTimeDebug;
 #endif
 
 #include "dri.h"
-#include "GL/glxint.h"
 #include "xgi_dri.h"
 #endif
 
@@ -768,9 +767,6 @@ typedef struct {
     Bool 		directRenderingEnabled;
     DRIInfoPtr 		pDRIInfo;
     int 		drmSubFD;
-    int 		numVisualConfigs;
-    __GLXvisualConfig* 	pVisualConfigs;
-    XGIConfigPrivPtr 	pVisualConfigsPriv;
 #endif
 
     HW_DEVICE_EXTENSION xgi_HwDevExt;      /* For new mode switching code */
