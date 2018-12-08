@@ -24,7 +24,7 @@
 AC_PREREQ([2.60])
 AC_INIT([xf86-video-xgi],
         [1.6.1],
-        [https://bugs.freedesktop.org/enter_bug.cgi?product=xorg],
+        [https://gitlab.freedesktop.org/xorg/driver/xf86-video-xgi/issues],
         [xf86-video-xgi])
 RELEASE_DATE="27 August 2007"
 
