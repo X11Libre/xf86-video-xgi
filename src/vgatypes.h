@@ -259,7 +259,7 @@ struct _XGI_HW_DEVICE_INFO
     BOOLEAN bSkipSense;
 
     BOOLEAN bIsPowerSaving;     /* True: XGIInit() is invoked by power management,
-                                   otherwise by 2nd adapter's initialzation */
+                                   otherwise by 2nd adapter's initialization */
 
     PXGI_DSReg  pSR;             /* restore SR registers in initial function. */
                                  /* end data :(idx, val) =  (FF, FF). */
@@ -307,7 +307,7 @@ struct _XGI_HW_DEVICE_INFO
 };
 #endif
 
-/* Addtional IOCTL for communication xgifb <> X driver        */
+/* Additional IOCTL for communication xgifb <> X driver        */
 /* If changing this, xgifb.h must also be changed (for xgifb) */
 
 #ifdef LINUX_XF86  /* We don't want the X driver to depend on the kernel source */

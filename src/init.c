@@ -384,7 +384,7 @@ XGI_SearchModeID(const XGI_StStruct *SModeIDTable,
 	if ((*ModeNo) <= 0x05)
 	    (*ModeNo) |= 0x01;
 
-	for (*ModeIdIndex = 0; /* emtpy */; (*ModeIdIndex)++) {
+	for (*ModeIdIndex = 0; /* empty */; (*ModeIdIndex)++) {
 	    if (SModeIDTable[*ModeIdIndex].St_ModeID == (*ModeNo))
 		break;
 
@@ -410,7 +410,7 @@ XGI_SearchModeID(const XGI_StStruct *SModeIDTable,
     }
     else {
 
-	for (*ModeIdIndex = 0; /* emtpy */; (*ModeIdIndex)++) {
+	for (*ModeIdIndex = 0; /* empty */; (*ModeIdIndex)++) {
 	    if (EModeIDTable[*ModeIdIndex].Ext_ModeID == (*ModeNo))
 		break;
 

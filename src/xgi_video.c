@@ -1743,7 +1743,7 @@ XGIPutVideo(
     		    //v4l get format
                     if (0 == ioctl(pPriv->fd, VIDIOC_G_FMT, &fmt))
 		    {
-		    	ErrorF("ioctl:VIDIOC_G_FMT succes!\n");
+			ErrorF("ioctl:VIDIOC_G_FMT success!\n");
 		    }
 		    else
 		    {
@@ -1765,7 +1765,7 @@ XGIPutVideo(
 	    	    //v4l set format
             	    if (0 == ioctl(pPriv->fd, VIDIOC_S_FMT, &fmt))
 	    	    {
-			ErrorF("ioctl:VIDIOC_S_FMT succes!\n");
+			ErrorF("ioctl:VIDIOC_S_FMT success!\n");
 	    	    }
 	    	    else
 	    	    {
@@ -1780,7 +1780,7 @@ XGIPutVideo(
             	    if (0 == ioctl(pPriv->fd, XGIIOC_G_FBUF, &xgifbuf))
 	    	    {
 			static int offset;
-			ErrorF("ioctl:XGIIOC_G_FBUF succes!\n");
+			ErrorF("ioctl:XGIIOC_G_FBUF success!\n");
 			pPriv->bufAddr[0] = offset = xgifbuf.fboffset[0];
 			ErrorF("capture buf offset 0 = %x\n",offset);
 			pPriv->bufAddr[1] = offset = xgifbuf.fboffset[1];

@@ -891,7 +891,7 @@ XGIProbe(DriverPtr drv, int flags)
 
 /* Copy and link two modes form mergedfb mode
  * (Code base taken from mga driver)
- * Copys mode i, links the result to dest, and returns it.
+ * Copies mode i, links the result to dest, and returns it.
  * Links i and j in Private record.
  * If dest is NULL, return value is copy of i linked to itself.
  * For mergedfb auto-config, we only check the dimension
@@ -1634,7 +1634,7 @@ XGIDumpMonitorInfo(xf86MonPtr pMonitor)
          pMonitor->vendor.week, pMonitor->vendor.year);
 
     ErrorF("ver = %d %d\n", pMonitor->ver.version, pMonitor->ver.revision);
-    ErrorF("intput type = %d voltage = %d setup = %d sync = %d\n",
+    ErrorF("input type = %d voltage = %d setup = %d sync = %d\n",
            pMonitor->features.input_type,
            pMonitor->features.input_voltage,
            pMonitor->features.input_setup, pMonitor->features.input_sync);
@@ -2467,7 +2467,7 @@ int	ModifyTypeOfSupportMode(DisplayModePtr availModes)
 	while(p)
 	{
 		/* if( (p->HDisplay == 1440) && (p->VDisplay == 900)) */
-		if( p->type == 0) /* externel support modeline */
+		if( p->type == 0) /* external support modeline */
 		{
 			p->type = M_T_USERDEF;
 			CountOfModifiedModes++;
@@ -3576,8 +3576,8 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     /* Jong 07/29/2009; Proposal : use wide range for HorizSync and strict range for VertRefresh; And set 1024x768 in Modes of Screen section */
 	/* Jong 07/17/2009; fix issue of only one mode (800x600) */
-    /* if (no Horizsync or VertRefresh is spefified in Monitor section) and (no DDC detection) */
-    /* then apply followings as default Hsync and VRefresh (1024x768x60HZ) */
+    /* if (no Horizsync or VertRefresh is specified in Monitor section) and (no DDC detection) */
+    /* then apply following as default Hsync and VRefresh (1024x768x60HZ) */
     /* XGIDDCPreInit() should be called first to get EDID but need I2C programming instead of VBIOS call */
 	if(pScrn->monitor->DDC == NULL)
 	{
@@ -4094,7 +4094,7 @@ XGIMapMem(ScrnInfoPtr pScrn)
         err = pci_device_map_region(pXGI->PciInfo, i, TRUE);
         if (err) {
             xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
-                       "Internal error: cound not map PCI region %u\n", i);
+                       "Internal error: could not map PCI region %u\n", i);
             return FALSE;
         }
     }

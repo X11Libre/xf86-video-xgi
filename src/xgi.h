@@ -694,7 +694,7 @@ typedef struct {
     void        	(*XGIRestore2)(ScrnInfoPtr pScrn, XGIRegPtr xgireg);
     void        	(*XGIRestore3)(ScrnInfoPtr pScrn, XGIRegPtr xgireg);
     void        	(*LoadCRT2Palette)(ScrnInfoPtr pScrn, int numColors,
-                		int *indicies, LOCO *colors, VisualPtr pVisual);
+                               int *indices, LOCO *colors, VisualPtr pVisual);
 
     int       		cmdQueueLen;		/* Current cmdQueueLength (for 2D and 3D) */
     unsigned long	cmdQueueLenMax;

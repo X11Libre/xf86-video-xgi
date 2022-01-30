@@ -1523,7 +1523,7 @@ XGI_GetRatePtrCRT2(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo, USHORT 
     ModeNo = pVBInfo->RefIndex[RefreshRateTableIndex].ModeID;
 
     /* Jong 10/03/2007; merge code */
-	/* Do the similiar adjustment like XGISearchCRT1Rate() */
+	/* Do the similar adjustment like XGISearchCRT1Rate() */
     if ( HwDeviceExtension->jChipType >= XG20 )  /* for XG20, XG21, XG27 */
     {
       /*
@@ -2706,7 +2706,7 @@ XGI_SetCRT1FIFO(USHORT ModeNo, PXGI_HW_DEVICE_INFO HwDeviceExtension,
 
     data = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x3D);
     data &= 0xfe;
-    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x3D, data);       /* diable auto-threshold */
+    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x3D, data);       /* disable auto-threshold */
 
     if (ModeNo > 0x13) {
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x08, 0x34);
@@ -3795,7 +3795,7 @@ XGI_GetVBInfo(USHORT ModeNo, USHORT ModeIdIndex,
                 temp = 0x017C;
         }
        }
-       else	/* 3nd party chip */
+       else	/* 3rd party chip */
        {
             if ( pVBInfo->IF_DEF_CH7017 == 1 )
                 temp = ( SetCRT2ToTV | SetCRT2ToLCD | SetCRT2ToLCDA ) ;
@@ -5598,7 +5598,7 @@ XGI_SetLockRegs(USHORT ModeNo, USHORT ModeIdIndex,
     tempbx = pVBInfo->VGAVT;
     push1 = tempbx;
     tempcx = 0x121;
-    tempbx = pVBInfo->VGAVDE;   /* 0x0E Virtical Display End */
+    tempbx = pVBInfo->VGAVDE;   /* 0x0E Vertical Display End */
 
     if (tempbx == 357)
         tempbx = 350;
@@ -8813,7 +8813,7 @@ XGI_EnableBridge(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 
         if (pVBInfo->VBType & (VB_XGI301LV | VB_XGI302LV | VB_XGI301C)) {
             tempah = 0x01;
-            tempbl = 0xFE;      /* turn on backlght */
+            tempbl = 0xFE;      /* turn on backlight */
         }
         else {
             tempbl = 0xF7;
@@ -8878,7 +8878,7 @@ XGI_DisableBridge(PXGI_HW_DEVICE_INFO HwDeviceExtension,
                         tempah = 0xBF;  /* Disable Channel B */
 
                     if (pVBInfo->SetFlag & DisableChB)
-                        tempah &= 0xBF; /* force to disable Cahnnel */
+                        tempah &= 0xBF; /* force to disable Channel */
 
                     if (pVBInfo->SetFlag & DisableChA)
                         tempah &= 0x7F; /* Force to disable Channel B */

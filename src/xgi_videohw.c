@@ -267,7 +267,7 @@ VOID SetDDAReg (XGIPtr pXGI, float scale)
             /* Normalize the weights */
             WW = W[0]+W[1]+W[2]+W[3];
 
-            /* for rouding */
+            /* for rounding */
             for(j=0; j<4; j++)
                     tempW[j] = (float)((W[j]/WW*16)+0.5);
 
@@ -471,7 +471,7 @@ XGIResetVideo(ScrnInfoPtr pScrn)
 
         /* Enable Horizontal 4-tap DDA mode */
         SetVideoRegMask(pXGI, Index_VI_Key_Overlay_OP, 0x40, 0x40);
-        /* Disable Vertical 4-tap DDA mode -- not surport not */
+        /* Disable Vertical 4-tap DDA mode -- not support not */
         SetVideoRegMask(pXGI, Index_VI_Key_Overlay_OP, 0x00, 0x80);
         /* The DDA registers should set scale to 1 as default */
     SetDDAReg (pXGI, 1.0);

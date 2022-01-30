@@ -1850,7 +1850,7 @@ BOOLEAN bGetEDID(
         return FALSE;
     }
 
-    // Force Monitor using DDC2 protocal...
+    // Force Monitor using DDC2 protocol...
     I2C.ClockRate = I2C_MAX_CLOCK_RATE;
     I2C.Command = I2C_COMMAND_WRITE;
     I2C.Flags = I2C_FLAGS_STOP;

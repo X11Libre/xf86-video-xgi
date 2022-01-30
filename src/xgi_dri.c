@@ -264,7 +264,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
     pXGI->agpVtxBufSize = 0;
     pXGIDRI->AGPVtxBufSize = 0;
 
-    /* jill note: IF not AGP, diable AGP memory allocate */	
+    /* jill note: IF not AGP, disable AGP memory allocate */
     if (AGP_BUS_TYPE != IsXGIAGPCard(pScreen))
 	    break;
 
@@ -312,7 +312,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
 
 /*    pXGI->agpSize = AGP_SIZE; */
     pXGI->agpAddr = drmAgpBase(pXGI->drmSubFD);
-    /* pXGI->agpBase = */ /* Xserver connot access VtxBuf, bc. not mem-map */
+    /* pXGI->agpBase = */ /* Xserver cannot access VtxBuf, bc. not mem-map */
 
     /* any client can access this VtxBuf AGP area */
     /* by mem-map pXGIDRI->agp.handle             */

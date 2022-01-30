@@ -676,7 +676,7 @@ static unsigned int taketime(void)	/* get current time (for benchmarking) */
 /* 2. Do we have /proc filesystem or similar for CPU information? */
 /* #define XGI_haveproc			*/
 
-/* 3. Optional: build-in memcpy()	*/
+/* 3. Optional: built-in memcpy()	*/
 /* #define XGI_haveBuiltInMC		*/
 /* static __inline void * builtin_memcpy(void * to, const void * from, int n)
    {

@@ -717,7 +717,7 @@ Volari_AccelInit(ScreenPtr pScreen)
 	      if(!(pXGI->EXADriverPtr = xnfcalloc(sizeof(ExaDriverRec), 1)))
 #endif
 		  {
-			  ErrorF("Failt to allocate EXADriverPtr!\n");
+			  ErrorF("Failed to allocate EXADriverPtr!\n");
 			  return FALSE;
 		  }
 

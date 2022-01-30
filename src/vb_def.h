@@ -748,7 +748,7 @@
 #define		OSDSupportInSBIOS            0x40
 #define		DisableLogo                  0x80
 
-/* ---------------------- HK Evnet Definition */
+/* ---------------------- HK Event Definition */
 #define		HKEvent                      0x0f               /* CR3D */
 #define		HK_ModeSwitch                0x01
 #define		HK_Expanding                 0x02
