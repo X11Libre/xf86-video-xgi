@@ -119,10 +119,10 @@
 /* Jong 09/27/2007; recover for compiler error */
 /* typedef unsigned long ulong ; */
 
-unsigned long    r_port, w_port ;
+extern unsigned long    r_port, w_port ;
 
-int     G2CmdQueLen;
-int 	Alignment ;
+extern int	G2CmdQueLen;
+extern int	Alignment ;
 /* int    GBCount = 0 ; */
 
 extern void Volari_SetDefaultIdleWait(XGIPtr pXGI, unsigned HDisplay, 
