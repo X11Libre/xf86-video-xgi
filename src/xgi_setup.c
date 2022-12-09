@@ -95,7 +95,7 @@ xgiXG2X_Setup(ScrnInfoPtr pScrn)
     unsigned int  ulMemConfig = 0;
     unsigned long ulMemSize   = 0;
     unsigned long ulDramType  = 0;
-    char *dramTypeStr ;
+    const char *  dramTypeStr ;
     unsigned long ulTemp ;
 
     /* DumpDDIName("xgiXG2X_Setup()\n") ; */

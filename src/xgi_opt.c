@@ -300,14 +300,14 @@ xgiOptions(ScrnInfoPtr pScrn)
 	pXGI->Non_DDC_DefaultRefreshRate = 60;
 
 	char	ModeStringFormat[32] = 	"%[^x]x%[^@]@%[^\n]" /* "%[^x]+%[^@]+%[^H^z]" */;
-    char*   Non_DDCDefaultMode = "";
+    const char*   Non_DDCDefaultMode = "";
     char   Non_DDCDefaultResolutionX[8] = "";
     char   Non_DDCDefaultResolutionY[8] = "";
     char   Non_DDCDefaultRefreshRate[8] = "";
 
 	/* strcpy(ModeStringFormat, "%[^+]x%[^+]@%[^\n]"); */
 
-	if((Non_DDCDefaultMode = (char *)xf86GetOptValString(pXGI->Options, OPTION_NONDDC_DEFAULT_MODE))) 
+	if((Non_DDCDefaultMode = xf86GetOptValString(pXGI->Options, OPTION_NONDDC_DEFAULT_MODE)))
 	{
 		sscanf(Non_DDCDefaultMode, ModeStringFormat, 
 				Non_DDCDefaultResolutionX , 
@@ -344,12 +344,12 @@ xgiOptions(ScrnInfoPtr pScrn)
 	g_GammaRed = g_GammaGreen = g_GammaBlue = 1000;
 
 	char	GammaStringFormat[32] = "%[^,],%[^,],%[^\n]";
-    char*   GammaRGB = "";
+    const char*   GammaRGB = "";
     char   GammaRed[8] = "";
     char   GammaGreen[8] = "";
     char   GammaBlue[8] = "";
 
-	if((GammaRGB = (char *)xf86GetOptValString(pXGI->Options, OPTION_GAMMA_RGB))) 
+	if((GammaRGB = xf86GetOptValString(pXGI->Options, OPTION_GAMMA_RGB)))
 	{
 		ErrorF("GammaRGB is (%s) from xorg.conf\n", GammaRGB);
 		sscanf(GammaRGB, GammaStringFormat, 

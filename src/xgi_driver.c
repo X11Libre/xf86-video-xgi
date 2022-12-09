@@ -1022,7 +1022,7 @@ XGICopyModeNLink(ScrnInfoPtr pScrn, DisplayModePtr dest,
  * (Code base taken from mga driver)
  */
 static DisplayModePtr
-XGIGetModeFromName(char *str, DisplayModePtr i)
+XGIGetModeFromName(const char *str, DisplayModePtr i)
 {
     DisplayModePtr c = i;
     if (!i)
@@ -1447,7 +1447,7 @@ XGIInternalDDC(ScrnInfoPtr pScrn, int crtno)
 	pScrn->monitor->widthmm = 310;
 	pScrn->monitor->heightmm = 240;
 
-    static char *crtno_means_str[] = {
+    static const char *crtno_means_str[] = {
         "CRT1", "DVI", "CRT2"
     };
 
@@ -2305,11 +2305,10 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
                 if (!(newm = malloc(sizeof(DisplayModeRec))))
                     break;
                 memcpy(newm, tempm, sizeof(DisplayModeRec));
-                if (!(newm->name = malloc(strlen(tempm->name) + 1))) {
+                if (!(newm->name = strdup(tempm->name))) {
                     free(newm);
                     break;
                 }
-                strcpy(newm->name, tempm->name);
                 if (!pXGI->CRT2pScrn->monitor->Modes)
                     pXGI->CRT2pScrn->monitor->Modes = newm;
                 if (currentm) {
