@@ -716,7 +716,7 @@ XGIIdentify(int flags)
     PDEBUG(ErrorF(" --- XGIIdentify \n"));
 }
 
-static void
+static void _X_ATTRIBUTE_PRINTF(2,3)
 XGIErrorLog(ScrnInfoPtr pScrn, const char *format, ...)
 {
     va_list ap;
