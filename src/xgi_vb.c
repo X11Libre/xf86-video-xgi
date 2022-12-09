@@ -35,7 +35,6 @@
 
 #include "xf86.h"
 #include "compiler.h"
-#include "xf86PciInfo.h"
 
 #include "xgi.h"
 #include "xgi_regs.h"

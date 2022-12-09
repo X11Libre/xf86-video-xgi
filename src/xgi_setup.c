@@ -35,7 +35,6 @@
 #include "config.h"
 #endif
 
-#include "xf86PciInfo.h"
 #include "xf86Pci.h"
 #include "xf86.h"
 #include "fb.h"

@@ -58,7 +58,6 @@
 #endif
 #include "dixstruct.h"
 #include "xorgVersion.h"
-#include "xf86PciInfo.h"
 #include "xf86Pci.h"
 #include "xf86cmap.h"
 #include "vgaHW.h"

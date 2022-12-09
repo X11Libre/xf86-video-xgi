@@ -36,7 +36,6 @@
 #endif
 
 #include "xf86.h"
-#include "xf86PciInfo.h"
 #include "cursorstr.h"
 #include "misc.h"
 #include "vgaHW.h"

@@ -22,7 +22,6 @@
 
 #ifdef LINUX_XF86
 #include "xf86.h"
-#include "xf86PciInfo.h"
 #include "xgi.h"
 #include "xgi_regs.h"
 #include "vb_i2c.h"
