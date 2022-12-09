@@ -988,6 +988,8 @@ Bool Volari_AccelInit(ScreenPtr pScreen) ;
 /* void XGI_EnableBridge(PXGI_HW_DEVICE_INFO,USHORT BaseAddr); */
 #endif
 
+extern void XGI_New_GetVBType(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO);
+
 extern USHORT XGI_GetModeID(ULONG VBFlags, int HDisplay, int VDisplay,
     int Depth, int LCDwith, int LCDheight);
 
