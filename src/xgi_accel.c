@@ -713,7 +713,7 @@ Volari_AccelInit(ScreenPtr pScreen)
 #ifdef XGIISXORGPOST70 /* for Xorg 7.0 and above */
 	      if(!(pXGI->EXADriverPtr = exaDriverAlloc()))
 #else
-	      if(!(pXGI->EXADriverPtr = xnfcalloc(sizeof(ExaDriverRec), 1)))
+	      if(!(pXGI->EXADriverPtr = XNFcallocarray(sizeof(ExaDriverRec), 1)))
 #endif
 		  {
 			  ErrorF("Failed to allocate EXADriverPtr!\n");

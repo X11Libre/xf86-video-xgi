@@ -387,7 +387,7 @@ XGIGetRec(ScrnInfoPtr pScrn)
      * the allocation has already been done.
      */
     if (pScrn->driverPrivate == NULL) {
-        XGIPtr pXGI = xnfcalloc(sizeof(XGIRec), 1);
+        XGIPtr pXGI = XNFcallocarray(sizeof(XGIRec), 1);
 
         /* Initialise it to 0 */
         memset(pXGI, 0, sizeof(XGIRec));
@@ -672,7 +672,7 @@ void XGIAddAvailableModes(DisplayModePtr availModes)
 	/* Add all modes of ExtraAvailableModeTiming[] */
 	for(i=0; /* i < ExtraAvailableModeTimingCount */ xf86NameCmp(ExtraAvailableModeTiming[i].name, "0x0") != 0 ; i++)
 	{
-		p = xnfcalloc(1, sizeof(DisplayModeRec));
+		p = XNFcallocarray(1, sizeof(DisplayModeRec));
 
 		p->prev = last;
 		p->next = NULL;
@@ -2873,7 +2873,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 
     if (!pXGI->XGI_Pr) {
-        if (!(pXGI->XGI_Pr = xnfcalloc(sizeof(VB_DEVICE_INFO), 1))) {
+        if (!(pXGI->XGI_Pr = XNFcallocarray(sizeof(VB_DEVICE_INFO), 1))) {
             XGIErrorLog(pScrn,
                         "Could not allocate memory for XGI_Pr private\n");
 
@@ -3642,7 +3642,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      * Setup the ClockRanges, which describe what clock ranges are available,
      * and what sort of modes they can be used for.
      */
-    clockRanges = xnfcalloc(sizeof(ClockRange), 1);
+    clockRanges = XNFcallocarray(sizeof(ClockRange), 1);
     clockRanges->next = NULL;
     clockRanges->minClock = pXGI->MinClock;
     clockRanges->maxClock = pXGI->MaxClock;

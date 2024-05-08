@@ -179,7 +179,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
   pDRIInfo->SAREASize = SAREA_MAX;
 #endif
 
-  if (!(pXGIDRI = (XGIDRIPtr)xnfcalloc(sizeof(XGIDRIRec),1))) {
+  if (!(pXGIDRI = (XGIDRIPtr)XNFcallocarray(sizeof(XGIDRIRec),1))) {
     DRIDestroyInfoRec(pXGI->pDRIInfo);
     pXGI->pDRIInfo=0;
     return FALSE;
