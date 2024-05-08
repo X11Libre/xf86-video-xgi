@@ -685,7 +685,7 @@ void XGIAddAvailableModes(DisplayModePtr availModes)
 		first->next = p;
 		*/
 
-		p->name = xnfalloc(strlen(ExtraAvailableModeTiming[i].name) + 1);
+		p->name = XNFalloc(strlen(ExtraAvailableModeTiming[i].name) + 1);
 		p->name = ExtraAvailableModeTiming[i].name;
 		p->status = MODE_OK;
 
