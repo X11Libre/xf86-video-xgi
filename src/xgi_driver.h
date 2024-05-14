@@ -729,19 +729,19 @@ static const unsigned char XGI301CScaling[] = {
 /* Mandatory functions */
 static void XGIIdentify(int flags);
 static Bool XGIPreInit(ScrnInfoPtr pScrn, int flags);
-static Bool XGIScreenInit(SCREEN_INIT_ARGS_DECL);
-static Bool XGIEnterVT(VT_FUNC_ARGS_DECL);
-static void XGILeaveVT(VT_FUNC_ARGS_DECL);
-static Bool XGICloseScreen(CLOSE_SCREEN_ARGS_DECL);
+static Bool XGIScreenInit(ScreenPtr pScreen, int argc, char **argv);
+static Bool XGIEnterVT(ScrnInfoPtr pScrn);
+static void XGILeaveVT(ScrnInfoPtr pScrn);
+static Bool XGICloseScreen(ScreenPtr pScreen);
 static Bool XGISaveScreen(ScreenPtr pScreen, int mode);
-static Bool XGISwitchMode(SWITCH_MODE_ARGS_DECL);
-static void XGIAdjustFrame(ADJUST_FRAME_ARGS_DECL);
+static Bool XGISwitchMode(ScrnInfoPtr pScrn, DisplayModePtr mode);
+static void XGIAdjustFrame(ScrnInfoPtr pScrn, int x, int y);
 static Bool XGISaveScreenDH(ScreenPtr pScreen, int mode);
 
 /* Optional functions */
-static void       XGIFreeScreen(FREE_SCREEN_ARGS_DECL);
+static void XGIFreeScreen(ScrnInfoPtr pScreen);
 
-static int      XGIValidMode(SCRN_ARG_TYPE arg, DisplayModePtr mode, Bool verbose,
+static int      XGIValidMode(ScrnInfoPtr arg, DisplayModePtr mode, Bool verbose,
                              int flags);
 /* Internally used functions */
 static Bool    XGIMapMem(ScrnInfoPtr pScrn);
@@ -753,10 +753,6 @@ static void    XGIModifyModeInfo(DisplayModePtr mode);
 static void    XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode);
 static void    XGIPostSetMode(ScrnInfoPtr pScrn, XGIRegPtr xgiReg);
 
-/* static Bool    InRegion(int x, int y, region r); */
-/* #ifdef XGIMERGED
-static void    XGIMergePointerMoved(int scrnIndex, int x, int y);
-#endif */
 USHORT XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode,
     unsigned long VBFlags);
 unsigned char  XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned char value);

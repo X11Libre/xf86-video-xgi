@@ -52,10 +52,6 @@
 #include "xf86.h"
 #include "xf86Module.h"
 #include "xf86_OSproc.h"
-#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 6
-#include "xf86Resources.h"
-#include "xf86RAC.h"
-#endif
 #include "dixstruct.h"
 #include "xorgVersion.h"
 #include "xf86Pci.h"
@@ -233,11 +229,7 @@ static XF86ModuleVersionInfo xgiVersRec = {
     XORG_VERSION_CURRENT,
     PACKAGE_VERSION_MAJOR, PACKAGE_VERSION_MINOR, PACKAGE_VERSION_PATCHLEVEL,
     ABI_CLASS_VIDEODRV,         /* This is a video driver */
-#ifdef ABI_VIDEODRV_VERSION
     ABI_VIDEODRV_VERSION,
-#else
-    6,
-#endif
     MOD_CLASS_VIDEODRV,
     {0, 0, 0, 0}
 };
@@ -358,13 +350,7 @@ xgiSetup(pointer module, pointer opts, int *errmaj, int *errmin)
 
     if (!setupDone) {
         setupDone = TRUE;
-/* Jong@09022009 */
-#if (XORG_VERSION_CURRENT > XORG_VERSION_NUMERIC(6,9,0,0,0) )
         xf86AddDriver(&XGI, module, HaveDriverFuncs);
-#else
-        xf86AddDriver(&XGI, module, 0);
-#endif
-
         return (pointer) TRUE;
     }
 
@@ -2562,11 +2548,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         return FALSE;
     }
 
-#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 12
-    pXGI->IODBase = pScrn->domainIOBase;
-#endif
-
-
     /* Get the entity, and make sure it is PCI. */
     pXGI->pEnt = xf86GetEntityInfo(pScrn->entityList[0]);
     if (pXGI->pEnt->location.type != BUS_PCI) {
@@ -2633,20 +2614,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         }
     }
     vgaHWGetIOBase(VGAHWPTR(pScrn));
-
-#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 12
-	/* Jong@08262009; why not to modify ??? */
-    /* We "patch" the PIOOffset inside vgaHW in order to force
-     * the vgaHW module to use our relocated i/o ports.
-     */
-    VGAHWPTR(pScrn)->PIOOffset = pXGI->IODBase - 0x380 +
-#ifdef XSERVER_LIBPCIACCESS
-        (pXGI->PciInfo->regions[2].base_addr & 0xFFFC)
-#else
-        (pXGI->PciInfo->ioBase[2] & 0xFFFC)
-#endif
-        ;
-#endif
 
     pXGI->pInt = NULL;
     if (!pXGI->Primary) {
@@ -4334,8 +4301,8 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 		}
 
 		XGIPostSetMode(pScrn, &pXGI->ModeReg);
-		XGIAdjustFrame(ADJUST_FRAME_ARGS(pXGIEnt->pScrn_1, pXGIEnt->pScrn_1->frameX0,
-				   pXGIEnt->pScrn_1->frameY0));
+        XGIAdjustFrame(pXGIEnt->pScrn_1, pXGIEnt->pScrn_1->frameX0,
+                       pXGIEnt->pScrn_1->frameY0);
     }
     else
     {
@@ -4346,17 +4313,6 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 			XGIErrorLog(pScrn, "vgaHWInit() failed\n");
 			return FALSE;
 		}
-
-#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 12
-		/* Reset our PIOOffset as vgaHWInit might have reset it */
-		VGAHWPTR(pScrn)->PIOOffset = pXGI->IODBase - 0x380 +
-#ifdef XSERVER_LIBPCIACCESS
-        (pXGI->PciInfo->regions[2].base_addr & 0xFFFC)
-#else
-        (pXGI->PciInfo->ioBase[2] & 0xFFFC)
-#endif
-        ;
-#endif
 
 		/* Prepare the register contents */
 		if (!(*pXGI->ModeInit) (pScrn, mode)) {
@@ -4477,7 +4433,6 @@ XGIRestore(ScrnInfoPtr pScrn)
 static void
 XGIBlockHandler(BLOCKHANDLER_ARGS_DECL)
 {
-    SCREEN_PTR(arg);
     ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     XGIPtr pXGI = XGIPTR(pScrn);
 
@@ -4522,7 +4477,7 @@ void xgiRestoreVirtual(ScrnInfoPtr pScrn)
  * pScrn->displayWidth : memory pitch
  */
 static Bool
-XGIScreenInit(SCREEN_INIT_ARGS_DECL)
+XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
 {
     ScrnInfoPtr pScrn;
     vgaHWPtr hwp;
@@ -4621,19 +4576,6 @@ XGIScreenInit(SCREEN_INIT_ARGS_DECL)
     }
     vgaHWGetIOBase(hwp);
 
-#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 12
-    /* Patch the PIOOffset inside vgaHW to use
-     * our relocated IO ports.
-     */
-    VGAHWPTR(pScrn)->PIOOffset = pXGI->IODBase - 0x380 +
-#ifdef XSERVER_LIBPCIACCESS
-        (pXGI->PciInfo->regions[2].base_addr & 0xFFFC)
-#else
-        (pXGI->PciInfo->ioBase[2] & 0xFFFC)
-#endif
-        ;
-#endif
-
     /* Map the XGI memory and MMIO areas */
     if (!XGIMapMem(pScrn)) {
         XGIErrorLog(pScrn, "XGIMapMem() failed\n");
@@ -4657,9 +4599,6 @@ XGIScreenInit(SCREEN_INIT_ARGS_DECL)
         return FALSE;
     }
 
-	/* Jong@08122009; still at virtual */
-	/* xgiRestoreVirtual(); */
-
     PDEBUG(ErrorF("--- XGIModeInit ---  \n"));
     PDEBUG(XGIDumpRegs(pScrn));
 
@@ -4671,11 +4610,7 @@ XGIScreenInit(SCREEN_INIT_ARGS_DECL)
     XGISaveScreen(pScreen, SCREEN_SAVER_ON);
 
     /* Set the viewport */
-    XGIAdjustFrame(ADJUST_FRAME_ARGS(pScrn, pScrn->frameX0, pScrn->frameY0)); 
-
-    /* XGIAdjustFrame(scrnIndex, 0, 0, 0); */
-
-	/* xgiRestoreVirtual(pScrn); */
+    XGIAdjustFrame(pScrn, pScrn->frameX0, pScrn->frameY0);
 
     /*
      * The next step is to setup the screen's visuals, and initialise the
@@ -4985,8 +4920,7 @@ XGIScreenInit(SCREEN_INIT_ARGS_DECL)
     PDEBUG(XGIDumpPalette(pScrn)); 
 	PDEBUG(XGIDumpRegs(pScrn));
 
-	/* xgiRestoreVirtual(); */
-    XGIAdjustFrame(ADJUST_FRAME_ARGS(pScrn, 0, 0)); 
+    XGIAdjustFrame(pScrn, 0, 0);
 	pScrn->frameX0 = 0;
 	pScrn->frameY0 = 0; 
 	pScrn->frameX1 = pScrn->currentMode->HDisplay - 1 ;
@@ -4997,9 +4931,8 @@ XGIScreenInit(SCREEN_INIT_ARGS_DECL)
 
 /* Usually mandatory */
 Bool
-XGISwitchMode(SWITCH_MODE_ARGS_DECL)
+XGISwitchMode(ScrnInfoPtr pScrn, DisplayModePtr mode)
 {
-    SCRN_INFO_PTR(arg);
     XGIPtr pXGI = XGIPTR(pScrn);
 
 	if(pXGI->TargetRefreshRate)
@@ -5032,10 +4965,8 @@ XGISwitchMode(SWITCH_MODE_ARGS_DECL)
     PDEBUG(ErrorF
            ("XGISwitchMode (%d, %d) \n", mode->HDisplay, mode->VDisplay));
 
-#if 1
     /* Jong 07/29/2009; Set the viewport; still not working */
-    XGIAdjustFrame(ADJUST_FRAME_ARGS(pScrn, pScrn->frameX0, pScrn->frameY0));
-#endif
+    XGIAdjustFrame(pScrn, pScrn->frameX0, pScrn->frameY0);
 
     if (!(XGIModeInit(pScrn, mode)))
         return FALSE;
@@ -5387,9 +5318,8 @@ XGIAdjustFrameMerged(int scrnIndex, int x, int y, int flags)
  * Usually mandatory
  */
 void
-XGIAdjustFrame(ADJUST_FRAME_ARGS_DECL)
+XGIAdjustFrame(ScrnInfoPtr pScrn, int x, int y)
 {
-    SCRN_INFO_PTR(arg);
     XGIPtr pXGI = XGIPTR(pScrn);
     unsigned long base;
     unsigned char ucSR5Stat, ucTemp;
@@ -5446,9 +5376,8 @@ XGIAdjustFrame(ADJUST_FRAME_ARGS_DECL)
  * Mandatory!
  */
 static Bool
-XGIEnterVT(VT_FUNC_ARGS_DECL)
+XGIEnterVT(ScrnInfoPtr pScrn)
 {
-    SCRN_INFO_PTR(arg);
     XGIPtr pXGI = XGIPTR(pScrn);
 
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
@@ -5458,7 +5387,7 @@ XGIEnterVT(VT_FUNC_ARGS_DECL)
         return FALSE;
     }
 
-    XGIAdjustFrame(ADJUST_FRAME_ARGS(pScrn, pScrn->frameX0, pScrn->frameY0));
+    XGIAdjustFrame(pScrn, pScrn->frameX0, pScrn->frameY0);
 
 #ifdef XF86DRI
     if (pXGI->directRenderingEnabled) {
@@ -5479,9 +5408,8 @@ XGIEnterVT(VT_FUNC_ARGS_DECL)
  * Mandatory!
  */
 static void
-XGILeaveVT(VT_FUNC_ARGS_DECL)
+XGILeaveVT(ScrnInfoPtr pScrn)
 {
-    SCRN_INFO_PTR(arg);
     vgaHWPtr hwp = VGAHWPTR(pScrn);
     XGIPtr pXGI = XGIPTR(pScrn);
 #ifdef XF86DRI
@@ -5522,7 +5450,7 @@ XGILeaveVT(VT_FUNC_ARGS_DECL)
  * Mandatory!
  */
 static Bool
-XGICloseScreen(CLOSE_SCREEN_ARGS_DECL)
+XGICloseScreen(ScreenPtr pScreen)
 {
     ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     vgaHWPtr hwp = VGAHWPTR(pScrn);
@@ -5596,7 +5524,7 @@ XGICloseScreen(CLOSE_SCREEN_ARGS_DECL)
 
     pScreen->CloseScreen = pXGI->CloseScreen;
 
-    return (*pScreen->CloseScreen) (CLOSE_SCREEN_ARGS);
+    return (*pScreen->CloseScreen)(pScreen);
 }
 
 
@@ -5604,9 +5532,8 @@ XGICloseScreen(CLOSE_SCREEN_ARGS_DECL)
 
 /* Optional */
 static void
-XGIFreeScreen(FREE_SCREEN_ARGS_DECL)
+XGIFreeScreen(ScrnInfoPtr pScrn)
 {
-    SCRN_INFO_PTR(arg);
     if (xf86LoaderCheckSymbol("vgaHWFreeHWRec")) {
         vgaHWFreeHWRec(pScrn);
     }
@@ -5652,9 +5579,8 @@ int XGIValidateUserDefMode(XGIPtr pXGI, DisplayModePtr mode)
 /* Checks if a mode is suitable for the selected chipset. */
 
 static int
-XGIValidMode(SCRN_ARG_TYPE arg, DisplayModePtr mode, Bool verbose, int flags)
+XGIValidMode(ScrnInfoPtr pScrn, DisplayModePtr mode, Bool verbose, int flags)
 {
-    SCRN_INFO_PTR(arg);
     XGIPtr pXGI = XGIPTR(pScrn);
     int HDisplay = mode->HDisplay;
     int VDisplay = mode->VDisplay;

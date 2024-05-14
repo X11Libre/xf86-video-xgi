@@ -256,8 +256,8 @@ XGI_SetMode(
 
 	pScrn->currentMode = pXGI->CurrentLayout.mode;
 
-        (*pScrn->SwitchMode)(SWITCH_MODE_ARGS(pScrn, pScrn->currentMode));
-	(*pScrn->AdjustFrame)(ADJUST_FRAME_ARGS(pScrn, pScrn->frameX0, pScrn->frameY0));
+        (*pScrn->SwitchMode)(pScrn, pScrn->currentMode);
+        (*pScrn->AdjustFrame)(pScrn, pScrn->frameX0, pScrn->frameY0);
         pXGI->DGAactive = FALSE;
 
     } else {	/* set new mode */
@@ -272,10 +272,10 @@ XGI_SetMode(
 	pXGI->CurrentLayout.depth        = pMode->depth;
 	pXGI->CurrentLayout.displayWidth = pMode->bytesPerScanline / (pMode->bitsPerPixel >> 3);
 
-    	(*pScrn->SwitchMode)(SWITCH_MODE_ARGS(pScrn, pMode->mode));
+        (*pScrn->SwitchMode)(pScrn, pMode->mode);
 	/* TW: Adjust viewport to 0/0 after mode switch */
 	/* This should fix the vmware-in-dualhead problems */
-	(*pScrn->AdjustFrame)(ADJUST_FRAME_ARGS(pScrn, 0, 0));
+        (*pScrn->AdjustFrame)(pScrn, 0, 0);
     }
 
     return TRUE;
@@ -293,7 +293,7 @@ XGI_GetViewport(ScrnInfoPtr pScrn)
 static void
 XGI_SetViewport(ScrnInfoPtr pScrn, int x, int y, int flags)
 {
-   (*pScrn->AdjustFrame)(ADJUST_FRAME_ARGS(pScrn, x, y));
+    (*pScrn->AdjustFrame)(pScrn, x, y);
 }
 
 static void

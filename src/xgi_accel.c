@@ -635,64 +635,40 @@ Volari_AccelInit(ScreenPtr pScreen)
 
 		PDEBUG(ErrorF("--- Enable EXA ---\n" )) ;
 
-#ifdef XGIISXORGPOST70 /* for Xorg 7.0 and above */
 	      if(!(pXGI->EXADriverPtr = exaDriverAlloc()))
-#else
-	      if(!(pXGI->EXADriverPtr = XNFcallocarray(sizeof(ExaDriverRec), 1)))
-#endif
 		  {
 			  ErrorF("Failed to allocate EXADriverPtr!\n");
 			  return FALSE;
 		  }
 
 	      /* data */
-#ifdef XGIISXORGPOST70
 		PDEBUG(ErrorF("--- Xorg7 and above - 1 ---\n" )) ;
 		  pXGI->EXADriverPtr->exa_major = 2;
 		  pXGI->EXADriverPtr->exa_minor = 0;
 
 		  pXGI->EXADriverPtr->memoryBase = pXGI->FbBase;
 	      pXGI->EXADriverPtr->memorySize = pXGI->maxxfbmem;
-#else
-	      pXGI->EXADriverPtr->card.memoryBase = pXGI->FbBase;
-	      pXGI->EXADriverPtr->card.memorySize = pXGI->maxxfbmem;
-#endif
 	    if(!obase) {
 	         obase = pScrn->displayWidth * pScrn->virtualY * (pScrn->bitsPerPixel >> 3);
 	    }
 
-#ifdef XGIISXORGPOST70
 		PDEBUG(ErrorF("--- Xorg7 and above - 2 ---\n" )) ;
 		pXGI->EXADriverPtr->offScreenBase = obase;
 		if (pXGI->EXADriverPtr->memorySize > pXGI->EXADriverPtr->offScreenBase) {
 			PDEBUG(ErrorF("--- Xorg7 and above - 3 ---\n" )) ;
 			pXGI->EXADriverPtr->flags = EXA_OFFSCREEN_PIXMAPS;
 		}
-#else
-		pXGI->EXADriverPtr->card.offScreenBase = obase;
-		if (pXGI->EXADriverPtr->card.memorySize > pXGI->EXADriverPtr->card.offScreenBase) 
-		    pXGI->EXADriverPtr->card.flags = EXA_OFFSCREEN_PIXMAPS;
-#endif
 		else {
 		    pXGI->NoXvideo = TRUE;
 		    xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
 			       "Not enough video RAM for offscreen memory manager. Xv disabled\n");
 		}
 
-#ifdef XGIISXORGPOST70
 		PDEBUG(ErrorF("--- Xorg7 and above - 4 ---\n" )) ;
 		pXGI->EXADriverPtr->pixmapOffsetAlign = 32; /* 16; */	/* src/dst: double quad word boundary */
 		pXGI->EXADriverPtr->pixmapPitchAlign = 4;	/* pitch:   double word boundary      */
 		pXGI->EXADriverPtr->maxX = 4095;
 		pXGI->EXADriverPtr->maxY = 4095;
-#else
-		pXGI->EXADriverPtr->card.pixmapOffsetAlign = 32; /* 16; */	/* src/dst: double quad word boundary */
-		pXGI->EXADriverPtr->card.pixmapPitchAlign = 4;	/* pitch:   double word boundary      */
-		pXGI->EXADriverPtr->card.maxX = 4095;
-		pXGI->EXADriverPtr->card.maxY = 4095;
-#endif
-
-#ifdef XGIISXORGPOST70
 
 		PDEBUG(ErrorF("Use EXA for HW acceleration for Xorg7 and above...\n"));
 
@@ -715,29 +691,6 @@ Volari_AccelInit(ScreenPtr pScreen)
 		pXGI->EXADriverPtr->Composite = XGIComposite;
 		pXGI->EXADriverPtr->DoneComposite = XGIDoneComposite;
 #endif
-#else
-		PDEBUG(ErrorF("Use EXA for HW acceleration for Xorg6.9...\n"));
-
-		/* Sync */
-		pXGI->EXADriverPtr->accel.WaitMarker = XGIEXASync;
-
-		/* Solid fill */
-		pXGI->EXADriverPtr->accel.PrepareSolid = XGIPrepareSolid;
-		pXGI->EXADriverPtr->accel.Solid = XGISolid;
-		pXGI->EXADriverPtr->accel.DoneSolid = XGIDoneSolid;
-
-		/* Copy */
-		pXGI->EXADriverPtr->accel.PrepareCopy = XGIPrepareCopy;
-		pXGI->EXADriverPtr->accel.Copy = XGICopy;
-		pXGI->EXADriverPtr->accel.DoneCopy = XGIDoneCopy;
-
-#ifdef XGI_HAVE_COMPOSITE
-		pXGI->EXADriverPtr->accel.CheckComposite = XGICheckComposite;
-		pXGI->EXADriverPtr->accel.PrepareComposite = XGIPrepareComposite;
-		pXGI->EXADriverPtr->accel.Composite = XGIComposite;
-		pXGI->EXADriverPtr->accel.DoneComposite = XGIDoneComposite;
-#endif
-#endif /* POST70 */
 	   }
 #endif /* EXA */
 
@@ -756,11 +709,7 @@ Volari_AccelInit(ScreenPtr pScreen)
 		{
 			 pXGI->exa_scratch_next = pXGI->exa_scratch->offset;
 
-#ifdef XGIISXORGPOST70
 			 pXGI->EXADriverPtr->UploadToScratch = XGIUploadToScratch;
-#else
-			 pXGI->EXADriverPtr->accel.UploadToScratch = XGIUploadToScratch;
-#endif	    
 		}
             return TRUE;
 	}
@@ -1134,15 +1083,9 @@ XGIUploadToScratch(PixmapPtr pSrc, PixmapPtr pDst)
 
 	w = pSrc->drawable.width;
 
-#ifdef XGIISXORGPOST70
 	dst_pitch = ((w * (pSrc->drawable.bitsPerPixel >> 3)) +
 		     pXGI->EXADriverPtr->pixmapPitchAlign - 1) &
 		    ~(pXGI->EXADriverPtr->pixmapPitchAlign - 1);
-#else
-	dst_pitch = ((w * (pSrc->drawable.bitsPerPixel >> 3)) +
-		     pXGI->EXADriverPtr->card.pixmapPitchAlign - 1) &
-		    ~(pXGI->EXADriverPtr->card.pixmapPitchAlign - 1);
-#endif
 
 	size = dst_pitch * pSrc->drawable.height;
 
@@ -1150,33 +1093,19 @@ XGIUploadToScratch(PixmapPtr pSrc, PixmapPtr pDst)
 	   return FALSE;
 
 
-#ifdef XGIISXORGPOST70
 	pXGI->exa_scratch_next = (pXGI->exa_scratch_next +
 				  pXGI->EXADriverPtr->pixmapOffsetAlign - 1) &
 				  ~(pXGI->EXADriverPtr->pixmapOffsetAlign - 1);
-#else
-	pXGI->exa_scratch_next = (pXGI->exa_scratch_next +
-				  pXGI->EXADriverPtr->card.pixmapOffsetAlign - 1) &
-				  ~(pXGI->EXADriverPtr->card.pixmapOffsetAlign - 1);
-#endif
 
 	if(pXGI->exa_scratch_next + size >
 	   pXGI->exa_scratch->offset + pXGI->exa_scratch->size) {
-#ifdef XGIISXORGPOST70
 	   (pXGI->EXADriverPtr->WaitMarker)(pSrc->drawable.pScreen, 0);
-#else
-	   (pXGI->EXADriverPtr->accel.WaitMarker)(pSrc->drawable.pScreen, 0);
-#endif
 	   pXGI->exa_scratch_next = pXGI->exa_scratch->offset;
 	}
 
 	memcpy(pDst, pSrc, sizeof(*pDst));
 	pDst->devKind = dst_pitch;
-#ifdef XGIISXORGPOST70
 	pDst->devPrivate.ptr = pXGI->EXADriverPtr->memoryBase + pXGI->exa_scratch_next;
-#else
-	pDst->devPrivate.ptr = pXGI->EXADriverPtr->card.memoryBase + pXGI->exa_scratch_next;
-#endif
 
 	pXGI->exa_scratch_next += size;
 

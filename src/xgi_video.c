@@ -47,7 +47,9 @@
 
 #include "xorgVersion.h"
 
-#if (XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(6,9,0,0,0) )
+// currently disabled, since it needs an old v4l version
+// maybe not hard porting to libv4l, so still leaving the code in here
+#if 0
 #define VC //video capture
 #endif
 
@@ -472,11 +474,7 @@ XGISetupImageVideo(ScreenPtr pScreen)
 	pPriv->linebufMergeLimit = 1280;
 
     /* gotta uninit this someplace */
-#if defined(REGION_NULL)
-  REGION_NULL(pScreen, &pPriv->clip);
-#else
-    REGION_INIT(pScreen, &pPriv->clip, NullBox, 0);
-#endif
+    REGION_NULL(pScreen, &pPriv->clip);
 
     /* Reset the properties to their defaults */
     XGISetPortDefaults(pScrn, pPriv);

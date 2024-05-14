@@ -149,14 +149,7 @@ extern Bool g_bRunTimeDebug;
 
 #include "xorgVersion.h"
 
-/* #if XORG_VERSION_CURRENT > XORG_VERSION_NUMERIC(7,0,0,0,0) */
-#if ((XORG_VERSION_CURRENT > XORG_VERSION_NUMERIC(7,0,0,0,0)) || (XORG_VERSION_CURRENT < XORG_VERSION_NUMERIC(2,0,0,0,0)) )
-#define XGIISXORGPOST70
-#endif
-
-#if (XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(6,9,0,0,0) )
 #define XGI_USE_EXA
-#endif
 
 #ifdef XGI_USE_EXA
 #include "exa.h"
@@ -180,11 +173,7 @@ extern Bool g_bRunTimeDebug;
 #include "sarea.h"
 #define _XF86DRI_SERVER_
 
-#if ( (XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(6,9,0,0,0)) || (XORG_VERSION_CURRENT <= XORG_VERSION_NUMERIC(2,0,0,0,0)) )
 #include "X11/dri/xf86dri.h"
-#else
-#include "xf86dri.h"
-#endif
 
 #include "dri.h"
 #include "xgi_dri.h"
