@@ -147,7 +147,6 @@ extern Bool g_bRunTimeDebug;
 #include "xf86xv.h"
 #include "compiler.h"
 
-#ifdef XORG_VERSION_CURRENT
 #include "xorgVersion.h"
 
 /* #if XORG_VERSION_CURRENT > XORG_VERSION_NUMERIC(7,0,0,0,0) */
@@ -157,8 +156,6 @@ extern Bool g_bRunTimeDebug;
 
 #if (XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(6,9,0,0,0) )
 #define XGI_USE_EXA
-#endif
-
 #endif
 
 /* Jong 01/13/2009; support EXA */
@@ -177,13 +174,6 @@ extern Bool g_bRunTimeDebug;
 #include "vgaHW.h"
 #include "vbe.h"
 
-/*
-#ifdef XORG_VERSION_CURRENT
-#include "xorgVersion.h"
-#endif */
-
-/* #define XGIISXORGPOST70 */
-
 #include "xgi_pci.h"
 #include "osdef.h"
 #include "vgatypes.h"
@@ -195,23 +185,14 @@ extern Bool g_bRunTimeDebug;
 #define XGINEWDRI
 #undef XGINEWDRI2
 
-#ifdef XF86_VERSION_CURRENT
-#if XF86_VERSION_CURRENT >= XF86_VERSION_NUMERIC(4,4,99,99,0)	/* Adapt this when the time has come */
-#define XGINEWDRI2
-#endif
-#endif /* XF86_VERSION_CURRENT */
-
 #include "xf86drm.h"
 #include "sarea.h"
 #define _XF86DRI_SERVER_
 
-/* Jong@09032009 */
-#ifdef XORG_VERSION_CURRENT
 #if ( (XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(6,9,0,0,0)) || (XORG_VERSION_CURRENT <= XORG_VERSION_NUMERIC(2,0,0,0,0)) )
 #include "X11/dri/xf86dri.h"
 #else
 #include "xf86dri.h"
-#endif
 #endif
 
 #include "dri.h"

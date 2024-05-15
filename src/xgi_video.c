@@ -45,14 +45,10 @@
 #include "config.h"
 #endif
 
-/* Jong@09022009 */
-#ifdef XORG_VERSION_CURRENT
 #include "xorgVersion.h"
 
 #if (XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(6,9,0,0,0) )
 #define VC //video capture
-#endif
-
 #endif
 
 # ifdef VC
