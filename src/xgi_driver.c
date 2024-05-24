@@ -960,11 +960,9 @@ XGICopyModeNLink(ScrnInfoPtr pScrn, DisplayModePtr dest,
         return dest;
     }
 
-#ifdef XGIXINERAMA
     if (srel != xgiClone) {
         pXGI->AtLeastOneNonClone = TRUE;
     }
-#endif
 
     xf86DrvMsg(pScrn->scrnIndex, X_INFO,
                "Merged %dx%d and %dx%d to %dx%d%s\n",
@@ -1032,16 +1030,12 @@ XGIGenerateModeListFromLargestModes(ScrnInfoPtr pScrn,
                                     DisplayModePtr i, DisplayModePtr j,
                                     XGIScrn2Rel srel)
 {
-#ifdef XGIXINERAMA
     XGIPtr pXGI = XGIPTR(pScrn);
-#endif
     DisplayModePtr mode1 = NULL;
     DisplayModePtr mode2 = NULL;
     DisplayModePtr result = NULL;
 
-#ifdef XGIXINERAMA
     pXGI->AtLeastOneNonClone = FALSE;
-#endif
 
     switch (srel) {
     case xgiLeftOf:
@@ -1075,9 +1069,7 @@ XGIGenerateModeListFromMetaModes(ScrnInfoPtr pScrn, char *str,
                                  DisplayModePtr i, DisplayModePtr j,
                                  XGIScrn2Rel srel)
 {
-#ifdef XGIXINERAMA
     XGIPtr pXGI = XGIPTR(pScrn);
-#endif
     char *strmode = str;
     char modename[256];
     Bool gotdash = FALSE;
@@ -1086,9 +1078,7 @@ XGIGenerateModeListFromMetaModes(ScrnInfoPtr pScrn, char *str,
     DisplayModePtr mode2 = NULL;
     DisplayModePtr result = NULL;
 
-#ifdef XGIXINERAMA
     pXGI->AtLeastOneNonClone = FALSE;
-#endif
 
     do {
         switch (*str) {

@@ -159,11 +159,9 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_IGNORE_DDC,		"IgnoreDDC",      	  OPTV_BOOLEAN,   {0}, -1 }, /* Jong@09032009 */
     { OPTION_NONDDC_DEFAULT_MODE,		"NonDDCDefaultMode",      	  OPTV_STRING,   {0}, FALSE }, /* Jong@09042009 */
     { OPTION_GAMMA_RGB,			"GammaRGB",      	  OPTV_STRING,   {0}, FALSE }, /* Jong@09092009 */
-#ifdef XGIXINERAMA
     { OPTION_NOXGIXINERAMA,		"NoMergedXinerama",	  OPTV_BOOLEAN,	  {0}, FALSE },
     { OPTION_NOXGIXINERAMA2,		"NoTwinviewXineramaInfo", OPTV_BOOLEAN,   {0}, FALSE },   /* alias */
     { OPTION_CRT2ISSCRN0,		"MergedXineramaCRT2IsScreen0",OPTV_BOOLEAN,{0},FALSE },
-#endif
     { -1,                       	NULL,                     OPTV_NONE,      {0}, FALSE }
 };
 
@@ -251,10 +249,8 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->CRT2VRefresh = NULL;
     pXGI->MetaModes = NULL;
     pXGI->MergedFBXDPI = pXGI->MergedFBYDPI = 0;
-#ifdef XGIXINERAMA
     pXGI->UsexgiXinerama = TRUE;
     pXGI->CRT2IsScrn0 = FALSE;
-#endif
 
     /* Collect the options */
 

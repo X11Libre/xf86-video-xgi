@@ -186,7 +186,6 @@ extern Bool g_bRunTimeDebug;
 #define CHIP_REVISION(p)  (p)->chipRev
 #endif
 
-#define XGIXINERAMA		/* Include Pseudo-Xinerama for MergedFB mode */
 #define XGI_XINERAMA_MAJOR_VERSION  1
 #define XGI_XINERAMA_MINOR_VERSION  1
 
@@ -199,11 +198,9 @@ extern Bool g_bRunTimeDebug;
 #define ENABLE_YPBPR
 #endif
 
-#ifdef XGIXINERAMA
 #define EXTENSION_PROC_ARGS void *
 #include "extnsionst.h"  	/* required */
 #include <X11/extensions/panoramiXproto.h>  	/* required */
-#endif
 
 #if 1
 #define XGIVRAMQ		/* Use VRAM queue mode on 315 series */
@@ -792,13 +789,11 @@ typedef struct {
     int			CRT1frameY1;
     Bool		CheckForCRT2;
     int			MergedFBXDPI, MergedFBYDPI;
-#ifdef XGIXINERAMA
     Bool		UsexgiXinerama;
     Bool		CRT2IsScrn0;
     ExtensionEntry 	*XineramaExtEntry;
     int			xgiXineramaVX, xgiXineramaVY;
     Bool		AtLeastOneNonClone;
-#endif
 
     /* Added for 3D */
     unsigned long        cmdQueue_shareWP_only2D;
