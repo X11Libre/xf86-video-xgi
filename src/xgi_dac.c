@@ -619,7 +619,6 @@ XGILoadPalette(ScrnInfoPtr pScrn, int numColors, int *indices, LOCO *colors,
 
      if (!IS_DUAL_HEAD(pXGI) || IS_SECOND_HEAD(pXGI)) {
         switch(pXGI->CurrentLayout.depth) {
-#ifdef XGIGAMMA
           case 15:
 	     if(dogamma1) {
 	        orXGIIDXREG(XGISR, 0x07, 0x04);
@@ -674,7 +673,6 @@ PDEBUG(ErrorF("\ndogamma1 SR7=%x ", SR7));
 	        andXGIIDXREG(XGISR, 0x07, ~0x04);
 	     }
 	     break;
-#endif
 	  default:
 	     if((pScrn->rgbBits == 8) && (dogamma1))
 	        orXGIIDXREG(XGISR, 0x07, 0x04);
