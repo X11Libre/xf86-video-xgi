@@ -29,12 +29,9 @@
 
 #include "osdef.h"
 
-#ifdef LINUX_XF86
 #include "xf86.h"
 #include "xgi.h"
 #include "xgi_regs.h"
-#endif
-
 #include "vb_def.h"
 #include "vgatypes.h"
 #include "vb_struct.h"
@@ -467,10 +464,6 @@ BOOLEAN
 XGISetModeNew(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo,
 	      USHORT ModeNo)
 {
-#ifndef LINUX_XF86
-    ULONG temp;
-    USHORT KeepLockReg;
-#endif
     USHORT ModeIdIndex;
     /* PUCHAR pVBInfo->FBAddr = HwDeviceExtension->pjVideoMemoryAddress ; */
     USHORT temp_mode_no;
@@ -1083,9 +1076,6 @@ XGI_SetCRT1Group(PXGI_HW_DEVICE_INFO HwDeviceExtension, USHORT ModeNo,
     USHORT temp;
 
     USHORT XGINew_P3cc = pVBInfo->P3cc;
-#ifndef LINUX_XF86
-    USHORT XGINew_P3c2 = pVBInfo->P3c2;
-#endif
 
 	PDEBUG(ErrorF("XGI_SetCRT1Group()...begin\n"));
 
@@ -1766,9 +1756,6 @@ XGI_SetCRT1CRTC(USHORT ModeNo, USHORT ModeIdIndex,
                 PXGI_HW_DEVICE_INFO HwDeviceExtension)
 {
     UCHAR index, data;
-#ifndef LINUX_XF86
-    USHORT temp, tempah, j, modeflag, ResInfo, DisplayType;
-#endif
     USHORT i;
 
     index = pVBInfo->RefIndex[RefreshRateTableIndex].Ext_CRT1CRTC;      /* Get index */
@@ -4382,9 +4369,6 @@ XGI_SenseCRT1(PVB_DEVICE_INFO pVBInfo)
     UCHAR DAC_TEST_PARMS[3] = { 0x0F, 0x0F, 0x0F };
 
     int i;
-#ifndef LINUX_XF86
-    int j;
-#endif
 
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x05, 0x86);
 
@@ -4509,11 +4493,7 @@ SetDualChipRegs(PXGI_HW_DEVICE_INFO HwDeviceExtension,
                 PVB_DEVICE_INFO pVBInfo)
 {
 
-#ifdef LINUX_XF86
     USHORT BaseAddr2nd = (USHORT) (ULONG) HwDeviceExtension->pj2ndIOAddress;
-#else
-    USHORT BaseAddr2nd = (USHORT) HwDeviceExtension->pj2ndIOAddress;
-#endif
     USHORT XGINew_P3CC = pVBInfo->BaseAddr + MISC_OUTPUT_REG_READ_PORT;
     USHORT XGINew_2ndP3CE = BaseAddr2nd + GRAPH_ADDRESS_PORT;
     USHORT XGINew_2ndP3C4 = BaseAddr2nd + SEQ_ADDRESS_PORT;
@@ -4715,9 +4695,6 @@ XGI_GetCRT2Data(USHORT ModeNo, USHORT ModeIdIndex,
                 USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT tempax = 0, tempbx, modeflag, resinfo;
-#ifndef LINUX_XF86
-    USHORT CRT2Index, ResIndex;
-#endif
 
     XGI_LCDDataStruct *LCDPtr = NULL;
     XGI_TVDataStruct *TVPtr = NULL;
@@ -5201,9 +5178,6 @@ XGI_PreSetGroup1(USHORT ModeNo, USHORT ModeIdIndex,
                  USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT tempcx = 0, CRT1Index = 0, resinfo = 0;
-#ifndef LINUX_XF86
-    USHORT temp = 0, tempax = 0, tempbx = 0, pushbx = 0, modeflag;
-#endif
 
     if (ModeNo > 0x13) {
         CRT1Index = pVBInfo->RefIndex[RefreshRateTableIndex].Ext_CRT1CRTC;
@@ -5788,21 +5762,6 @@ XGI_SetGroup2(USHORT ModeNo, USHORT ModeIdIndex, USHORT RefreshRateTableIndex,
         j,
         tempax,
         tempbx, tempcx, temp, push1, push2, modeflag, resinfo, crt2crtc;
-#ifndef LINUX_XF86
-    USHORT temp1, temp3, resindex, xres;
-#endif
-/*           XGINew_RY1COE = 0 ,
-           XGINew_RY2COE = 0 ,
-           XGINew_RY3COE = 0 ,
-           XGINew_RY4COE = 0 ,
-           XGINew_RY5COE = 0 ,
-           XGINew_RY6COE = 0 ,
-           XGINew_RY7COE = 0 ;
-*/
-
-#ifndef LINUX_XF86
-    UCHAR *PhasePoint;
-#endif
     const UCHAR *TimingPoint;
 
     ULONG longtemp, tempeax, tempebx, temp2, tempecx;
@@ -6563,10 +6522,6 @@ XGI_GetTap4Ptr(USHORT tempcx, PVB_DEVICE_INFO pVBInfo)
 void
 XGI_SetTap4Regs(PVB_DEVICE_INFO pVBInfo)
 {
-
-#ifndef LINUX_XF86
-    USHORT tempcx;
-#endif
     USHORT i, j;
 
     const XGI301C_Tap4TimingStruct *Tap4TimingPtr;
@@ -6684,12 +6639,7 @@ XGI_SetGroup4(USHORT ModeNo, USHORT ModeIdIndex, USHORT RefreshRateTableIndex,
               PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT tempax, tempcx, tempbx, modeflag, temp, temp2;
-#ifndef LINUX_XF86
-    USHORT push1;
-#endif
-
     ULONG tempebx, tempeax, templong;
-
 
     if (ModeNo <= 0x13) {
         modeflag = pVBInfo->SModeIDTable[ModeIdIndex].St_ModeFlag;      /* si+St_ResInfo */
@@ -7685,12 +7635,7 @@ XGI_DisableGatingCRT(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 void
 XGI_SetPanelDelay(USHORT tempbl, PVB_DEVICE_INFO pVBInfo)
 {
-    USHORT index;
-#ifndef LINUX_XF86
-    USHORT temp;
-#endif
-
-    index = XGI_GetLCDCapPtr(pVBInfo);
+    USHORT index = XGI_GetLCDCapPtr(pVBInfo);
 
     if (tempbl == 1)
         XGINew_LCD_Wait_Time(pVBInfo->LCDCapList[index].PSC_S1, pVBInfo);
@@ -8626,9 +8571,6 @@ void
 XGI_EnableBridge(PXGI_HW_DEVICE_INFO HwDeviceExtension,
                  PVB_DEVICE_INFO pVBInfo)
 {
-#ifndef LINUX_XF86
-    USHORT tempax;
-#endif
     USHORT tempbl, tempah;
 
     if (pVBInfo->SetFlag == Win9xDOSMode) {
@@ -9043,11 +8985,7 @@ void
 XGI_SetDelayComp(PVB_DEVICE_INFO pVBInfo)
 {
     USHORT index;
-
     UCHAR tempah, tempbl, tempbh;
-#ifndef LINUX_XF86
-    UCHAR temp;
-#endif
 
     if (pVBInfo->
         VBType & (VB_XGI301B | VB_XGI302B | VB_XGI301LV | VB_XGI302LV |
@@ -9508,12 +9446,8 @@ void
 XGI_SetCRT2ModeRegs(USHORT ModeNo, PXGI_HW_DEVICE_INFO HwDeviceExtension,
                     PVB_DEVICE_INFO pVBInfo)
 {
-#ifndef LINUX_XF86
-    USHORT i, j;
-#endif
     USHORT tempbl;
     SHORT tempcl;
-
     UCHAR tempah;
 
     /* XGI_SetReg((XGIIOADDRESS) pVBInfo->Part1Port , 0x03 , 0x00 ) ; // fix write part1 index 0 BTDRAM bit Bug */
@@ -9739,9 +9673,6 @@ XGI_GetRAMDAC2DATA(USHORT ModeNo, USHORT ModeIdIndex,
                    USHORT RefreshRateTableIndex, PVB_DEVICE_INFO pVBInfo)
 {
     USHORT tempax, tempbx, temp1, temp2, modeflag = 0, tempcx, CRT1Index;
-#ifndef LINUX_XF86
-    USHORT temp, ResInfo, DisplayType;
-#endif
 
     pVBInfo->RVBHCMAX = 1;
     pVBInfo->RVBHCFACT = 1;

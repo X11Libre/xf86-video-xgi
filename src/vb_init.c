@@ -34,12 +34,9 @@
 #include "vb_setmode.h"
 #include "vb_init.h"
 #include "vb_ext.h"
-
-#ifdef LINUX_XF86
 #include "xf86.h"
 #include "xgi.h"
 #include "xgi_regs.h"
-#endif
 
 static UCHAR XGINew_ChannelAB;
 static UCHAR XGINew_DataBusWidth;
@@ -202,13 +199,6 @@ static ULONG UNIROM;			  /* UNIROM */
 BOOLEAN XGIInitNew(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 		   PVB_DEVICE_INFO pVBInfo)
 {
-#ifndef LINUX_XF86
-    USHORT Mclockdata[ 30 ] , Eclockdata[ 30 ] ;
-    UCHAR  j , SR11 , SR17 = 0 , SR18 = 0 , SR19 = 0 ;
-    UCHAR  CR37 = 0 , CR38 = 0 , CR79 = 0 , CR7A = 0 ,
-           CR7B = 0 , CR36 = 0 , CR78 = 0 , CR3C = 0 ,
-           CR3D = 0 , CR3E = 0 , CR3F = 0 , CR35 = 0 ;
-#endif
     UCHAR   i , temp = 0 , temp1 ,
             VBIOSVersion[ 5 ] ;
     ULONG   base,ChipsetID,VendorID,GraphicVendorID;
@@ -628,11 +618,7 @@ BOOLEAN XGIInitNew(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 /* --------------------------------------------------------------------- */
 void DualChipInit( PXGI_HW_DEVICE_INFO HwDeviceExtension ,PVB_DEVICE_INFO pVBInfo)
 {
-#ifdef LINUX_XF86
     USHORT  BaseAddr2nd = (USHORT)(ULONG)HwDeviceExtension->pj2ndIOAddress ;
-#else
-    USHORT  BaseAddr2nd = (USHORT)HwDeviceExtension->pj2ndIOAddress ;
-#endif
     USHORT  XGINew_P3C3 = pVBInfo->BaseAddr + VIDEO_SUBSYSTEM_ENABLE_PORT ;
     USHORT  XGINew_P3CC = pVBInfo->BaseAddr + MISC_OUTPUT_REG_READ_PORT ;
     USHORT  XGINew_2ndP3C3 = BaseAddr2nd + VIDEO_SUBSYSTEM_ENABLE_PORT ;
@@ -1229,9 +1215,6 @@ void XGINew_DDR1x_DefaultRegister(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 {
     USHORT P3d4 = Port ,
            P3c4 = Port - 0x10 ;
-#ifndef LINUX_XF86
-    UCHAR  data ;
-#endif
     if ( HwDeviceExtension->jChipType >= XG20 )
     {
         XGINew_SetMemoryClock( HwDeviceExtension , pVBInfo ) ;
@@ -1292,10 +1275,6 @@ void XGINew_DDR2x_DefaultRegister(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 {
     USHORT P3d4 = Port ,
            P3c4 = Port - 0x10 ;
-
-#ifndef LINUX_XF86
-    UCHAR  data ;
-#endif
 
     XGINew_SetMemoryClock( HwDeviceExtension , pVBInfo ) ;
 
@@ -2868,15 +2847,9 @@ int XGINew_DDRSizing(PVB_DEVICE_INFO pVBInfo)
 /* --------------------------------------------------------------------- */
 void XGINew_SetMemoryClock( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo)
 {
-#ifndef LINUX_XF86
-    UCHAR tempal ;
-#endif
-
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x28 , pVBInfo->MCLKData[ XGINew_RAMType ].SR28 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x29 , pVBInfo->MCLKData[ XGINew_RAMType ].SR29 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2A , pVBInfo->MCLKData[ XGINew_RAMType ].SR2A ) ;
-
-
 
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2E , pVBInfo->ECLKData[ XGINew_RAMType ].SR2E ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x2F , pVBInfo->ECLKData[ XGINew_RAMType ].SR2F ) ;
@@ -3012,10 +2985,6 @@ void XGINew_InitVBIOSData(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO
 /* --------------------------------------------------------------------- */
 void ReadVBIOSTablData( UCHAR ChipType , PVB_DEVICE_INFO pVBInfo)
 {
-#ifndef LINUX_XF86
-    ULONG   ulOffset ;
-    UCHAR   temp , index , l ;
-#endif
     PUCHAR  volatile pVideoMemory = ( PUCHAR )pVBInfo->ROMAddr ;
     ULONG   i ;
     UCHAR   j , k ;
@@ -3408,10 +3377,6 @@ void XGINew_DDR1x_MRS_XG20( USHORT P3c4 , PVB_DEVICE_INFO pVBInfo)
 void XGINew_SetDRAMModeRegister_XG20(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 				     PVB_DEVICE_INFO pVBInfo)
 {
-#ifndef LINUX_XF86
-    UCHAR data ;
-#endif
-
     ReadVBIOSTablData( HwDeviceExtension->jChipType , pVBInfo) ;
 
     if ( XGINew_Get340DRAMType( HwDeviceExtension, pVBInfo) == 0 )
@@ -3424,9 +3389,6 @@ void XGINew_SetDRAMModeRegister_XG20(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 
 void XGINew_SetDRAMModeRegister_XG27( PXGI_HW_DEVICE_INFO HwDeviceExtension )
 {
-#ifndef LINUX_XF86
-    UCHAR data ;
-#endif
     VB_DEVICE_INFO VBINF;
     PVB_DEVICE_INFO pVBInfo = &VBINF;
     pVBInfo->ROMAddr = HwDeviceExtension->pjVirtualRomBase ;

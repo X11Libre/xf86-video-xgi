@@ -52,11 +52,8 @@
 #define _VGATYPES_
 
 #include "osdef.h"
-
-#ifdef LINUX_XF86
 #include "xorgVersion.h"
 #include "xf86Pci.h"
-#endif
 
 #ifndef FALSE
 #define FALSE   0
@@ -122,9 +119,7 @@ typedef UCHAR BOOLEAN;
 typedef UCHAR bool;
 #endif
 
-#ifdef LINUX_XF86
 typedef unsigned long XGIIOADDRESS;
-#endif
 
 #ifndef VBIOS_VER_MAX_LENGTH
 #define VBIOS_VER_MAX_LENGTH    4
@@ -300,8 +295,6 @@ struct _XGI_HW_DEVICE_INFO
 /* Additional IOCTL for communication xgifb <> X driver        */
 /* If changing this, xgifb.h must also be changed (for xgifb) */
 
-#ifdef LINUX_XF86  /* We don't want the X driver to depend on the kernel source */
-
 /* ioctl for identifying and giving some info (esp. memory heap start) */
 #define XGIFB_GET_INFO    0x80046ef8  /* Wow, what a terrible hack... */
 
@@ -348,7 +341,5 @@ struct _XGIFB_INFO {
 
 	uint8_t reserved[212]; 		/* for future use */
 };
-#endif
 
 #endif
-

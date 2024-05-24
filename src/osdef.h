@@ -49,11 +49,5 @@
  *
  */
 
-/* The choices are: */
-#define LINUX_XF86    		/* XFree86 */
-
 #define XGI_MemoryCopy(Destination,Source,Length) memcpy(Destination,Source,Length)
-
-#ifdef LINUX_XF86
 #define XGI_SetMemory(MemoryAddress,MemorySize,value) memset(MemoryAddress, value, MemorySize)
-#endif

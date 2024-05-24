@@ -9,12 +9,10 @@
 /* #include "vb_util.h" */ /* Jong@08032009 */
 #include "vb_def.h"
 
-#ifdef LINUX_XF86
 #include "xf86.h"
 #include "xgi.h"
 #include "xgi_regs.h"
 #include "vb_i2c.h"
-#endif
 
 char vGetEDIDExtensionBlocks(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl pI2C, PUCHAR pjBuffer, ULONG ulBufferSize);
 char vGetEnhancedEDIDBlock(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl pI2C, ULONG ulBlockID, ULONG ulBlockTag, PUCHAR pjBuffer, ULONG ulBufferSize);

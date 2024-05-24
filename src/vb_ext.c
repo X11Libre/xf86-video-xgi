@@ -29,12 +29,9 @@
 #endif
 #include "osdef.h"
 
-#ifdef LINUX_XF86
 #include "xf86.h"
 #include "xgi.h"
 #include "xgi_regs.h"
-#endif
-
 #include "vb_def.h"
 #include "vgatypes.h"
 #include "vb_struct.h"
@@ -371,9 +368,6 @@ BOOLEAN XGINew_SenseHiTV( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INF
 {
     USHORT tempbx , tempcx , temp , i , tempch;
 
-#ifndef LINUX_XF86
-    USHORT tempax ;
-#endif
     tempbx = *pVBInfo->pYCSenseData2 ;
 
     tempcx = 0x0604 ;

@@ -844,10 +844,8 @@ XGI_New_SetCRT1Group(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 
   XGI_Pr->SetFlag &= (~ProgrammingCRT2);
 
-#ifdef LINUX_XF86
   xf86DrvMsgVerb(0, X_PROBED, 4, "(init: VBType=0x%04x, VBInfo=0x%04x)\n",
                     XGI_Pr->VBType, XGI_Pr->VBInfo);
-#endif
 
   if(XGI_Pr->VBInfo & SetSimuScanMode) {
      if(XGI_Pr->VBInfo & SetInSlaveMode) {
@@ -880,7 +878,6 @@ XGI_New_SetCRT1Group(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 /*         XFree86: SET SCREEN PITCH         */
 /*********************************************/
 
-#ifdef LINUX_XF86
 static void
 XGI_SetPitchCRT1(VB_DEVICE_INFO *XGI_Pr, ScrnInfoPtr pScrn)
 {
@@ -890,14 +887,12 @@ XGI_SetPitchCRT1(VB_DEVICE_INFO *XGI_Pr, ScrnInfoPtr pScrn)
    XGI_SetReg(XGI_Pr->P3d4,0x13,(HDisplay & 0xFF));
    XGI_SetRegANDOR(XGI_Pr->P3c4,0x0E,0xF0,(HDisplay>>8));
 }
-#endif
 
 /*********************************************/
 /*          XFree86: XGIBIOSSetMode()        */
 /*           for non-Dual-Head mode          */
 /*********************************************/
 
-#ifdef LINUX_XF86
 BOOLEAN
 XGIBIOSSetMode(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 	       ScrnInfoPtr pScrn, DisplayModePtr mode)
@@ -1080,4 +1075,3 @@ XGIBIOSSetModeCRT1(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 
    return TRUE;
 }
-#endif /* Linux_XF86 */

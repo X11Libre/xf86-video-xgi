@@ -55,14 +55,11 @@
 
 #include "vgatypes.h"
 #include "vb_struct.h"
-
-#ifdef LINUX_XF86
 #include "xf86.h"
 #include "xf86Pci.h"
 #include "xf86_OSproc.h"
 #include "xgi.h"
 #include "xgi_regs.h"
-#endif
 
 /* Mode numbers */
 static const USHORT  ModeIndex_320x200[]      = {0x59, 0x41, 0x00, 0x4f};
@@ -106,20 +103,16 @@ USHORT	XGI_GetMCLK(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo);
 USHORT	XGI_New_GetOffset(VB_DEVICE_INFO *XGI_Pr,USHORT ModeNo,USHORT ModeIdIndex,
               USHORT RefreshRateTableIndex,PXGI_HW_DEVICE_INFO HwInfo);
 void	XGI_New_LoadDAC(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo, USHORT ModeNo, USHORT ModeIdIndex);
-#ifdef LINUX_XF86
+
 BOOLEAN	XGIBIOSSetMode(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
     ScrnInfoPtr pScrn, DisplayModePtr mode);
 
 BOOLEAN	XGIBIOSSetModeCRT1(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
     ScrnInfoPtr pScrn, DisplayModePtr mode);
-#endif
 
-#ifdef LINUX_XF86
 extern unsigned char XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned char value);
 extern unsigned char XGI_GetSetModeID(ScrnInfoPtr pScrn, unsigned char id);
 extern USHORT XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode,
     unsigned long VBFlags);
-#endif
 
 #endif
-
