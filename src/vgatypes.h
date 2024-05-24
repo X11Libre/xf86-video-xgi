@@ -155,7 +155,6 @@ typedef enum _XGI_VB_CHIP_TYPE {
 } XGI_VB_CHIP_TYPE;
 #endif
 
-#ifndef XGI_LCD_TYPE
 typedef enum _XGI_LCD_TYPE {
     LCD_INVALID = 0,
     LCD_320x480,       /* FSTN, DSTN */
@@ -181,17 +180,12 @@ typedef enum _XGI_LCD_TYPE {
     LCD_CUSTOM,
     LCD_UNKNOWN
 } XGI_LCD_TYPE;
-#endif
 
-#ifndef PXGI_DSReg
 typedef struct _XGI_DSReg
 {
   UCHAR  jIdx;
   UCHAR  jVal;
 } XGI_DSReg, *PXGI_DSReg;
-#endif
-
-#ifndef XGI_HW_DEVICE_INFO
 
 typedef struct _XGI_HW_DEVICE_INFO  XGI_HW_DEVICE_INFO, *PXGI_HW_DEVICE_INFO;
 
@@ -255,9 +249,6 @@ struct _XGI_HW_DEVICE_INFO
                                  /* end data :(idx, val) =  (FF, FF) */
                                  /* Note : restore cR registers if  */
                                  /* bSkipDramSizing = TRUE */
-/*
-#endif
-*/
 
     PXGI_QUERYSPACE  pQueryVGAConfigSpace;
 
@@ -290,7 +281,6 @@ struct _XGI_HW_DEVICE_INFO
 	UCHAR		ucI2cFCNT;
 	int			crtno;			 
 };
-#endif
 
 /* Additional IOCTL for communication xgifb <> X driver        */
 /* If changing this, xgifb.h must also be changed (for xgifb) */
@@ -298,14 +288,13 @@ struct _XGI_HW_DEVICE_INFO
 /* ioctl for identifying and giving some info (esp. memory heap start) */
 #define XGIFB_GET_INFO    0x80046ef8  /* Wow, what a terrible hack... */
 
+#define XGIFB_ID	  0x53495346    /* Identify myself with 'XGIF' */
+
 /* Structure argument for XGIFB_GET_INFO ioctl  */
 typedef struct _XGIFB_INFO xgifb_info, *pxgifb_info;
 
 struct _XGIFB_INFO {
 	uint32_t 	xgifb_id;         	/* for identifying xgifb */
-#ifndef XGIFB_ID
-#define XGIFB_ID	  0x53495346    /* Identify myself with 'XGIF' */
-#endif
 	uint32_t 	chip_id;		/* PCI ID of detected chip */
 	uint32_t	memory;			/* video memory in KB which xgifb manages */
 	uint32_t	heapstart;             	/* heap start (= xgifb "mem" argument) in KB */

@@ -44,12 +44,6 @@
 
 #include "xf86Pci.h"
 #include "fb.h"
-#define PSZ 8
-/* #include "cfb.h" */
-#undef PSZ
-/* #include "cfb16.h" */
-/* #include "cfb32.h" */
-
 #include "miline.h"
 
 #include "xgi.h"
