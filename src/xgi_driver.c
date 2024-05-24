@@ -3972,22 +3972,10 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         return FALSE;
     }
 
-    /* Load XAA if needed */
+    /* Load EXA if needed */
     if (!pXGI->NoAccel) 
 	{
         xf86DrvMsg(pScrn->scrnIndex, X_INFO, "Accel enabled\n");
-
-#ifdef XGI_USE_XAA
-		if(!(pXGI->useEXA))
-		{
-			if (!xf86LoadSubModule(pScrn, "xaa")) {
-				XGIErrorLog(pScrn, "Could not load xaa module\n");
-
-				pXGI->NoAccel = TRUE;
-				pXGI->ShadowFB = TRUE;
-			}
-		}
-#endif
 
 #ifdef XGI_USE_EXA
 		if(pXGI->useEXA)
@@ -4455,13 +4443,6 @@ XGIRestore(ScrnInfoPtr pScrn)
 
     PDEBUG(ErrorF("XGIRestore():\n"));
 
-    /* Wait for the accelerators */
-#ifdef XGI_USE_XAA
-    if (!(pXGI->useEXA) && pXGI->AccelInfoPtr) {
-        (*pXGI->AccelInfoPtr->Sync) (pScrn);
-    }
-#endif
-
     vgaHWProtect(pScrn, TRUE);
 
 #ifdef UNLOCK_ALWAYS
@@ -4915,13 +4896,6 @@ XGIScreenInit(SCREEN_INIT_ARGS_DECL)
         return FALSE;
     }
 
-/*
-    if (!xf86HandleColormaps(pScreen, 256, 8, XGILoadPalette, NULL,
-                             CMAP_RELOAD_ON_MODE_SWITCH))
-    {
-        return FALSE;
-    }
-*/
     xf86DPMSInit(pScreen, (DPMSSetProcPtr) XGIDisplayPowerManagementSet, 0);
 
     /* Init memPhysBase and fbOffset in pScrn */
@@ -5054,15 +5028,6 @@ XGISwitchMode(SWITCH_MODE_ARGS_DECL)
 	//pScrn->frameY0 = 0;
 	//pScrn->frameX1 = mode->HDisplay;
 	//pScrn->frameY1 = mode->VDisplay;
-
-    if (!pXGI->NoAccel) {
-#ifdef XGI_USE_XAA
-        if (!(pXGI->useEXA) && pXGI->AccelInfoPtr) {
-            (*pXGI->AccelInfoPtr->Sync) (pScrn);
-            PDEBUG(ErrorF("XGISwitchMode Accel Enabled. \n"));
-        }
-#endif
-    }
 
     PDEBUG(ErrorF
            ("XGISwitchMode (%d, %d) \n", mode->HDisplay, mode->VDisplay));
@@ -5602,18 +5567,6 @@ XGICloseScreen(CLOSE_SCREEN_ARGS_DECL)
         xf86FreeInt10(pXGI->pInt);
         pXGI->pInt = NULL;
     }
-
-#ifdef XGI_USE_XAA
-    if (pXGI->AccelLinearScratch) {
-        xf86FreeOffscreenLinear(pXGI->AccelLinearScratch);
-        pXGI->AccelLinearScratch = NULL;
-    }
-
-    if (!(pXGI->useEXA) && pXGI->AccelInfoPtr) {
-        XAADestroyInfoRec(pXGI->AccelInfoPtr);
-        pXGI->AccelInfoPtr = NULL;
-    }
-#endif
 
     if (pXGI->CursorInfoPtr) {
         xf86DestroyCursorInfoRec(pXGI->CursorInfoPtr);

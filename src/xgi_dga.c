@@ -42,9 +42,6 @@
 #include "xgi.h"
 #include "xgi_regs.h"
 #include "dgaproc.h"
-#ifdef HAVE_XAA_H
-#include "xaalocal.h"
-#endif
 
 #ifndef NEW_DGAOPENFRAMEBUFFER
 static Bool XGI_OpenFramebuffer(ScrnInfoPtr, char **, unsigned char **,
@@ -305,28 +302,12 @@ XGI_FillRect (
    int x, int y, int w, int h,
    unsigned long color
 ){
-    XGIPtr pXGI = XGIPTR(pScrn);
-
-#ifdef XGI_USE_XAA
-    if(pXGI->AccelInfoPtr) {
-      (*pXGI->AccelInfoPtr->SetupForSolidFill)(pScrn, color, GXcopy, ~0);
-      (*pXGI->AccelInfoPtr->SubsequentSolidFillRect)(pScrn, x, y, w, h);
-      SET_SYNC_FLAG(pXGI->AccelInfoPtr);
-    }
-#endif
 }
 
 static void
 XGI_Sync(
    ScrnInfoPtr pScrn
 ){
-    XGIPtr pXGI = XGIPTR(pScrn);
-
-#ifdef XGI_USE_XAA
-    if(pXGI->AccelInfoPtr) {
-      (*pXGI->AccelInfoPtr->Sync)(pScrn);
-    }
-#endif
 }
 
 static void
@@ -337,19 +318,6 @@ XGI_BlitRect(
    int dstx, int dsty
 ){
     XGIPtr pXGI = XGIPTR(pScrn);
-
-#ifdef XGI_USE_XAA
-    if(pXGI->AccelInfoPtr) {
-      int xdir = ((srcx < dstx) && (srcy == dsty)) ? -1 : 1;
-      int ydir = (srcy < dsty) ? -1 : 1;
-
-      (*pXGI->AccelInfoPtr->SetupForScreenToScreenCopy)(
-          pScrn, xdir, ydir, GXcopy, (uint32_t)~0, -1);
-      (*pXGI->AccelInfoPtr->SubsequentScreenToScreenCopy)(
-          pScrn, srcx, srcy, dstx, dsty, w, h);
-      SET_SYNC_FLAG(pXGI->AccelInfoPtr);
-    }
-#endif
 }
 
 static Bool

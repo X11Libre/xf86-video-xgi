@@ -158,15 +158,6 @@ extern Bool g_bRunTimeDebug;
 #define XGI_USE_EXA
 #endif
 
-/* Jong 01/13/2009; support EXA */
-#ifdef HAVE_XAA_H
-#define XGI_USE_XAA 
-#endif
-/* #define XGI_USE_EXA */
-
-#ifdef XGI_USE_XAA
-#include "xaa.h"
-#endif
 #ifdef XGI_USE_EXA
 #include "exa.h"
 #endif
@@ -565,7 +556,6 @@ typedef struct {
 } XGIEntRec, *XGIEntPtr;
 
 #define XGIPTR(p)       ((XGIPtr)((p)->driverPrivate))
-#define XAAPTR(p)       ((XAAInfoRecPtr)(XGIPTR(p)->AccelInfoPtr))
 
 #define ExtRegSize    0x40
 
@@ -651,9 +641,6 @@ typedef struct {
     XGIRegRec           SavedReg;
     XGIRegRec           ModeReg;
 
-#ifdef XGI_USE_XAA
-    XAAInfoRecPtr       AccelInfoPtr;
-#endif
 #ifdef XGI_USE_EXA /* Jong 01/13/2009; support EXA */
     ExaDriverPtr		EXADriverPtr;
     int			fillPitch, fillBpp;
@@ -823,10 +810,6 @@ typedef struct {
     BOOLEAN		disablecolorkeycurrent;
     uint32_t		colorKey;
     uint32_t		MiscFlags;
-
-#ifdef XGI_USE_XAA
-    FBLinearPtr		AccelLinearScratch;
-#endif
 
     float		zClearVal;
     unsigned long	bClrColor, dwColor;

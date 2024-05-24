@@ -394,22 +394,19 @@ xgiOptions(ScrnInfoPtr pScrn)
 	if ((pXGI->Chipset== PCI_CHIP_XGIXG20)||(pXGI->Chipset== PCI_CHIP_XGIXG21)||(pXGI->Chipset== PCI_CHIP_XGIXG27))
 		pXGI->NoXvideo = TRUE; 
 		
-	pXGI->useEXA = FALSE; /* default : XAA */
+	pXGI->useEXA = FALSE;
     if(!pXGI->NoAccel) 
 	{
 		from = X_DEFAULT;
 		if((strptr = (char *)xf86GetOptValString(pXGI->Options, OPTION_ACCELMETHOD))) {
-			if(!xf86NameCmp(strptr,"XAA")) {
-				from = X_CONFIG;
-				pXGI->useEXA = FALSE;
-			} else if(!xf86NameCmp(strptr,"EXA")) {
+			if(!xf86NameCmp(strptr,"EXA")) {
 				from = X_CONFIG;
 				pXGI->useEXA = TRUE;
 			}
 		}
 
 		xf86DrvMsg(pScrn->scrnIndex, from, "Using %s acceleration architecture\n",
-			pXGI->useEXA ? "EXA" : "XAA");
+			pXGI->useEXA ? "EXA" : "none");
     }
 
     /* SWCursor

@@ -73,9 +73,6 @@
 #include "xgi.h"
 #include "xf86xv.h"
 #include <X11/extensions/Xv.h>
-#ifdef HAVE_XAA_H
-#include "xaalocal.h"
-#endif
 #include "dixstruct.h"
 #include "fourcc.h"
 
@@ -469,11 +466,6 @@ XGISetupImageVideo(ScreenPtr pScreen)
 # endif //VC
 
     pPriv->currentBuf = 0;
-
-#ifdef XGI_USE_XAA
-    pPriv->linear     = NULL;
-    pPriv->fbAreaPtr = NULL;
-#endif
 
     pPriv->fbSize = 0;
 	pPriv->videoStatus = 0;
@@ -1046,15 +1038,7 @@ XGIStopVideo(ScrnInfoPtr pScrn, pointer data, Bool exit)
 	EnableCaptureAutoFlip(pXGI, FALSE);      
      }
 # endif //VC	
-	
-#ifdef XGI_USE_XAA
-     if(pPriv->fbAreaPtr) {
-       xf86FreeOffscreenArea(pPriv->fbAreaPtr);
-       pPriv->fbAreaPtr = NULL;
-       pPriv->fbSize = 0;
-     }
-#endif	
-	
+
      /* clear all flag */
      pPriv->videoStatus = 0;
 
@@ -1155,31 +1139,9 @@ XGIPutImage(
       
       pPriv->fbSize = totalSize;
 
-#ifdef XGI_USE_XAA
-      if(pPriv->fbAreaPtr) {
-                xf86FreeOffscreenArea(pPriv->fbAreaPtr);
-        }
-#endif
-
       depth = (pScrn->bitsPerPixel + 7 ) / 8;
       pitch = pScrn->displayWidth * depth;
       lines = ((totalSize * 2) / pitch) + 1;
-              
-#ifdef XGI_USE_XAA
-      pPriv->fbAreaPtr = xf86AllocateOffscreenArea(pScrn->pScreen, 
-                                 pScrn->displayWidth,
-                                lines, 0, NULL, NULL, NULL);
-
-      if(!pPriv->fbAreaPtr) {
-        xf86DrvMsg(pScrn->scrnIndex, X_ERROR, 
-               "Allocate video memory fails\n");
-        return BadAlloc;
-          }
-      
-      pBox = &(pPriv->fbAreaPtr->box);     
-      pPriv->bufAddr[0] = (pBox->x1 * depth) + (pBox->y1 * pitch); 
-      pPriv->bufAddr[1] = pPriv->bufAddr[0] + totalSize;
-#endif      
    } while(0);
 	
    /* copy data */
