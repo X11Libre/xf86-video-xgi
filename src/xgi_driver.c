@@ -117,9 +117,7 @@ static Bool XGIProbe(DriverPtr drv, int flags);
 void Volari_EnableAccelerator(ScrnInfoPtr pScrn);
 /* Globals (yes, these ARE really required to be global) */
 
-#ifdef XGIDUALHEAD
 static int XGIEntityIndex = -1;
-#endif
 
 /* Jong 09/19/2007; support modeline */
 int g_CountOfUserDefinedModes=0;
@@ -827,9 +825,7 @@ XGIProbe(DriverPtr drv, int flags)
     else
         for (i = 0; i < numUsed; i++) {
             ScrnInfoPtr pScrn;
-#ifdef XGIDUALHEAD
             EntityInfoPtr pEnt;
-#endif
 
             /* Allocate a ScrnInfoRec and claim the slot */
             pScrn = NULL;
@@ -852,10 +848,7 @@ XGIProbe(DriverPtr drv, int flags)
                 pScrn->ValidMode = XGIValidMode;
                 foundScreen = TRUE;
             }
-#ifdef XGIDUALHEAD
             pEnt = xf86GetEntityInfo(usedChips[i]);
-
-#endif
         }
     free(usedChips);
 
@@ -2472,14 +2465,9 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     struct fb_fix_screeninfo fix;
     XGIEntPtr pXGIEnt = NULL;
     size_t memreq;
-
-#if defined(XGIMERGED) || defined(XGIDUALHEAD)
     DisplayModePtr first, p, n;
-#endif
     unsigned char srlockReg, crlockReg;
     vbeInfoPtr pVbe;
-
-        /****************** Code Start ***********************/
 
     ErrorF("XGIPreInit\n");
 
@@ -2554,7 +2542,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         return FALSE;
     }
 
-#ifdef XGIDUALHEAD
     /* Allocate an entity private if necessary */
     if (xf86IsEntityShared(pScrn->entityList[0])) {
         pXGIEnt = xf86GetEntityPrivate(pScrn->entityList[0],
@@ -2569,7 +2556,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             return FALSE;
         }
     }
-#endif
 
     /* Find the PCI info for this screen */
 #ifndef XSERVER_LIBPCIACCESS
@@ -2784,7 +2770,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     pXGI->CursorSize = 4096;
     pix24flags = Support32bppFb;
 
-#ifdef XGIDUALHEAD
     /* In case of Dual Head, we need to determine if we are the "master" head or
      * the "slave" head. In order to do that, we set PrimInit to DONE in the
      * shared entity at the end of the first initialization. The second
@@ -2825,7 +2810,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         pXGI->SecondHead = FALSE;
         pXGI->DualHeadMode = FALSE;
     }
-#endif
 
     /* Allocate VB_DEVICE_INFO (for mode switching code) and initialize it */
     pXGI->XGI_Pr = NULL;
@@ -3984,9 +3968,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         pXGI->pVbe = NULL;
     }
 
-#ifdef XGIDUALHEAD
     xf86SetPrimInitDone(pScrn->entityList[0]);
-#endif
 
     xgiRestoreExtRegisterLock(pXGI, srlockReg, crlockReg);
 
@@ -5742,7 +5724,6 @@ XGISaveScreen(ScreenPtr pScreen, int mode)
 static Bool
 XGISaveScreenDH(ScreenPtr pScreen, int mode)
 {
-#ifdef XGIDUALHEAD
     ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
 
     if ((pScrn != NULL) && pScrn->vtSema) {
@@ -5770,7 +5751,6 @@ XGISaveScreenDH(ScreenPtr pScreen, int mode)
             xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
         }
     }
-#endif
     return TRUE;
 }
 

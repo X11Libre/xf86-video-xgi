@@ -187,10 +187,6 @@ extern Bool g_bRunTimeDebug;
 #endif
 
 #if 1 
-#define XGIDUALHEAD  		/* Include Dual Head code  */
-#endif
-
-#if 1 
 #define XGIMERGED		/* Include Merged-FB mode */
 #endif
 
@@ -743,11 +739,9 @@ typedef struct {
     UCHAR ScratchSet[16];
     MonitorRangeRec CRT1Range,CRT2Range;
 
-#ifdef XGIDUALHEAD
     Bool 		DualHeadMode;		/* TRUE if we use dual head mode */
     Bool 		SecondHead;		/* TRUE is this is the second head */
     XGIEntPtr 		entityPrivate;		/* Ptr to private entity (see above) */
-#endif
     XGIFBLayout         CurrentLayout;		/* Current framebuffer layout */
     Bool		Primary;		/* Display adapter is primary */
     xf86Int10InfoPtr    pInt;			/* Our int10 */
@@ -850,16 +844,9 @@ typedef struct {
 	int			Non_DDC_DefaultRefreshRate ;
 } XGIRec, *XGIPtr;
 
-#ifdef XGIDUALHEAD
 # define IS_DUAL_HEAD(x)      ((x)->DualHeadMode)
 # define IS_SECOND_HEAD(x)    ((x)->SecondHead)
 # define ENTITY_PRIVATE(x)    ((x)->entityPrivate)
-#else
-# define IS_DUAL_HEAD(x)      FALSE
-# define IS_SECOND_HEAD(x)    FALSE
-# define ENTITY_PRIVATE(x)    NULL
-#endif
-
 
 #define SEQ_ADDRESS_PORT  0x0014
 #define MISC_OUTPUT_REG_WRITE_PORT  0x0012
