@@ -43,13 +43,8 @@
 #include "xgi_regs.h"
 #include "dgaproc.h"
 
-#ifndef NEW_DGAOPENFRAMEBUFFER
 static Bool XGI_OpenFramebuffer(ScrnInfoPtr, char **, unsigned char **,
                                 int *, int *, int *);
-#else
-static Bool XGI_OpenFramebuffer(ScrnInfoPtr, char **, unsigned int *, 
-                                unsigned int *, unsigned int *, unsigned int *);
-#endif
 
 static Bool XGI_SetMode(ScrnInfoPtr, DGAModePtr);
 static void XGI_Sync(ScrnInfoPtr);
@@ -320,26 +315,15 @@ static Bool
 XGI_OpenFramebuffer(
    ScrnInfoPtr pScrn,
    char **name,
-#ifndef NEW_DGAOPENFRAMEBUFFER
    unsigned char **mem,
    int *size,
    int *offset,
    int *flags
-#else
-   unsigned int *mem,
-   unsigned int *size,
-   unsigned int *offset,
-   unsigned int *flags
-#endif
 ){
     XGIPtr pXGI = XGIPTR(pScrn);
 
     *name = NULL;       /* no special device */
-#ifndef NEW_DGAOPENFRAMEBUFFER
     *mem = (unsigned char*)pXGI->FbAddress;
-#else
-    *mem = pXGI->FbAddress;
-#endif
     *size = pXGI->maxxfbmem;
     *offset = 0;
     *flags = DGA_NEED_ROOT;
