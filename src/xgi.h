@@ -133,9 +133,6 @@ extern Bool g_bRunTimeDebug;
 #endif
 #endif
 
-/* Always unlock the registers (should be set!) */
-#define UNLOCK_ALWAYS
-
 #ifdef XSERVER_LIBPCIACCESS
 #include <pciaccess.h>
 #else

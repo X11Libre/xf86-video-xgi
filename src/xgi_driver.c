@@ -501,9 +501,7 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
             docrt1 = FALSE;
     }
 
-#ifdef UNLOCK_ALWAYS
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
-#endif
 
     switch (PowerManagementMode) {
 
@@ -4398,11 +4396,7 @@ XGIRestore(ScrnInfoPtr pScrn)
 
     vgaHWProtect(pScrn, TRUE);
 
-#ifdef UNLOCK_ALWAYS
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
-#endif
-
-	/* Volari_DisableCmdQueue(pScrn) ; */
 
 	/* Volari_Restore() */
     (*pXGI->XGIRestore) (pScrn, xgiReg);
@@ -4579,9 +4573,7 @@ XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
         return FALSE;
     }
 
-#ifdef UNLOCK_ALWAYS
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
-#endif
 
     /* Save the current state */
     XGISave(pScrn);
@@ -5739,12 +5731,8 @@ XGISaveScreen(ScreenPtr pScreen, int mode)
     ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
 
     if ((pScrn != NULL) && pScrn->vtSema) {
-
         XGIPtr pXGI = XGIPTR(pScrn);
-
-#ifdef UNLOCK_ALWAYS
         xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
-#endif
     }
 
     return vgaHWSaveScreen(pScreen, mode);
@@ -5779,9 +5767,7 @@ XGISaveScreenDH(ScreenPtr pScreen, int mode)
                 return TRUE;
 
             /* enable access to extended sequencer registers */
-#ifdef UNLOCK_ALWAYS
             xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
-#endif
         }
     }
 #endif
@@ -5867,9 +5853,7 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
     vbflag = pXGI->VBFlags;
     PDEBUG(ErrorF("VBFlags=0x%lx\n", pXGI->VBFlags));
 
-#ifdef UNLOCK_ALWAYS
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);     /* Unlock Registers */
-#endif
 
     inXGIIDXREG(XGICR, 0x30, CR30);
     inXGIIDXREG(XGICR, 0x31, CR31);
@@ -6111,9 +6095,7 @@ XGIPostSetMode(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
     xf86DrvMsg(pScrn->scrnIndex, X_INFO, "CRT1off is %d\n", pXGI->CRT1off);
 #endif
 
-#ifdef UNLOCK_ALWAYS
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
-#endif
 
     /* Determine if the video overlay can be used */
     if (!pXGI->NoXvideo) {
@@ -6526,9 +6508,7 @@ void
 xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1, unsigned char reg2)
 {
     /* restore lock */
-#ifndef UNLOCK_ALWAYS
     outXGIIDXREG(XGISR, 0x05, reg1 == 0xA1 ? 0x86 : 0x00);
-#endif
 }
 
 /* Jong 12/03/2007; */
