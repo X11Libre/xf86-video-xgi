@@ -3206,12 +3206,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         pXGI->XGI_SD_Flags |= XGI_SD_SUPPORTTV;
     }
 
-#ifdef ENABLE_YPBPR
-    if (pXGI->XGI_Pr->VBType & (VB_XGI301 | VB_XGI301B | VB_XGI302B)) {
-        pXGI->XGI_SD_Flags |= XGI_SD_SUPPORTHIVISION;
-    }
-#endif
-
 #ifdef TWDEBUG                  /* @@@ TEST @@@ */
     pXGI->XGI_SD_Flags |= XGI_SD_SUPPORTYPBPRAR;
     xf86DrvMsg(0, X_INFO, "TEST: Support Aspect Ratio\n");

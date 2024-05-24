@@ -189,10 +189,6 @@ extern Bool g_bRunTimeDebug;
 #define XGI_XINERAMA_MAJOR_VERSION  1
 #define XGI_XINERAMA_MINOR_VERSION  1
 
-#if 0				/* Include YPbPr support on VB  */
-#define ENABLE_YPBPR
-#endif
-
 #define EXTENSION_PROC_ARGS void *
 #include "extnsionst.h"  	/* required */
 #include <X11/extensions/panoramiXproto.h>  	/* required */
