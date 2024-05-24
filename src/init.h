@@ -65,9 +65,6 @@
 #endif
 
 #ifdef LINUX_KERNEL
-#ifdef XGI_CP
-#undef XGI_CP
-#endif
 #include <linux/config.h>
 #include <linux/version.h>
 #include <linux/types.h>

@@ -102,9 +102,6 @@ typedef enum {
 	OPTION_IGNORE_DDC,     /* Jong@09032009 */
 	OPTION_NONDDC_DEFAULT_MODE, /* Jong@09042009 */
 	OPTION_GAMMA_RGB,			/* Jong@09092009 */
-#ifdef XGI_CP
-    XGI_CP_OPT_OPTIONS
-#endif
     OPTION_PSEUDO
 } XGIOpts;
 
@@ -168,9 +165,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_NOXGIXINERAMA2,		"NoTwinviewXineramaInfo", OPTV_BOOLEAN,   {0}, FALSE },   /* alias */
     { OPTION_CRT2ISSCRN0,		"MergedXineramaCRT2IsScreen0",OPTV_BOOLEAN,{0},FALSE },
 #endif
-#endif
-#ifdef XGI_CP
-    XGI_CP_OPTION_DETAIL
 #endif
     { -1,                       	NULL,                     OPTV_NONE,      {0}, FALSE }
 };
@@ -265,10 +259,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->CRT2IsScrn0 = FALSE;
 #endif
 #endif
-#ifdef XGI_CP
-    XGI_CP_OPT_DEFAULT
-#endif
-
 
     /* Collect the options */
 
@@ -486,9 +476,6 @@ xgiOptions(ScrnInfoPtr pScrn)
        if(xf86GetOptValBool(pXGI->Options, OPTION_CRT2GAMMA, &val)) {
           xf86DrvMsg(pScrn->scrnIndex, X_WARNING, mystring, "CRT2Gamma");
        }
-#ifdef XGI_CP
-       XGI_CP_OPT_DH_WARN
-#endif
     }
     else {
 	  /* TurboQueue */
@@ -499,11 +486,6 @@ xgiOptions(ScrnInfoPtr pScrn)
           }
           xf86DrvMsg(pScrn->scrnIndex, from, "TurboQueue %s\n",
                     pXGI->TurboQueue ? enabledstr : disabledstr);
-
-#ifdef XGI_CP
-       XGI_CP_OPT_DOOPT
-#endif
-
     }  /* DualHead */
 
     /* CRT1Gamma - enable/disable gamma correction for CRT1

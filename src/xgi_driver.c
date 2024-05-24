@@ -3356,9 +3356,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         }
     }
 
-#ifdef XGI_CP
-    XGI_CP_DRIVER_RECONFIGOPT
-#endif
         /* Do some MergedFB mode initialisation */
 #ifdef XGIMERGED
         if (pXGI->MergedFB) {
@@ -5974,10 +5971,7 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
             }
 
             CR31 &= ~0x04;      /* Clear NotSimuMode */
-#ifdef XGI_CP
-            XGI_CP_DRIVER_CONFIG
-#endif
-                break;
+            break;
 
         case CRT2_LCD:
             CR30 |= 0x20;

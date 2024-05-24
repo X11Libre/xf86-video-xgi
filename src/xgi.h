@@ -136,8 +136,6 @@ extern Bool g_bRunTimeDebug;
 /* Always unlock the registers (should be set!) */
 #define UNLOCK_ALWAYS
 
-#undef XGI_CP
-
 #ifdef XSERVER_LIBPCIACCESS
 #include <pciaccess.h>
 #else
@@ -538,10 +536,6 @@ typedef struct {
     unsigned char       *RenderAccelArray;
     unsigned char *	FbBase1;
     unsigned long	OnScreenSize1;
-
-#ifdef XGI_CP
-    XGI_CP_H_ENT
-#endif
 } XGIEntRec, *XGIEntPtr;
 
 #define XGIPTR(p)       ((XGIPtr)((p)->driverPrivate))
@@ -779,9 +773,7 @@ typedef struct {
     Atom		xvDisableColorkey, xvUseChromakey, xvChromaMin, xvChromaMax;
     Atom		xvInsideChromakey, xvYUVChromakey;
     Atom		xvGammaRed, xvGammaGreen, xvGammaBlue;
-#ifdef XGI_CP
-    XGI_CP_H
-#endif
+
     unsigned long       ChipFlags;
     unsigned long       XGI_SD_Flags;
     BOOLEAN		UseHWARGBCursor;
