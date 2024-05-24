@@ -186,17 +186,9 @@ extern Bool g_bRunTimeDebug;
 #define CHIP_REVISION(p)  (p)->chipRev
 #endif
 
-#if 1 
-#define XGIMERGED		/* Include Merged-FB mode */
-#endif
-
-#ifdef XGIMERGED
-#if 1
 #define XGIXINERAMA		/* Include Pseudo-Xinerama for MergedFB mode */
 #define XGI_XINERAMA_MAJOR_VERSION  1
 #define XGI_XINERAMA_MINOR_VERSION  1
-#endif
-#endif
 
 #if 1
 #define XGIGAMMA		/* Include code for gamma correction */
@@ -211,12 +203,10 @@ extern Bool g_bRunTimeDebug;
 #define ENABLE_YPBPR
 #endif
 
-#ifdef XGIMERGED
 #ifdef XGIXINERAMA
 #define EXTENSION_PROC_ARGS void *
 #include "extnsionst.h"  	/* required */
 #include <X11/extensions/panoramiXproto.h>  	/* required */
-#endif
 #endif
 
 #if 1
@@ -792,7 +782,6 @@ typedef struct {
     int	                CurXPreset ;
     int                 CurYPreset ;
     unsigned long	mmioSize;
-#ifdef XGIMERGED
     Bool		MergedFB, MergedFBAuto;
     XGIScrn2Rel		CRT2Position;
     char *		CRT2HSync;
@@ -813,7 +802,6 @@ typedef struct {
     ExtensionEntry 	*XineramaExtEntry;
     int			xgiXineramaVX, xgiXineramaVY;
     Bool		AtLeastOneNonClone;
-#endif
 #endif
 
     /* Added for 3D */

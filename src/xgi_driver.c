@@ -235,7 +235,6 @@ static XF86ModuleVersionInfo xgiVersRec = {
 _X_EXPORT XF86ModuleData xgiModuleData = { &xgiVersRec, xgiSetup, NULL };
 
 /*** static string ***/
-#ifdef XGIMERGED
 static const char *mergednocrt1 = "CRT1 not detected or forced off. %s.\n";
 static const char *mergednocrt2 =
     "No CRT2 output selected or no bridge detected. %s.\n";
@@ -244,7 +243,6 @@ static const char *modesforstr =
     "Modes for CRT%d: *********************************************\n";
 static const char *crtsetupstr =
     "------------------------ CRT%d setup -------------------------\n";
-#endif
 
 typedef struct
 {
@@ -425,7 +423,6 @@ XGIFreeRec(ScrnInfoPtr pScrn)
         pXGI->RenderAccelArray = NULL;
     }
 
-#ifdef XGIMERGED
     if (pXGI->MetaModes)
         free(pXGI->MetaModes);
     pXGI->MetaModes = NULL;
@@ -448,7 +445,6 @@ XGIFreeRec(ScrnInfoPtr pScrn)
             pXGI->CRT1Modes = NULL;
         }
     }
-#endif
     if (pXGI->pVbe)
         vbeFree(pXGI->pVbe);
     pXGI->pVbe = NULL;
@@ -858,8 +854,6 @@ XGIProbe(DriverPtr drv, int flags)
 
 
 /* Some helper functions for MergedFB mode */
-
-#ifdef XGIMERGED
 
 /* Copy and link two modes form mergedfb mode
  * (Code base taken from mga driver)
@@ -1401,8 +1395,6 @@ XGIFreeCRT2Structs(XGIPtr pXGI)
         pXGI->CRT2pScrn = NULL;
     }
 }
-
-#endif /* End of MergedFB helpers */
 
 static xf86MonPtr
 XGIInternalDDC(ScrnInfoPtr pScrn, int crtno)
@@ -2265,7 +2257,6 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
 
     return;
 
-#ifdef XGIMERGED
     if (pXGI->MergedFB) {
         pXGI->CRT2pScrn->monitor = malloc(sizeof(MonRec));
         if (pXGI->CRT2pScrn->monitor) {
@@ -2323,15 +2314,10 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
             pXGI->MergedFB = FALSE;
         }
     }
-#endif
 
-#ifdef XGIMERGED
     if (pXGI->MergedFB) {
         xf86DrvMsg(pScrn->scrnIndex, X_INFO, crtsetupstr, 1);
     }
-#endif
-
-    /* end of DDC */
 }
 
 #ifdef DEBUG5
@@ -3041,14 +3027,12 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     /* Evaluate options */
     xgiOptions(pScrn);
 
-#ifdef XGIMERGED
     /* Due to palette & timing problems we don't support 8bpp in MFBM */
     if ((pXGI->MergedFB) && (pScrn->bitsPerPixel == 8)) {
         XGIErrorLog(pScrn, "MergedFB: Color depth 8 not supported, %s\n",
                     mergeddisstr);
         pXGI->MergedFB = pXGI->MergedFBAuto = FALSE;
     }
-#endif
 
     /* Do basic configuration */
 
@@ -3339,7 +3323,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 
         /* Do some MergedFB mode initialisation */
-#ifdef XGIMERGED
         if (pXGI->MergedFB) {
         pXGI->CRT2pScrn = malloc(sizeof(ScrnInfoRec));
         if (!pXGI->CRT2pScrn) {
@@ -3352,7 +3335,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             memcpy(pXGI->CRT2pScrn, pScrn, sizeof(ScrnInfoRec));
         }
     }
-#endif
     PDEBUG(ErrorF("3674 pXGI->VBFlags =%x\n", pXGI->VBFlags));
 
     /* Determine CRT1<>CRT2 mode
@@ -3377,7 +3359,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                 XGIFreeRec(pScrn);
                 return FALSE;
             }
-#ifdef XGIMERGED
             if (pXGI->MergedFB) {
                 if (pXGI->MergedFBAuto) {
                     xf86DrvMsg(pScrn->scrnIndex, X_INFO, mergednocrt1,
@@ -3391,7 +3372,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                 pXGI->CRT2pScrn = NULL;
                 pXGI->MergedFB = FALSE;
             }
-#endif
             pXGI->VBFlags |= VB_DISPMODE_SINGLE;
         }
         /* CRT1 and CRT2 - mirror or dual head ----- */
@@ -3418,7 +3398,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             return FALSE;
         }
 
-#ifdef XGIMERGED
         if (pXGI->MergedFB) {
             if (pXGI->MergedFBAuto) {
                 xf86DrvMsg(pScrn->scrnIndex, X_INFO, mergednocrt2,
@@ -3432,7 +3411,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             pXGI->CRT2pScrn = NULL;
             pXGI->MergedFB = FALSE;
         }
-#endif
         PDEBUG(ErrorF("3782 pXGI->VBFlags =%x\n", pXGI->VBFlags));
         pXGI->VBFlags |= (VB_DISPMODE_SINGLE | DISPTYPE_CRT1);
     }
@@ -3600,9 +3578,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      */
 
     /* Select valid modes from those available */
-#ifdef XGIMERGED
     pXGI->CheckForCRT2 = FALSE;
-#endif
     XGIDumpMonPtr(pScrn->monitor);
 
 
@@ -3724,17 +3700,14 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     pXGI->CurrentLayout.mode = pScrn->currentMode;
     pXGI->CurrentLayout.displayWidth = pScrn->displayWidth;
 
-#ifdef XGIMERGED
     if (pXGI->MergedFB) {
         xf86DrvMsg(pScrn->scrnIndex, X_INFO, modesforstr, 1);
     }
-#endif
 
     /* Print the list of modes being used ; call xf86Mode.c-xf86PrintModeline() to print */
 	ErrorF("Call xf86PrintModes(pScrn) to list all valid modes...\n");
     xf86PrintModes(pScrn);
 
-#ifdef XGIMERGED
     if (pXGI->MergedFB) {
         BOOLEAN acceptcustommodes = TRUE;
         BOOLEAN includelcdmodes = TRUE;
@@ -3862,16 +3835,12 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         pXGI->CurrentLayout.displayWidth = pScrn->displayWidth;
 
     }
-#endif
 
     /* Set display resolution */
-#ifdef XGIMERGED
     if (pXGI->MergedFB) {
         XGIMergedFBSetDpi(pScrn, pXGI->CRT2pScrn, pXGI->CRT2Position);
     }
     else
-#endif
-
 
 	/* Jong 07/30/2009; might cause small font size */
 	xf86SetDpi(pScrn, 0, 0);
@@ -3990,10 +3959,8 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #endif
     }
 
-#ifdef XGIMERGED
     if (pXGI->MergedFB)
         pXGI->XGI_SD_Flags |= XGI_SD_ISMERGEDFB;
-#endif
 
     if (pXGI->enablexgictrl)
         pXGI->XGI_SD_Flags |= XGI_SD_ENABLED;
@@ -5035,7 +5002,6 @@ XGISetStartAddressCRT1(XGIPtr pXGI, unsigned long base)
     setXGIIDXREG(XGICR, 0x11, 0x7F,(cr11backup & 0x80));
 } */
 
-#ifdef XGIMERGED
 /* static Bool
 InRegion(int x, int y, region r)
 {
@@ -5280,7 +5246,6 @@ XGIAdjustFrameMerged(int scrnIndex, int x, int y, int flags)
 
     XGIAdjustFrameHW_CRT1(pScrn1, pXGI->CRT1frameX0, pXGI->CRT1frameY0);
 } */
-#endif
 
 /*
  * This function is used to initialize the Start Address - the first
@@ -5817,17 +5782,13 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
     int temp = 0;
     int crt1rateindex = 0;
     DisplayModePtr mymode;
-#ifdef XGIMERGED
     DisplayModePtr mymode2 = NULL;
-#endif
 
-#ifdef XGIMERGED
     if (pXGI->MergedFB) {
         mymode = ((XGIMergedDisplayModePtr) mode->Private)->CRT1;
         mymode2 = ((XGIMergedDisplayModePtr) mode->Private)->CRT2;
     }
     else
-#endif
         mymode = mode;
 
     vbflag = pXGI->VBFlags;
@@ -6000,9 +5961,7 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
             }
         }
     }
-    else
-#ifdef XGIMERGED
-    if (pXGI->MergedFB) {
+    else if (pXGI->MergedFB) {
         CR33 = 0;
         if (!(vbflag & CRT1_LCDA)) {
             CR33 |= (crt1rateindex & 0x0f);
@@ -6012,7 +5971,6 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
         }
     }
     else
-#endif
     {
         CR33 = 0;
         if (!(vbflag & CRT1_LCDA)) {

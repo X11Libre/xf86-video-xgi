@@ -198,11 +198,7 @@ XGIDGAInit(ScreenPtr pScreen)
    /* We don't support 8bpp modes in dual head or MergedFB mode,
     * so don't offer them to DGA either.
     */
-   if (!IS_DUAL_HEAD(pXGI)
-#ifdef XGIMERGED
-       && !(pXGI->MergedFB)
-#endif
-       ) {
+   if (!IS_DUAL_HEAD(pXGI) && !(pXGI->MergedFB)) {
        modes = XGISetupDGAMode(pScrn, modes, &num, 8, 8,
 			       (pScrn->bitsPerPixel == 8),
 			       ((pScrn->bitsPerPixel != 8)

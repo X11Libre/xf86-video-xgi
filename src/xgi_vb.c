@@ -110,9 +110,7 @@ void XGICRT1PreInit(ScrnInfoPtr pScrn)
     unsigned char CRT1Detected;
 
     if (!(pXGI->XGI_Pr->VBType & VB_XGIVB) || IS_DUAL_HEAD(pXGI)
-#ifdef XGIMERGED
        || ((pXGI->MergedFB) && (!(pXGI->MergedFBAuto)))
-#endif
        ) {
        pXGI->CRT1off = 0;
        return;

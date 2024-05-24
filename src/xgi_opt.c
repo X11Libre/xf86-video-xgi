@@ -143,7 +143,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_XVMEMCPY,			"XvUseMemcpy",  	  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_ENABLEHOTKEY,		"EnableHotkey",	   	  OPTV_BOOLEAN,   {0}, -1    },
     { OPTION_ENABLEXGICTRL,		"EnableXGICtrl",   	  OPTV_BOOLEAN,   {0}, -1    },
-#ifdef XGIMERGED
     { OPTION_MERGEDFB,			"MergedFB",		  OPTV_BOOLEAN,	  {0}, FALSE },
     { OPTION_MERGEDFB2,			"TwinView",		  OPTV_BOOLEAN,	  {0}, FALSE },	  /* alias */
     { OPTION_MERGEDFBAUTO,		"MergedFBAuto",		  OPTV_BOOLEAN,	  {0}, FALSE },
@@ -164,7 +163,6 @@ static const OptionInfoRec XGIOptions[] = {
     { OPTION_NOXGIXINERAMA,		"NoMergedXinerama",	  OPTV_BOOLEAN,	  {0}, FALSE },
     { OPTION_NOXGIXINERAMA2,		"NoTwinviewXineramaInfo", OPTV_BOOLEAN,   {0}, FALSE },   /* alias */
     { OPTION_CRT2ISSCRN0,		"MergedXineramaCRT2IsScreen0",OPTV_BOOLEAN,{0},FALSE },
-#endif
 #endif
     { -1,                       	NULL,                     OPTV_NONE,      {0}, FALSE }
 };
@@ -247,7 +245,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     pXGI->XvDefDisableGfxLR = FALSE;
     pXGI->XvUseMemcpy = TRUE;
     pXGI->XvGammaRed = pXGI->XvGammaGreen = pXGI->XvGammaBlue = 1000;
-#ifdef XGIMERGED
     pXGI->MergedFB = pXGI->MergedFBAuto = FALSE;
     pXGI->CRT2Position = xgiRightOf;
     pXGI->CRT2HSync = NULL;
@@ -257,7 +254,6 @@ xgiOptions(ScrnInfoPtr pScrn)
 #ifdef XGIXINERAMA
     pXGI->UsexgiXinerama = TRUE;
     pXGI->CRT2IsScrn0 = FALSE;
-#endif
 #endif
 
     /* Collect the options */
@@ -420,7 +416,6 @@ xgiOptions(ScrnInfoPtr pScrn)
      * Enable/disable and configure merged framebuffer mode
      *
      */
-#ifdef XGIMERGED
     if (IS_DUAL_HEAD(pXGI)) {
        Bool val;
        if(xf86GetOptValBool(pXGI->Options, OPTION_MERGEDFB, &val)) {
@@ -428,7 +423,6 @@ xgiOptions(ScrnInfoPtr pScrn)
 	     "Option \"MergedFB\" cannot be used in Dual Head mode\n");
        }
     } else
-#endif
 
     /* Some options can only be specified in the Master Head's Device
      * section. Here we give the user a hint in the log.
@@ -502,13 +496,11 @@ xgiOptions(ScrnInfoPtr pScrn)
     /* ShadowFB */
     from = X_DEFAULT;
     if(xf86GetOptValBool(pXGI->Options, OPTION_SHADOW_FB, &pXGI->ShadowFB)) {
-#ifdef XGIMERGED
        if(pXGI->MergedFB) {
           pXGI->ShadowFB = FALSE;
 	  xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
 	      "Shadow Frame Buffer not supported in MergedFB mode\n");
        } else
-#endif
           from = X_CONFIG;
     }
     if(pXGI->ShadowFB) {
@@ -519,13 +511,10 @@ xgiOptions(ScrnInfoPtr pScrn)
 
     /* Rotate */
     if((strptr = (char *)xf86GetOptValString(pXGI->Options, OPTION_ROTATE))) {
-#ifdef XGIMERGED
        if(pXGI->MergedFB) {
 	  xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
 	      "Screen rotation not supported in MergedFB mode\n");
-       } else
-#endif
-       if(!xf86NameCmp(strptr, "CW")) {
+       } else if(!xf86NameCmp(strptr, "CW")) {
           pXGI->Rotate = 1;
        } else if(!xf86NameCmp(strptr, "CCW")) {
           pXGI->Rotate = -1;
