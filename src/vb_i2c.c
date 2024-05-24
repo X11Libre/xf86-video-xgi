@@ -9,17 +9,6 @@
 /* #include "vb_util.h" */ /* Jong@08032009 */
 #include "vb_def.h"
 
-#ifdef WIN2000
-#include <dderror.h>
-#include <devioctl.h>
-#include <miniport.h>
-#include <ntddvdeo.h>
-#include <video.h>
-#include "xgiv.h"
-#include "dd_i2c.h"
-#include "tools.h"
-#endif /* WIN2000 */
-
 #ifdef LINUX_XF86
 #include "xf86.h"
 #include "xgi.h"
