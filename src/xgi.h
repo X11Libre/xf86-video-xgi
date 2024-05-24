@@ -189,11 +189,6 @@ extern Bool g_bRunTimeDebug;
 #define XGI_XINERAMA_MAJOR_VERSION  1
 #define XGI_XINERAMA_MINOR_VERSION  1
 
-/* Jong 09/28/2007; disable this because it causes cursor drawing incorrectly */
-#if 0				/* Include code for color hardware cursors */
-#define XGI_ARGB_CURSOR
-#endif
-
 #if 0				/* Include YPbPr support on VB  */
 #define ENABLE_YPBPR
 #endif

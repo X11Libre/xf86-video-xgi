@@ -273,12 +273,6 @@ XGIHWCursorInit(ScreenPtr pScreen)
         infoPtr->UseHWCursor = Volari_UseHWCursor;
 /* infoPtr->RealizeCursor = XGIRealizeCursorColor ; // */
 
-        /* Jong 09/19/2007; Is this required */
-	#ifdef XGI_ARGB_CURSOR
-		infoPtr->UseHWCursorARGB = Volari_UseHWCursorARGB ;
-		infoPtr->LoadCursorARGB = Volari_LoadCursorARGB ;
-	#endif
-
         infoPtr->Flags =
             HARDWARE_CURSOR_TRUECOLOR_AT_8BPP |
             HARDWARE_CURSOR_INVERT_MASK |
