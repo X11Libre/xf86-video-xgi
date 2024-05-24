@@ -901,23 +901,6 @@ XGIBIOSSetMode(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
     UShort  ModeNo=0;
     BOOLEAN SetModeRet = FALSE ;
     UShort  HDisplay = pXGI->scrnOffset >> 3 ;
-
-#if XGI_USING_BIOS_SETMODE
-    PDEBUG(ErrorF("XGI_USING_BIOS_SETMODE \n"));
-    if ((pXGI->pVbe != NULL) && (pXGI->pVbe->pInt10 != NULL)) {
-        xf86Int10InfoPtr pInt = pXGI->pVbe->pInt10;
-
-        if (xf86LoadSubModule(pScrn, "int10")) {
-            pInt->num = 0x10;
-            pInt->ax = 0x80 | ModeNo;
-
-            /* ah = 0, set mode */
-            xf86ExecX86int10(pInt);
-            SetModeRet = ((pInt->ax & 0x7f) == ModeNo);
-        }
-    }
-    else
-#endif
     {
         PDEBUG(ErrorF("XGI_USING_C_code_SETMODE \n"));
 		/* Jong 08/21/2007; support external modeline in X configuration file */
