@@ -202,10 +202,6 @@ extern Bool g_bRunTimeDebug;
 #include "extnsionst.h"  	/* required */
 #include <X11/extensions/panoramiXproto.h>  	/* required */
 
-#if 1
-#define XGIVRAMQ		/* Use VRAM queue mode on 315 series */
-#endif
-
 #undef XGI315DRI		/* define this if dri is adapted for 315/330 series */
 
 #ifndef PCI_VENDOR_XGI

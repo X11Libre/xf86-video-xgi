@@ -197,11 +197,9 @@ xgiOptions(ScrnInfoPtr pScrn)
 #endif 
 */
     pXGI->TurboQueue = TRUE;
-#ifdef XGIVRAMQ
     /* TODO: Option (315 series VRAM command queue) */
     /* But beware: xgifb does not know about this!!! */
     pXGI->cmdQueueSize = 512*1024;
-#endif
     pXGI->doRender = TRUE;
     pXGI->HWCursor = TRUE;
     pXGI->Rotate = FALSE;
