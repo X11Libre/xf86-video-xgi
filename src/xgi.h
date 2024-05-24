@@ -32,6 +32,8 @@
 #ifndef _XGI_H_
 #define _XGI_H_
 
+#include <X11/Xdefs.h>
+
 /***************
 #define DEBUG 
 #define DEBUG1
@@ -42,7 +44,6 @@
 #define DEBUGI2C
 *****************/
 
-#ifndef XGI_VIDEO_HW /* avoid compile error in xgi_videohw.c; weird!  */
 /* Jong 07/27/2009; use run-time debug instead except for HW acceleration routines */
 extern Bool g_bRunTimeDebug;
 #define RUNTIMEDEBUG(p)		if(g_bRunTimeDebug)p;
@@ -130,7 +131,6 @@ extern Bool g_bRunTimeDebug;
 #define PACCELDEBUG(p)       p
 #else
 #define PACCELDEBUG(p)
-#endif
 #endif
 
 #ifdef XSERVER_LIBPCIACCESS
