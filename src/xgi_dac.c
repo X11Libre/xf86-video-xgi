@@ -338,7 +338,6 @@ Volari_Save(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
 
     PDEBUG(xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
            "Volari_Save(ScrnInfoPtr pScrn, XGIRegPtr xgiReg) Done\n"));
-
 }
 
 static void
@@ -367,12 +366,9 @@ Volari_Restore(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
     for (i = 0x06; i <= 0x3F; i++) {
         if( !(i==0x16 ) ) {
            outb(XGISR,i);
-
             xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO,4,
                     "XR%X Contents - %02X ", i, inb(XGISR+1));
-
             outb(XGISR+1,xgiReg->xgiRegs3C4[i]);
-
             xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO,4,
                         "Restore to - %02X Read after - %02X\n",
                         xgiReg->xgiRegs3C4[i], inb(XGISR+1));
@@ -403,7 +399,6 @@ Volari_Threshold(ScrnInfoPtr pScrn, DisplayModePtr mode,
         orXGIIDXREG(XGISR, 0x3D, 0x01);
 }
 
-
 /**
  * Calculate available memory bandwidth for an XG40 series chip.
  *
@@ -431,7 +426,6 @@ static int XG40_MemBandWidth(ScrnInfoPtr pScrn)
     return  (int)(total / magic);
 }
 
-
 /**
  * Calculate available memory bandwidth for an XG20 series chip.
  *
@@ -446,7 +440,6 @@ static int XG20_MemBandWidth(ScrnInfoPtr pScrn)
     const float magic = 1.44;
     float  total  = (mclk * bus) / bpp;
 
-    /* Jong 09/19/2007; support DDRII and double pixel clock */
     unsigned long SR39, CR97 ;
 
     PDEBUG5(ErrorF("mclk: %d, bus: %d, magic: %f, bpp: %d\n",
@@ -455,11 +448,9 @@ static int XG20_MemBandWidth(ScrnInfoPtr pScrn)
     total = mclk*bus/bpp;
 
     /* Jong 04/26/2007; support DDRII and double pixel clock */
-    /*-------------------------------------------------------*/
     inXGIIDXREG(XGISR, 0x39, SR39);
     inXGIIDXREG(XGICR, 0x97, CR97);
 
-	/* Jong@09082009; modify for XG27 */
     if(pXGI->Chipset == PCI_CHIP_XGIXG27)
 	{
 		if (CR97 & 0xC1)
@@ -482,7 +473,6 @@ static int XG20_MemBandWidth(ScrnInfoPtr pScrn)
 			}
 		}
 	}
-    /*-------------------------------------------------------*/
 
     PDEBUG5(ErrorF("Total Adapter Bandwidth is %fM\n", total/1000));
 
@@ -634,7 +624,6 @@ PDEBUG(ErrorF("XGIDACPreInit()\n"));
 	? XG20_MemBandWidth(pScrn) : XG40_MemBandWidth(pScrn);
 }
 
-
 int
 XG40Mclk(XGIPtr pXGI)
 {
@@ -662,7 +651,6 @@ XG40Mclk(XGIPtr pXGI)
     return mclk;
 }
 
-
 static int
 retrace_signals_active(XGIIOADDRESS RelIO)
 {
@@ -682,7 +670,6 @@ retrace_signals_active(XGIIOADDRESS RelIO)
 
     return 1;
 }
-
 
 /**
  * Wait for beginning of next vertical retrace.
@@ -709,7 +696,6 @@ XGI_WaitBeginRetrace(XGIIOADDRESS RelIO)
 	    /* empty */ ;
     }
 }
-
 
 /**
  * Wait for end of next vertical retrace.

@@ -1224,7 +1224,6 @@ XGIMergedFBSetDpi(ScrnInfoPtr pScrn1, ScrnInfoPtr pScrn2, XGIScrn2Rel srel)
             pScrn1->yDpi =
                 (int) ((double) pScrn1->virtualY * 25.4 / pScrn1->heightmm);
         }
-
     }
     else {
 
@@ -2416,7 +2415,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     PDEBUG(ErrorF(" --- Chipset : %s \n", pScrn->chipset));
 
-
     /*
      * This shouldn't happen because such problems should be caught in
      * XGIProbe(), but check it just in case.
@@ -2879,7 +2877,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     pXGI->availMem -= (pXGI->TurboQueue) ? (64 * 1024) : pXGI->CursorSize;
 
-
     /* In dual head mode, we share availMem equally - so align it
      * to 8KB; this way, the address of the FB of the second
      * head is aligned to 4KB for mapping.
@@ -3013,7 +3010,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     xf86DrvMsg(0, X_INFO, "SDFlags %lx\n", pXGI->XGI_SD_Flags);
 #endif
 
-
     if (!IS_DUAL_HEAD(pXGI) || IS_SECOND_HEAD(pXGI)) {
         xf86DrvMsg(pScrn->scrnIndex, pXGI->CRT1gammaGiven ? X_CONFIG : X_INFO,
                    "CRT1 gamma correction is %s\n",
@@ -3048,7 +3044,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
         || (pXGI->VBFlags & CRT1_LCDA)) {
         pXGI->CRT1off = 0;
     }
-
 
     /* Handle TVStandard option */
     if ((pXGI->NonDefaultPAL != -1) || (pXGI->NonDefaultNTSC != -1)) {
@@ -3229,7 +3224,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #endif
 #endif
 
-
     XGIDDCPreInit(pScrn);
 
     /* Jong 07/29/2009; Proposal : use wide range for HorizSync and strict range for VertRefresh; And set 1024x768 in Modes of Screen section */
@@ -3380,7 +3374,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 		}
     }
 
-
     /* Dual Head:
      * -) Go through mode list and mark all those modes as bad,
      *    which are unsuitable for dual head mode.
@@ -3521,7 +3514,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             XGIFreeCRT2Structs(pXGI);
             pXGI->MergedFB = FALSE;
         }
-
     }
 
     if (pXGI->MergedFB) {
@@ -3552,9 +3544,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
             pScrn->modes = pXGI->CRT1Modes;
             pXGI->CRT1Modes = NULL;
             pXGI->MergedFB = FALSE;
-
         }
-
     }
 
     if (pXGI->MergedFB) {
@@ -3580,7 +3570,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
     else
 
-	/* Jong 07/30/2009; might cause small font size */
 	xf86SetDpi(pScrn, 0, 0);
 
     /* Load fb module */
@@ -3659,7 +3648,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 #endif
 
-
     /* Now load and initialize VBE module for VESA and mode restoring. */
     if (pXGI->pVbe) {
         vbeFree(pXGI->pVbe);
@@ -3697,11 +3685,9 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     return TRUE;
 }
 
-
 /*
  * Map the framebuffer and MMIO memory.
  */
-
 static Bool
 XGIMapMem(ScrnInfoPtr pScrn)
 {
@@ -3769,17 +3755,14 @@ XGIMapMem(ScrnInfoPtr pScrn)
     return TRUE;
 }
 
-
 /*
  * Unmap the framebuffer and MMIO memory.
  */
-
 static Bool
 XGIUnmapMem(ScrnInfoPtr pScrn)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
     XGIEntPtr pXGIEnt = ENTITY_PRIVATE(pXGI);
-
 
     /* In dual head mode, we must not unmap if the other head still
      * assumes memory as mapped
@@ -3894,14 +3877,12 @@ XGISave(ScrnInfoPtr pScrn)
     /* "Save" these again as they may have been changed prior to XGISave() call */
 }
 
-
 /*
  * Initialise a new mode.  This is currently done using the
  * "initialise struct, restore/write struct to HW" model for
  * the old chipsets (5597/530/6326). For newer chipsets,
  * we use our own mode switching code (or VESA).
  */
-
 static Bool
 XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 {
@@ -3948,7 +3929,6 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
     andXGIIDXREG(XGICR, 0x11, 0x7f);    /* Unlock CRTC registers */
 
     XGIModifyModeInfo(mode);    /* Quick check of the mode parameters */
-
 
     if (IS_DUAL_HEAD(pXGI)) 
 	{
@@ -4011,10 +3991,8 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 			   "REAL REGISTER CONTENTS AFTER SETMODE:\n");
 		(*pXGI->ModeInit) (pScrn, mode);
 #endif
-
 		vgaHWProtect(pScrn, FALSE);
     }
-
 
 	if((pXGI->Chipset == PCI_CHIP_XGIXG40)||(pXGI->Chipset == PCI_CHIP_XGIXG20)||(pXGI->Chipset == PCI_CHIP_XGIXG21)||(pXGI->Chipset == PCI_CHIP_XGIXG27))
 	   {
@@ -4048,7 +4026,6 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 
     return TRUE;
 }
-
 
 /*
  * Restore the initial mode. To be used internally only!
@@ -4088,7 +4065,6 @@ XGIRestore(ScrnInfoPtr pScrn)
     vgaHWProtect(pScrn, FALSE);
 }
 
-
 /* Our generic BlockHandler for Xv */
 static void
 XGIBlockHandler(BLOCKHANDLER_ARGS_DECL)
@@ -4109,7 +4085,6 @@ XGIBlockHandler(BLOCKHANDLER_ARGS_DECL)
     }
 }
 
-/* Jong@08122009 */
 int  g_virtualX;
 int  g_virtualY;
 int  g_frameX0;
@@ -4164,9 +4139,6 @@ XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
     PDEBUG(ErrorF("pScrn->frameX1 = %d\n", pScrn->frameX1));
     PDEBUG(ErrorF("pScrn->frameY1 = %d\n", pScrn->frameY1));
 
-/* Jong 07/29/2009; fix bug of switch mode */
-    /* Jong 08/30/2007; no virtual screen for all cases */
-    /* Jong 08/22/2007; support modeline */
     {
 		g_virtualX = pScrn->virtualX;
 		g_virtualY = pScrn->virtualY;
@@ -4350,12 +4322,10 @@ XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
     case 16:
     case 32:
 
-/* Jong 07/30/2009; fix bug of small font */
 		PDEBUG(ErrorF("Use Virtual Size - *1\n"));
 		width = /* pScrn->virtualX; */ pScrn->currentMode->HDisplay; 
 		height = /* pScrn->virtualY;*/ pScrn->currentMode->VDisplay; 
 
-		/* Jong@10022009 */
 		displayWidth = pScrn->displayWidth; /* important to set pitch correctly */
 
 		PDEBUG(ErrorF("Call fbScreenInit()...\n"));
@@ -4577,13 +4547,11 @@ XGISwitchMode(ScrnInfoPtr pScrn, DisplayModePtr mode)
     PDEBUG(ErrorF
            ("XGISwitchMode (%d, %d) \n", mode->HDisplay, mode->VDisplay));
 
-    /* Jong 07/29/2009; Set the viewport; still not working */
     XGIAdjustFrame(pScrn, pScrn->frameX0, pScrn->frameY0);
 
     if (!(XGIModeInit(pScrn, mode)))
         return FALSE;
 
-	/* Jong 07/30/2009; bug fixing for small font size */
 	pScrn->pScreen->mmWidth = (pScrn->virtualX * 254 + pScrn->xDpi * 5) / (pScrn->xDpi * 10);
 	pScrn->pScreen->mmHeight = (pScrn->virtualY * 254 + pScrn->yDpi * 5) / (pScrn->yDpi * 10);
 
@@ -4714,14 +4682,12 @@ XGILeaveVT(ScrnInfoPtr pScrn)
 
     XGIRestore(pScrn);
 
-
     /* We use (otherwise unused) bit 7 to indicate that we are running to keep
      * xgifb to change the displaymode (this would result in lethal display
      * corruption upon quitting X or changing to a VT until a reboot).
      */
     vgaHWLock(hwp);
 }
-
 
 /*
  * This is called at the end of each server generation.  It restores the
@@ -4820,7 +4786,6 @@ XGIFreeScreen(ScrnInfoPtr pScrn)
     XGIFreeRec(pScrn);
 }
 
-
 /* Jong 07/02/2008; Validate user-defined mode */
 int XGIValidateUserDefMode(XGIPtr pXGI, DisplayModePtr mode)
 {
@@ -4852,14 +4817,12 @@ XGIValidMode(ScrnInfoPtr pScrn, DisplayModePtr mode, Bool verbose, int flags)
     int i = 0;
     int VRefresh;
 
-	/* Jong 07/27/2009; support custom mode without ModeID */
 	pXGI->HaveCustomModes = TRUE;
 
     VRefresh =
         (int) ((float) (Clock * 1000) /
                (float) (mode->VTotal * mode->HTotal) + 0.5);
 
-	/* Jong@09252009 */
 	if(mode->VRefresh == 0)
 		mode->VRefresh = VRefresh;
 
@@ -5113,11 +5076,8 @@ XGIPreSetMode(ScrnInfoPtr pScrn, DisplayModePtr mode, int viewmode)
 
     }
     else {
-
         switch (vbflag & (CRT2_TV | CRT2_LCD | CRT2_VGA)) {
-
         case CRT2_TV:
-
             CR38 &= ~0xC0;      /* Clear Pal M/N bits */
 
             if (vbflag & TV_YPBPR) {    /* Video bridge */
@@ -5380,7 +5340,6 @@ XGIPostSetMode(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
      */
 }
 
-
 USHORT
 XGI_CalcModeIndex(ScrnInfoPtr pScrn, DisplayModePtr mode,
                   unsigned long VBFlags)
@@ -5501,7 +5460,6 @@ XGISearchCRT1Rate(ScrnInfoPtr pScrn, DisplayModePtr mode)
         i++;
     }
 
-	/* Jong 10/19/2007; merge code */
 	/* Adjust to match table of VBIOS */
 	switch(pXGI->Chipset)
 	{
@@ -5721,7 +5679,6 @@ xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1, unsigned char reg2)
     outXGIIDXREG(XGISR, 0x05, reg1 == 0xA1 ? 0x86 : 0x00);
 }
 
-/* Jong 12/05/2007; filter mode list by monitor DDC */
 static void XGIFilterModeByDDC(DisplayModePtr pModeList, xf86MonPtr pMonitorDDC)
 {
     DisplayModePtr first, p;
@@ -5738,7 +5695,6 @@ static void XGIFilterModeByDDC(DisplayModePtr pModeList, xf86MonPtr pMonitorDDC)
     }
 }
 
-/* Jong 12/05/2007; filter mode list by monitor DDC */
 static bool XGICheckModeByDDC(DisplayModePtr pMode, xf86MonPtr pMonitorDDC)
 {
     int i, j;
@@ -5887,7 +5843,6 @@ XGIDumpRegs(ScrnInfoPtr pScrn)
     XGIDumpMMIO(pScrn);
 #endif /* DEBUG */
 }
-
 
 void
 XGIDumpPalette(ScrnInfoPtr pScrn)

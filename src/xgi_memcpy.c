@@ -360,8 +360,6 @@
     PDEBUG(ErrorF("Jong-NOPREFETCH_FUNC(prefix,itype,ptype,begin,fence,small)...\n"));	\
     }
 
-/* Other archs */
-
 /************************************************************************/
 /*                   libc memcpy() wrapper - generic                    */
 /************************************************************************/

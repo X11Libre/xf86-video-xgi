@@ -305,7 +305,6 @@ xgiOptions(ScrnInfoPtr pScrn)
 					pXGI->Non_DDC_DefaultRefreshRate );
 	}
 
-	/* Jong@09092009; gamma value */
 	g_GammaRed = g_GammaGreen = g_GammaBlue = 1000;
 
 	char	GammaStringFormat[32] = "%[^,],%[^,],%[^\n]";
@@ -470,7 +469,6 @@ xgiOptions(ScrnInfoPtr pScrn)
 	  pXGI->CRT1gammaGiven = TRUE;
        }
     }
-
 
     /* ShadowFB */
     from = X_DEFAULT;
