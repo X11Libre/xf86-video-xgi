@@ -142,8 +142,6 @@ static Bool XGIPrepareCopy(PixmapPtr pSrcPixmap, PixmapPtr pDstPixmap, int xdir,
 static void XGICopy(PixmapPtr pDstPixmap, int srcX, int srcY, int dstX, int dstY, int width, int height);
 static void XGIDoneCopy(PixmapPtr pDstPixmap);
 
-#define XGI_HAVE_COMPOSITE
-#ifdef XGI_HAVE_COMPOSITE
 static Bool XGICheckComposite(int op, PicturePtr pSrcPicture, PicturePtr pMaskPicture,
 				PicturePtr pDstPicture);
 static Bool XGIPrepareComposite(int op, PicturePtr pSrcPicture, PicturePtr pMaskPicture,
@@ -151,7 +149,6 @@ static Bool XGIPrepareComposite(int op, PicturePtr pSrcPicture, PicturePtr pMask
 static void XGIComposite(PixmapPtr pDst, int srcX, int srcY, int maskX, int maskY, int dstX, int dstY,
 				int width, int height);
 static void XGIDoneComposite(PixmapPtr pDst);
-#endif
 #endif /* EXA */
 
 void Volari_EnableAccelerator(ScrnInfoPtr pScrn) ;
@@ -685,12 +682,10 @@ Volari_AccelInit(ScreenPtr pScreen)
 		pXGI->EXADriverPtr->Copy = XGICopy;
 		pXGI->EXADriverPtr->DoneCopy = XGIDoneCopy;
 
-#ifdef XGI_HAVE_COMPOSITE
 		pXGI->EXADriverPtr->CheckComposite = XGICheckComposite;
 		pXGI->EXADriverPtr->PrepareComposite = XGIPrepareComposite;
 		pXGI->EXADriverPtr->Composite = XGIComposite;
 		pXGI->EXADriverPtr->DoneComposite = XGIDoneComposite;
-#endif
 	   }
 #endif /* EXA */
 
@@ -932,7 +927,6 @@ XGIDoneCopy(PixmapPtr pDstPixmap)
 	PACCELDEBUG(ErrorF("XGIDoneCopy()...\n"));
 }
 
-#ifdef XGI_HAVE_COMPOSITE
 static Bool
 XGICheckComposite(int op, PicturePtr pSrcPicture, PicturePtr pMaskPicture,
 				PicturePtr pDstPicture)
@@ -989,7 +983,6 @@ static void
 XGIDoneComposite(PixmapPtr pDst)
 {
 }
-#endif
 
 /************************************************************************/
 /*                   libc memcpy() wrapper - generic                    */
