@@ -202,8 +202,6 @@ extern Bool g_bRunTimeDebug;
 #include "extnsionst.h"  	/* required */
 #include <X11/extensions/panoramiXproto.h>  	/* required */
 
-#undef XGI315DRI		/* define this if dri is adapted for 315/330 series */
-
 #ifndef PCI_VENDOR_XGI
 #define PCI_VENDOR_XGI 		    0x18CA
 #endif
