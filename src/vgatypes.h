@@ -58,10 +58,6 @@
 #include "xf86Pci.h"
 #endif
 
-#ifdef LINUX_KERNEL  /* We don't want the X driver to depend on kernel source */
-#include <linux/ioctl.h>
-#endif
-
 #ifndef FALSE
 #define FALSE   0
 #endif
@@ -126,10 +122,6 @@ typedef UCHAR BOOLEAN;
 typedef UCHAR bool;
 #endif
 
-#ifdef LINUX_KERNEL
-typedef unsigned long XGIIOADDRESS;
-#endif
-
 #ifdef LINUX_XF86
 typedef unsigned long XGIIOADDRESS;
 #endif
@@ -138,7 +130,6 @@ typedef unsigned long XGIIOADDRESS;
 #define VBIOS_VER_MAX_LENGTH    4
 #endif
 
-#ifndef LINUX_KERNEL   /* For the linux kernel, this is defined in xgifb.h */
 #ifndef XGI_CHIP_TYPE
 typedef enum _XGI_CHIP_TYPE {
     XGI_VGALegacy = 0,
@@ -151,7 +142,6 @@ typedef enum _XGI_CHIP_TYPE {
     XG27,
     MAX_XGI_CHIP
 } XGI_CHIP_TYPE;
-#endif
 #endif
 
 #ifndef XGI_VB_CHIP_TYPE

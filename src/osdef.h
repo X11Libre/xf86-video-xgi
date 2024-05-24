@@ -50,17 +50,10 @@
  */
 
 /* The choices are: */
-/* #define LINUX_KERNEL	 */  	/* Kernel framebuffer */
 #define LINUX_XF86    		/* XFree86 */
 
 #define XGI_MemoryCopy(Destination,Source,Length) memcpy(Destination,Source,Length)
 
 #ifdef LINUX_XF86
 #define XGI_SetMemory(MemoryAddress,MemorySize,value) memset(MemoryAddress, value, MemorySize)
-#endif
-#ifdef LINUX_KERNEL
-#include <linux/config.h>
-#include <linux/version.h>
-
-#define XGI_SetMemory(MemoryAddress,MemorySize,value) memset_io(MemoryAddress, value, MemorySize)
 #endif

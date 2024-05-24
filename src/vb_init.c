@@ -29,15 +29,6 @@
 
 #include "osdef.h"
 #include "vgatypes.h"
-
-
-#ifdef LINUX_KERNEL
-#include <linux/version.h>
-#include <linux/types.h>
-#include <linux/delay.h> /* udelay */
-#include "XGIfb.h"
-#endif
-
 #include "vb_def.h"
 #include "vb_struct.h"
 #include "vb_setmode.h"
@@ -49,14 +40,6 @@
 #include "xgi.h"
 #include "xgi_regs.h"
 #endif
-
-#ifdef LINUX_KERNEL
-#include <asm/io.h>
-#include <linux/types.h>
-#endif
-
-
-
 
 static UCHAR XGINew_ChannelAB;
 static UCHAR XGINew_DataBusWidth;
@@ -209,14 +192,6 @@ static void XGINew_CheckChannel(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 
 static int XGINew_RAMType;                  /*int      ModeIDOffset,StandTable,CRT1Table,ScreenOffset,REFIndex;*/
 static ULONG UNIROM;			  /* UNIROM */
-
-
-#ifdef LINUX_KERNEL
-void DelayUS(ULONG MicroSeconds)
-{
-	udelay(MicroSeconds);
-}
-#endif
 
 /* --------------------------------------------------------------------- */
 /* Function : XGIInitNew */

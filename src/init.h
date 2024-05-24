@@ -64,15 +64,6 @@
 #include "xgi_regs.h"
 #endif
 
-#ifdef LINUX_KERNEL
-#include <linux/config.h>
-#include <linux/version.h>
-#include <linux/types.h>
-#include <asm/io.h>
-#include <linux/fb.h>
-#include <video/xgifb.h>
-#endif
-
 /* Mode numbers */
 static const USHORT  ModeIndex_320x200[]      = {0x59, 0x41, 0x00, 0x4f};
 static const USHORT  ModeIndex_320x240[]      = {0x50, 0x56, 0x00, 0x53};

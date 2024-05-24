@@ -16,22 +16,6 @@
 #include "vb_i2c.h"
 #endif
 
-#ifdef LINUX_KERNEL
-#include <linux/version.h>
-#include <asm/io.h>
-#include <linux/types.h>
-#include "vb_i2c.h"
-
-/* Jong@08052009 */
-/* #include <linux/delay.h> */ /* udelay */
-
-#include "XGIfb.h"
-
-#endif
-
-
-
-/*char I2CAccessBuffer(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl I2CCntl, ULONG DevAddr, ULONG Offset, PUCHAR pBuffer, ULONG ulSize); */
 char vGetEDIDExtensionBlocks(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl pI2C, PUCHAR pjBuffer, ULONG ulBufferSize);
 char vGetEnhancedEDIDBlock(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl pI2C, ULONG ulBlockID, ULONG ulBlockTag, PUCHAR pjBuffer, ULONG ulBufferSize);
 

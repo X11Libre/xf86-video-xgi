@@ -1,15 +1,6 @@
 #ifndef _VBI2C_
 #define _VBI2C_
 #include "vgatypes.h"
-#ifdef LINUX_KERNEL
-/* Jong@08052009 */
-// #include <linux/delay.h> /* udelay */
-#endif 
-
-/* Jong@08052009 */
-//#ifndef DelayUS
-//#define DelayUS(p) udelay(p)
-//#endif
 
 #define IND_CR48_GPIO_REG_I   0x48
 #define IND_CR4A_GPIO_REG_III 0x4A

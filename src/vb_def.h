@@ -30,21 +30,6 @@
 #ifndef NewScratch
 #define NewScratch
 #endif
-/* shampoo */
-#ifdef LINUX_KERNEL
-#define SEQ_ADDRESS_PORT	  0x0014
-#define SEQ_DATA_PORT		  0x0015
-#define MISC_OUTPUT_REG_READ_PORT 0x001C
-#define MISC_OUTPUT_REG_WRITE_PORT 0x0012
-#define GRAPH_DATA_PORT		  0x1F
-#define GRAPH_ADDRESS_PORT	  0x1E
-#define XGI_MASK_DUAL_CHIP	  0x04  /* SR3A */
-#define CRTC_ADDRESS_PORT_COLOR   0x0024
-#define VIDEO_SUBSYSTEM_ENABLE_PORT 0x0013
-#define PCI_COMMAND		0x04
-#endif
-/* ~shampoo */
-
 
 #define VB_XGI301       0x0001 /*301b*/
 #define VB_XGI301B      0x0002

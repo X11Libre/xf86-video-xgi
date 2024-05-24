@@ -35,14 +35,6 @@
 #include "xgi_regs.h"
 #endif
 
-#ifdef LINUX_KERNEL
-#include <linux/version.h>
-#include <asm/io.h>
-#include <linux/types.h>
-#include "XGIfb.h"
-#define MASK_OUTPUTSTATE_CRT2LCD 0x02
-#endif
-
 #include "vb_def.h"
 #include "vgatypes.h"
 #include "vb_struct.h"
