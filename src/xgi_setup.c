@@ -46,7 +46,6 @@
 #include "xgi.h"
 #include "xgi_regs.h"
 #include "xgi_dac.h"
-/* #include "valid_mode.h" */
 
 #define _XF86DGA_SERVER_
 #include <X11/extensions/xf86dgaproto.h>
@@ -71,7 +70,6 @@ static Bool XGI_IsXG21(ScrnInfoPtr pScrn);
 
 static void XGI_InitHwDevInfo(ScrnInfoPtr pScrn);
 
-/* Jong 10/16/2007; merge code */
 static void
 xgiXG2X_Setup(ScrnInfoPtr pScrn)
 {
@@ -245,7 +243,6 @@ xgiXG2X_Setup(ScrnInfoPtr pScrn)
     if(( pXGI->Chipset == PCI_CHIP_XGIXG20 )||( pXGI->Chipset == PCI_CHIP_XGIXG21 )||( pXGI->Chipset == PCI_CHIP_XGIXG27 ))
     {
         pXGI->cmdQueueSize = VOLARI_CQSIZEXG20;
-    /* XgiMode = XG20_Mode ; */
         PDEBUG(ErrorF(" ---XG20_Mode \n"));
     }
 
@@ -637,7 +634,6 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
     XGI_New_GetVBType(pXGI->XGI_Pr, pHwDevInfo); //yilin
     ErrorF("XGI_New_GetVBType  VBType = %x\n", pXGI->XGI_Pr->VBType);
 
- //   pHwDevInfo->ujVBChipID = VB_CHIP_301 ; //yilin
     if( pXGI->XGI_Pr->VBType & (VB_XGI301 | VB_XGI301B | VB_XGI301C))
     {
     PDEBUG(ErrorF("VB chip = 301 \n")) ;
@@ -647,12 +643,6 @@ XGI_InitHwDevInfo(ScrnInfoPtr pScrn)
     {
         pHwDevInfo->ujVBChipID = VB_CHIP_302 ;
     }
-/*
-    else if (pXGI->VBFlags & VB_LVDS) {
-        pHwDevInfo->ulExternalChip |= 0x01 ;
-    }
-*/ //yilin
-
 
     PDEBUG(ErrorF("pHwDevInfo->jChipType = %08lX done\n",pHwDevInfo->jChipType)) ;
 }

@@ -50,24 +50,8 @@
 #define VB_YPbPr750p     0x02
 #define VB_YPbPr1080i    0x03
 
-/* #define CRT1Len 17 */
 #define LVDSCRT1Len             15
 #define CHTVRegDataLen          5
-
-/* #define ModeInfoFlag 0x07 */
-/* #define IsTextMode 0x07 */
-/* #define ModeText 0x00 */
-/* #define ModeCGA 0x01 */
-/* #define ModeEGA 0x02 */
-/* #define ModeVGA 0x03 */
-/* #define Mode15Bpp 0x04 */
-/* #define Mode16Bpp 0x05 */
-/* #define Mode24Bpp 0x06 */
-/* #define Mode32Bpp 0x07 */
-
-/* #define DACInfoFlag 0x18 */
-/* #define MemoryInfoFlag 0x1E0 */
-/* #define MemorySizeShift 0x05 */
 
 #define Charx8Dot               0x0200
 #define LineCompareOff          0x0400
@@ -92,7 +76,6 @@
 #define SyncPP                  0x0000
 #define SyncPN                  0x4000
 #define SyncNP                  0x8000
-/* #define SyncNN 0xc000 */
 #define ECLKindex0              0x0000
 #define ECLKindex1              0x0100
 #define ECLKindex2              0x0200
@@ -116,7 +99,6 @@
  * CR31
  */
 #define SetNTSCTV               0x0000
-/* #define SetPALTV 0x0100 */
 #define SetCRT2ToLCDA           0x0100
 #define SetInSlaveMode          0x0200
 #define SetNotSimuMode          0x0400
@@ -129,7 +111,6 @@
 #define HotKeySwitch            0x8000
 #define SetCHTVOverScan         0x8000
 #define SetCRT2ToDualEdge       0x8000
-/* #define SetCRT2ToLCDA          0x8000 301b */
 #define PanelRGB18Bit           0x0100
 #define PanelRGB24Bit           0x0000
 
@@ -145,16 +126,10 @@
 #define SetToLCDA		0x02
 
 #define YPbPrModeInfo           0x38
-/* #define YPbPrMode525i 0x00 */
-/* #define YPbPrMode525p 0x08 */
-/* #define YPbPrMode750p 0x10 */
-/* #define YPbPrMode1080i 0x18 */
 
 #define SetSCARTOutput          0x01
 #define BoardTVType             0x02
 #define  EnablePALMN           0x40   /* Romflag: 1 = Allow PALM/PALN */
-/* #define LCDVESATiming 0x0008 */
-/* #define EnableLVDSDDA 0x0010 */
 
 #define Panel320x480              0x07/*fstn*/
 /* [ycchen] 02/12/03 Modify for Multi-Sync. LCD Support */
@@ -178,13 +153,7 @@
 #define PanelRef60Hz            0x00
 #define PanelRef75Hz            0x20
 
-/* #define DDC2DelayTime 300 */
-
 #define CRT2DisplayFlag         0x2000
-/* #define LCDDataLen 8 */
-/* #define HiTVDataLen 12 */
-/* #define TVDataLen 16 */
-/* #define SetPALTV 0x0100 */
 #define HalfDCLK                0x1000
 #define NTSCHT                  1716
 #define NTSC2HT                 1920
@@ -220,7 +189,6 @@
 #define YPbPr525iVCLK           0x03B
 #define YPbPr525iVCLK_2         0x03A
 
-/* #define LCDVESATiming 0x08 */
 #define SetSCARTOutput          0x01
 #define AVIDEOSense             0x01
 #define SVIDEOSense             0x02
@@ -251,18 +219,12 @@
 #define ADR_CHTVRegDataPtr      0x218
 
 #define LVDSDataLen             6
-/* #define EnableLVDSDDA 0x10 */
-/* #define LVDSDesDataLen 3 */
 #define ActiveNonExpanding      0x40
 #define ActiveNonExpandingShift 6
-/* #define ActivePAL 0x20 */
 #define ActivePALShift          5
-/* #define ModeSwitchStatus 0x0F */
 #define SoftTVType              0x40
 #define SoftSettingAddr         0x52
 #define ModeSettingAddr         0x53
-
-/* #define SelectCRT1Rate 0x4 */
 
 #define _PanelType00             0x00
 #define _PanelType01             0x08
@@ -324,12 +286,9 @@
 
 #define OEMLCDPanelIDSupport    0x0080
 
-/* #define LCDVESATiming 0x0001 //LCD Info CR37 */
-/* #define EnableLVDSDDA 0x0002 */
 #define EnableScalingLCD        0x0008
 #define SetPWDEnable            0x0004
 #define SetLCDtoNonExpanding    0x0010
-/* #define SetLCDPolarity 0x00E0 */
 #define SetLCDDualLink          0x0100
 #define SetLCDLowResolution     0x0200
 #define SetLCDStdMode           0x0400
@@ -526,7 +485,6 @@
 #define		SetPALMTV                    0x0004
 #define		SetPALNTV                    0x0008
 #define		SetCHTVUnderScan             0x0000
-/* #define SetCHTVOverScan 0x0010 */
 #define		SetYPbPrMode525i             0x0020
 #define		SetYPbPrMode525p             0x0040
 #define		SetYPbPrMode750p             0x0080
@@ -936,10 +894,7 @@
 #define		HiTVSimuVCLK          0x3E
 #define		HiTVTextVCLK          0x3F
 #define		VCLK39_77              0x40
-/* #define YPbPr750pVCLK 0x0F */
 #define		YPbPr525pVCLK           0x3A
-/* #define ;;YPbPr525iVCLK 0x3B */
-/* #define ;;YPbPr525iVCLK_2 0x3A */
 #define		NTSC1024VCLK         0x41
 #define		VCLK25_175_41        0x42                  /* ; ScaleLCD */
 #define		VCLK25_175_42        0x43

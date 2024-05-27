@@ -62,11 +62,6 @@
 #define LARGE(n) ((1?n) > (0?n) ? (1?n) : (0?n))
 // Select Small one from a:b
 #define SMALL(n) ((1?n) < (0?n) ? (1?n) : (0?n))
-// set bits as 1 between bit(a) and bit(b)
-//#define BITSMASK(a,b)   ( (a)>(b) ? BITS((a)-(b)+1) << (b) : BITS((b)-(a)+1) << (a) )
-// The same as BITMASK(a,b) instead of parameters' format
-//#define MASK(n)         BITSMASK(1?n, 0?n)
-// set bits as 1 between bit(a) and bit(b)
 #define MASK(n)         ( BITS(LARGE(n)-SMALL(n)+1) << SMALL(n) )
 // get bits [a:b]'s binary value
 #ifndef GETBITS
@@ -154,8 +149,6 @@ typedef struct _XGI_I2C_CONTROL
      ULONG                   I2CDelay;        /* 100ns units*/
 } XGI_I2C_CONTROL, *PXGI_I2C_CONTROL;
 
-/*extern  char I2CAccessBuffer(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl I2CCntl, ULONG DevAddr, ULONG Offset, PUCHAR pBuffer, ULONG ulSize);
-*/
 extern  char vGetEDIDExtensionBlocks(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl pI2C, PUCHAR pjBuffer, ULONG ulBufferSize);
 extern  char vGetEnhancedEDIDBlock(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl pI2C, ULONG ulBlockID, ULONG ulBlockTag, PUCHAR pjBuffer, ULONG ulBufferSize);
 

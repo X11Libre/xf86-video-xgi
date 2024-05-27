@@ -26,6 +26,7 @@
  
 #ifndef  _VBINIT_
 #define  _VBINIT_
+
 extern BOOLEAN XGIInitNew(PXGI_HW_DEVICE_INFO HwDeviceExtension,
     PVB_DEVICE_INFO pVBInfo);
 
@@ -37,4 +38,3 @@ extern void ReadVBIOSTablData(UCHAR ChipType, PVB_DEVICE_INFO pVBInfo);
 extern XGI21_LVDSCapStruct  XGI21_LCDCapList;
 
 #endif
-

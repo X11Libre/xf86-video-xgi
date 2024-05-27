@@ -190,12 +190,6 @@ xgiOptions(ScrnInfoPtr pScrn)
 
     xf86ProcessOptions(pScrn->scrnIndex, pScrn->options, pXGI->Options);
 
-    /* Set defaults */
-/*
-#ifdef __powerpc__
-    pXGI->NoAccel = TRUE;
-#endif 
-*/
     pXGI->TurboQueue = TRUE;
     /* TODO: Option (315 series VRAM command queue) */
     /* But beware: xgifb does not know about this!!! */
@@ -266,13 +260,6 @@ xgiOptions(ScrnInfoPtr pScrn)
 		if(pXGI->IgnoreDDC == TRUE)
 			xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Monitor (Option) : IgnoreDDC \n");
 	} 
-#if 0 /* can support 1280x768 but not being applied */
-	else
-	{
-		pXGI->IgnoreDDC = TRUE;
-		xf86DrvMsg(pScrn->scrnIndex, X_CONFIG, "Monitor (Option) : set IgnoreDDC as default\n");
-	}
-#endif
 
 	pXGI->Non_DDC_DefaultMode = FALSE;
 	pXGI->Non_DDC_DefaultResolutionX = 1024;
@@ -284,8 +271,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     char   Non_DDCDefaultResolutionX[8] = "";
     char   Non_DDCDefaultResolutionY[8] = "";
     char   Non_DDCDefaultRefreshRate[8] = "";
-
-	/* strcpy(ModeStringFormat, "%[^+]x%[^+]@%[^\n]"); */
 
 	if((Non_DDCDefaultMode = xf86GetOptValString(pXGI->Options, OPTION_NONDDC_DEFAULT_MODE)))
 	{

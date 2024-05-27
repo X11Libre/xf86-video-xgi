@@ -146,11 +146,7 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
                 if ( !XGINew_BridgeIsEnable( HwDeviceExtension, pVBInfo ) )
                 {
 		    USHORT temp_mode_no;
-
                     SenseModeNo = 0x2e ;
-                    /* XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x30 , 0x41 ) ; */
-		    /* XGISetModeNew(HwDeviceExtension, pVBInfo, 0x2e); // ynlai InitMode */
-
 		    temp_mode_no = SenseModeNo;
 		    XGI_SearchModeID(pVBInfo->SModeIDTable,
 				     pVBInfo->EModeIDTable, 0x11,
@@ -165,7 +161,6 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
                     XGI_EnableBridge( HwDeviceExtension, pVBInfo ) ;
                     XGI_SetCRT2Group301( SenseModeNo , HwDeviceExtension, pVBInfo ) ;
                     XGI_SetCRT2ModeRegs( 0x2e , HwDeviceExtension, pVBInfo ) ;
-                    /* XGI_DisableBridge( HwDeviceExtension, pVBInfo ) ; */
                     XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3c4 , 0x01 , 0xDF , 0x20 ) ;	/* Display Off 0212 */
                     for( i = 0 ; i < 20 ; i++ )
                     {
@@ -272,7 +267,6 @@ void XGI_GetSenseStatus( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO
             if ( !( P2reg0 & 0x20 ) )
             {
                 pVBInfo->VBInfo = DisableCRT2Display ;
-                /* XGI_SetCRT2Group301( SenseModeNo , HwDeviceExtension, pVBInfo ) ; */
             }
         }
     }
@@ -440,13 +434,11 @@ void XGIPowerSaving(PVB_DEVICE_INFO pVBInfo, UCHAR PowerSavingStatus)
 	if(PowerSavingStatus & 0x01) /* turn off DAC1 */
 	{
 	   ErrorF("Turn off DAC1...\n");
-       /* XGI_SetRegAND((XGIIOADDRESS) pVBInfo->P3c4 , ??? , ??? ) ; */			/* ??? */
        XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3c4 , 0x07 , ~0x20, 0x20 ) ;	/* SR07[5] : Enable DAC1 power saving mode */
 	}
 	else
 	{
 	   ErrorF("Turn on DAC1...\n");
-       /* XGI_SetRegAND((XGIIOADDRESS) pVBInfo->P3c4 , ??? , ??? ) ; */			
        XGI_SetRegAND((XGIIOADDRESS) pVBInfo->P3c4 , 0x07 , ~0x20 ) ;			
 	}
 
@@ -492,8 +484,6 @@ VOID XGISetDPMS(ScrnInfoPtr pScrn, PVB_DEVICE_INFO pVBInfo, PXGI_HW_DEVICE_INFO 
 {
     USHORT ModeNo, ModeIdIndex ;
     UCHAR  temp ;
-    /* VB_DEVICE_INFO VBINF; */
-    /* PVB_DEVICE_INFO pVBInfo = pXGI->XGI_Pr */ /* &VBINF */;
 
     ErrorF("XGISetDPMS(VESA_POWER_STATE = 0x%lx)...\n", VESA_POWER_STATE);
 
@@ -502,48 +492,16 @@ VOID XGISetDPMS(ScrnInfoPtr pScrn, PVB_DEVICE_INFO pVBInfo, PXGI_HW_DEVICE_INFO 
 
     XGIInitMiscVBInfo(pXGIHWDE, pVBInfo);
 
-	/* Jong@08212009; ignored at present */
-	/*
-    if ( pVBInfo->IF_DEF_CH7007 == 0 )
-    {
-        XGINew_SetModeScratch ( pXGIHWDE , pVBInfo ) ;
-    } */
-
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x05 , 0x86 ) ;	/* 1.Openkey */
     XGI_UnLockCRT2( pXGIHWDE , pVBInfo) ;
     ModeNo = XGI_GetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x34 ) ;
     XGI_SearchModeID(pVBInfo->SModeIDTable, pVBInfo->EModeIDTable,  0x11, &ModeNo , &ModeIdIndex);
-    /* XGI_SearchModeID( ModeNo , &ModeIdIndex, pVBInfo ) ; */
-
-	/* Jong@08212009; ignored */
-	/*
-    if ( ( pXGIHWDE->ujVBChipID == VB_CHIP_301 ) || ( pXGIHWDE->ujVBChipID == VB_CHIP_302 ) || ( pVBInfo->IF_DEF_CH7007 == 1 ))
-    {
-        XGI_GetVBType( pVBInfo ) ;
-        XGI_GetVBInfo( ModeNo , ModeIdIndex , pXGIHWDE, pVBInfo ) ;
-        XGI_GetTVInfo( ModeNo , ModeIdIndex, pVBInfo ) ;
-        XGI_GetLCDInfo( ModeNo , ModeIdIndex, pVBInfo ) ;
-    } 
-
-    if ( VESA_POWER_STATE == 0x00000400 )
-      XGINew_SetReg1( pVBInfo->Part4Port , 0x31 , ( UCHAR )( XGINew_GetReg1( pVBInfo->Part4Port , 0x31 ) & 0xFE ) ) ;
-    else
-      XGINew_SetReg1( pVBInfo->Part4Port , 0x31 , ( UCHAR )( XGINew_GetReg1( pVBInfo->Part4Port , 0x31 ) | 0x01 ) ) ;
-	*/
 
     temp = ( UCHAR )XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x1f ) ;
     temp &= 0x3f ;
     switch ( VESA_POWER_STATE )
     {
         case 0x00000000 : /* on */
-			/* Jong@08212009; not support */
-			/*
-            if ( ( pXGIHWDE->ujVBChipID == VB_CHIP_301 ) || ( pXGIHWDE->ujVBChipID == VB_CHIP_302 ) )
-            {
-                XGINew_SetReg1( pVBInfo->P3c4 , 0x1f , ( UCHAR )( temp | 0x00 ) ) ;
-                XGI_EnableBridge( pXGIHWDE, pVBInfo ) ;
-            }
-            else */
             {
 			   /* Handle LVDS */
                if ( pVBInfo->IF_DEF_LVDS == 1 )
@@ -572,7 +530,6 @@ VOID XGISetDPMS(ScrnInfoPtr pScrn, PVB_DEVICE_INFO pVBInfo, PXGI_HW_DEVICE_INFO 
                    XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3c4 , 0x09 , ~0x80 , 0x80 ) ;	/* DVO ON */
                    XGI_SetXG21FPBits( pVBInfo );
                    XGI_SetRegAND((XGIIOADDRESS) pVBInfo->P3d4 , 0x4A , ~0x20 ) ; 		/* Enable write GPIOF */
-                   /*XGINew_SetRegANDOR( pVBInfo->P3d4 , 0x48 , ~0x20 , 0x20 ) ;*/ 		/* LCD Display ON */
                  }
 
                  XGI_XG21BLSignalVDD( 0x20 , 0x20, pVBInfo ) ; /* LVDS signal on */
@@ -587,7 +544,6 @@ VOID XGISetDPMS(ScrnInfoPtr pScrn, PVB_DEVICE_INFO pVBInfo, PXGI_HW_DEVICE_INFO 
                    XGI_SetRegANDOR((XGIIOADDRESS) pVBInfo->P3c4 , 0x09 , ~0x80 , 0x80 ) ;	/* DVO ON */
                    XGI_SetXG27FPBits( pVBInfo );
                    XGI_SetRegAND((XGIIOADDRESS) pVBInfo->P3d4 , 0x4A , ~0x20 ) ; 			/* Enable write GPIOF */
-                   /*XGINew_SetRegANDOR( pVBInfo->P3d4 , 0x48 , ~0x20 , 0x20 ) ;*/ 			/* LCD Display ON */
                  }
                  XGI_XG27BLSignalVDD( 0x20 , 0x20, pVBInfo ) ; /* LVDS signal on */
 
@@ -659,14 +615,6 @@ VOID XGISetDPMS(ScrnInfoPtr pScrn, PVB_DEVICE_INFO pVBInfo, PXGI_HW_DEVICE_INFO 
 
             break ;
         case 0x00000400: /* off */
-			/* Jong@08212009; not support */
-			/*
-            if ( (pXGIHWDE->ujVBChipID == VB_CHIP_301 ) || ( pXGIHWDE->ujVBChipID == VB_CHIP_302 ) )
-            {
-                XGINew_SetReg1( pVBInfo->P3c4 , 0x1f , ( UCHAR )( temp | 0xc0 ) ) ;
-                XGI_DisableBridge( pXGIHWDE, pVBInfo ) ;
-            }
-            else */
             {
                if ( pXGIHWDE->jChipType == XG21 )
                {
@@ -680,7 +628,6 @@ VOID XGISetDPMS(ScrnInfoPtr pScrn, PVB_DEVICE_INFO pVBInfo, PXGI_HW_DEVICE_INFO 
                  {
                    XGI_SetRegAND((XGIIOADDRESS) pVBInfo->P3c4 , 0x09 , ~0x80 ) ;		/* DVO Off */
                    XGI_SetRegAND((XGIIOADDRESS) pVBInfo->P3d4 , 0x4A , ~0x20 ) ; 		/* Enable write GPIOF */
-                   /*XGINew_SetRegAND( pVBInfo->P3d4 , 0x48 , ~0x20 ) ;*/ 		/* LCD Display OFF */
                  }
 
 				 XGIPowerSaving(pVBInfo, 0x03);	/* Turn off DAC1, DVO */

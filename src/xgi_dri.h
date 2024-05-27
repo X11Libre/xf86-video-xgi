@@ -49,17 +49,11 @@ typedef struct {
   unsigned int FrameCount;
   
   unsigned long shareWPoffset;
-  /*uint16_t*/
-  /*unsigned short RelIO;*/
-
-  /* 2001/12/16 added by jjtseng for some bala reasons .... */
   unsigned char *AGPCmdBufBase;
   unsigned long AGPCmdBufAddr;
   unsigned long AGPCmdBufOffset;
   unsigned int  AGPCmdBufSize;
   unsigned long AGPCmdBufNext;
-  /*~ 2001/12/16 added by jjtseng for some bala reasons .... */
-  /* chiawen@2005/0601 for agp heap */  
   int isAGPHeapCreated;
 } XGISAREAPriv;
 
@@ -90,13 +84,11 @@ typedef struct {
   int textureSize;
   unsigned int AGPVtxBufOffset;
   unsigned int AGPVtxBufSize;
-  /* 2001/12/16 added by jjtseng for some bala reasons .... */
   unsigned char *AGPCmdBufBase;
   unsigned long AGPCmdBufAddr;
   unsigned long AGPCmdBufOffset;
   unsigned int AGPCmdBufSize;
   unsigned long *pAGPCmdBufNext;
-  /*~ 2001/12/16 added by jjtseng for some bala reasons .... */
   int irqEnabled;
   unsigned int scrnX, scrnY;
 } XGIDRIRec, *XGIDRIPtr;

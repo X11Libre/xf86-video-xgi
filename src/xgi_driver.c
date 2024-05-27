@@ -476,7 +476,6 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
     xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
                    "XGIDisplayPowerManagementSet(%d)\n", PowerManagementMode);
 
-#if 1
 	PVB_DEVICE_INFO pVBInfo = pXGI->XGI_Pr;
     PXGI_HW_DEVICE_INFO pHwDevInfo = &pXGI->xgi_HwDevExt;
 	ULONG  PowerState = 0xFFFFFFFF;
@@ -487,113 +486,6 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
 		PowerState = 0x0;
 
 	XGISetDPMS(pScrn, pVBInfo, pHwDevInfo, PowerState);
-#else
-    if (IS_DUAL_HEAD(pXGI)) {
-        if (IS_SECOND_HEAD(pXGI))
-            docrt2 = FALSE;
-        else
-            docrt1 = FALSE;
-    }
-
-    xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
-
-    switch (PowerManagementMode) {
-
-    case DPMSModeOn:           /* HSync: On, VSync: On */
-		PDEBUG(ErrorF("!-DPMSMode-On...\n"));
-
-        if (docrt1)
-            pXGI->Blank = FALSE;
-
-        sr1 = 0x00;
-        cr17 = 0x80;
-        pmreg = 0x00;
-        cr63 = 0x00;
-        sr7 = 0x10;
-        sr11 = (pXGI->LCDon & 0x0C);
-        p2_0 = 0x20;
-        p1_13 = 0x00;
-        backlight = TRUE;
-        break;
-
-    case DPMSModeSuspend:      /* HSync: On, VSync: Off */
-		PDEBUG(ErrorF("!-DPMSMode-Suspend...\n"));
-
-        if (docrt1)
-            pXGI->Blank = TRUE;
-
-        sr1 = 0x20;
-        cr17 = 0x80;
-        pmreg = 0x80;
-        cr63 = 0x40;
-        sr7 = 0x00;
-        sr11 = 0x08;
-        p2_0 = 0x40;
-        p1_13 = 0x80;
-        backlight = FALSE;
-        break;
-
-    case DPMSModeStandby:      /* HSync: Off, VSync: On */
-		PDEBUG(ErrorF("!-DPMSMode-Standby...\n"));
-
-        if (docrt1)
-            pXGI->Blank = TRUE;
-
-        sr1 = 0x20;
-        cr17 = 0x80;
-        pmreg = 0x40;
-        cr63 = 0x40;
-        sr7 = 0x00;
-        sr11 = 0x08;
-        p2_0 = 0x80;
-        p1_13 = 0x40;
-        backlight = FALSE;
-        break;
-
-    case DPMSModeOff:          /* HSync: Off, VSync: Off */
-		PDEBUG(ErrorF("!-DPMSMode-Off...\n"));
-
-        if (docrt1)
-            pXGI->Blank = TRUE;
-
-        sr1 = 0x20;
-        cr17 = 0x00;
-        pmreg = 0xc0;
-        cr63 = 0x40;
-        sr7 = 0x00;
-        sr11 = 0x08;
-        p2_0 = 0xc0;
-        p1_13 = 0xc0;
-        backlight = FALSE;
-        break;
-
-    default:
-        return;
-    }
-
-    if (docrt1) {
-        /* Set/Clear "Display On" bit 
-         */
-        setXGIIDXREG(XGISR, 0x01, ~0x20, sr1);
-
-        if ((!(pXGI->VBFlags & CRT1_LCDA))
-            || (pXGI->XGI_Pr->VBType & VB_XGI301C)) {
-            inXGIIDXREG(XGISR, 0x1f, oldpmreg);
-            if (!pXGI->CRT1off) {
-                setXGIIDXREG(XGISR, 0x1f, 0x3f, pmreg);
-            }
-        }
-        oldpmreg &= 0xc0;
-    }
-
-    if ((docrt1) && (pmreg != oldpmreg)
-        && ((!(pXGI->VBFlags & CRT1_LCDA))
-            || (pXGI->XGI_Pr->VBType & VB_XGI301C))) {
-        outXGIIDXREG(XGISR, 0x00, 0x01);        /* Synchronous Reset */
-        usleep(10000);
-        outXGIIDXREG(XGISR, 0x00, 0x03);        /* End Reset */
-    }
-#endif
 }
 
 typedef struct 
@@ -641,8 +533,6 @@ void XGIAddAvailableModes(DisplayModePtr availModes)
 		last = q;
 	} 
 
-	/* first = availModes->next; */
-
 	/* Add all modes of ExtraAvailableModeTiming[] */
 	for(i=0; /* i < ExtraAvailableModeTimingCount */ xf86NameCmp(ExtraAvailableModeTiming[i].name, "0x0") != 0 ; i++)
 	{
@@ -651,13 +541,6 @@ void XGIAddAvailableModes(DisplayModePtr availModes)
 		p->prev = last;
 		p->next = NULL;
 		last->next = p;
-
-		/*
-		first->next->prev = p;
-		p->prev = first;
-		p->next = first->next;
-		first->next = p;
-		*/
 
 		p->name = XNFalloc(strlen(ExtraAvailableModeTiming[i].name) + 1);
 		p->name = ExtraAvailableModeTiming[i].name;
@@ -1418,7 +1301,6 @@ XGIInternalDDC(ScrnInfoPtr pScrn, int crtno)
     }
 
 /* Jong 08/03/2009; get EDID with I2C function instead of VBIOS call */
-#if 1 
     ErrorF("get EDID with I2C function instead of VBIOS call...\n");
 
 	PXGI_HW_DEVICE_INFO pHwDevInfo = &pXGI->xgi_HwDevExt;
@@ -1428,55 +1310,9 @@ XGIInternalDDC(ScrnInfoPtr pScrn, int crtno)
 	pHwDevInfo->crtno = crtno;
 	int bEDID = bGetEDID(pHwDevInfo, crtno, pjEDIDBuffer, ulBufferSize);
 
-#else
-    ErrorF("get EDID with VBIOS call...\n");
-    if (xf86LoadSubModule(pScrn, "int10")) 
-	{
-        pInt = xf86InitInt10(pXGI->pEnt->index);
-        if (pInt == NULL) {
-            xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-                       "XGIInternalDDC(): Can not initialize pInt, abort.\n");
-            return NULL;
-        }
-
-        page = xf86Int10AllocPages(pInt, 1, &RealOff);
-        if (page == NULL) {
-            xf86FreeInt10(pInt);
-            xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
-                       "XGIInternalDDC(): Can not initialize real mode buffer, abort.\n");
-            return NULL;
-        }
-    }
-
-    if (pInt) 
-	{
-        pInt->ax = 0x4f15;      /* VESA DDC supporting */
-        pInt->bx = 1;           /* get EDID */
-        pInt->cx = crtno;       /* port 0 or 1 for CRT 1 or 2 */
-        pInt->es = SEG_ADDR(RealOff);
-        pInt->di = SEG_OFF(RealOff);
-        pInt->num = 0x10;
-        xf86ExecX86int10(pInt);
-
-        PDEBUG3(ErrorF
-                ("ax = %04X bx = %04X cx = %04X dx = %04X si = %04X di = %04X es = %04X\n",
-                 pInt->ax, pInt->bx, pInt->cx, pInt->dx, pInt->si, pInt->di,
-                 pInt->es));
-#endif
-
-#if 0
-        if ((pInt->ax & 0xff00) == 0) 
-		{
-            int i;
-
-            for (i = 0; i < 128; i++) {
-                buffer[i] = page[i];
-            }
-#else /* Jong 08/03/2009; get EDID with I2C function instead of VBIOS call */
 		if(bEDID == 1)
 		{
             int i;
-#endif
             xf86DrvMsg(pScrn->scrnIndex, X_INFO,
                        "XGIInternalDDC(): VESA get DDC success for output channel %d.\n",
                        crtno + 1);
@@ -1493,8 +1329,6 @@ XGIInternalDDC(ScrnInfoPtr pScrn, int crtno)
 			g_DVI_I_SignalType = (buffer[20] & 0x80) >> 7;
 			ErrorF("DVI-I : %s signal ...\n", (g_DVI_I_SignalType == 0x01) ? "DVI" : "CRT" );
 
-			/* Jong 09/04/2007; Alan fixed abnormal EDID data */
-			/* pMonitor = xf86InterpretEDID(pScrn->scrnIndex, buffer) ; */
 			if ( (buffer[0]==0) && (buffer[7]==0) )
             {
                 for (i=1;i<7;i++)
@@ -1520,46 +1354,8 @@ XGIInternalDDC(ScrnInfoPtr pScrn, int crtno)
                        crtno + 1);
         }
 
-/* Jong 08/03/2009; get EDID with I2C function instead of VBIOS call */
-#if 0
-        xf86Int10FreePages(pInt, page, 1);
-        xf86FreeInt10(pInt);
-    }
-#endif
-
     return pMonitor;
 }
-
-/* static xf86MonPtr
-XGIDoPrivateDDC(ScrnInfoPtr pScrn, int *crtnum)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-
-    if(IS_DUAL_HEAD(pXGI)) 
-    {
-       if(IS_SECOND_HEAD(pXGI)) 
-       {
-          *crtnum = 1;
-      return(XGIInternalDDC(pScrn, 0));
-       }
-       else 
-       {
-          *crtnum = 2;
-      return(XGIInternalDDC(pScrn, 1));
-       }
-    }
-    else if(pXGI->CRT1off) 
-    {
-       *crtnum = 2;
-       return(XGIInternalDDC(pScrn, 1));
-    }
-    else 
-    {
-       *crtnum = 1;
-       return(XGIInternalDDC(pScrn, 0));
-    }
-} */
-
 
 #ifdef DEBUG5
 static void
@@ -1957,22 +1753,10 @@ XGISyncDDCMonitorRange(MonPtr monitor, MonitorRangePtr range)
 	monitor->nHsync++;
 	monitor->nVrefresh++;
 
-#if 1
         monitor->hsync[monitor->nHsync-1].lo = range->loH;
         monitor->hsync[monitor->nHsync-1].hi = range->hiH;
         monitor->vrefresh[monitor->nVrefresh-1].lo = range->loV;
         monitor->vrefresh[monitor->nVrefresh-1].hi = range->hiV;
-#else
-    for (i = 0; i < monitor->nHsync; i++) {
-        monitor->hsync[i].lo = range->loH;
-        monitor->hsync[i].hi = range->hiH;
-    }
-
-    for (i = 0; i < monitor->nVrefresh; i++) {
-        monitor->vrefresh[i].lo = range->loV;
-        monitor->vrefresh[i].hi = range->hiV;
-    }
-#endif
 }
 
 /* Jong@08212009; defined in vb_ext.c */
@@ -2041,13 +1825,11 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
 				{
 					xf86DrvMsg(pScrn->scrnIndex, X_INFO,
 							   "Could not retrieve DDC data for CRT1\n");
-					/* PowerSavingStatus |= 0x01; */ /* device is not detected through DAC1 */
 
 					ErrorF("Getting DVI EDID (DVO)...\n");
 					pMonitorDVI = XGIInternalDDC(pScrn, 1);
 
 					if (pMonitorDVI == NULL) {
-						/* PowerSavingStatus |= 0x02; */ /* device is not detected through DVO */
 						xf86DrvMsg(pScrn->scrnIndex, X_INFO,
 							   "Could not retrieve DDC data for DVI\n");
 					}
@@ -2074,7 +1856,6 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
 				pMonitorCRT2 = XGIInternalDDC(pScrn, 2);
 
 				if (pMonitorCRT2 == NULL) {
-					/* PowerSavingStatus |= 0x04; */ /* device is not detected through DAC2 */
 					xf86DrvMsg(pScrn->scrnIndex, X_INFO,
 							   "Could not retrieve DDC data for CRT2\n");
 				}
@@ -2131,14 +1912,6 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
 
 	if(PowerSavingStatus == 0xFF)
 		PowerSavingStatus = 0x00; 
-
-
-/*	if((pXGI->xgi_HwDevExt.jChipType == XG27) && (PowerSavingStatus == 0x07))
-		PowerSavingStatus = 0x00; 
-
-	if((pXGI->xgi_HwDevExt.jChipType == XG21) && (PowerSavingStatus == 0x03))
-		PowerSavingStatus = 0x00; 
-*/
 
 	XGIPowerSaving(pXGI->XGI_Pr, PowerSavingStatus);
 	g_PowerSavingStatus = PowerSavingStatus;
@@ -2219,8 +1992,6 @@ XGIDDCPreInit(ScrnInfoPtr pScrn)
 		}
 	}
 
-	/* Jong@08132009 */
-    /* if (pXGI->xgi_HwDevExt.jChipType == XG21) { */
     if ((pXGI->xgi_HwDevExt.jChipType == XG21) || (pXGI->xgi_HwDevExt.jChipType == XG27) ) {
         /* Mode range intersecting */
         if (pXGI->CRT1Range.loH < pXGI->CRT2Range.loH) {
@@ -2365,9 +2136,6 @@ XGIDumpMonPtr(MonPtr pMonitor)
 {
 #ifdef DEBUG5
     int i;
-# if 0
-    DisplayModePtr mode;
-#endif
 
     ErrorF("XGIDumpMonPtr() ... \n");
     if (pMonitor == NULL) {
@@ -2392,16 +2160,6 @@ XGIDumpMonPtr(MonPtr pMonitor)
     ErrorF("widthmm = %d, heightmm = %d\n",
            pMonitor->widthmm, pMonitor->heightmm);
     ErrorF("options = %p, DDC = %p\n", pMonitor->options, pMonitor->DDC);
-# if 0
-    mode = pMonitor->Modes;
-    while (1) {
-        XGIDumpModePtr(mode);
-        if (mode == pMonitor->Last) {
-            break;
-        }
-        mode = mode->next;
-    }
-# endif
 #endif /* DEBUG5 */
 }
 
@@ -2413,7 +2171,6 @@ int	ModifyTypeOfSupportMode(DisplayModePtr availModes)
 
 	while(p)
 	{
-		/* if( (p->HDisplay == 1440) && (p->VDisplay == 900)) */
 		if( p->type == 0) /* external support modeline */
 		{
 			p->type = M_T_USERDEF;
@@ -2981,7 +2738,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      */
     {
 		Gamma zeros = { 0.0, 0.0, 0.0 };
-        /* Gamma zeros = { 0.5, 0.5, 0.5 }; */
 
         if (!xf86SetGamma(pScrn, zeros)) {
             XGIErrorLog(pScrn, "xf86SetGamma() error\n");
@@ -3568,8 +3324,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
 	XGIAddAvailableModes(pScrn->monitor->Modes);
 
-	/* XGIFilterModeByDDC(pScrn->monitor->Modes, g_pMonitorDVI); */ /* Do it in XGIValidMode() */
-
 	ErrorF("Call xf86ValidateModes()...Use Virtual Size-1-Virtual Size=%d\n", pScrn->display->virtualX);
     i = xf86ValidateModes(pScrn, pScrn->monitor->Modes, pScrn->display->modes, clockRanges, NULL, 256, 2048,    /* min / max pitch */
                           pScrn->bitsPerPixel * 8, 128, 2048,   /* min / max height */
@@ -3828,15 +3582,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
 	/* Jong 07/30/2009; might cause small font size */
 	xf86SetDpi(pScrn, 0, 0);
-
-#if 0
-	/*yilin@20080407 fix the font too small problem at low resolution*/
-	if((pScrn->xDpi < 65)||(pScrn->yDpi < 65)) 
-	{
-		  pScrn->xDpi = 75;
-		  pScrn->yDpi = 75;
-	}
-#endif
 
     /* Load fb module */
     switch (pScrn->bitsPerPixel) {
@@ -4181,8 +3926,6 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
     PDEBUG(ErrorF("pScrn->frameX1 = %d\n", pScrn->frameX1));
     PDEBUG(ErrorF("pScrn->frameY1 = %d\n", pScrn->frameY1));
 
-	/* pScrn->displayWidth=mode->HDisplay; */
-
 	if(pXGI->TargetRefreshRate)
 			mode->VRefresh = pXGI->TargetRefreshRate;
 
@@ -4193,7 +3936,6 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 		mode->VRefresh = pXGI->Non_DDC_DefaultRefreshRate;
 	}
 
-    /* PDEBUG(ErrorF("XGIModeInit(). \n")); */
     PDEBUG(ErrorF
            ("XGIModeInit Resolution (%d, %d) \n", mode->HDisplay,
             mode->VDisplay));
@@ -4276,10 +4018,8 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 
 	if((pXGI->Chipset == PCI_CHIP_XGIXG40)||(pXGI->Chipset == PCI_CHIP_XGIXG20)||(pXGI->Chipset == PCI_CHIP_XGIXG21)||(pXGI->Chipset == PCI_CHIP_XGIXG27))
 	   {
-        /* PDEBUG(XGIDumpRegs(pScrn)) ; */
         PDEBUG(ErrorF(" *** PreSetMode(). \n"));
         XGIPreSetMode(pScrn, mode, XGI_MODE_SIMU);
-        /* PDEBUG(XGIDumpRegs(pScrn)) ; */
         PDEBUG(ErrorF(" *** Start SetMode() \n"));
 
         if (!XGIBIOSSetMode(pXGI->XGI_Pr, &pXGI->xgi_HwDevExt, pScrn, mode)) {
@@ -4287,9 +4027,6 @@ XGIModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
             return FALSE;
         }
         Volari_EnableAccelerator(pScrn);
-        /* XGIPostSetMode(pScrn, &pXGI->ModeReg); */
-        /* outXGIIDXREG(XGISR, 0x20, 0xA1) ; */
-        /* PDEBUG(XGIDumpRegs(pScrn)) ; */
     }
 
     /* Update Currentlayout */
@@ -4331,7 +4068,6 @@ XGIRestore(ScrnInfoPtr pScrn)
 
     xgiSaveUnlockExtRegisterLock(pXGI, NULL, NULL);
 
-	/* Volari_Restore() */
     (*pXGI->XGIRestore) (pScrn, xgiReg);
 
 	pXGI->xgi_HwDevExt.SpecifyTiming = FALSE;
@@ -4429,33 +4165,16 @@ XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
     PDEBUG(ErrorF("pScrn->frameY1 = %d\n", pScrn->frameY1));
 
 /* Jong 07/29/2009; fix bug of switch mode */
-#if 1
     /* Jong 08/30/2007; no virtual screen for all cases */
     /* Jong 08/22/2007; support modeline */
-    /* if(g_CountOfUserDefinedModes > 0) */
     {
-		/* Jong@08122009 */
 		g_virtualX = pScrn->virtualX;
 		g_virtualY = pScrn->virtualY;
 		g_frameX0 = pScrn->frameX0;
 		g_frameY0 = pScrn->frameY0;
 		g_frameX1 = pScrn->frameX1;
 		g_frameY1 = pScrn->frameY1;
-
-		/*
-		pScrn->virtualX=pScrn->currentMode->HDisplay;
-		pScrn->virtualY=pScrn->currentMode->VDisplay;
-		*/
-
-		//pScrn->displayWidth=pScrn->currentMode->HDisplay; 
-
-		/*
-		pScrn->frameX0=0;
-		pScrn->frameY0=0;
-		pScrn->frameX1=pScrn->currentMode->HDisplay-1;
-		pScrn->frameY1=pScrn->currentMode->VDisplay-1; */
     }
-#endif
 
     PDEBUG(ErrorF("After update...\n"));
     PDEBUG(ErrorF("pScrn->virtualX = %d\n", pScrn->virtualX));
@@ -4568,15 +4287,6 @@ XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
         return FALSE;
     }
 
-	/*xgiRestoreVirtual(pScrn); */
-
-#if 0
-	ErrorF("Use Virtual Size - *1\n");
-    width = pScrn->virtualX;
-    height = pScrn->virtualY;
-    displayWidth = pScrn->displayWidth;
-#endif
-
     if (pXGI->Rotate) {
         height = pScrn->virtualX;
         width = pScrn->virtualY;
@@ -4630,8 +4340,6 @@ XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
     }
 #endif
 
-	/* xgiRestoreVirtual(pScrn); */
-
     /*
      * Call the framebuffer layer's ScreenInit function, and fill in other
      * pScreen fields.
@@ -4643,25 +4351,17 @@ XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
     case 32:
 
 /* Jong 07/30/2009; fix bug of small font */
-#if 1
 		PDEBUG(ErrorF("Use Virtual Size - *1\n"));
 		width = /* pScrn->virtualX; */ pScrn->currentMode->HDisplay; 
 		height = /* pScrn->virtualY;*/ pScrn->currentMode->VDisplay; 
 
 		/* Jong@10022009 */
 		displayWidth = pScrn->displayWidth; /* important to set pitch correctly */
-#endif
+
 		PDEBUG(ErrorF("Call fbScreenInit()...\n"));
 		PDEBUG(ErrorF("width=%d, height=%d, pScrn->xDpi=%d, pScrn->yDpi=%d, displayWidth=%d, pScrn->bitsPerPixel=%d...\n", 
 					width, height, pScrn->xDpi, pScrn->yDpi,displayWidth, pScrn->bitsPerPixel));
 
-		/* in fbscreen.c */
-		/* (xsize, ysize) : virtual size (1600, 1200)
-		   (dpix, dpiy) : (75, 75)
-		   (542) pScreen->mmWidth = (xsize * 254 + dpix * 5) / (dpix * 10);
-		   (406) pScreen->mmHeight = (ysize * 254 + dpiy * 5) / (dpiy * 10); */
-
-        /* ret = fbScreenInit(pScreen, FBStart, width, */
         ret = fbScreenInit(pScreen, FBStart , width,
                            height, pScrn->xDpi, pScrn->yDpi,
                            displayWidth, pScrn->bitsPerPixel);
@@ -4705,12 +4405,8 @@ XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
         }
     }
 
-	/* xgiRestoreVirtual(pScrn); */
-
     /* Initialize RENDER ext; must be after RGB ordering fixed */
     fbPictureInit(pScreen, 0, 0);
-
-	/* xgiRestoreVirtual(pScrn); */
 
     /* hardware cursor needs to wrap this layer    <-- TW: what does that mean? */
     if (!pXGI->ShadowFB)
@@ -4878,12 +4574,6 @@ XGISwitchMode(ScrnInfoPtr pScrn, DisplayModePtr mode)
 	PDEBUG(ErrorF("pScreen->mmWidth = %d\n", pScrn->pScreen->mmWidth));
     PDEBUG(ErrorF("pScreen->mmHeight = %d\n", pScrn->pScreen->mmHeight));
 
-	/* Jong@08122009 */
-	//pScrn->frameX0 = 0;
-	//pScrn->frameY0 = 0;
-	//pScrn->frameX1 = mode->HDisplay;
-	//pScrn->frameY1 = mode->VDisplay;
-
     PDEBUG(ErrorF
            ("XGISwitchMode (%d, %d) \n", mode->HDisplay, mode->VDisplay));
 
@@ -4893,60 +4583,9 @@ XGISwitchMode(ScrnInfoPtr pScrn, DisplayModePtr mode)
     if (!(XGIModeInit(pScrn, mode)))
         return FALSE;
 
-
-#if 0
-    int height, width, displayWidth;
-    unsigned char *FBStart;
-	int ret;
-
-    if (pXGI->ShadowFB) {
-        displayWidth = pXGI->ShadowPitch / (pScrn->bitsPerPixel >> 3);
-        FBStart = pXGI->ShadowPtr;
-    }
-    else {
-        pXGI->ShadowPtr = NULL;
-        FBStart = pXGI->FbBase;
-    }
-
-	width = pScrn->virtualX; /* 1024; */ /* pScrn->currentMode->HDisplay; */
-	height = pScrn->virtualY; /* 768; */ /* pScrn->currentMode->VDisplay; */
-	displayWidth = pScrn->displayWidth; /* important to set pitch correctly */
-
-	ErrorF("Call fbScreenInit()...\n");
-	ErrorF("width=%d, height=%d, pScrn->xDpi=%d, pScrn->yDpi=%d, displayWidth=%d, pScrn->bitsPerPixel=%d...\n", 
-				width, height, pScrn->xDpi, pScrn->yDpi,displayWidth, pScrn->bitsPerPixel);
-
-	/* in fbscreen.c */
-	/* (xsize, ysize) : virtual size (1600, 1200)
-	   (dpix, dpiy) : (75, 75)
-	   (542) pScreen->mmWidth = (xsize * 254 + dpix * 5) / (dpix * 10);
-	   (406) pScreen->mmHeight = (ysize * 254 + dpiy * 5) / (dpiy * 10); */
-
-    ret = fbScreenInit(pScrn->pScreen, FBStart, width,
-                       height, pScrn->xDpi, pScrn->yDpi,
-                       displayWidth, pScrn->bitsPerPixel);
-#endif
-
 	/* Jong 07/30/2009; bug fixing for small font size */
 	pScrn->pScreen->mmWidth = (pScrn->virtualX * 254 + pScrn->xDpi * 5) / (pScrn->xDpi * 10);
 	pScrn->pScreen->mmHeight = (pScrn->virtualY * 254 + pScrn->yDpi * 5) / (pScrn->yDpi * 10);
-
-#if 0
-    /* Jong 08/30/2007; no virtual screen for all cases */
-    /* Jong 08/22/2007; support modeline */
-    /* if(g_CountOfUserDefinedModes > 0) */
-    {
-	
-		pScrn->virtualX=mode->HDisplay;
-		pScrn->virtualY=mode->VDisplay; 
-
-		pScrn->displayWidth=mode->HDisplay;
-		pScrn->frameX0=0;
-		pScrn->frameY0=0;
-		pScrn->frameX1=mode->HDisplay-1;
-		pScrn->frameY1=mode->VDisplay-1;
-    }
-#endif
 
 	PDEBUG(ErrorF("After update...\n"));
     PDEBUG(ErrorF("pScrn->virtualX = %d\n", pScrn->virtualX));
@@ -4962,274 +4601,8 @@ XGISwitchMode(ScrnInfoPtr pScrn, DisplayModePtr mode)
 	PDEBUG(ErrorF("pScreen->mmWidth = %d\n", pScrn->pScreen->mmWidth));
     PDEBUG(ErrorF("pScreen->mmHeight = %d\n", pScrn->pScreen->mmHeight));
 
-    /* Since RandR (indirectly) uses SwitchMode(), we need to
-     * update our Xinerama info here, too, in case of resizing
-     */
-
-	/* sleep(3); */ /* Jong 07/30/2009; wait to be ready for drawing */;
-
     return TRUE;
 }
-
-/* static void
-XGISetStartAddressCRT1(XGIPtr pXGI, unsigned long base)
-{
-    unsigned char cr11backup;
-
-    inXGIIDXREG(XGICR,  0x11, cr11backup);  
-    andXGIIDXREG(XGICR, 0x11, 0x7F);
-    outXGIIDXREG(XGICR, 0x0D, base & 0xFF);
-    outXGIIDXREG(XGICR, 0x0C, (base >> 8) & 0xFF);
-    outXGIIDXREG(XGISR, 0x0D, (base >> 16) & 0xFF);
-
-    
-    setXGIIDXREG(XGICR, 0x11, 0x7F,(cr11backup & 0x80));
-} */
-
-/* static Bool
-InRegion(int x, int y, region r)
-{
-    return (r.x0 <= x) && (x <= r.x1) && (r.y0 <= y) && (y <= r.y1);
-} */
-
-/* static void
-XGIAdjustFrameHW_CRT1(ScrnInfoPtr pScrn, int x, int y)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-    unsigned long base;
-
-    base = y * pXGI->CurrentLayout.displayWidth + x;
-    switch(pXGI->CurrentLayout.bitsPerPixel) 
-    {
-       case 16:  base >>= 1; 	break;
-       case 32:  		break;
-       default:  base >>= 2;
-    }
-    XGISetStartAddressCRT1(pXGI, base);
-} */
-
-/* static void
-XGIMergePointerMoved(int scrnIndex, int x, int y)
-{
-  ScrnInfoPtr   pScrn1 = xf86Screens[scrnIndex];
-  XGIPtr        pXGI = XGIPTR(pScrn1);
-  ScrnInfoPtr   pScrn2 = pXGI->CRT2pScrn;
-  region 	out, in1, in2, f2, f1;
-  int 		deltax, deltay;
-
-  f1.x0 = pXGI->CRT1frameX0;
-  f1.x1 = pXGI->CRT1frameX1;
-  f1.y0 = pXGI->CRT1frameY0;
-  f1.y1 = pXGI->CRT1frameY1;
-  f2.x0 = pScrn2->frameX0;
-  f2.x1 = pScrn2->frameX1;
-  f2.y0 = pScrn2->frameY0;
-  f2.y1 = pScrn2->frameY1;
-
-  out.x0 = pScrn1->frameX0;
-  out.x1 = pScrn1->frameX1;
-  out.y0 = pScrn1->frameY0;
-  out.y1 = pScrn1->frameY1;
-
-  in1 = out;
-  in2 = out;
-  switch(((XGIMergedDisplayModePtr)pXGI->CurrentLayout.mode->Private)->CRT2Position) 
-  {
-     case xgiLeftOf:
-        in1.x0 = f1.x0;
-        in2.x1 = f2.x1;
-        break;
-     case xgiRightOf:
-        in1.x1 = f1.x1;
-        in2.x0 = f2.x0;
-        break;
-     case xgiBelow:
-        in1.y1 = f1.y1;
-        in2.y0 = f2.y0;
-        break;
-     case xgiAbove:
-        in1.y0 = f1.y0;
-        in2.y1 = f2.y1;
-        break;
-     case xgiClone:
-        break;
-  }
-
-  deltay = 0;
-  deltax = 0;
-
-  if(InRegion(x, y, out)) 
-  {	
-
-     if(InRegion(x, y, in1) && !InRegion(x, y, f1)) 
-     {
-        REBOUND(f1.x0, f1.x1, x);
-        REBOUND(f1.y0, f1.y1, y);
-        deltax = 1;
-     }
-     if(InRegion(x, y, in2) && !InRegion(x, y, f2)) 
-     {
-        REBOUND(f2.x0, f2.x1, x);
-        REBOUND(f2.y0, f2.y1, y);
-        deltax = 1;
-     }
-
-  }
-  else 
-  {			
-
-     if(out.x0 > x) 
-     {
-        deltax = x - out.x0;
-     }
-     if(out.x1 < x) 
-     {
-        deltax = x - out.x1;
-     }
-     if(deltax) 
-     {
-        pScrn1->frameX0 += deltax;
-        pScrn1->frameX1 += deltax;
-    f1.x0 += deltax;
-        f1.x1 += deltax;
-        f2.x0 += deltax;
-        f2.x1 += deltax;
-     }
-
-     if(out.y0 > y) 
-     {
-        deltay = y - out.y0;
-     }
-     if(out.y1 < y) 
-     {
-        deltay = y - out.y1;
-     }
-     if(deltay) 
-     {
-        pScrn1->frameY0 += deltay;
-        pScrn1->frameY1 += deltay;
-    f1.y0 += deltay;
-        f1.y1 += deltay;
-        f2.y0 += deltay;
-        f2.y1 += deltay;
-     }
-
-     switch(((XGIMergedDisplayModePtr)pXGI->CurrentLayout.mode->Private)->CRT2Position) 
-     {
-        case xgiLeftOf:
-       if(x >= f1.x0) 
-       { REBOUND(f1.y0, f1.y1, y); }
-       if(x <= f2.x1) 
-       { REBOUND(f2.y0, f2.y1, y); }
-           break;
-        case xgiRightOf:
-       if(x <= f1.x1) 
-       { REBOUND(f1.y0, f1.y1, y); }
-       if(x >= f2.x0) 
-       { REBOUND(f2.y0, f2.y1, y); }
-           break;
-        case xgiBelow:
-       if(y <= f1.y1) 
-       { REBOUND(f1.x0, f1.x1, x); }
-       if(y >= f2.y0) 
-       { REBOUND(f2.x0, f2.x1, x); }
-           break;
-        case xgiAbove:
-       if(y >= f1.y0) 
-       { REBOUND(f1.x0, f1.x1, x); }
-       if(y <= f2.y1) 
-       { REBOUND(f2.x0, f2.x1, x); }
-           break;
-        case xgiClone:
-           break;
-     }
-
-  }
-
-  if(deltax || deltay) 
-  {
-     pXGI->CRT1frameX0 = f1.x0;
-     pXGI->CRT1frameY0 = f1.y0;
-     pScrn2->frameX0 = f2.x0;
-     pScrn2->frameY0 = f2.y0;
-
-     pXGI->CRT1frameX1 = pXGI->CRT1frameX0 + CDMPTR->CRT1->HDisplay - 1;
-     pXGI->CRT1frameY1 = pXGI->CRT1frameY0 + CDMPTR->CRT1->VDisplay - 1;
-     pScrn2->frameX1   = pScrn2->frameX0   + CDMPTR->CRT2->HDisplay - 1;
-     pScrn2->frameY1   = pScrn2->frameY0   + CDMPTR->CRT2->VDisplay - 1;
-     pScrn1->frameX1   = pScrn1->frameX0   + pXGI->CurrentLayout.mode->HDisplay  - 1;
-     pScrn1->frameY1   = pScrn1->frameY0   + pXGI->CurrentLayout.mode->VDisplay  - 1;
-
-     XGIAdjustFrameHW_CRT1(pScrn1, pXGI->CRT1frameX0, pXGI->CRT1frameY0);
-  }
-}  */
-
-
-/* static void
-XGIAdjustFrameMerged(int scrnIndex, int x, int y, int flags)
-{
-    ScrnInfoPtr pScrn1 = xf86Screens[scrnIndex];
-    XGIPtr pXGI = XGIPTR(pScrn1);
-    ScrnInfoPtr pScrn2 = pXGI->CRT2pScrn;
-    int VTotal = pXGI->CurrentLayout.mode->VDisplay;
-    int HTotal = pXGI->CurrentLayout.mode->HDisplay;
-    int VMax = VTotal;
-    int HMax = HTotal;
-
-    BOUND(x, 0, pScrn1->virtualX - HTotal);
-    BOUND(y, 0, pScrn1->virtualY - VTotal);
-
-    switch(SDMPTR(pScrn1)->CRT2Position) 
-    {
-        case xgiLeftOf:
-            pScrn2->frameX0 = x;
-            BOUND(pScrn2->frameY0,   y, y + VMax - CDMPTR->CRT2->VDisplay);
-            pXGI->CRT1frameX0 = x + CDMPTR->CRT2->HDisplay;
-            BOUND(pXGI->CRT1frameY0, y, y + VMax - CDMPTR->CRT1->VDisplay);
-            break;
-        case xgiRightOf:
-            pXGI->CRT1frameX0 = x;
-            BOUND(pXGI->CRT1frameY0, y, y + VMax - CDMPTR->CRT1->VDisplay);
-            pScrn2->frameX0 = x + CDMPTR->CRT1->HDisplay;
-            BOUND(pScrn2->frameY0,   y, y + VMax - CDMPTR->CRT2->VDisplay);
-            break;
-        case xgiAbove:
-            BOUND(pScrn2->frameX0,   x, x + HMax - CDMPTR->CRT2->HDisplay);
-            pScrn2->frameY0 = y;
-            BOUND(pXGI->CRT1frameX0, x, x + HMax - CDMPTR->CRT1->HDisplay);
-            pXGI->CRT1frameY0 = y + CDMPTR->CRT2->VDisplay;
-            break;
-        case xgiBelow:
-            BOUND(pXGI->CRT1frameX0, x, x + HMax - CDMPTR->CRT1->HDisplay);
-            pXGI->CRT1frameY0 = y;
-            BOUND(pScrn2->frameX0,   x, x + HMax - CDMPTR->CRT2->HDisplay);
-            pScrn2->frameY0 = y + CDMPTR->CRT1->VDisplay;
-            break;
-        case xgiClone:
-            BOUND(pXGI->CRT1frameX0, x, x + HMax - CDMPTR->CRT1->HDisplay);
-            BOUND(pXGI->CRT1frameY0, y, y + VMax - CDMPTR->CRT1->VDisplay);
-            BOUND(pScrn2->frameX0,   x, x + HMax - CDMPTR->CRT2->HDisplay);
-            BOUND(pScrn2->frameY0,   y, y + VMax - CDMPTR->CRT2->VDisplay);
-            break;
-    }
-
-    BOUND(pXGI->CRT1frameX0, 0, pScrn1->virtualX - CDMPTR->CRT1->HDisplay);
-    BOUND(pXGI->CRT1frameY0, 0, pScrn1->virtualY - CDMPTR->CRT1->VDisplay);
-    BOUND(pScrn2->frameX0,   0, pScrn1->virtualX - CDMPTR->CRT2->HDisplay);
-    BOUND(pScrn2->frameY0,   0, pScrn1->virtualY - CDMPTR->CRT2->VDisplay);
-
-    pScrn1->frameX0 = x;
-    pScrn1->frameY0 = y;
-
-    pXGI->CRT1frameX1 = pXGI->CRT1frameX0 + CDMPTR->CRT1->HDisplay - 1;
-    pXGI->CRT1frameY1 = pXGI->CRT1frameY0 + CDMPTR->CRT1->VDisplay - 1;
-    pScrn2->frameX1   = pScrn2->frameX0   + CDMPTR->CRT2->HDisplay - 1;
-    pScrn2->frameY1   = pScrn2->frameY0   + CDMPTR->CRT2->VDisplay - 1;
-    pScrn1->frameX1   = pScrn1->frameX0   + pXGI->CurrentLayout.mode->HDisplay  - 1;
-    pScrn1->frameY1   = pScrn1->frameY0   + pXGI->CurrentLayout.mode->VDisplay  - 1;
-
-    XGIAdjustFrameHW_CRT1(pScrn1, pXGI->CRT1frameX0, pXGI->CRT1frameY0);
-} */
 
 /*
  * This function is used to initialize the Start Address - the first
@@ -5270,24 +4643,10 @@ XGIAdjustFrame(ScrnInfoPtr pScrn, int x, int y)
         outXGIIDXREG(XGISR, 0x0D, ucTemp);
         ucTemp = (base >> 24) & 0x01;
         setXGIIDXREG(XGISR, 0x37, 0xFE, ucTemp);
-
-/*        if (pXGI->VBFlags)  {
-            XGI_UnLockCRT2(&(pXGI->xgi_HwDevExt),pXGI->pVBInfo);
-            ucTemp = base & 0xFF       ; outXGIIDXREG( XGIPART1, 6 , ucTemp ) ;
-            ucTemp = (base>>8) & 0xFF  ; outXGIIDXREG( XGIPART1, 5 , ucTemp ) ;
-            ucTemp = (base>>16) & 0xFF ; outXGIIDXREG( XGIPART1, 4 , ucTemp ) ;
-            ucTemp = (base>>24) & 0x01 ; ucTemp <<= 7 ;
-            setXGIIDXREG( XGIPART1, 0x2, 0x7F, ucTemp ) ;
-
-            XGI_LockCRT2(&(pXGI->xgi_HwDevExt),pXGI->pVBInfo);
-        }
-        */
         break;
-
     }
 
     outXGIIDXREG(XGISR, 0x05, ucSR5Stat);
-
 }
 
 /*
@@ -5467,8 +4826,6 @@ int XGIValidateUserDefMode(XGIPtr pXGI, DisplayModePtr mode)
 {
    UShort i = (pXGI->CurrentLayout.bitsPerPixel+7)/8 - 1;
 
-
-#if 1
 	if((mode->HDisplay >= 1600) && (mode->VDisplay >= 1200) && (mode->VRefresh > 60))
 	{
 		ErrorF("Not support over (1600,1200) 60Hz ... Reduce to (1600,1200) 60Hz\n");
@@ -5479,19 +4836,6 @@ int XGIValidateUserDefMode(XGIPtr pXGI, DisplayModePtr mode)
 		ErrorF("Update clock to %d...\n", mode->Clock);
 		return(-111) ;
 	}
-#endif
-
-#if 0
-	if(XGI_GetModeID(0, mode->HDisplay, mode->VDisplay, i, 0, 0) == 0)
-	{
-		/* Jong 11/10/2008; support custom mode without ModeID */
-		if( !((pXGI->HaveCustomModes) && (!(mode->type & M_T_DEFAULT))) )
-		{
-			ErrorF("Can't get Mode ID...\n");
-			return(MODE_NOMODE) ;
-	    }
-	}
-#endif
 
 	return(MODE_OK);
 }
@@ -5534,7 +4878,6 @@ XGIValidMode(ScrnInfoPtr pScrn, DisplayModePtr mode, Bool verbose, int flags)
 	if(flags == MODECHECK_FINAL)
 	    PDEBUG5(ErrorF("This is a final check...\n"));
 
-#if 1
     if((mode->type == M_T_USERDEF) || ((mode->type & M_T_CLOCK_CRTC_C) == M_T_CLOCK_CRTC_C))
 	{
 		if(pScrn->monitor->DDC)
@@ -5549,49 +4892,9 @@ XGIValidMode(ScrnInfoPtr pScrn, DisplayModePtr mode, Bool verbose, int flags)
 		PDEBUG5(ErrorF("It's a user-defined mode...return MODE_OK (might need more checking here) \n"));
 		return(MODE_OK); 
 	} 
-#else
-	if((mode->type == M_T_USERDEF) || ((mode->type & M_T_CLOCK_CRTC_C) == M_T_CLOCK_CRTC_C))
-	{
-		iRet=XGIValidateUserDefMode(pXGI, mode);
-		if(iRet != -111)
-		{
-			if(iRet == MODE_OK)
-				ErrorF("User-defined mode---MODE_OK\n");
-			else
-				ErrorF("User-defined mode---MODE_NOMODE\n");
-			
-			return(iRet);
-		}
-	}
-#endif
 
 	if(mode->VRefresh == 0)
 		mode->VRefresh = VRefresh;
-
-#if 0
-    if (pXGI->VBFlags & CRT2_LCD) {
-        if ((HDisplay > 1600 && VDisplay > 1200)
-            || (HDisplay < 640 && VDisplay < 480)) {
-            PDEBUG5(ErrorF("skip by LCD limit\n"));
-            return (MODE_NOMODE);
-        }
-        /* if( VRefresh != 60) return(MODE_NOMODE) ; */
-    }
-    else if (pXGI->VBFlags & CRT2_TV) {
-        if ((HDisplay > 1024 && VDisplay > 768) ||
-            (HDisplay < 640 && VDisplay < 480) || (VRefresh != 60)) {
-            PDEBUG5(ErrorF("skip by TV limit\n"));
-            return (MODE_NOMODE);
-        }
-    }
-    else if (pXGI->VBFlags & CRT2_VGA) {
-        if ((HDisplay > 1600 && VDisplay > 1200) ||
-            (HDisplay < 640 && VDisplay < 480)) {
-            PDEBUG5(ErrorF("skip by CRT2 limit\n"));
-            return (MODE_NOMODE);
-        }
-    }
-#endif
 
     if ((pXGI->Chipset == PCI_CHIP_XGIXG20) ||(pXGI->Chipset == PCI_CHIP_XGIXG21) ||( pXGI->Chipset == PCI_CHIP_XGIXG27 )) {
         XgiMode = XG20_Mode;
@@ -6006,9 +5309,6 @@ static void
 XGIPostSetMode(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
-/*    unsigned char usScratchCR17;
-    Bool flag = FALSE;
-    Bool doit = TRUE; */
     int myclock;
     unsigned char sr2b, sr2c, tmpreg;
     float num, denum, postscalar, divider;
@@ -6033,10 +5333,6 @@ XGIPostSetMode(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
             (int) ((14318 * (divider / postscalar) * (num / denum)) / 1000);
 
         pXGI->MiscFlags &= ~(MISC_CRT1OVERLAY | MISC_CRT1OVERLAYGAMMA);
-/*       switch(pXGI->xgi_HwDevExt.jChipType) {
-            break;
-       }
-       */
         if (!(pXGI->MiscFlags & MISC_CRT1OVERLAY)) {
             if (!IS_DUAL_HEAD(pXGI) || IS_SECOND_HEAD(pXGI))
                 xf86DrvMsgVerb(pScrn->scrnIndex, X_WARNING, 3,
@@ -6394,13 +5690,6 @@ xgiSaveUnlockExtRegisterLock(XGIPtr pXGI, unsigned char *reg1,
         /* save State */
         if (reg1)
             *reg1 = val;
-        /* unlock */
-/*
-       outb (0x3c4, 0x20);
-       val4 = inb (0x3c5);
-       val4 |= 0x20;
-       outb (0x3c5, val4);
-*/
         outXGIIDXREG(XGISR, 0x05, 0x86);
         inXGIIDXREG(XGISR, 0x05, val);
         if (val != 0xA1) {
@@ -6415,7 +5704,6 @@ xgiSaveUnlockExtRegisterLock(XGIPtr pXGI, unsigned char *reg1,
 #ifdef TWDEBUG
             for (i = 0; i <= 0x3f; i++) {
                 inXGIIDXREG(XGISR, i, val1);
-                /* inXGIIDXREG(0x3c4, i, val2); */
                 inXGIIDXREG(XGISR, i, val2);
                 xf86DrvMsg(pXGI->pScrn->scrnIndex, X_INFO,
                            "SR%02d: RelIO=0x%02x 0x3c4=0x%02x (%d)\n",
@@ -6432,24 +5720,6 @@ xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1, unsigned char reg2)
     /* restore lock */
     outXGIIDXREG(XGISR, 0x05, reg1 == 0xA1 ? 0x86 : 0x00);
 }
-
-/* Jong 12/03/2007; */
-/*
-void XGICheckModeForMonitor(ScrnInfoPtr pScrn, )
-{
-	DisplayModePtr pCRT1Modes=pScrn->monitor->Modes;
-
-    if ((p = first = pScrn->monitor->Modes)) {
-        do {
-			xf86CheckModeForMonitor(p, 
-            n = p->next;
-            p = n;
-        } while (p != NULL && p != first);
-    }
-
-    xf86PruneDriverModes(pXGI->CRT2pScrn);
-}
-*/
 
 /* Jong 12/05/2007; filter mode list by monitor DDC */
 static void XGIFilterModeByDDC(DisplayModePtr pModeList, xf86MonPtr pMonitorDDC)
@@ -6527,83 +5797,6 @@ static bool XGICheckModeByDDC(DisplayModePtr pMode, xf86MonPtr pMonitorDDC)
 			return(TRUE);
     }
 
-/* Jong 12/05/2007; Don't know how to do? */
-#if 0
-    for (i = 0; i < 4; i++) 
-	{
-        switch (pMonitorDDC->det_mon[i].type) 
-		{
-			case DS_RANGES:
-				pranges = &(pMonitorDDC->det_mon[i].section.ranges);
-				PDEBUG5(ErrorF
-						("min_v = %d max_v = %d min_h = %d max_h = %d max_clock = %d\n",
-						 pranges->min_v, pranges->max_v, pranges->min_h,
-						 pranges->max_h, pranges->max_clock));
-
-				if (range->loH > pranges->min_h)
-					range->loH = pranges->min_h;
-				if (range->loV > pranges->min_v)
-					range->loV = pranges->min_v;
-				if (range->hiH < pranges->max_h)
-					range->hiH = pranges->max_h;
-				if (range->hiV < pranges->max_v)
-					range->hiV = pranges->max_v;
-				PDEBUG5(ErrorF
-						("range(%8.3f %8.3f %8.3f %8.3f)\n", range->loH,
-						 range->loV, range->hiH, range->hiV));
-				break;
-
-			case DS_STD_TIMINGS:
-				pstd_t = pMonitorDDC->det_mon[i].section.std_t;
-				for (j = 0; j < 5; j++) {
-					int k;
-					PDEBUG5(ErrorF
-							("std_t[%d] hsize = %d vsize = %d refresh = %d id = %d\n",
-							 j, pstd_t[j].hsize, pstd_t[j].vsize,
-							 pstd_t[j].refresh, pstd_t[j].id));
-					for (k = 0; StdTiming[k].width != -1; k++) {
-						if ((StdTiming[k].width == pstd_t[j].hsize) &&
-							(StdTiming[k].height == pstd_t[j].vsize) &&
-							(StdTiming[k].VRefresh == pstd_t[j].refresh)) {
-							if (range->loH > StdTiming[k].HSync)
-								range->loH = StdTiming[k].HSync;
-							if (range->hiH < StdTiming[k].HSync)
-								range->hiH = StdTiming[k].HSync;
-							if (range->loV > StdTiming[k].VRefresh)
-								range->loV = StdTiming[k].VRefresh;
-							if (range->hiV < StdTiming[k].VRefresh)
-								range->hiV = StdTiming[k].VRefresh;
-							break;
-						}
-
-					}
-				}
-				break;
-
-			case DT:
-
-				pd_timings = &pMonitorDDC->det_mon[i].section.d_timings;
-
-				HF = pd_timings->clock / (pd_timings->h_active +
-										  pd_timings->h_blanking);
-				VF = HF / (pd_timings->v_active + pd_timings->v_blanking);
-				HF /= 1000;         /* into KHz Domain */
-				if (range->loH > HF)
-					range->loH = HF;
-				if (range->hiH < HF)
-					range->hiH = HF;
-				if (range->loV > VF)
-					range->loV = VF;
-				if (range->hiV < VF)
-					range->hiV = VF;
-				PDEBUG(ErrorF
-					   ("Detailing Timing: HF = %f VF = %f range (%8.3f %8.3f %8.3f %8.3f)\n",
-						HF, VF, range->loH, range->loV, range->hiH, range->hiV));
-				break;
-		}
-    }
-#endif
-
 	return(FALSE);
 }
 
@@ -6676,164 +5869,9 @@ XGIDumpGR(ScrnInfoPtr pScrn)
     ErrorF("\n");
 }
 
-#if 0
-void
-XGIDumpPart0(ScrnInfoPtr pScrn)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-    int i, j;
-    unsigned long temp;
-
-    ErrorF
-        ("----------------------------------------------------------------------\n");
-    ErrorF("PART0 xx\n");
-    ErrorF
-        ("----------------------------------------------------------------------\n");
-    for (i = 0; i < 0x50; i += 0x10) {
-        ErrorF("PART0[%02X]:", i);
-        for (j = 0; j < 0x10; j++) {
-            inXGIIDXREG(XGIPART0, (i + j), temp);
-            ErrorF(" %02lX", temp);
-        }
-        ErrorF("\n");
-    }
-}
-
-void
-XGIDumpPart05(ScrnInfoPtr pScrn)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-    int i, j;
-    unsigned long temp;
-    ErrorF
-        ("----------------------------------------------------------------------\n");
-    ErrorF("PART05 xx\n");
-    ErrorF
-        ("----------------------------------------------------------------------\n");
-    for (i = 0; i < 0x50; i += 0x10) {
-        ErrorF("PART05[%02X]:", i);
-        for (j = 0; j < 0x10; j++) {
-            inXGIIDXREG(XGIPART05, (i + j), temp);
-            ErrorF(" %02lX", temp);
-        }
-        ErrorF("\n");
-    }
-}
-
-void
-XGIDumpPart1(ScrnInfoPtr pScrn)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-
-    int i, j;
-    unsigned long temp;
-
-    ErrorF
-        ("----------------------------------------------------------------------\n");
-    ErrorF("PART1 xx\n");
-    ErrorF
-        ("----------------------------------------------------------------------\n");
-    for (i = 0; i < 0x100; i += 0x10) {
-        ErrorF("PART1[%02X]:", i);
-        for (j = 0; j < 0x10; j++) {
-            inXGIIDXREG(XGIPART1, (i + j), temp);
-            ErrorF(" %02lX", temp);
-        }
-        ErrorF("\n");
-    }
-}
-
-void
-XGIDumpPart2(ScrnInfoPtr pScrn)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-
-    int i, j;
-    unsigned long temp;
-
-    ErrorF
-        ("----------------------------------------------------------------------\n");
-    ErrorF("PART2 xx\n");
-    ErrorF
-        ("----------------------------------------------------------------------\n");
-    for (i = 0; i < 0x100; i += 0x10) {
-        ErrorF("PART2[%02X]:", i);
-        for (j = 0; j < 0x10; j++) {
-            inXGIIDXREG(XGIPART2, (i + j), temp);
-            ErrorF(" %02lX", temp);
-        }
-        ErrorF("\n");
-    }
-}
-
-void
-XGIDumpPart3(ScrnInfoPtr pScrn)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-
-    int i, j;
-    unsigned long temp;
-
-    ErrorF
-        ("----------------------------------------------------------------------\n");
-    ErrorF("PART3 xx\n");
-    ErrorF
-        ("----------------------------------------------------------------------\n");
-
-    for (i = 0; i < 0x100; i += 0x10) {
-        ErrorF("PART3[%02X]:", i);
-        for (j = 0; j < 0x10; j++) {
-            inXGIIDXREG(XGIPART3, (i + j), temp);
-            ErrorF(" %02lX", temp);
-        }
-        ErrorF("\n");
-    }
-}
-
-void
-XGIDumpPart4(ScrnInfoPtr pScrn)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-
-    int i, j;
-    unsigned long temp;
-
-    ErrorF
-        ("----------------------------------------------------------------------\n");
-    ErrorF("PART4 xx\n");
-    ErrorF
-        ("----------------------------------------------------------------------\n");
-    for (i = 0; i < 0x100; i += 0x10) {
-        ErrorF("PART4[%02X]:", i);
-        for (j = 0; j < 0x10; j++) {
-            inXGIIDXREG(XGIPART4, (i + j), temp);
-            ErrorF(" %02lX", temp);
-        }
-        ErrorF("\n");
-    }
-}
-#endif
-
 void
 XGIDumpMMIO(ScrnInfoPtr pScrn)
 {
-    XGIPtr pXGI = XGIPTR(pScrn);
-
-    int i;
-    unsigned long temp;
-/*
-    ErrorF("----------------------------------------------------------------------\n") ;
-    ErrorF("MMIO 85xx\n") ;
-    ErrorF("----------------------------------------------------------------------\n") ;
-	for( i = 0x8500 ; i < 0x8600 ; i+=0x10 )
-	{
-		ErrorF("[%04X]: %08lX %08lX %08lX %08lX\n",i,
-			XGIMMIOLONG(i),
-			XGIMMIOLONG(i+4),
-			XGIMMIOLONG(i+8),
-			XGIMMIOLONG(i+12)) ;
-	}
-*/
 }
 #endif /* DEBUG */
 
@@ -6846,20 +5884,7 @@ XGIDumpRegs(ScrnInfoPtr pScrn)
 
     XGIDumpSR(pScrn);
     XGIDumpCR(pScrn);
-//      XGIDumpGR(pScrn);
-//      XGIDumpPalette(pScrn);
     XGIDumpMMIO(pScrn);
-
-	/*
-    if (pXGI->Chipset != PCI_CHIP_XGIXG20) {
-        XGIDumpPart0(pScrn);
-        XGIDumpPart05(pScrn);
-        XGIDumpPart1(pScrn);
-        XGIDumpPart2(pScrn);
-        XGIDumpPart3(pScrn);
-        XGIDumpPart4(pScrn);
-    } */
-
 #endif /* DEBUG */
 }
 
@@ -6879,13 +5904,7 @@ XGIDumpPalette(ScrnInfoPtr pScrn)
         ("----------------------------------------------------------------------\n");
     for (i = 0; i < 0xFF; i += 0x04) {
         for (j = 0; j < 16; j++) {
-            /* outb(0x3c7, i + j); */
             outb(XGISR+3, i + j);
-			
-			/*
-            temp[0] = inb(0x3c9);
-            temp[1] = inb(0x3c9);
-            temp[2] = inb(0x3c9); */
             temp[0] = inb(XGISR+5);
             temp[1] = inb(XGISR+5);
             temp[2] = inb(XGISR+5);
@@ -6898,4 +5917,3 @@ XGIDumpPalette(ScrnInfoPtr pScrn)
     ErrorF("\n");
 #endif
 }
-

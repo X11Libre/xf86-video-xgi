@@ -72,7 +72,6 @@
 /*********************************************/
 /*            HELPER: Get ModeID             */
 /*********************************************/
-/* Jong 09/18/2007; patch to GIT */
 /* VGAEngine is not used; FSTN is always FALSE */
 USHORT
 XGI_GetModeID(ULONG VBFlags, int HDisplay, int VDisplay,
@@ -161,7 +160,6 @@ XGI_GetModeID(ULONG VBFlags, int HDisplay, int VDisplay,
      case 1400:
           break;
      case 1440: 
-          /* if(VDisplay == 900) ModeIndex = ModeIndex_1440x900[Depth]; */
           break;
      case 1600:
           if(VDisplay == 1200) ModeIndex = ModeIndex_1600x1200[Depth];
@@ -826,14 +824,6 @@ XGI_New_SetCRT1Group(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
                                                   ModeNo, ModeIdIndex);
     USHORT RefreshRateTableIndex = 0;
 
-
-/*
-  if(XGI_Pr->SetFlag & LowModeTests) {
-     if(XGI_Pr->VBInfo & (SetSimuScanMode | SwitchToCRT2)) {
-        XGI_New_DisableBridge(XGI_Pr, HwInfo);
-     }
-  }
-*/
   XGI_SetSeqRegs(StandTableIndex, XGI_Pr);
   XGI_SetMiscRegs(StandTableIndex, XGI_Pr);
   XGI_SetCRTCRegs(StandTableIndex, XGI_Pr);
@@ -933,13 +923,11 @@ XGIBIOSSetMode(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 
 			xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3, "Setting a standard mode 0x%x\n", ModeNo);
 		}
-		/* ------------------------------------------------------------------ */
 
         SetModeRet = XGISetModeNew(HwInfo, XGI_Pr, ModeNo);
         PDEBUG(ErrorF("out_of_C_code_SETMODE \n"));
     }
-    
-    
+
     /* SetPitch: Adapt to virtual size & position */
     if ((ModeNo > 0x13) || (mode->type == M_T_USERDEF) || ((mode->type & M_T_CLOCK_CRTC_C) == M_T_CLOCK_CRTC_C)) {
         XGI_SetReg(XGI_Pr->Part1Port, 0x2f, 1);  //yilin for crt2pitch it shoude modify if not colone mode
@@ -950,9 +938,6 @@ XGIBIOSSetMode(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO HwInfo,
 	    PDEBUG(ErrorF("scrnOffset is %d...\n", pXGI->scrnOffset));
         XGI_SetReg(XGI_Pr->P3d4,0x13,(HDisplay & 0xFF));
         XGI_SetRegANDOR(XGI_Pr->P3c4,0x0E,0xF0,(HDisplay>>8));
-		/*
-        XGI_SetReg(XGI_Pr->P3d4,0x13,(HDisplay & 0xFF));
-        XGI_SetRegANDOR(XGI_Pr->P3c4,0x0E,0xF0,(HDisplay>>8)); */
     }
 
     return SetModeRet;

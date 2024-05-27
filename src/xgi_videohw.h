@@ -336,10 +336,6 @@ typedef struct {
 #define I2C_SDA      0x01
 #define I2C_DELAY       10
 
-/*******************************
-*       Function               *
-*******************************/
-/* static uint8_t vblank_active_CRT1(XGIPtr); */
 void SetOverlayReg(XGIPtr, XGIOverlayPtr);
 void SetColorkeyReg(XGIPtr, uint32_t);
 void SetSelectOverlayReg(XGIPtr, uint8_t);

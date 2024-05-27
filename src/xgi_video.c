@@ -177,23 +177,6 @@ static XF86VideoFormatRec XGIFormats[NUM_FORMATS] =
 
 # ifdef VC
 #define ENCODING_ATTRIB_NUM 13  /* 0~12 */
-/*
-static XF86VideoEncodingRec InputVideoEncodings[] =
-{
-    {0,"XV_IMAGE",		1024,1024,{1,1}},
-    {1,"pal-composite",		720, 288, {1,50}},
-    {2,"pal-tuner",		720, 288, {1,50}},
-    {3,"pal-svideo",		720, 288, {1,50}},
-    {4,"ntsc-composite",	720, 240, {1001,60000}},
-    {5,"ntsc-tuner",		720, 240, {1001,60000}},
-    {6,"ntsc-svideo",		720, 240, {1001,60000}},
-    {7,"secam-composite", 	720, 240, {1,50}},
-    {8,"secam-tuner",		720, 240, {1,50}},
-    {9,"secam-svideo",		720, 240, {1,50}},
-    {10,"pal_60-composite", 	768, 288, {1,50}},
-    {11,"pal_60-tuner", 	768, 288, {1,50}},
-    {12,"pal_60-svideo", 	768, 288, {1,50}},
-};*/
 static XF86VideoEncodingRec InputVideoEncodings[] =
 {
     {0,"XV_IMAGE",		1024,1024,{1,1}},
@@ -397,7 +380,6 @@ XGISetupImageVideo(ScreenPtr pScreen)
 
     adapt->type = XvWindowMask | XvInputMask | XvImageMask | XvVideoMask;
     adapt->flags = VIDEO_OVERLAID_IMAGES | VIDEO_CLIP_TO_VIEWPORT;
-    /*adapt->name = "XGI Video Overlay"; */
     adapt->name = "XGI Video";
 # ifdef VC
     adapt->nEncodings = ENCODING_ATTRIB_NUM;
@@ -979,7 +961,6 @@ XGIDisplayVideo(ScrnInfoPtr pScrn, XGIPortPrivPtr pPriv)
               break;
 
         default:
-		/* ErrorF("UnSurpported Format"); */
           break;
       }
 # ifdef VC
@@ -1030,7 +1011,6 @@ XGIStopVideo(ScrnInfoPtr pScrn, pointer data, Bool exit)
 	ErrorF("Giwas: XGIStopVideo--CAPTURE_ON\n");
 	
 	if (pPriv->fd != -1){
-	  //ioctl(pPriv->fd, VIDIOC_OVERLAY, &zero);
           XGICloseV4l(pPriv);
                 }
 	EnableCaptureAutoFlip(pXGI, FALSE);      
@@ -1615,17 +1595,14 @@ XGIPutVideo(
     short drw_w, short drw_h,
     RegionPtr clipBoxes, pointer data)
 {
-    /* XGIPtr pXGI = XGIPTR(pScrn); */
    XGIPortPrivPtr pPriv = (XGIPortPrivPtr)data;
 
 # ifdef VC
    struct v4l2_format		fmt;
-/*   struct xgi_framebuf          xgifbuf;*/
-   int width, height /*, id*/;
+   int width, height;
    int last_width, last_height;
 # endif //VC
 
-   //EnableCaptureAutoFlip(pXGI, TRUE);
    pPriv->id     = PIXEL_FMT_UYVY;
    pPriv->videoStatus = CLIENT_VIDEO_ON | CLIENT_CAPTURE_ON;
                  
@@ -1639,10 +1616,6 @@ XGIPutVideo(
    pPriv->src_h  = src_h;
    pPriv->height = src_h;
    
-    /* ImageInfo(src_x, src_y, drw_x, drw_y, src_w, src_h, drw_w, drw_h,
-                 id, buf, width, height);
-     */  
-
 # ifdef VC
     {
 	    struct v4l2_standard standard;
@@ -1705,11 +1678,6 @@ XGIPutVideo(
 		    	ErrorF("ioctl:VIDIOC_G_FMT Fail!\n");
 		    }
 
-                    /* if (width > fmt.fmt.pix.width && fmt.fmt.pix.width)
-                        width = fmt.fmt.pix.width;
-                    if (height > fmt.fmt.pix.height && fmt.fmt.pix.height)
-                        height = fmt.fmt.pix.height; */	    
-    
     	    	    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_UYVY;	    	     
 	    	    fmt.fmt.pix.width = width; 
 	    	    fmt.fmt.pix.height= height; 
@@ -1728,28 +1696,8 @@ XGIPutVideo(
 	    	    }
 
 	    	    pPriv->srcPitch  = (((fmt.fmt.pix.width*16)/8) + 63) & ~63;
-	    	    ErrorF("Giwas : PutVideo srcPitch = %x\n", pPriv->srcPitch);
-
-/*            	    //To get the frame buff addrs allocated by v4l2 module
-            	    //so that I can make sure the capture buffs are valid
-            	    if (0 == ioctl(pPriv->fd, XGIIOC_G_FBUF, &xgifbuf))
-	    	    {
-			static int offset;
-			ErrorF("ioctl:XGIIOC_G_FBUF success!\n");
-			pPriv->bufAddr[0] = offset = xgifbuf.fboffset[0];
-			ErrorF("capture buf offset 0 = %x\n",offset);
-			pPriv->bufAddr[1] = offset = xgifbuf.fboffset[1];
-			ErrorF("capture buf offset 1 = %x\n",offset);
-
-	    	    }
-	    	    else
-	    	    {
-			ErrorF("ioctl:XGIIOC_G_FBUF Fail!\n");
-	    	    }
-*/
-  	                        
+	    	    ErrorF("Giwas : PutVideo srcPitch = %x\n", pPriv->srcPitch);  	                        
                 }//VIDEO_OFF
-
             }
             
             if ((last_width != width) || (last_height != height)) 
@@ -1758,7 +1706,6 @@ XGIPutVideo(
                 last_width = width;
                 last_height = height;
             }
-
     }
 # endif //VC    
    
@@ -1863,8 +1810,6 @@ static int XGIOpenV4l(XGIPortPrivPtr pPriv)
     struct v4l2_capability 	cap;
 
     ErrorF("Giwas: XGIOpenV4l called\n");	
-
-    /*if (pPriv->overlay == TRUE) */
         {
             if (-1 == pPriv->fd) 
 	    {
@@ -1891,7 +1836,6 @@ static int XGIOpenV4l(XGIPortPrivPtr pPriv)
             ErrorF("Giwas: XGI Xv open V4l: refcount=%d\n",pPriv->usecount);
             return 0;
         }
-        
 }
 
 static void XGICloseV4l(XGIPortPrivPtr pPriv)
@@ -1905,4 +1849,3 @@ static void XGICloseV4l(XGIPortPrivPtr pPriv)
     }
 }
 # endif //VC
-

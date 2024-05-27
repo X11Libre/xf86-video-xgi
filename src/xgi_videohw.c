@@ -40,17 +40,7 @@
 #include "fourcc.h"
 
 #define  CAPTURE_340A1
-/*
-static uint32_t _XGIRead(XGIPtr pXGI, uint32_t reg)
-{
-    return *(pXGI->IOBase + reg);
-}
 
-static void _XGIWrite(XGIPtr pXGI, uint32_t reg, uint32_t data)
-{
-    *(pXGI->IOBase + reg) = data;
-}
-*/
 static uint8_t GetVideoReg(XGIPtr pXGI, uint8_t reg)
 {
     outb (pXGI->RelIO + vi_index_offset, reg);
@@ -103,13 +93,7 @@ void SetSRRegMask(XGIPtr pXGI, uint8_t reg, uint8_t data, uint8_t mask)
     data = (data & mask) | (old & (~mask));
     outb (pXGI->RelIO + sr_data_offset, data);
 }
-/*
-static void SetVCReg(XGIPtr pXGI, uint8_t reg, uint8_t data)
-{
-    outb (pXGI->RelIO + vc_index_offset, reg);
-    outb (pXGI->RelIO + vc_data_offset, data);
-}
-*/
+
 static void SetVCRegMask(XGIPtr pXGI, uint8_t reg, uint8_t data, uint8_t mask)
 {
     uint8_t   old;
@@ -119,19 +103,7 @@ static void SetVCRegMask(XGIPtr pXGI, uint8_t reg, uint8_t data, uint8_t mask)
     data = (data & mask) | (old & (~mask));
     outb (pXGI->RelIO + vc_data_offset, data);
 }
-/*
-static uint8_t GetXGIReg(XGIPtr pXGI, uint8_t index_offset, uint8_t reg)
-{
-    outb (pXGI->RelIO + index_offset, reg);
-    return inb(pXGI->RelIO + index_offset+1);
-}
 
-static void SetXGIReg(XGIPtr pXGI, uint8_t index_offset, uint8_t reg, uint8_t data)
-{
-    outb (pXGI->RelIO + index_offset, reg);
-    outb (pXGI->RelIO + index_offset+1, data);
-}
-*/
 static float tap_dda_func(float x)
 {
     double pi = 3.14159265358979;
@@ -425,16 +397,12 @@ XGIResetVideo(ScrnInfoPtr pScrn)
             SetSRReg (pXGI, 0x05, 0x86);
             if (GetSRReg (pXGI, 0x05) != 0xa1)
 	    {}	    
-                    /* xf86DrvMsg(pScrn->scrnIndex, X_ERROR, */
-                    /* "Standard password not initialize\n"); */
     }
     if (GetVideoReg (pXGI, Index_VI_Passwd) != 0xa1)
     {
             SetVideoReg (pXGI, Index_VI_Passwd, 0x86);
             if (GetVideoReg (pXGI, Index_VI_Passwd) != 0xa1)
 	    {}
-                    /* xf86DrvMsg(pScrn->scrnIndex, X_ERROR, */
-                    /* "Video password not initialize\n"); */
     }
 
     /* Initial Overlay 1 */
@@ -724,9 +692,7 @@ SetOverlayReg(XGIPtr pXGI, XGIOverlayPtr pOverlay)
 
 		if(pOverlay->pixelFormat == PIXEL_FMT_YV12)
 	    	uvpitch >>= 1;
-/*
-        bYUV_Pitch_High = (HIBYTE(LOWORD(uvpitch))<<4) & 0xf0 |
-                        (HIBYTE(LOWORD(tmpYPitch))) & 0x0f;  */
+
         bYUV_Pitch_High = ((HIBYTE(LOWORD(uvpitch))<<4) & 0xf0) | ((HIBYTE(LOWORD(tmpYPitch))) & 0x0f);  
         SetVideoReg    (pXGI, Index_VI_Disp_UV_Buf_Pitch_Low,         LOBYTE(LOWORD(uvpitch)));
         SetVideoReg    (pXGI, Index_VI_Disp_Y_UV_Buf_Pitch_High, bYUV_Pitch_High);
@@ -758,13 +724,8 @@ SetOverlayReg(XGIPtr pXGI, XGIOverlayPtr pOverlay)
     /* [16:12] save in the D[4:0] */
     SetVideoRegMask(pXGI, Index_VI_Disp_Y_Buf_Pitch_EXT_High, (tmpYPitch>>12)&0x1f , 0x1f);
 
-
      /* start address ready */
     SetVideoRegMask(pXGI, Index_VI_Control_Misc3, 0x03, 0x03);
-
-    /* set contrast factor */
-    /* SetVideoRegMask(pXGI, Index_VI_Contrast_Enh_Ctrl, pOverlay->contrastCtrl<<6, 0xc0); */
-    /* SetVideoReg (pXGI, Index_VI_Contrast_Factor, pOverlay->contrastFactor); */
 }
 
 void

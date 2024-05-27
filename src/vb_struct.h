@@ -145,7 +145,6 @@ typedef struct _XGI_Ext2Struct
  UCHAR  ModeID;
  USHORT XRes;
  USHORT YRes;
- /* USHORT ROM_OFFSET; */
 } XGI_Ext2Struct;
 
 
@@ -433,15 +432,6 @@ struct _VB_DEVICE_INFO
     ULONG   VGAVT,VGAHT,VGAVDE,VGAHDE;
     ULONG   VT,HT,VDE,HDE;
     ULONG   LCDHRS,LCDVRS,LCDHDES,LCDVDES;
-	/*
-    USHORT   P3c4,P3d4,P3c0,P3ce,P3c2,P3cc;
-    USHORT   P3ca,P3c6,P3c7,P3c8,P3c9,P3da;
-    USHORT   Part0Port,Part1Port,Part2Port;
-    USHORT   Part3Port,Part4Port,Part5Port;
-    USHORT   RVBHCFACT,RVBHCMAX,RVBHRS;
-    USHORT   VGAVT,VGAHT,VGAVDE,VGAHDE;
-    USHORT   VT,HT,VDE,HDE;
-    USHORT   LCDHRS,LCDVRS,LCDHDES,LCDVDES; */
 
     USHORT   ModeType;
     USHORT   IF_DEF_TRUMPION,IF_DEF_DSTN;
@@ -460,7 +450,6 @@ struct _VB_DEVICE_INFO
     PUCHAR ROMAddr;
     PUCHAR FBAddr;
     ULONG BaseAddr;
-    /* USHORT BaseAddr; */
     XGIIOADDRESS RelIO;
 
     DRAM4Type  CR6B[CR6B_SIZE];
@@ -555,7 +544,6 @@ struct _VB_DEVICE_INFO
     const XGI_StandTableStruct  *StandTable;
     const XGI_ExtStruct         *EModeIDTable;
     const XGI_Ext2Struct        *RefIndex;
-    /* XGINew_CRT1TableStruct *CRT1Table; */
     const XGI_CRT1TableStruct    *XGINEWUB_CRT1Table;
     const XGI_VCLKDataStruct    *VCLKData;
     const XGI_VBVCLKDataStruct  *VBVCLKData;

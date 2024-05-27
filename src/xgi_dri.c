@@ -273,15 +273,11 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
       break;
     }
 
-    /* TODO: default value is 2x? */
-/* if (drmAgpEnable(pXGI->drmSubFD, drmAgpGetMode(pXGI->drmSubFD)&~0x0) < 0) {
-*/
     /* Default to 1X agp mode */
     if (drmAgpEnable(pXGI->drmSubFD, drmAgpGetMode(pXGI->drmSubFD)&~0x00000002) < 0) {
       xf86DrvMsg(pScreen->myNum, X_ERROR, "[drm] drmAgpEnable failed\n");
       break;
     }
-/* ErrorF("[drm] drmAgpEnabled succeeded\n"); */
 
     if (drmAgpAlloc(pXGI->drmSubFD, pXGI->agpSize, 0, NULL, &pXGI->agpHandle) < 0) {
       xf86DrvMsg(pScreen->myNum, X_ERROR,
@@ -303,9 +299,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
       break;
     }
 
-/*    pXGI->agpSize = AGP_SIZE; */
     pXGI->agpAddr = drmAgpBase(pXGI->drmSubFD);
-    /* pXGI->agpBase = */ /* Xserver cannot access VtxBuf, bc. not mem-map */
 
     /* any client can access this VtxBuf AGP area */
     /* by mem-map pXGIDRI->agp.handle             */
@@ -320,7 +314,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
       break;
     }
 
-#if 1 /* chiawen : remove this to 3d driver */
+    /* chiawen : remove this to 3d driver */
     pXGI->agpVtxBufSize = AGP_VTXBUF_SIZE; /* 2MB */
     pXGI->agpVtxBufAddr = pXGI->agpAddr;
     pXGI->agpVtxBufBase = pXGI->agpVtxBufAddr - pXGI->agpAddr +
@@ -340,7 +334,6 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
       agp.size = pXGI->agpSize; /* AGP_SIZE - AGP_VTXBUF_SIZE; */
 #ifdef DRM_IOCTL_XGI_AGP_INIT
       ioctl(pXGI->drmSubFD, DRM_IOCTL_XGI_AGP_INIT, &agp);
-#endif
 #endif
     }
   }
@@ -427,10 +420,8 @@ XGIDRIFinishScreenInit(ScreenPtr pScreen)
 {
   ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
   XGIPtr pXGI = XGIPTR(pScrn);
-/*  XGIPtr pXGI = XGIPTR(pScrn); */
   XGIDRIPtr pXGIDRI;
 
-  /*pXGI->pDRIInfo->driverSwapMethod = DRI_HIDE_X_CONTEXT;*/
   pXGI->pDRIInfo->driverSwapMethod = DRI_SERVER_SWAP;
 
   pXGIDRI=(XGIDRIPtr)pXGI->pDRIInfo->devPrivate;
@@ -444,14 +435,6 @@ XGIDRIFinishScreenInit(ScreenPtr pScreen)
   pXGIDRI->scrnX=pXGIDRI->width;
   pXGIDRI->scrnY=pXGIDRI->height;
 
-/*
-  pXGIDRI->textureOffset=pXGI->texOffset;
-  pXGIDRI->textureSize=pXGI->texSize;
-  pXGIDRI->fbOffset=pXGI->fbOffset;
-  pXGIDRI->backOffset=pXGI->backOffset;
-  pXGIDRI->depthOffset=pXGI->depthOffset;
-*/
-
   /* set SAREA value */
   {
     XGISAREAPriv *saPriv;
@@ -464,11 +447,8 @@ XGIDRIFinishScreenInit(ScreenPtr pScreen)
     pXGI->cmdQueueLenPtr = &(saPriv->QueueLength);
     saPriv->AGPVtxBufNext = 0;
 
-  
     saPriv->shareWPoffset = pXGI->cmdQueue_shareWP_only2D;
     pXGI->pCQ_shareWritePort = &(saPriv->shareWPoffset);
-
-
 
     Volari_Idle(pXGI);
   }
@@ -483,17 +463,6 @@ XGIDRISwapContext(ScreenPtr pScreen, DRISyncType syncType,
 {
   ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
   XGIPtr pXGI = XGIPTR(pScrn);
-
-  /* mEndPrimitive */
-  /*
-   * TODO: do this only if X-Server get lock. If kernel supports delayed
-   * signal, needless to do this
-   */
-  /* 
-  *(pXGI->IOBase + 0X8B50) = 0xff;
-  *(unsigned int *)(pXGI->IOBase + 0x8B60) = -1;
-  */
-
   Volari_Idle(pXGI);
 }
 

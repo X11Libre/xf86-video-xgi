@@ -231,7 +231,6 @@ PDEBUG(ErrorF("XG40Init()\n"));
         pReg->xgiRegs3C4[0x32] &= 0xF7;
     }
 
-    /*pReg->xgiRegs3C2 = inb(0x3CC) | 0x0C;*/ /* Programmable Clock */
     pReg->xgiRegs3C2 = inb(pXGI->RelIO+0x4c) | 0x0C; /*Programmable Clock*/
 
     if (!pXGI->NoAccel) {
@@ -273,7 +272,4 @@ void XGIVGAPreInit(ScrnInfoPtr pScrn)
             pXGI->ModeInit = XG40Init;
             break;
     }
-
- 
 }
-

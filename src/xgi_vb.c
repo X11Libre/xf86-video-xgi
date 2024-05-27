@@ -47,15 +47,7 @@ extern unsigned char XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, uns
 static Bool
 TestDDC1(ScrnInfoPtr pScrn)
 {
-/*    XGIPtr  pXGI = XGIPTR(pScrn); 
-    unsigned short old;  */
     int count = 48;
-/*
-    old = XGI_ReadDDC1Bit(pXGI->XGI_Pr);
-    do {
-       if(old != XGI_ReadDDC1Bit(pXGI->XGI_Pr)) break;
-    } while(count--);
-*/
     return (count == -1) ? FALSE : TRUE;
 }
 
@@ -141,8 +133,6 @@ void XGILCDPreInit(ScrnInfoPtr pScrn)
     unsigned char CR32;
 
     pXGI->LCDwidth = 0;
-
-    /* if(!(pXGI->XGI_Pr->VBType & VB_XGIVB)) return; */
 
     inXGIIDXREG(XGICR, 0x32, CR32);
 
@@ -280,5 +270,3 @@ void XGICRT2PreInit(ScrnInfoPtr pScrn)
     
     xf86DrvMsg(pScrn->scrnIndex, X_PROBED,"%sCRT2 (VGA) connection detected\n",	    CRT2Detected ? "" : "No ");
 }
-
-

@@ -362,7 +362,6 @@ void ResetVariableFor2DRegister()
 	g_Fg = -1;
 
 	g_trans_color=0;
-	/*----------------------------------------------------*/
 }
 
 static void
@@ -373,7 +372,6 @@ Volari_InitCmdQueue(ScrnInfoPtr pScrn)
     unsigned long ulCR55 ;
     unsigned long ulSR26 ;
     unsigned long temp ;
- /*   unsigned long ulFlag = 0 ; */
 
 	ResetVariableFor2DRegister();
 
@@ -512,11 +510,8 @@ Volari_InitCmdQueue(ScrnInfoPtr pScrn)
 
     /* XGI315 */
     pXGI->cmdQueue_shareWP_only2D = ulXGITempRP;
-    /* pXGI->pCQ_shareWritePort = &(pXGI->cmdQueue_shareWP_only2D); */
 
     Volari_UpdateHwWP(ulXGITempRP) ;
-    
-    
 
     MMIO_OUT32(pXGI->IOBase, 0x85C0, pXGI->cmdQueueOffset) ;
 
@@ -584,17 +579,12 @@ Volari_DisableAccelerator(ScrnInfoPtr pScrn)
                    | SR1E_ENABLE_3D_AGP_VERTEX_FETCH
                    | SR1E_ENABLE_3D_COMMAND_PARSER
                    | SR1E_ENABLE_3D));
-/*    PDEBUG(ErrorF("Volari_DisableAccelerator(pScrn) Done, GBCount = %ld\n",GBCount)) ; */
 }
 
 static void
 Volari_DisableCmdQueue(ScrnInfoPtr pScrn)
 {
     XGIPtr pXGI = XGIPTR(pScrn) ;
-
-	/* Jong@08112009; bug fixing */
-    /* andXGIIDXREG(XGISR, 0x26, 0x0F) ; */
-
     orXGIIDXREG(XGISR, 0x26, 0x01) ;
     andXGIIDXREG(XGISR, 0x26, 0x0C) ;
 }
@@ -623,8 +613,7 @@ Volari_AccelInit(ScreenPtr pScreen)
 
     PDEBUG1(ErrorF("Volari_AccelInit()\n" )) ;
 
-/* Jong 01/13/2009; support EXA */
-#ifdef XGI_USE_EXA	/* ----------------------- EXA ----------------------- */
+#ifdef XGI_USE_EXA
 		PDEBUG(ErrorF("--- EXA ---\n" )) ;
 	   if(pXGI->useEXA) 
 	   {
@@ -687,9 +676,7 @@ Volari_AccelInit(ScreenPtr pScreen)
 		pXGI->EXADriverPtr->Composite = XGIComposite;
 		pXGI->EXADriverPtr->DoneComposite = XGIDoneComposite;
 	   }
-#endif /* EXA */
 
-#ifdef XGI_USE_EXA
 	if(pXGI->useEXA) 
 	{
 	   /* if(!pSiS->NoAccel) { */
@@ -781,7 +768,6 @@ XGIPrepareSolid(PixmapPtr pPixmap, int alu, Pixel planemask, Pixel fg)
 	uint16_t pitch;
 
 	PACCELDEBUG(ErrorF("XGIPrepareSolid...\n"));
-	/* DisableDrawingFunctionDynamically(TRUE); */
 
 	/* Planemask not supported */
 	if((planemask & ((1 << pPixmap->drawable.depth) - 1)) !=
@@ -827,7 +813,6 @@ XGISolid(PixmapPtr pPixmap, int x1, int y1, int x2, int y2)
 
 	PACCELDEBUG(ErrorF("XGISolid...\n"));
 	PACCELDEBUG(ErrorF("pXGI->CommandReg = 0x%x...\n", pXGI->CommandReg));
-	/* DisableDrawingFunctionDynamically(FALSE); */
 
 	Volari_SetupDSTXY(x1, y1)
     Volari_SetupRect(x2-x1, y2-y1) ;
@@ -853,7 +838,6 @@ XGIPrepareCopy(PixmapPtr pSrcPixmap, PixmapPtr pDstPixmap, int xdir, int ydir,
 	PACCELDEBUG(ErrorF("XGIPrepareCopy()...\n"));
 	PACCELDEBUG(ErrorF("pSrcPixmap->devPrivate.ptr=0x%x, pDstPixmap->devPrivate.ptr=0x%x...\n", 
 						pSrcPixmap->devPrivate.ptr, pDstPixmap->devPrivate.ptr));
-	/* DisableDrawingFunctionDynamically(TRUE); */
 
 	/* Planemask not supported */
 	if((planemask & ((1 << pSrcPixmap->drawable.depth) - 1)) !=
@@ -912,7 +896,6 @@ XGICopy(PixmapPtr pDstPixmap, int srcX, int srcY, int dstX, int dstY, int width,
 	PACCELDEBUG(ErrorF("XGICopy()...\n"));
 	PACCELDEBUG(ErrorF("srcX=%d, srcY=%d, dstX=%d, dstY=%d...\n", srcX, srcY, dstX, dstY));
 	PACCELDEBUG(ErrorF("pDstPixmap->devPrivate.ptr=0x%x...\n", pDstPixmap->devPrivate.ptr));
-	/* DisableDrawingFunctionDynamically(FALSE); */
 
 	Volari_SetupSRCXY(srcX, srcY)
 	Volari_SetupDSTXY(dstX, dstY)
@@ -935,7 +918,6 @@ XGICheckComposite(int op, PicturePtr pSrcPicture, PicturePtr pMaskPicture,
 	XGIPtr pXGI = XGIPTR(pScrn);
 
 	PACCELDEBUG(ErrorF("XGICheckComposite()...\n"));
-	/* DisableDrawingFunctionDynamically(TRUE); */
 
 	xf86DrvMsg(0, 0, "CC: %d Src %x (fi %d ca %d) Msk %x (%d %d) Dst %x (%d %d)\n",
 		op, pSrcPicture->format, pSrcPicture->filter, pSrcPicture->componentAlpha,
@@ -961,7 +943,6 @@ XGIPrepareComposite(int op, PicturePtr pSrcPicture, PicturePtr pMaskPicture,
 	XGIPtr pXGI = XGIPTR(pScrn);
 
 	PACCELDEBUG(ErrorF("XGIPrepareComposite()...\n"));
-	/* DisableDrawingFunctionDynamically(TRUE); */
 
     Volari_ResetCmd ;
 
@@ -976,7 +957,6 @@ XGIComposite(PixmapPtr pDst, int srcX, int srcY, int maskX, int maskY, int dstX,
 	XGIPtr pXGI = XGIPTR(pScrn);
 
 	PACCELDEBUG(ErrorF("XGIComposite()...\n"));
-	/* DisableDrawingFunctionDynamically(FALSE); */
 }
 
 static void

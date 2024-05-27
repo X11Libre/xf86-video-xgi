@@ -868,17 +868,11 @@ void XGI_WaitBeginRetrace(XGIIOADDRESS RelIO);
 void XGI_WaitEndRetrace(XGIIOADDRESS RelIO);
 
 #include <unistd.h>
-/* 2005/11/21 added by jjtseng */
 #define DelayS(sec) usleep((sec)*1000000)
 #define DelayMS(millisec) usleep((millisec)*1000)
 #define DelayUS(microsec) usleep((microsec))
-/*~jjtseng 2005/11/21 */
 
 Bool Volari_AccelInit(ScreenPtr pScreen) ;
-/* void XGI_UnLockCRT2(PXGI_HW_DEVICE_INFO,USHORT BaseAddr); */
-/* void XGI_LockCRT2(PXGI_HW_DEVICE_INFO,USHORT BaseAddr); */
-/* void XGI_DisableBridge(PXGI_HW_DEVICE_INFO,USHORT BaseAddr); */
-/* void XGI_EnableBridge(PXGI_HW_DEVICE_INFO,USHORT BaseAddr); */
 #endif
 
 extern void XGI_New_GetVBType(VB_DEVICE_INFO *XGI_Pr, PXGI_HW_DEVICE_INFO);

@@ -167,7 +167,6 @@ compute_vclk(
 void
 XGICalcClock(ScrnInfoPtr pScrn, int clock, int max_VLD, unsigned int *vclk)
 {
-/*    XGIPtr pXGI = XGIPTR(pScrn); */
     int M, N, P , PSN, VLD , PSNx ;
     int bestM=0, bestN=0, bestP=0, bestPSN=0, bestVLD=0;
     double abest = 42.0;
@@ -279,17 +278,6 @@ XGICalcClock(ScrnInfoPtr pScrn, int clock, int max_VLD, unsigned int *vclk)
   vclk[VLDidx] = bestVLD;
   vclk[Pidx]   = bestP;
   vclk[PSNidx] = bestPSN;
-/*
-  PDEBUG(xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
-                "Freq. selected: %.2f MHz, M=%d, N=%d, VLD=%d, P=%d, PSN=%d\n",
-                (float)(clock / 1000.), vclk[Midx], vclk[Nidx], vclk[VLDidx],
-                vclk[Pidx], vclk[PSNidx]));
-  PDEBUG(xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
-                "Freq. set: %.2f MHz\n", bestFout / 1.0e6));
-  PDEBUG(xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
-                "VCO Freq.: %.2f MHz\n", bestFout*bestP / 1.0e6));
-*/
-  
 }
 
 static void
@@ -312,12 +300,7 @@ Volari_Save(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
 #endif
 
     for (i = 0x06; i <= 0x3F; i++) {
-        /* outb(VGA_SEQ_INDEX, i); */
         outb(XGISR, i);
-
-        /* xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 4,
-                    "XR%02X Contents - %02X \n", i, inb(VGA_SEQ_DATA));
-        xgiReg->xgiRegs3C4[i] = inb(VGA_SEQ_DATA); */
         xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 4,
                     "XR%02X Contents - %02X \n", i, inb(XGISR+1));
         xgiReg->xgiRegs3C4[i] = inb(XGISR+1);
@@ -326,8 +309,6 @@ Volari_Save(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
     for (i=0x19; i<0x5C; i++)  {
         inXGIIDXREG(XGICR, i, xgiReg->xgiRegs3D4[i]);
     }
-
-    /*xgiReg->xgiRegs3C2 = inb(0x3CC);*/
 
     xgiReg->xgiRegs3C2 = inb(pXGI->RelIO+0x4c);
 
@@ -376,49 +357,16 @@ Volari_Restore(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
 
     outXGIIDXREG(XGISR, 0x05, 0x86);
 
-
-#if 1
-	/* Jong@08112009; recover this line */
-	/* Volari_DisableAccelerator(pScrn) ; */
-#else
-    inXGIIDXREG(XGISR, 0x1E, temp);
-
-    if (temp & (SR1E_ENABLE_2D | SR1E_ENABLE_3D)) {
-        Volari_Idle(pXGI);
-    }
-
-    PDEBUG(XGIDumpRegs(pScrn));
-
-    outXGIIDXREG(XGICR, 0x55, 0);
-    andXGIIDXREG(XGISR, 0x1E,
-                 ~(SR1E_ENABLE_3D_TRANSFORM_ENGINE
-                   | SR1E_ENABLE_2D
-                   | SR1E_ENABLE_3D));
-    PDEBUG(XGIDumpRegs(pScrn));
-#endif
-
 	PDEBUG(XGIDumpRegs(pScrn)) ; //yilin
 
     for (i = 0x19; i < 0x5C; i++)  {
-     /* Jong 09/19/2007; added for ??? */
      if((i!=0x48 && i!=0x4a)|| ((pXGI->Chipset != PCI_CHIP_XGIXG20)&&(pXGI->Chipset != PCI_CHIP_XGIXG21)&&(pXGI->Chipset != PCI_CHIP_XGIXG27)))
         outXGIIDXREG(XGICR, i, xgiReg->xgiRegs3D4[i]);
     }
 
     for (i = 0x06; i <= 0x3F; i++) {
- /* if( !(i==0x16 || i==0x18 || i==0x19 || i==0x28 || i==0x29 || i==0x2E || i==0x2F) ) { */
         if( !(i==0x16 ) ) {
-           /* outb(VGA_SEQ_INDEX,i); */
            outb(XGISR,i);
-
-            /* xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO,4,
-                    "XR%X Contents - %02X ", i, inb(VGA_SEQ_DATA));
-
-            outb(VGA_SEQ_DATA,xgiReg->xgiRegs3C4[i]);
-
-            xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO,4,
-                        "Restore to - %02X Read after - %02X\n",
-                        xgiReg->xgiRegs3C4[i], inb(VGA_SEQ_DATA)); */
 
             xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO,4,
                     "XR%X Contents - %02X ", i, inb(XGISR+1));
@@ -430,28 +378,6 @@ Volari_Restore(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
                         xgiReg->xgiRegs3C4[i], inb(XGISR+1));
         }
     }
-
-
-#if 0
-	// yilin restore the VB register
-    outXGIIDXREG(XGIPART1, 0x2f, 0x01);
-    for (i=0; i<0x50; i++)  
-    {
-        outXGIIDXREG(XGIPART1, i, xgiReg->VBPart1[i]);
-    }
-    for (i=0; i<0x50; i++)  
-    {
-        outXGIIDXREG(XGIPART2, i, xgiReg->VBPart2[i]);
-    }
-    for (i=0; i<0x50; i++)  
-    {
-        outXGIIDXREG(XGIPART3, i, xgiReg->VBPart3[i]);
-    }
-    for (i=0; i<0x50; i++)  
-    {
-        outXGIIDXREG(XGIPART4, i, xgiReg->VBPart4[i]);
-    }
-#endif
 
     outb(pXGI->RelIO+0x42, xgiReg->xgiRegs3C2);
 
@@ -466,8 +392,6 @@ Volari_Restore(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
 	PDEBUG(XGIDumpRegs(pScrn)) ; //yilin
     xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 4,
                 "Volari_Restore(ScrnInfoPtr pScrn, XGIRegPtr xgiReg) Done\n");
-
-
 }
 
 static void
@@ -605,10 +529,8 @@ XGILoadPalette(ScrnInfoPtr pScrn, int numColors, int *indices, LOCO *colors,
 {
      XGIPtr  pXGI = XGIPTR(pScrn);
      int     i, j, index;
-/*     unsigned char backup = 0; */
      unsigned char SR7;
      Bool    dogamma1 = pXGI->CRT1gamma;
-/*     Bool    resetxvgamma = FALSE; */
 
     if (IS_DUAL_HEAD(pXGI)) {
         XGIEntPtr pXGIEnt = ENTITY_PRIVATE(pXGI);
@@ -720,12 +642,10 @@ XG40Mclk(XGIPtr pXGI)
     unsigned char Num, Denum;
 
     /* Numerator */
-    /* inXGIIDXREG(0x3c4, 0x28, Num); */
     inXGIIDXREG(XGISR, 0x28, Num);
     mclk = 14318 * ((Num & 0x7f) + 1);
 
     /* Denumerator */
-    /* inXGIIDXREG(0x3c4, 0x29, Denum); */
     inXGIIDXREG(XGISR, 0x29, Denum);
     mclk = mclk / ((Denum & 0x1f) + 1);
 

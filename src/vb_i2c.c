@@ -65,7 +65,6 @@ extern UCHAR XGI_GetRegByte(XGIIOADDRESS port);
 void I2C_DelayUS(ULONG MicroSeconds)
 {
 	ErrorF("");
-	/* udelay(MicroSeconds); */
 }
 
 
@@ -73,9 +72,6 @@ typedef enum _I2C_ACCESS_CMD
 {
     I2C_WRITE = 0,
     I2C_READ 
-/* Jong 08/18/2008; for XFree86 */
-    /* WRITE = 0,
-    READ */
 } I2C_ACCESS_CMD;
 
 /* For XG21 */
@@ -500,24 +496,17 @@ char vGetEnhancedEDIDBlock(
 }
 char I2COpen (PXGI_HW_DEVICE_INFO  pHWDE, ULONG ulI2CEnable, ULONG ulChannelID, PI2CControl pI2CControl)
 {
-/*
-//    printk("\nI2COpen(%d) : Channel ID = %d\n", ulI2CEnable, ulChannelID);
-    // we need to determine the Context area for each command we receive
-    // i.e. which hardware I2C bus is the command for.
-    // this is unimplemented here!
-*/
     if (ulChannelID >= MAX_I2C_CHANNEL)
     {
         return ERROR_INVALID_PARAMETER;
     }
     if (ulI2CEnable)    /* Open I2C Port */
     {
-/*        // verify clock rate. If you cannot implement the given rate,
+        // verify clock rate. If you cannot implement the given rate,
         // enable a lower clock rate closest to the request clock rate.
         //
         // put a better check here if your device can only do discrete
         // clock rate values.
-*/
         if (pI2CControl->ClockRate > I2C_MAX_CLOCK_RATE)
         {
             pI2CControl->ClockRate = I2C_MAX_CLOCK_RATE;
@@ -533,11 +522,9 @@ char I2COpen (PXGI_HW_DEVICE_INFO  pHWDE, ULONG ulI2CEnable, ULONG ulChannelID, 
         pI2CControl->Status = I2C_STATUS_NOERROR;
     }
 
-
-
     return 0;
 }
-/* end of I2COpen */
+
 char I2CAccess(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl pI2CControl)
 {
     ULONG                       ulChannel = pI2CControl->dwCookie % MAX_I2C_CHANNEL;
@@ -552,36 +539,22 @@ char I2CAccess(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl pI2CControl)
     }
 
     pHWDE->I2CDelay = (1000000 / pI2CControl->ClockRate) * 10 * 2; /* in 100ns */
-    /* pHWDE->I2CDelay = (1000000 / pI2CControl->ClockRate) * 10; */ /* in 100ns */
-    /* pHWDE->I2CDelay = 100; */
-	/* PDEBUG(ErrorF("I2CAccess()-I2CDelay = %d...\n", pHWDE->I2CDelay)); */
-
-	/* pHWDE->I2CDelay = 100; */ /* Jong@08032009 */
 
     switch (pI2CControl->Command)
     {
         /* Issue a STOP or START without a READ or WRITE Command */
         case I2C_COMMAND_NULL:
             if (I2CNull(pHWDE, pI2CControl) == FALSE)  break;
-/*          if (pI2CControl->Flags & I2C_FLAGS_STOP)  {
-                pI2CContext->dwI2CPortAcquired = FALSE;
-            }
-*/          break;
+            break;
 
         /* READ or WRITE Command */
         case I2C_COMMAND_READ:
             if (I2CRead(pHWDE, pI2CControl) == FALSE)  break;
-/*          if (pI2CControl->Flags & I2C_FLAGS_STOP)  {
-                pI2CContext->dwI2CPortAcquired = FALSE;
-            }
-*/          break;
+            break;
 
         case I2C_COMMAND_WRITE:
             if (I2CWrite(pHWDE, pI2CControl) == FALSE)  break;
-/*          if (pI2CControl->Flags & I2C_FLAGS_STOP)  {
-                pI2CContext->dwI2CPortAcquired = FALSE;
-            }
-*/          break;
+            break;
 
         case I2C_COMMAND_STATUS:
          pI2CControl->Status = I2C_STATUS_NOERROR;
@@ -597,9 +570,6 @@ char I2CAccess(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl pI2CControl)
             return ERROR_INVALID_PARAMETER;
     }
     
-
-/*    printk("\nI2CAccess(): I2C Cmd = 0x%X I2C Flags = 0x%X I2C Status = 0x%X I2C Data = 0x%X", pI2CControl->Command, pI2CControl->Flags, pI2CControl->Status, pI2CControl->Data); */
-
     return NO_ERROR;
 }
 
@@ -640,7 +610,7 @@ BOOLEAN I2CNull( PXGI_HW_DEVICE_INFO pHWDE,  PI2CControl pI2CControl)
 
     pI2CControl->Status = I2C_STATUS_NOERROR;
     return TRUE;
-}/* end of I2CNull()*/
+}
 
 /*^^*
  * Function:    I2CRead
@@ -691,7 +661,7 @@ BOOLEAN I2CRead(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl pI2CControl)
 
     pI2CControl->Status = I2C_STATUS_NOERROR;
     return TRUE;
-} /* end of I2CRead() */
+}
 
 /*^^*
  * Function:    I2CWrite
@@ -758,7 +728,7 @@ BOOLEAN I2CWrite(PXGI_HW_DEVICE_INFO pHWDE,  PI2CControl pI2CControl)
 
     pI2CControl->Status = I2C_STATUS_NOERROR;
     return TRUE;
-} /* end of I2CWrite() */
+}
 
 /*^^*
  * Function:    ResetI2C
@@ -781,10 +751,7 @@ BOOLEAN ResetI2C(PXGI_HW_DEVICE_INFO pHWDE,  PI2CControl pI2CControl)
         pI2CControl->Status = I2C_STATUS_ERROR;
         return FALSE;
     }
-} /* ResetI2C() */
-
-
-
+}
 
 /*^^*
  * Function:    Ack
@@ -874,8 +841,7 @@ BOOLEAN Ack (PXGI_HW_DEVICE_INFO pHWDE,  bool fPut)
         }
         return (BOOLEAN)(status == LODAT);
     }
-}/* end of Ack() */
-
+}
 
 BOOLEAN NoAck(PXGI_HW_DEVICE_INFO pHWDE)
 {
@@ -967,7 +933,7 @@ BOOLEAN Start( PXGI_HW_DEVICE_INFO pHWDE)
     I2C_DelayUS(delay);
 
     return TRUE;
-}/* end of Start */
+}
 
 /*^^*
  * Function:    Stop
@@ -1010,7 +976,7 @@ BOOLEAN Stop(PXGI_HW_DEVICE_INFO pHWDE)
     I2C_DelayUS(delay);
 
     return (BOOLEAN)(bReadDataLine(pHWDE) == HIDAT);
-}/* end of Stop*/
+}
 
 /*^^*
  * Function:    WriteUCHARI2C
@@ -1058,7 +1024,7 @@ BOOLEAN WriteUCHARI2C(PXGI_HW_DEVICE_INFO pHWDE,  UCHAR cData)
         I2C_DelayUS(delay);
     }
     return TRUE;
-}/* end of WriteUCHARI2C */
+}
 
 /*^^*
  * Function:    ReadUCHARI2C
@@ -1381,7 +1347,6 @@ VOID vWriteClockLineCRT(PXGI_HW_DEVICE_INFO pHWDE, UCHAR data)
     temp = (temp & (~MASK(1:0))) | pHWDE->ucI2cCRT;
 
     //wait for CRT1 retrace only when CRT1 is enabled!
-    /* if (pHWDE->bMonitorPoweredOn) */ /* jong@08042009; ignore here */
     {
         if(!(data & 1) && ((ujSR1F & 0xC0)==0) )
         {
@@ -1415,7 +1380,6 @@ VOID vWriteDataLineCRT(PXGI_HW_DEVICE_INFO pHWDE, UCHAR data)
     temp = (temp & (~MASK(1:0))) | pHWDE->ucI2cCRT;
 
     //wait for CRT1 retrace only when CRT1 is enabled!
-    /* if (pHWDE->bMonitorPoweredOn) */ /* Jong@08042009; ignore checking */
     {
         if(!(data & 1) && ((ujSR1F & 0xC0)==0) )
         {
@@ -1629,9 +1593,8 @@ BOOLEAN bEDIDCheckSum(PUCHAR  pjEDIDBuf,ULONG   ulBufSize)
 
     for (i = 0; i < ulBufSize; i++)
     {
-  /*     printk("pujPtr=%x, ",*pujPtr); */
        ujSum += *(pujPtr++);
-    } /*for-loop */
+    }
 
     return(ujSum);
 
@@ -1672,11 +1635,6 @@ VP_STATUS vGetEDID_1(
     }
 
     // Set Segment Block ID as 0 if Monitor support Enhanced-EDID
-    /*
-    pI2C->Command = I2C_COMMAND_WRITE_SEGMENT; // to replace I2C_COMMAND_WRITE
-    pI2C->Data = 0;
-    I2CAccessBuffer(pHWDE, pI2C, 0x60, 0, &(pI2C->Data), 0);
-    */
     pI2C->Command = I2C_COMMAND_WRITE;
     pI2C->Data = 0;
     I2CAccessBuffer(pHWDE, pI2C, 0x60, 0, &(pI2C->Data), 0);

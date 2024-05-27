@@ -46,19 +46,6 @@
 #define XGIG2_SOLIDFILL
 #define XGIG2_8X8MONOPATFILL
 
-
-/*
-#define XGIG2_COLOREXPSCANLN
-#define XGIG2_SOLIDLINE
-#define XGIG2_DASHEDLINE
-#define XGIG2_S2SCOLOREXPANFILL
-#define XGIG2_8X8COLORPATFILL
-#define XGIG2_C2SCOLOREXPANFILL
-#define XGIG2_IMAGEWRITE
-#define XGIG2_COLOREXPSCANLN
-#define XGIG2_IMAGEWRITE
-*/
-
 #undef BR
 #define BR(x)   (0x8200 | (x) << 2)
 
@@ -123,7 +110,6 @@ extern unsigned long    r_port, w_port ;
 
 extern int	G2CmdQueLen;
 extern int	Alignment ;
-/* int    GBCount = 0 ; */
 
 extern void Volari_SetDefaultIdleWait(XGIPtr pXGI, unsigned HDisplay, 
     unsigned depth);
@@ -166,7 +152,6 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 #define Volari_SetupCMDFlag(flags) \
     pXGI->CommandReg |= (flags);
 
-#if 1
 #define GuardBand(CS)\
 {\
 	unsigned long lTemp ;\
@@ -190,46 +175,6 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 		}while(lTemp < (CS)) ;\
 	}\
 }
-#else
-#define GuardBand(CS)\
-    {\
-        unsigned long lTemp ; \
-        \
-        w_port = Volari_GetSwWP();  \
-        lTemp = r_port - w_port + pXGI->cmdQueueSize ; \
-        \
-        if( ((lTemp & pXGI->cmdQueueSizeMask ) < (BandSize + CS)) && ( r_port != w_port ) ) \
-        { \
-            while ( 1 ) \
-            { \
-                r_port = Volari_GetHwRP(); \
-                if(r_port == w_port) \
-                    break; \
-                lTemp = r_port - w_port + pXGI->cmdQueueSize ; \
-                if( (lTemp & pXGI->cmdQueueSizeMask ) >= (BandSize + CS) ) \
-                    break; \
-                usleep(1);/*usleep(100);*//* Jong Lin 08-29-2005 */\
-            } \
-        } \
-    }
-#endif
-
-/*
-#define GuardBand(CS)\
-    {\
-        long lTemp ; \
-        w_port = Volari_GetSwWP();  \
-        while ( 1 ) \
-        { \
-            r_port = Volari_GetHwRP(); \
-            if(r_port == w_port)\
-                break; \
-            lTemp = r_port - w_port + pXGI->cmdQueueSize ; \
-            if( (lTemp & pXGI->cmdQueueSizeMask ) >= (BandSize + CS) ) \
-                break; \
-        }\
-   }
-*/
 
 #define Volari_DoCMD\
     {\
@@ -257,13 +202,6 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         Volari_UpdateHwWP(ulTemp) ;\
         \
     }
-
-/**********************************************************************
-#define Volari_SetupSRCBase(base) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(0), base);\
-                G2CmdQueLen --;
- **********************************************************************/
 
 #define Volari_SetupSRCBase(base) \
     {\
@@ -294,14 +232,6 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
     }
 
 
-/***********************************************************************
-#define Volari_SetupSRCPitch(pitch) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT16(pXGI->IOBase, BR(1), pitch);\
-                G2CmdQueLen --;
-
-***********************************************************************/
-
 #define Volari_SetupSRCPitch(pitch) \
         {\
         unsigned long ulTemp ;\
@@ -330,13 +260,6 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 		}	\
         \
     }
-
-/***********************************************************************
-#define Volari_SetupSRCXY(x,y) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(2), (x)<<16 | (y) );\
-                G2CmdQueLen --;
-***********************************************************************/
 
 #define Volari_SetupSRCXY(x,y) \
         {\
@@ -367,14 +290,6 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
 			} \
     }
 
-/***********************************************************************
-#define Volari_SetupDSTBase(base) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(4), base);\
-                G2CmdQueLen --;
-
-***********************************************************************/
-
 #define Volari_SetupDSTBase(base) \
         {\
         unsigned long ulTemp ;\
@@ -402,14 +317,6 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         Volari_UpdateSwWP(ulTemp) ;\
 			} \
     }
-
-/***********************************************************************
-#define Volari_SetupDSTXY(x,y) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(3), (x)<<16 | (y) );\
-                G2CmdQueLen --;
-
-***********************************************************************/
 
 #define Volari_SetupDSTXY(x,y) \
         {\
@@ -439,14 +346,6 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         Volari_UpdateSwWP(ulTemp) ;\
 			} \
     }
-
-/***********************************************************************
-#define Volari_SetupDSTRect(x,y) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(5), (y)<<16 | (x) );\
-                G2CmdQueLen --;
-
-***********************************************************************/
 
 #define Volari_SetupDSTRect(x,y) \
         {\
@@ -479,22 +378,8 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         \
     }
 
-/***********************************************************************
-#define Volari_SetupDSTColorDepth(bpp) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT16(pXGI->IOBase, BR(1)+2, bpp);\
-                G2CmdQueLen --;
-***********************************************************************/
-
 #define Volari_SetupDSTColorDepth(bpp) \
     pXGI->CommandReg |= ((ulong)(bpp))&(GENMASK(17:16)) ;
-
-/***********************************************************************
-#define Volari_SetupRect(w,h) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(6), (h)<<16 | (w) );\
-                G2CmdQueLen --;
-***********************************************************************/
 
 #define Volari_SetupRect(w,h) \
         {\
@@ -524,31 +409,6 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         Volari_UpdateSwWP(ulTemp) ;\
 		} \
     }
-
-/***********************************************************************
-#define Volari_SetupPATFG(color) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(7), color);\
-                G2CmdQueLen --;
-***********************************************************************/
-/***********************************************************************
-#define Volari_SetupPATBG(color) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(8), color);\
-                G2CmdQueLen --;
-***********************************************************************/
-/***********************************************************************
-#define Volari_SetupSRCFG(color) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(9), color);\
-                G2CmdQueLen --;
-***********************************************************************/
-/***********************************************************************
-#define Volari_SetupSRCBG(color) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(10), color);\
-                G2CmdQueLen --;
-***********************************************************************/
 
 #define Volari_SetupPATFG(color) \
         {\
@@ -659,14 +519,6 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         \
     }
 
-/***********************************************************************
-#define Volari_SetupMONOPAT(p0,p1) \
-                if (G2CmdQueLen <= 1)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(11), p0);\
-                MMIO_OUT32(pXGI->IOBase, BR(12), p1);\
-                G2CmdQueLen =G2CmdQueLen-2;
-***********************************************************************/
-
 #define Volari_SetupMONOPAT0(p0) \
         {\
         unsigned long ulTemp ;\
@@ -716,18 +568,6 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         Volari_UpdateSwWP(ulTemp) ;\
         \
     }
-/***********************************************************************
-#define Volari_SetupClipLT(left,top) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(13), ((left) & 0xFFFF) | (top)<<16 );\
-                G2CmdQueLen--;
-***********************************************************************/
-/***********************************************************************
-#define Volari_SetupClipRB(right,bottom) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(14), ((right) & 0xFFFF) | (bottom)<<16 );\
-                G2CmdQueLen --;
-***********************************************************************/
 
 #define Volari_SetupClip(left,top,right,bottom) \
         {\
@@ -803,48 +643,6 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
         Volari_UpdateSwWP(ulTemp) ;\
         \
     }
-
-/***********************************************************************
-#define Volari_SetupROP(rop) \
-        pXGI->CommandReg = (rop) << 8;
-
-#define Volari_SetupCMDFlag(flags) \
-        pXGI->CommandReg |= (flags);
-
-#define Volari_DoCMD \
-                if (G2CmdQueLen <= 1)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(15), pXGI->CommandReg); \
-                MMIO_OUT32(pXGI->IOBase, BR(16), 0);\
-                G2CmdQueLen =G2CmdQueLen-2;
-***********************************************************************/
-
-/***********************************************************************
-#define Volari_SetupX0Y0(x,y) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(2), (y)<<16 | (x) );\
-                G2CmdQueLen --;
-#define Volari_SetupX1Y1(x,y) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(3), (y)<<16 | (x) );\
-                G2CmdQueLen --;
-#define Volari_SetupLineCount(c) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT16(pXGI->IOBase, BR(6), c);\
-                G2CmdQueLen --;
-#define Volari_SetupStylePeriod(p) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT16(pXGI->IOBase, BR(6)+2, p);\
-                G2CmdQueLen --;
-#define Volari_SetupStyleLow(ls) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(11), ls);\
-                G2CmdQueLen --;
-#define Volari_SetupStyleHigh(ls) \
-                if (G2CmdQueLen <= 0)  Volari_Idle(pXGI);\
-                MMIO_OUT32(pXGI->IOBase, BR(12), ls);\
-                G2CmdQueLen --;
-***********************************************************************/
-
 
 /***********************************************************************
  * For Line Drawing
@@ -1019,4 +817,3 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
     }
 
 #endif /* _XGI_315_ACCEL_H_ */
-
