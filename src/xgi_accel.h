@@ -103,9 +103,6 @@
 
 #define BandSize 		0x10
 
-/* Jong 09/27/2007; recover for compiler error */
-/* typedef unsigned long ulong ; */
-
 extern unsigned long    r_port, w_port ;
 
 extern int	G2CmdQueLen;
@@ -379,7 +376,7 @@ void XGIDumpCMDQueue(ScrnInfoPtr pScrn);
     }
 
 #define Volari_SetupDSTColorDepth(bpp) \
-    pXGI->CommandReg |= ((ulong)(bpp))&(GENMASK(17:16)) ;
+    pXGI->CommandReg |= ((ULong)(bpp))&(GENMASK(17:16)) ;
 
 #define Volari_SetupRect(w,h) \
         {\
