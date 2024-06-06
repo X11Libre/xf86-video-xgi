@@ -163,30 +163,6 @@ extern int FbDevExist;
 
 #define DEBUG_ACCEL_DYNAMICALLY
 
-#ifndef DEBUG_ACCEL_DYNAMICALLY
-#define DisableDrawingFunctionDynamically(bReturn) \
-	{ \
-	}
-#else
-#define DisableDrawingFunctionDynamically(bReturn) \
-	{ \
-		/* Jong - Good method for performance evaluation */ \
-		/*-----------------------------------------------*/ \
-		uint8_t   CR37=0x00; /* Jong 09/11/2008; [7] for disable/enable NULL function dynamically */ \
-		/* Jong 09/12/2008; disable NULL function of HW acceleration dynamically by CR37[7] */ \
-		/* After test, this extra IO doesn't have significant loading */ \
-		CR37=XGI_GetReg(pXGI->XGI_Pr->P3d4, 0x37); \
-		\
-		if((CR37 & 0x80) != 0) \
-		{ \
-		   if(bReturn) \
-			return(bReturn); \
-		   else \
-			return; \
-		} \
-	}
-#endif
-
 #if X_BYTE_ORDER == X_BIG_ENDIAN
 #define BE_SWAP32(x) lswapl(x)
 #else 
@@ -1052,7 +1028,18 @@ XGIUploadToScratch(PixmapPtr pSrc, PixmapPtr pDst)
 	int src_pitch = exaGetPixmapPitch(pSrc);
 	int dst_pitch, size, w, h, bytes;
 
-	DisableDrawingFunctionDynamically(TRUE); 
+#ifdef DEBUG_ACCEL_DYNAMICALLY
+	{
+		/* Jong - Good method for performance evaluation */
+		/*-----------------------------------------------*/ \
+		uint8_t CR37=0x00; /* Jong 09/11/2008; [7] for disable/enable NULL function dynamically */
+		/* Jong 09/12/2008; disable NULL function of HW acceleration dynamically by CR37[7] */
+		/* After test, this extra IO doesn't have significant loading */
+		CR37=XGI_GetReg(pXGI->XGI_Pr->P3d4, 0x37);
+		if((CR37 & 0x80) != 0)
+			return TRUE;
+	}
+#endif
 
 	w = pSrc->drawable.width;
 
