@@ -374,7 +374,7 @@ typedef struct _XGI21_LVDSCapStruct
 
 typedef struct _XGI_CRT1TableStruct
 {
-  UCHAR CR[15];
+  UCHAR CR[16];
 } XGI_CRT1TableStruct;
 
 
