@@ -22,10 +22,10 @@
 
 # Initialize Autoconf
 AC_PREREQ([2.60])
-AC_INIT([xf86-video-xgi],
+AC_INIT([xlibre-xf86-video-xgi],
         [1.6.1],
-        [https://gitlab.freedesktop.org/xorg/driver/xf86-video-xgi/issues],
-        [xf86-video-xgi])
+        [https://github.com/X11Libre/xf86-video-xgi/issues],
+        [xlibre-xf86-video-xgi])
 RELEASE_DATE="27 August 2007"
 
 AC_CONFIG_SRCDIR([Makefile.am])
