@@ -722,10 +722,6 @@ static char *XGI_GetCPUFreq(ScrnInfoPtr pScrn, char *buf, double *cpuFreq)
 
 #ifdef XGICHECKOSSSE
 
-#ifndef XFree86LOADER
-#include <setjmp.h>
-#endif
-
 static jmp_buf sigill_return;
 
 static void sigill_handler(void)
