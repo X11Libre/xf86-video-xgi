@@ -106,9 +106,5 @@ PKG_CHECK_MODULES([PCIACCESS], [pciaccess >= 0.8.0])
 
 AC_SUBST([moduledir])
 
-AC_CONFIG_FILES([
-                Makefile
-                src/Makefile
-                man/Makefile
-])
+AC_CONFIG_FILES([Makefile src/Makefile man/Makefile])
 AC_OUTPUT
