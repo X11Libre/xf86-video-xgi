@@ -23,7 +23,7 @@
 # Initialize Autoconf
 AC_PREREQ([2.60])
 AC_INIT([xlibre-xf86-video-xgi],
-        [1.6.1],
+        [25.0.0],
         [https://github.com/X11Libre/xf86-video-xgi/issues],
         [xlibre-xf86-video-xgi])
 
