@@ -2118,7 +2118,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
      */
 
     xf86DrvMsg(pScrn->scrnIndex, X_INFO,
-               "XGI driver (%s)\n", "01/21/2009" /*XGI_RELEASE_DATE*/);
+               "XGI driver (%s)\n", "01/21/2009" );
 
     xf86DrvMsg(pScrn->scrnIndex, X_INFO,
                "Copyright (C) 2001-2004 Thomas Winischhofer <thomas@winischhofer.net> and others\n");

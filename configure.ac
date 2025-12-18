@@ -26,7 +26,6 @@ AC_INIT([xlibre-xf86-video-xgi],
         [1.6.1],
         [https://github.com/X11Libre/xf86-video-xgi/issues],
         [xlibre-xf86-video-xgi])
-RELEASE_DATE="27 August 2007"
 
 AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_HEADERS([config.h])
@@ -106,7 +105,6 @@ fi
 PKG_CHECK_MODULES([PCIACCESS], [pciaccess >= 0.8.0])
 
 AC_SUBST([moduledir])
-AC_DEFINE_UNQUOTED(XGI_RELEASE_DATE, ["$RELEASE_DATE"], [Driver release])
 
 AC_CONFIG_FILES([
                 Makefile
