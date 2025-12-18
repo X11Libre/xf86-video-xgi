@@ -339,16 +339,10 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
 
   /* enable IRQ */
   pXGI->irq = drmGetInterruptFromBusID(pXGI->drmSubFD,
-#ifdef XSERVER_LIBPCIACCESS
 				       ((pXGI->PciInfo->domain << 8)
 					| pXGI->PciInfo->bus),
 				       pXGI->PciInfo->dev,
 				       pXGI->PciInfo->func
-#else
-	       ((pciConfigPtr)pXGI->PciInfo->thisCard)->busnum,
-	       ((pciConfigPtr)pXGI->PciInfo->thisCard)->devnum,
-	       ((pciConfigPtr)pXGI->PciInfo->thisCard)->funcnum
-#endif
 				       );
 
   if((drmCtlInstHandler(pXGI->drmSubFD, pXGI->irq)) != 0)
@@ -485,34 +479,6 @@ XGIDRIMoveBuffers(WindowPtr pParent, DDXPointRec ptOldOrg,
   Volari_Idle(pXGI);
 }
 
-#ifndef XSERVER_LIBPCIACCESS
-/**
- * Use this function to check AGP slot
- */
-ULONG CheckAGPSlot(ScreenPtr pScreen, ULONG uNextLink)
-{
-	ULONG uBuffer = 0, uLink = 0, uValue = 0 ;
-	ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
-	XGIPtr pXGI = XGIPTR(pScrn);
-		
-	uBuffer = pciReadLong(pXGI->PciTag, uNextLink);
-	uLink = (uBuffer & 0xff00) >> 8;
-	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s]uBuffer=0x%lx uNextLink=0x%lx, uLink=0x%lx\n", __FUNCTION__, uBuffer, uNextLink, uLink);
-	
-	if ((uBuffer & 0xff) != 0x02)
-	{
-		if(uLink)
-			uValue = CheckAGPSlot(pScreen, uLink);
-		else
-			uValue = PCI_BUS_TYPE;				
-	}
-	else
-		uValue = AGP_BUS_TYPE;	
-
-    return uValue;		
-}	
-#endif
-
 /** 	
  * Use this function to check if the current card is AGP or PCI.
  */
@@ -521,38 +487,8 @@ ULONG IsXGIAGPCard(ScreenPtr pScreen)
     ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     XGIPtr pXGI = XGIPTR(pScrn);
 
-
-#ifdef XSERVER_LIBPCIACCESS
     const struct pci_agp_info *agp_info =
 	pci_device_get_agp_info(pXGI->PciInfo);
     
     return (agp_info == NULL) ? PCI_BUS_TYPE : AGP_BUS_TYPE;
-#else
-	ULONG u34h = pciReadLong(pXGI->PciTag,0x34);
-	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] u34h=0x%lx\n", __FUNCTION__, u34h);
-	
-	/* This value is read only and the default value should be 0x40; 
-	* I have no idea why I should do this */
-	ULONG uLink = u34h & 0xff;
-		
-	if (0 == uLink)
-	{
-		xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] No Next ID, This is a PCI card\n", __FUNCTION__);    
-		return PCI_BUS_TYPE;
-	}
-
-	ULONG uType = 0;
-	uType = CheckAGPSlot(pScreen, uLink);	
-
-	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] This Card Type is %ld \n", __FUNCTION__, uType);
-
-	if (uType == PCI_BUS_TYPE)
-		xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] This Card Type is PCI\n", __FUNCTION__);    	
-	if (uType == AGP_BUS_TYPE)
-		xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] This Card Type is AGP\n", __FUNCTION__);    	
-	if (uType == PCIE_BUS_TYPE)
-		xf86DrvMsg(pScrn->scrnIndex, X_INFO, "[%s] This Card Type is PCIExpress\n", __FUNCTION__);    	
-	
-	return uType;	
-#endif
 }

@@ -99,12 +99,8 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
-#ifdef XSERVER_LIBPCIACCESS
 static Bool XGIPciProbe(DriverPtr drv, int entity_num,
     struct pci_device *dev, intptr_t match_data);
-#else
-static Bool XGIProbe(DriverPtr drv, int flags);
-#endif
 
 void Volari_EnableAccelerator(ScrnInfoPtr pScrn);
 /* Globals (yes, these ARE really required to be global) */
@@ -152,7 +148,6 @@ struct fb_fix_screeninfo
     unsigned short reserved[3]; /* Reserved for future compatibility */
 };
 
-#ifdef XSERVER_LIBPCIACCESS
 #define XGI_DEVICE_MATCH(d, i) \
     { 0x18ca, (d), PCI_MATCH_ANY, PCI_MATCH_ANY, 0, 0, (i) }
 
@@ -163,7 +158,6 @@ static const struct pci_id_match xgi_device_match[] = {
     XGI_DEVICE_MATCH(PCI_CHIP_XGIXG27, 3),
     { 0, 0, 0 },
 };
-#endif
 
 /*
  * This contains the functions needed by the server after loading the driver
@@ -177,20 +171,13 @@ DriverRec XGI = {
     XGI_CURRENT_VERSION,
     XGI_DRIVER_NAME,
     XGIIdentify,
-#ifdef XSERVER_LIBPCIACCESS
     NULL,
-#else
-    XGIProbe,
-#endif
     XGIAvailableOptions,
     NULL,
     0,
     NULL,
-
-#ifdef XSERVER_LIBPCIACCESS
     xgi_device_match,
     XGIPciProbe
-#endif
 };
 
 static SymTabRec XGIChipsets[] = {
@@ -582,7 +569,6 @@ XGIErrorLog(ScrnInfoPtr pScrn, const char *format, ...)
     xf86DrvMsg(pScrn->scrnIndex, X_ERROR, "%s", str);
 }
 
-#ifdef XSERVER_LIBPCIACCESS
 static Bool XGIPciProbe(DriverPtr drv, int entity_num,
                         struct pci_device *dev, intptr_t match_data)
 {
@@ -619,114 +605,6 @@ static Bool XGIPciProbe(DriverPtr drv, int entity_num,
 
     return (pScrn != NULL);
 }
-
-#else
-
-/* Mandatory */
-static Bool
-XGIProbe(DriverPtr drv, int flags)
-{
-    int i;
-    GDevPtr *devSections;
-    int *usedChips;
-    int numDevSections;
-    int numUsed;
-    Bool foundScreen = FALSE;
-
-    /*
-     * The aim here is to find all cards that this driver can handle,
-     * and for the ones not already claimed by another driver, claim the
-     * slot, and allocate a ScrnInfoRec.
-     *
-     * This should be a minimal probe, and it should under no circumstances
-     * change the state of the hardware.  Because a device is found, don't
-     * assume that it will be used.  Don't do any initialisations other than
-     * the required ScrnInfoRec initialisations.  Don't allocate any new
-     * data structures.
-     *
-     */
-
-    /*
-     * Next we check, if there has been a chipset override in the config file.
-     * For this we must find out if there is an active device section which
-     * is relevant, i.e., which has no driver specified or has THIS driver
-     * specified.
-     */
-
-    if ((numDevSections =
-         xf86MatchDevice(XGI_DRIVER_NAME, &devSections)) <= 0) {
-        /*
-         * There's no matching device section in the config file, so quit
-         * now.
-         */
-        return FALSE;
-    }
-
-    PDEBUG(ErrorF(" --- XGIProbe \n"));
-    /*
-     * We need to probe the hardware first.  We then need to see how this
-     * fits in with what is given in the config file, and allow the config
-     * file info to override any contradictions.
-     */
-
-    /*
-     * All of the cards this driver supports are PCI, so the "probing" just
-     * amounts to checking the PCI data that the server has already collected.
-     */
-    if (xf86GetPciVideoInfo() == NULL) {
-        /*
-         * We won't let anything in the config file override finding no
-         * PCI video cards at all.  This seems reasonable now, but we'll see.
-         */
-        return FALSE;
-    }
-
-    numUsed = xf86MatchPciInstances(XGI_NAME, PCI_VENDOR_XGI,
-                                    XGIChipsets, XGIPciChipsets, devSections,
-                                    numDevSections, drv, &usedChips);
-
-    /* Free it since we don't need that list after this */
-    free(devSections);
-    if (numUsed <= 0)
-        return FALSE;
-
-    if (flags & PROBE_DETECT) {
-        foundScreen = TRUE;
-    }
-    else
-        for (i = 0; i < numUsed; i++) {
-            ScrnInfoPtr pScrn;
-            EntityInfoPtr pEnt;
-
-            /* Allocate a ScrnInfoRec and claim the slot */
-            pScrn = NULL;
-
-            if ((pScrn = xf86ConfigPciEntity(pScrn, 0, usedChips[i],
-                                             XGIPciChipsets, NULL, NULL,
-                                             NULL, NULL, NULL))) {
-                /* Fill in what we can of the ScrnInfoRec */
-                pScrn->driverVersion = XGI_CURRENT_VERSION;
-                pScrn->driverName = XGI_DRIVER_NAME;
-                pScrn->name = XGI_NAME;
-                pScrn->Probe = XGIProbe;
-                pScrn->PreInit = XGIPreInit;
-                pScrn->ScreenInit = XGIScreenInit;
-                pScrn->SwitchMode = XGISwitchMode;
-                pScrn->AdjustFrame = XGIAdjustFrame;
-                pScrn->EnterVT = XGIEnterVT;
-                pScrn->LeaveVT = XGILeaveVT;
-                pScrn->FreeScreen = XGIFreeScreen;
-                pScrn->ValidMode = XGIValidMode;
-                foundScreen = TRUE;
-            }
-            pEnt = xf86GetEntityInfo(usedChips[i]);
-        }
-    free(usedChips);
-
-    return foundScreen;
-}
-#endif
-
 
 /* Some helper functions for MergedFB mode */
 
@@ -2283,12 +2161,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 
     /* Find the PCI info for this screen */
-#ifndef XSERVER_LIBPCIACCESS
-    pXGI->PciInfo = xf86GetPciInfoForEntity(pXGI->pEnt->index);
-    pXGI->PciTag = pciTag(pXGI->PciInfo->bus, pXGI->PciInfo->device,
-                          pXGI->PciInfo->func);
-#endif
-
     pXGI->Primary = xf86IsPrimaryPci(pXGI->PciInfo);
     xf86DrvMsg(pScrn->scrnIndex, X_PROBED,
                "This adapter is %s display adapter\n",
@@ -2296,11 +2168,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
     if (pXGI->Primary) {
 #if defined(__arm__) 
-#ifdef XSERVER_LIBPCIACCESS
         VGAHWPTR(pScrn)->MapPhys = pXGI->PciInfo->regions[2].base_addr + 0xf2000000;
-#else
-        VGAHWPTR(pScrn)->MapPhys = pXGI->PciInfo->ioBase[2] + 0xf2000000; 	
-#endif
 #endif
 
         VGAHWPTR(pScrn)->MapSize = 0x10000;     /* Standard 64k VGA window */
@@ -2315,11 +2183,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
 		  xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
 				  "VGA memory map from %p to %p \n",
-#ifdef XSERVER_LIBPCIACCESS
 				  (void *)(intptr_t)pXGI->PciInfo->regions[2].base_addr, VGAHWPTR(pScrn)->Base);
-#else
-				  (void *)(intptr_t)pXGI->PciInfo->ioBase[2], VGAHWPTR(pScrn)->Base);
-#endif
         }
     }
     vgaHWGetIOBase(VGAHWPTR(pScrn));
@@ -2340,15 +2204,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 #endif /* !defined(__powerpc__) */
 #endif /* !defined(__alpha__) */
     }
-
-#ifndef XSERVER_LIBPCIACCESS
-    xf86SetOperatingState(resVgaMem, pXGI->pEnt->index, ResUnusedOpr);
-
-    /* Operations for which memory access is required */
-    pScrn->racMemFlags = RAC_FB | RAC_COLORMAP | RAC_CURSOR | RAC_VIEWPORT;
-    /* Operations for which I/O access is required */
-    pScrn->racIoFlags = RAC_COLORMAP | RAC_CURSOR | RAC_VIEWPORT;
-#endif
 
     /* The ramdac module should be loaded here when needed */
     if (!xf86LoadSubModule(pScrn, "ramdac")) {
@@ -2567,11 +2422,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 
 #else
     pXGI->RelIO = (XGIIOADDRESS) (pXGI->IODBase |
-#ifdef XSERVER_LIBPCIACCESS
                                   (pXGI->PciInfo->regions[2].base_addr & 0xFFFC) 
-#else
-                                  (pXGI->PciInfo->ioBase[2] & 0xFFFC) 
-#endif
                                   );
 #endif
 
@@ -2777,21 +2628,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     XGISetup(pScrn);
 
     from = X_PROBED;
-#ifdef XSERVER_LIBPCIACCESS
         pXGI->FbAddress = pXGI->PciInfo->regions[0].base_addr & 0xFFFFFFF0;
-#else
-    if (pXGI->pEnt->device->MemBase != 0) {
-        /*
-         * XXX Should check that the config file value matches one of the
-         * PCI base address values.
-         */
-        pXGI->FbAddress = pXGI->pEnt->device->MemBase;
-        from = X_CONFIG;
-    }
-    else {
-        pXGI->FbAddress = pXGI->PciInfo->memBase[0] & 0xFFFFFFF0;
-    }
-#endif
 
     pXGI->realFbAddress = pXGI->FbAddress;
 
@@ -2800,43 +2637,12 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                IS_DUAL_HEAD(pXGI) ? "Global l" : "L",
                (unsigned long) pXGI->FbAddress);
 
-#ifdef XSERVER_LIBPCIACCESS
         pXGI->IOAddress = pXGI->PciInfo->regions[1].base_addr & 0xFFFFFFF0;
-#else
-    if (pXGI->pEnt->device->IOBase != 0) {
-        /*
-         * XXX Should check that the config file value matches one of the
-         * PCI base address values.
-         */
-        pXGI->IOAddress = pXGI->pEnt->device->IOBase;
-        from = X_CONFIG;
-    }
-    else {
-        pXGI->IOAddress = pXGI->PciInfo->memBase[1] & 0xFFFFFFF0;
-    }
-#endif
 
     xf86DrvMsg(pScrn->scrnIndex, from,
                "MMIO registers at 0x%lX (size %ldK)\n",
                (unsigned long) pXGI->IOAddress, pXGI->mmioSize);
     pXGI->xgi_HwDevExt.bIntegratedMMEnabled = TRUE;
-
-#ifndef XSERVER_LIBPCIACCESS
-    /* Register the PCI-assigned resources. */
-    if (xf86RegisterResources(pXGI->pEnt->index, NULL, ResExclusive)) {
-        XGIErrorLog(pScrn,
-                    "xf86RegisterResources() found resource conflicts\n");
-
-        if (pXGIEnt)
-            pXGIEnt->ErrorAfterFirst = TRUE;
-
-        if (pXGI->pInt)
-            xf86FreeInt10(pXGI->pInt);
-        xgiRestoreExtRegisterLock(pXGI, srlockReg, crlockReg);
-        XGIFreeRec(pScrn);
-        return FALSE;
-    }
-#endif
 
     from = X_PROBED;
     if (pXGI->pEnt->device->videoRam != 0) {
@@ -3699,7 +3505,6 @@ XGIMapMem(ScrnInfoPtr pScrn)
 {
     XGIPtr pXGI = XGIPTR(pScrn);;
 
-#ifdef XSERVER_LIBPCIACCESS
     unsigned i;
 
     for (i = 0; i < 2; i++) {
@@ -3715,48 +3520,6 @@ XGIMapMem(ScrnInfoPtr pScrn)
 
     pXGI->FbBase = pXGI->PciInfo->regions[0].memory;
     pXGI->IOBase = pXGI->PciInfo->regions[1].memory;
-#else
-    int mmioFlags;
-
-    /*
-     * Map IO registers to virtual address space
-     */
-#if !defined(__alpha__)
-    mmioFlags = VIDMEM_MMIO;
-#else
-    /*
-     * For Alpha, we need to map SPARSE memory, since we need
-     * byte/short access.
-     */
-    mmioFlags = VIDMEM_MMIO | VIDMEM_SPARSE;
-#endif
-    pXGI->IOBase = xf86MapPciMem(pScrn->scrnIndex, mmioFlags,
-                                 pXGI->PciTag, pXGI->IOAddress, 0x10000);
-    if (pXGI->IOBase == NULL)
-        return FALSE;
-
-#ifdef __alpha__
-    /*
-     * for Alpha, we need to map DENSE memory as well, for
-     * setting CPUToScreenColorExpandBase.
-     */
-    pXGI->IOBaseDense = xf86MapPciMem(pScrn->scrnIndex, VIDMEM_MMIO,
-                                      pXGI->PciTag, pXGI->IOAddress, 0x10000);
-
-    if (pXGI->IOBaseDense == NULL)
-        return FALSE;
-#endif /* __alpha__ */
-
-    pXGI->FbBase = xf86MapPciMem(pScrn->scrnIndex, VIDMEM_FRAMEBUFFER,
-                                 pXGI->PciTag,
-                                 (unsigned long) pXGI->FbAddress,
-                                 pXGI->FbMapSize);
-
-    PDEBUG(ErrorF("pXGI->FbBase = 0x%08lx\n", (ULONG) (pXGI->FbBase)));
-
-    if (pXGI->FbBase == NULL)
-        return FALSE;
-#endif
 
     return TRUE;
 }
@@ -3780,12 +3543,7 @@ XGIUnmapMem(ScrnInfoPtr pScrn)
         if (pXGIEnt->MapCountIOBase) {
             pXGIEnt->MapCountIOBase--;
             if ((pXGIEnt->MapCountIOBase == 0) || (pXGIEnt->forceUnmapIOBase)) {
-#ifdef XSERVER_LIBPCIACCESS
                 pci_device_unmap_region(pXGI->PciInfo, 1);
-#else
-                xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGIEnt->IOBase,
-                                (pXGI->mmioSize * 1024));
-#endif
                 pXGIEnt->IOBase = NULL;
                 pXGIEnt->MapCountIOBase = 0;
                 pXGIEnt->forceUnmapIOBase = FALSE;
@@ -3793,33 +3551,12 @@ XGIUnmapMem(ScrnInfoPtr pScrn)
             pXGI->IOBase = NULL;
         }
 #ifdef __alpha__
-#ifdef XSERVER_LIBPCIACCESS
 #error "How to do dense mapping on Alpha?"
-#else
-        if (pXGIEnt->MapCountIOBaseDense) {
-            pXGIEnt->MapCountIOBaseDense--;
-            if ((pXGIEnt->MapCountIOBaseDense == 0)
-                || (pXGIEnt->forceUnmapIOBaseDense)) {
-                xf86UnMapVidMem(pScrn->scrnIndex,
-                                (pointer) pXGIEnt->IOBaseDense,
-                                (pXGI->mmioSize * 1024));
-                pXGIEnt->IOBaseDense = NULL;
-                pXGIEnt->MapCountIOBaseDense = 0;
-                pXGIEnt->forceUnmapIOBaseDense = FALSE;
-            }
-            pXGI->IOBaseDense = NULL;
-        }
-#endif
 #endif /* __alpha__ */
         if (pXGIEnt->MapCountFbBase) {
             pXGIEnt->MapCountFbBase--;
             if ((pXGIEnt->MapCountFbBase == 0) || (pXGIEnt->forceUnmapFbBase)) {
-#ifdef XSERVER_LIBPCIACCESS
                 pci_device_unmap_region(pXGI->PciInfo, 0);
-#else
-                xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGIEnt->FbBase,
-                                pXGI->FbMapSize);
-#endif
                 pXGIEnt->FbBase = NULL;
                 pXGIEnt->MapCountFbBase = 0;
                 pXGIEnt->forceUnmapFbBase = FALSE;
@@ -3829,26 +3566,13 @@ XGIUnmapMem(ScrnInfoPtr pScrn)
         }
     }
     else {
-#ifdef XSERVER_LIBPCIACCESS
         pci_device_unmap_region(pXGI->PciInfo, 0);
         pci_device_unmap_region(pXGI->PciInfo, 1);
-#else
-        xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGI->IOBase,
-                        (pXGI->mmioSize * 1024));
-        xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGI->FbBase,
-                        pXGI->FbMapSize);
-#endif
         pXGI->IOBase = NULL;
         pXGI->FbBase = NULL;
 
 #ifdef __alpha__
-#ifdef XSERVER_LIBPCIACCESS
 #error "How to do dense mapping on Alpha?"
-#else
-        xf86UnMapVidMem(pScrn->scrnIndex, (pointer) pXGI->IOBaseDense,
-                        (pXGI->mmioSize * 1024));
-        pXGI->IOBaseDense = NULL;
-#endif
 #endif
     }
 
@@ -5641,11 +5365,7 @@ XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned char value)
 #if (defined(i386) || defined(__i386) || defined(__i386__) || defined(__AMD64__))
     unsigned char *base;
 
-#ifdef XSERVER_LIBPCIACCESS
     pci_device_map_legacy(XGIPTR(pScrn)->PciInfo, 0, 0x2000, 1, (void**)&base);
-#else
-    base = xf86MapVidMem(pScrn->scrnIndex, VIDMEM_MMIO, 0, 0x2000);
-#endif
     if (!base) {
         XGIErrorLog(pScrn, "(Could not map BIOS scratch area)\n");
         return 0;
@@ -5657,11 +5377,6 @@ XGI_GetSetBIOSScratch(ScrnInfoPtr pScrn, USHORT offset, unsigned char value)
     if (value != 0xff)
         *(base + offset) = value;
 
-#ifdef XSERVER_LIBPCIACCESS
-    pci_device_unmap_legacy(XGIPTR(pScrn)->PciInfo, (void*)base, 0x2000);
-#else
-    xf86UnMapVidMem(pScrn->scrnIndex, base, 0x2000);
-#endif
 #endif
     return ret;
 }

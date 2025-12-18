@@ -164,11 +164,7 @@ xgiXG2X_Setup(ScrnInfoPtr pScrn)
 
     if (pXGI->Chipset == PCI_CHIP_XGIXG40) {
 	const unsigned revision =
-#ifdef XSERVER_LIBPCIACCESS
 	    pXGI->PciInfo->revision
-#else
-	    pciReadLong(pXGI->PciTag, 0x08) & 0x0FF
-#endif
 	    ;
 
 	/* Revision 2 cards encode the memory config bits slightly differently
@@ -642,18 +638,13 @@ Bool
 bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset, ULONG ulSet, CARD32 *pulValue)
 {
     XGIPtr pXGI ;
-#ifdef XSERVER_LIBPCIACCESS
     int err;
-#else
-    PCITAG pciDev;
-#endif
 
     if (!pHwDevInfo || !pulValue) {
         return FALSE;
     }
 
     pXGI = (XGIPtr)pHwDevInfo->pDevice ;
-#ifdef XSERVER_LIBPCIACCESS
     if (ulSet) {
 	err = pci_device_cfg_write_u32(pXGI->PciInfo, *pulValue,
 				       ulOffset & ~3);
@@ -663,15 +654,4 @@ bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset, ULONG ulSet, C
     }
 
     return (err == 0);
-#else
-    pciDev = pXGI->PciTag ;
-
-    if (ulSet) {
-        pciWriteLong(pciDev, ulOffset&0xFFFFFFFc, *pulValue);
-    } else {
-        *pulValue = pciReadLong(pciDev, ulOffset&0xFFFFFFFc);
-    }
-
-    return TRUE ;
-#endif
 }
