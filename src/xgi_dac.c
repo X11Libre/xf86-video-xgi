@@ -40,10 +40,7 @@
  * (http://www.xfree86.org/current/LICENSE1.html)
  *
  */
-
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include "xf86.h"
 #include "xf86_OSproc.h"

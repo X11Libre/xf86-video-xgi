@@ -30,10 +30,8 @@
  *           David Thomas <davtom@dream.org.uk>,
  *	     Thomas Winischhofer <thomas@winischhofer.net>.
  */
-
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+
 #include <unistd.h>
 
 #include "xf86.h"

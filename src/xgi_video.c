@@ -40,10 +40,7 @@
  * XGI340, XGI342: Full register range, one overlay (used for both CRT1 and CRT2 alt.)
  *
  */
-
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include "xorgVersion.h"
 

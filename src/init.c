@@ -59,10 +59,7 @@
  * All comments in this file are by me, regardless if they are marked TW or not.
  *
  */
-
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include "init.h"
 #include "vgatypes.h"

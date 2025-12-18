@@ -1,7 +1,6 @@
 /* Jong 03/12/2009; added for supporting Xorg 7.0 */
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+
 #include <unistd.h>
 
 #include "osdef.h"

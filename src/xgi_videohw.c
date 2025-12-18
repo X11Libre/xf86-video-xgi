@@ -29,10 +29,7 @@
 *                       control aperature.  must not be called until after
 *                       the board's pci memory has been mapped.
 ****************************************************************************/
-
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include "xgi.h"
 #include "xgi_videohw.h"
