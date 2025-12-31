@@ -160,7 +160,6 @@ extern Bool g_bRunTimeDebug;
 
 #include "xf86drm.h"
 #include "sarea.h"
-#define _XF86DRI_SERVER_
 
 #include "X11/dri/xf86dri.h"
 
