@@ -157,8 +157,6 @@ extern Bool g_bRunTimeDebug;
 #include "compat-api.h"
 
 #ifdef XF86DRI
-#define XGINEWDRI
-#undef XGINEWDRI2
 
 #include "xf86drm.h"
 #include "sarea.h"
