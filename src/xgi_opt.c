@@ -516,7 +516,6 @@ xgiOptions(ScrnInfoPtr pScrn)
     if(!xf86GetOptValBool(pXGI->Options, OPTION_RUNTIME_DEBUG, &g_bRunTimeDebug))
 		g_bRunTimeDebug=0;
 
-#ifdef XF86DRI
     /* DRI */
     from = X_DEFAULT;
     if(xf86GetOptValBool(pXGI->Options, OPTION_DRI, &pXGI->loadDRI)) {
@@ -542,7 +541,6 @@ xgiOptions(ScrnInfoPtr pScrn)
 	  }
        }
     }
-#endif
 
     /* NoXVideo
      * Set this to TRUE to disable Xv hardware video acceleration
