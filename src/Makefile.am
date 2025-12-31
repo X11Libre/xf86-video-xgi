@@ -67,10 +67,6 @@ xgi_drv_la_SOURCES = \
 	xgi_video.c \
 	xgi_video.h \
 	xgi_videohw.c \
-	xgi_videohw.h
-
-if DRI
-xgi_drv_la_SOURCES += \
+	xgi_videohw.h \
 	xgi_dri.c \
-	xgi_dri.h 
-endif
+	xgi_dri.h

@@ -84,9 +84,7 @@
 #include <X11/extensions/Xv.h>
 #endif
 
-#ifdef XF86DRI
 #include "dri.h"
-#endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -3447,7 +3445,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
     }
 
     /* Load the dri module if requested. */
-#ifdef XF86DRI
     if(pXGI->loadDRI) {
         if (!xf86LoadSubModule(pScrn, "dri")) {
             if (!IS_DUAL_HEAD(pXGI))
@@ -3455,8 +3452,6 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                            "Remove >Load \"dri\"< from the Module section of your XF86Config file\n");
         }
     }
-#endif
-
 
     /* Now load and initialize VBE module for VESA and mode restoring. */
     if (pXGI->pVbe) {
@@ -4035,7 +4030,6 @@ XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
 
     pXGI->cmdQueueLen = 0;      /* Force an EngineIdle() at start */
 
-#ifdef XF86DRI
     if(pXGI->loadDRI) {
         /* No DRI in dual head mode */
         if (IS_DUAL_HEAD(pXGI)) {
@@ -4054,7 +4048,6 @@ XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
             PDEBUG(ErrorF("--- DRI supported   \n"));
         }
     }
-#endif
 
     /*
      * Call the framebuffer layer's ScreenInit function, and fill in other
@@ -4179,7 +4172,6 @@ XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
     }
 #endif
 
-#ifdef XF86DRI
     if (pXGI->directRenderingEnabled) {
 	/* Now that mi, drm and others have done their thing,
 	 * complete the DRI setup.
@@ -4193,7 +4185,6 @@ XGIScreenInit(ScreenPtr pScreen, int argc, char **argv)
 	/* TODO */
 	/* XGISetLFBConfig(pXGI); */
     }
-#endif
 
     /* Wrap some funcs and setup remaining SD flags */
 
@@ -4384,11 +4375,9 @@ XGIEnterVT(ScrnInfoPtr pScrn)
 
     XGIAdjustFrame(pScrn, pScrn->frameX0, pScrn->frameY0);
 
-#ifdef XF86DRI
     if (pXGI->directRenderingEnabled) {
         DRIUnlock(xf86ScrnToScreen(pScrn));
     }
-#endif
 
     if ((!IS_DUAL_HEAD(pXGI) || !IS_SECOND_HEAD(pXGI)) && (pXGI->ResetXv)) {
         (pXGI->ResetXv) (pScrn);
@@ -4407,7 +4396,6 @@ XGILeaveVT(ScrnInfoPtr pScrn)
 {
     vgaHWPtr hwp = VGAHWPTR(pScrn);
     XGIPtr pXGI = XGIPTR(pScrn);
-#ifdef XF86DRI
     ScreenPtr pScreen;
 
     PDEBUG(ErrorF("XGILeaveVT()\n"));
@@ -4415,7 +4403,6 @@ XGILeaveVT(ScrnInfoPtr pScrn)
         pScreen = xf86ScrnToScreen(pScrn);
         DRILock(pScreen, 0);
     }
-#endif
 
     if (IS_DUAL_HEAD(pXGI) && IS_SECOND_HEAD(pXGI))
         return;
@@ -4451,13 +4438,10 @@ XGICloseScreen(ScreenPtr pScreen)
     vgaHWPtr hwp = VGAHWPTR(pScrn);
     XGIPtr pXGI = XGIPTR(pScrn);
 
-
-#ifdef XF86DRI
     if (pXGI->directRenderingEnabled) {
         XGIDRICloseScreen(pScreen);
         pXGI->directRenderingEnabled = FALSE;
     }
-#endif
 
     if (pScrn->vtSema) {
         if (pXGI->CursorInfoPtr

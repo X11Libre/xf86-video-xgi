@@ -156,8 +156,6 @@ extern Bool g_bRunTimeDebug;
 
 #include "compat-api.h"
 
-#ifdef XF86DRI
-
 #include "xf86drm.h"
 #include "sarea.h"
 
@@ -165,7 +163,6 @@ extern Bool g_bRunTimeDebug;
 
 #include "dri.h"
 #include "xgi_dri.h"
-#endif
 
 #define VENDOR_ID(p)      (p)->vendor_id
 #define DEVICE_ID(p)      (p)->device_id
@@ -603,7 +600,6 @@ typedef struct {
      */
     unsigned int        agpWantedPages;
 
-#ifdef XF86DRI
     unsigned long 	agpHandle;
     unsigned long	agpAddr;
     unsigned char 	*agpBase;
@@ -615,7 +611,6 @@ typedef struct {
     xgiRegion 		agp;
     Bool 		irqEnabled;
     int 		irq;
-#endif
     unsigned long	DRIheapstart, DRIheapend;
 
     void		(*RenderCallback)(ScrnInfoPtr);
@@ -656,11 +651,9 @@ typedef struct {
      */
     Bool		loadDRI;
 
-#ifdef XF86DRI
     Bool 		directRenderingEnabled;
     DRIInfoPtr 		pDRIInfo;
     int 		drmSubFD;
-#endif
 
     HW_DEVICE_EXTENSION xgi_HwDevExt;      /* For new mode switching code */
     XF86VideoAdaptorPtr adaptor;
