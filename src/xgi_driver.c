@@ -3802,13 +3802,13 @@ XGIRestore(ScrnInfoPtr pScrn)
 
 /* Our generic BlockHandler for Xv */
 static void
-XGIBlockHandler(BLOCKHANDLER_ARGS_DECL)
+XGIBlockHandler(ScreenPtr pScreen, pointer pTimeout)
 {
     ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     XGIPtr pXGI = XGIPTR(pScrn);
 
     pScreen->BlockHandler = pXGI->BlockHandler;
-    (*pScreen->BlockHandler) (BLOCKHANDLER_ARGS);
+    (*pScreen->BlockHandler) (pScreen, pTimeout);
     pScreen->BlockHandler = XGIBlockHandler;
 
     if (pXGI->VideoTimerCallback) {
