@@ -29,7 +29,6 @@ xgi_drv_la_LDFLAGS = -module -avoid-version
 xgi_drv_ladir = @moduledir@/drivers
 
 xgi_drv_la_SOURCES = \
-	compat-api.h\
 	init.c \
 	init.h \
 	osdef.h \

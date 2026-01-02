@@ -154,8 +154,6 @@ extern Bool g_bRunTimeDebug;
 #include "vgatypes.h"
 #include "vb_struct.h"
 
-#include "compat-api.h"
-
 #include "xf86drm.h"
 #include "sarea.h"
 
