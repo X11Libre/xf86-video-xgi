@@ -316,15 +316,15 @@ static bool XGICheckModeByDDC(DisplayModePtr pMode, xf86MonPtr pMonitorDDC);
 /* Jong 12/05/2007; filter mode list by monitor DDC */
 static void XGIFilterModeByDDC(DisplayModePtr pModeList, xf86MonPtr pMonitorDDC);
 
-static pointer
-xgiSetup(pointer module, pointer opts, int *errmaj, int *errmin)
+static void*
+xgiSetup(void *module, void *opts, int *errmaj, int *errmin)
 {
     static Bool setupDone = FALSE;
 
     if (!setupDone) {
         setupDone = TRUE;
         xf86AddDriver(&XGI, module, HaveDriverFuncs);
-        return (pointer) TRUE;
+        return (void*) TRUE;
     }
 
     if (errmaj)
@@ -2424,7 +2424,7 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
                                   );
 #endif
 
-    pXGI->xgi_HwDevExt.pjIOAddress = (pointer)((XGIIOADDRESS) (pXGI->RelIO + 0x30));
+    pXGI->xgi_HwDevExt.pjIOAddress = ((XGIIOADDRESS) (pXGI->RelIO + 0x30));
     xf86DrvMsg(pScrn->scrnIndex, from, "Relocated IO registers at 0x%lX\n",
                (unsigned long) pXGI->RelIO);
     ErrorF("xgi_driver.c-pXGI->xgi_HwDevExt.pjIOAddress=0x%lx...\n", pXGI->xgi_HwDevExt.pjIOAddress);
@@ -3802,7 +3802,7 @@ XGIRestore(ScrnInfoPtr pScrn)
 
 /* Our generic BlockHandler for Xv */
 static void
-XGIBlockHandler(ScreenPtr pScreen, pointer pTimeout)
+XGIBlockHandler(ScreenPtr pScreen, void *pTimeout)
 {
     ScrnInfoPtr pScrn = xf86ScreenToScrn(pScreen);
     XGIPtr pXGI = XGIPTR(pScrn);

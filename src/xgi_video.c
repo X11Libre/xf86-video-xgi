@@ -87,23 +87,23 @@
 # endif //VC
 
 static XF86VideoAdaptorPtr XGISetupImageVideo(ScreenPtr);
-static int XGISetPortAttribute(ScrnInfoPtr, Atom, INT32, pointer);
-static int XGIGetPortAttribute(ScrnInfoPtr, Atom ,INT32 *, pointer);
+static int XGISetPortAttribute(ScrnInfoPtr, Atom, INT32, void*);
+static int XGIGetPortAttribute(ScrnInfoPtr, Atom ,INT32 *, void*);
 static void XGIQueryBestSize(ScrnInfoPtr, Bool,
-        short, short, short, short, unsigned int *, unsigned int *, pointer);
+        short, short, short, short, unsigned int *, unsigned int *, void*);
 static int XGIPutImage( ScrnInfoPtr,
         short, short, short, short, short, short, short, short,
-        int, unsigned char*, short, short, Bool, RegionPtr, pointer, DrawablePtr);
+        int, unsigned char*, short, short, Bool, RegionPtr, void*, DrawablePtr);
 static int XGIQueryImageAttributes(ScrnInfoPtr,
         int, unsigned short *, unsigned short *,  int *, int *);
 
-static void XGIStopVideo(ScrnInfoPtr, pointer, Bool);
+static void XGIStopVideo(ScrnInfoPtr, void*, Bool);
 /* static void XGIFreeOverlayMemory(ScrnInfoPtr pScrn); */
 
 #ifdef VC
 static int XGIPutVideo( ScrnInfoPtr,
     short, short, short, short, short, short, short, short,
-    RegionPtr, pointer); 
+    RegionPtr, void*);
     
 static struct v4l2_input XGIToV4lInput(XGIPortPrivPtr pPriv, int encoding);
 static struct v4l2_standard XGIToV4lStandard(XGIPortPrivPtr pPriv, int encoding);
@@ -392,7 +392,7 @@ XGISetupImageVideo(ScreenPtr pScreen)
 
     pPriv = (XGIPortPrivPtr)(&adapt->pPortPrivates[1]);
 
-    adapt->pPortPrivates[0].ptr = (pointer)(pPriv);
+    adapt->pPortPrivates[0].ptr = pPriv;
     adapt->pAttributes = XGIAttributes;
     adapt->nAttributes = NUM_ATTRIBUTES;
 	adapt->nImages = NUM_IMAGES;
@@ -499,7 +499,7 @@ XGISetPortAttribute(
   ScrnInfoPtr pScrn,
   Atom attribute,
   INT32 value,
-  pointer data
+  void *data
 ){
   XGIPortPrivPtr pPriv = (XGIPortPrivPtr)data;
   XGIPtr pXGI = XGIPTR(pScrn);
@@ -607,7 +607,7 @@ XGIGetPortAttribute(
   ScrnInfoPtr pScrn,
   Atom attribute,
   INT32 *value,
-  pointer data
+  void *data
 ){
   XGIPortPrivPtr pPriv = (XGIPortPrivPtr)data;
   XGIPtr pXGI = XGIPTR(pScrn);
@@ -657,7 +657,7 @@ XGIQueryBestSize(
   short vid_w, short vid_h,
   short drw_w, short drw_h,
   unsigned int *p_w, unsigned int *p_h,
-  pointer data
+  void *data
 ){
   *p_w = drw_w;
   *p_h = drw_h;
@@ -989,7 +989,7 @@ XGIDisplayVideo(ScrnInfoPtr pScrn, XGIPortPrivPtr pPriv)
 
 
 static void
-XGIStopVideo(ScrnInfoPtr pScrn, pointer data, Bool exit)
+XGIStopVideo(ScrnInfoPtr pScrn, void *data, Bool exit)
 {
   XGIPortPrivPtr pPriv = (XGIPortPrivPtr)data;
   XGIPtr pXGI = XGIPTR(pScrn);
@@ -1036,7 +1036,7 @@ XGIPutImage(
   int id, unsigned char* buf,
   short width, short height,
   Bool sync,
-  RegionPtr clipBoxes, pointer data,
+  RegionPtr clipBoxes, void *data,
   DrawablePtr pDraw
 ){	
    XGIPtr pXGI = XGIPTR(pScrn);
@@ -1590,7 +1590,7 @@ XGIPutVideo(
     short drw_x, short drw_y,
     short src_w, short src_h,
     short drw_w, short drw_h,
-    RegionPtr clipBoxes, pointer data)
+    RegionPtr clipBoxes, void *data)
 {
    XGIPortPrivPtr pPriv = (XGIPortPrivPtr)data;
 
