@@ -63,9 +63,6 @@ XORG_DRIVER_CHECK_EXT(DPMSExtension, xextproto)
 # Obtain compiler/linker options for the driver dependencies
 PKG_CHECK_MODULES(XORG, [xorg-server >= 25.0.0 xproto fontsproto $REQUIRED_MODULES])
 PKG_CHECK_MODULES(XEXT, [xextproto >= 7.0.99.1])
-
-sdkdir=`$PKG_CONFIG --variable=sdkdir xorg-server`
-
 PKG_CHECK_MODULES(DRI, [libdrm >= 2.0 xf86driproto])
 PKG_CHECK_MODULES([PCIACCESS], [pciaccess >= 0.8.0])
 
