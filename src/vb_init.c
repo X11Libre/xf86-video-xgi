@@ -202,7 +202,6 @@ BOOLEAN XGIInitNew(PXGI_HW_DEVICE_INFO HwDeviceExtension,
     ULONG   base,ChipsetID,VendorID,GraphicVendorID;
     PUCHAR  volatile pVideoMemory;
     PXGI_DSReg pSR ;
-    ULONG Temp ;
 
     XGINew_InitVBIOSData(HwDeviceExtension, pVBInfo);
 
@@ -378,7 +377,8 @@ BOOLEAN XGIInitNew(PXGI_HW_DEVICE_INFO HwDeviceExtension,
         ChipsetID = XGI_GetRegLong((XGIIOADDRESS) 0x0cfc ) ;
         if ( ChipsetID == 0x25308086 )
             XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4 , 0x77 , 0xF0 ) ;
-            
+
+        CARD32 Temp;
         HwDeviceExtension->pQueryVGAConfigSpace( HwDeviceExtension , 0x50 , 0 , &Temp ) ;	/* Get */
         Temp >>= 20 ;
         Temp &= 0xF ;
@@ -510,8 +510,8 @@ BOOLEAN XGIInitNew(PXGI_HW_DEVICE_INFO HwDeviceExtension,
 
     base = 0x80000000;
     XGI_SetRegLong(0xcf8, base);
-    Temp = (XGI_GetRegLong(0xcfc) & 0x0000FFFF);
-    if (Temp == 0x1039) {
+
+    if ((XGI_GetRegLong(0xcfc) & 0x0000FFFF) == 0x1039) {
         XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4, 0x22, pVBInfo->SR22 & 0xFE);
     }
     else {
@@ -550,7 +550,7 @@ void DualChipInit( PXGI_HW_DEVICE_INFO HwDeviceExtension ,PVB_DEVICE_INFO pVBInf
     USHORT  XGINew_2ndP3D4 = BaseAddr2nd + CRTC_ADDRESS_PORT_COLOR ;
     USHORT  XGINew_2ndP3C4 = BaseAddr2nd + SEQ_ADDRESS_PORT ;
     USHORT  XGINew_2ndP3C2 = BaseAddr2nd + MISC_OUTPUT_REG_WRITE_PORT ;
-    ULONG   Temp ;
+    CARD32  Temp ;
     UCHAR   tempal , i ;
 
     pVBInfo->ROMAddr     = HwDeviceExtension->pjVirtualRomBase ;
@@ -2743,7 +2743,7 @@ void XGINew_SetMemoryClock( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_IN
 /* --------------------------------------------------------------------- */
 void SetPowerConsume ( PXGI_HW_DEVICE_INFO HwDeviceExtension , USHORT XGI_P3d4Port )
 {
-    ULONG   lTemp ;
+    CARD32 lTemp;
     UCHAR   bTemp;
 
     HwDeviceExtension->pQueryVGAConfigSpace( HwDeviceExtension , 0x08 , 0 , &lTemp ) ; /* Get */
