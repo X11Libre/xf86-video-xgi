@@ -2841,20 +2841,6 @@ static const XGI330_TVDataTablStruct XGI_EPLCHTVRegPtr[]=
   {0xFFFF,0x0000,4}
 };
 
-static const USHORT LCDLenList[]=
-{
-   LVDSCRT1Len_H,
-   LVDSCRT1Len_V,
-   LVDSDataLen,
-   LCDDesDataLen,
-   LCDDataLen,
-   LCDDesDataLen,
-   0,
-   LCDDesDataLen,
-   LCDDesDataLen,
-   0
-};
-
 static const XGI330_LCDCapStruct  XGI_LCDDLCapList[]=  /* Dual link only */
 {
 /* LCDCap1024x768 */

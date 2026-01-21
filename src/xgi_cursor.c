@@ -60,7 +60,6 @@ static void
 Volari_ShowCursor(ScrnInfoPtr pScrn)
 {
     XGIPtr    pXGI = XGIPTR(pScrn);
- /*   unsigned long cursor_addr = pXGI->CursorOffset ;  */
     unsigned long cursor_base = pXGI->CursorOffset/1024 ;
 
     if( pXGI->HWARGBCursor )
@@ -107,7 +106,7 @@ XGIG1_SetCursorPosition(ScrnInfoPtr pScrn, int x, int y)
 
     currX = x ;
     currY = y ;
-    
+
     if (x < 0) {
         x_preset = (-x);
         x = 0;
@@ -116,7 +115,7 @@ XGIG1_SetCursorPosition(ScrnInfoPtr pScrn, int x, int y)
         y_preset = (-y);
         y = 0;
     }
-   
+
     xgiG1CRT1_SetCursorPositionX(x , x_preset) ;
     xgiG1CRT1_SetCursorPositionY(y , y_preset) ;
     if (pXGI->VBFlags & CRT2_ENABLE)  {
@@ -183,44 +182,6 @@ Volari_UseHWCursorARGB(ScreenPtr pScreen, CursorPtr pCurs)
     }
 
 	return TRUE ;
-}
-
-/* Jong 09/19/2007; Is this required? */
-static void
-Volari_LoadCursorARGB(ScrnInfoPtr pScrn, CursorPtr pCursor)
-{
-    XGIPtr pXGI = XGIPTR(pScrn);
-    unsigned long cursor_addr = pXGI->CursorOffset ;
-    unsigned long cursor_base = pXGI->CursorOffset/1024 ;
-    unsigned char *pCursorShape ;
-	int i , j ; uint32_t *pDest,*pSrc ;
-	CursorBitsPtr pCursorBits = pCursor->bits ;
-
-	pXGI->HWARGBCursor = TRUE ;
-    pCursorShape = pXGI->FbBase + cursor_addr ;
-
-	pSrc = pCursorBits->argb ;
-
-	pXGI->CurXPreset = 64-pCursorBits->width ;
-	pXGI->CurYPreset = 64-pCursorBits->height ;
-
-	for( i = 64 - pCursorBits->height ; i< 64 ; i++ )
-	{
-		pDest = (uint32_t *)(pCursorShape + i*64*4 ) ;
-		for( j = 64-pCursorBits->width ; j < 64 ; j++, pSrc++ )
-		{
-			pDest[j] = *pSrc ;
-		}
-	}
-
-    xgiG2CRT1_SetCursorAddressPattern(cursor_base,0) ;
-
-    if (pXGI->VBFlags & CRT2_ENABLE)  {
-        xgiG2CRT2_SetCursorAddressPattern(cursor_base,0) ;
-    }
-    XGIG1_SetCursorPosition(pScrn, currX, currY) ;
-	PDEBUG4(vWaitCRT1VerticalRetrace(pScrn)) ;
-	PDEBUG4(XGIDumpMMIO(pScrn));
 }
 
 Bool

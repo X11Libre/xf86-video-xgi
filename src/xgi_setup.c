@@ -55,8 +55,6 @@ extern  int  FbDevExist;
 
 static Bool bAccessVGAPCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo, ULONG ulOffset,
     ULONG ulSet, CARD32 *pulValue);
-static Bool bAccessNBridgePCIInfo(PXGI_HW_DEVICE_INFO pHwDevInfo,
-    ULONG ulOffset, ULONG ulSet, ULONG *pulValue);
 static Bool XGI_IsXG21(ScrnInfoPtr pScrn);
 
 static void XGI_InitHwDevInfo(ScrnInfoPtr pScrn);
@@ -83,11 +81,8 @@ xgiXG2X_Setup(ScrnInfoPtr pScrn)
     XGIPtr        pXGI = XGIPTR(pScrn);
     unsigned int  ulMemConfig = 0;
     unsigned long ulMemSize   = 0;
-    unsigned long ulDramType  = 0;
     const char *  dramTypeStr ;
     unsigned long ulTemp ;
-
-    /* DumpDDIName("xgiXG2X_Setup()\n") ; */
 
     inXGIIDXREG(XGICR, 0x48, ulTemp) ;
     if(ulTemp & (1<<0)) /* GPIOH, CR48 D[0] read */
@@ -98,7 +93,6 @@ xgiXG2X_Setup(ScrnInfoPtr pScrn)
     {
         dramTypeStr = "DDR DRAM" ;
     }
-
 
     pXGI->MemClock = XG40Mclk(pXGI);
 

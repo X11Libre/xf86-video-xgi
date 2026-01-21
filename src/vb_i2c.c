@@ -526,9 +526,6 @@ char I2COpen (PXGI_HW_DEVICE_INFO  pHWDE, ULONG ulI2CEnable, ULONG ulChannelID, 
 
 char I2CAccess(PXGI_HW_DEVICE_INFO pHWDE, PI2CControl pI2CControl)
 {
-    ULONG                       ulChannel = pI2CControl->dwCookie % MAX_I2C_CHANNEL;
-
-
     if (pI2CControl->ClockRate > I2C_MAX_CLOCK_RATE)
     {
         pI2CControl->ClockRate = I2C_MAX_CLOCK_RATE;
@@ -1474,7 +1471,7 @@ VOID vWriteClockLineFCNT(PXGI_HW_DEVICE_INFO pHWDE, UCHAR data)
 //*************************************************************************//
 VOID vWriteDataLineFCNT(PXGI_HW_DEVICE_INFO pHWDE, UCHAR data)
 {
-    UCHAR       temp, temp2, temp3;
+    uint8_t temp;
     XGIIOADDRESS      pjI2cIOBase = pHWDE->pjIOAddress + SEQ_ADDRESS_PORT;
 
     PDEBUGI2C(ErrorF("I2C:Write FCNT data = %x\n", data & 1));

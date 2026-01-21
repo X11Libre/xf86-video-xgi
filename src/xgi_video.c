@@ -98,13 +98,12 @@ static int XGIQueryImageAttributes(ScrnInfoPtr,
         int, unsigned short *, unsigned short *,  int *, int *);
 
 static void XGIStopVideo(ScrnInfoPtr, void*, Bool);
-/* static void XGIFreeOverlayMemory(ScrnInfoPtr pScrn); */
 
 #ifdef VC
 static int XGIPutVideo( ScrnInfoPtr,
     short, short, short, short, short, short, short, short,
     RegionPtr, void*);
-    
+
 static struct v4l2_input XGIToV4lInput(XGIPortPrivPtr pPriv, int encoding);
 static struct v4l2_standard XGIToV4lStandard(XGIPortPrivPtr pPriv, int encoding);
 static int XGIOpenV4l(XGIPortPrivPtr pPriv);
@@ -115,7 +114,9 @@ extern void SetSRRegMask(XGIPtr, uint8_t, uint8_t, uint8_t);
 extern void XGIUpdateXvGamma(XGIPtr, XGIPortPrivPtr);
 #define MAKE_ATOM(a) MakeAtom(a, sizeof(a) - 1, TRUE)
 
-static Atom xvBrightness, xvContrast, xvColorKey, xvSaturation, xvHue, xvmcUncompressIndex, xvMode, xvSubpicture, xvEncoding/*::::for capture*/;
+#ifdef VC
+static Atom xvEncoding;
+#endif
 
 void XGIInitVideo(ScreenPtr pScreen)
 {
@@ -152,7 +153,6 @@ void XGIInitVideo(ScreenPtr pScreen)
         free(newAdaptors);
 
 }
-
 
 /* client libraries expect an encoding */
 static XF86VideoEncodingRec DummyEncoding =
@@ -611,7 +611,7 @@ XGIGetPortAttribute(
 ){
   XGIPortPrivPtr pPriv = (XGIPortPrivPtr)data;
   XGIPtr pXGI = XGIPTR(pScrn);
-  
+
   if (attribute == pXGI->xvBrightness) {
           *value = pPriv->brightness;
   }
@@ -623,20 +623,15 @@ XGIGetPortAttribute(
   }
   else if (attribute == pXGI->xvHue) {
           *value = pPriv->hue;
-		  
   } else if(attribute == pXGI->xvGammaRed) {
           *value = pXGI->XvGammaRed;
-		  
   } else if(attribute == pXGI->xvGammaGreen) {
         *value = pXGI->XvGammaGreen;
-		
   } else if(attribute == pXGI->xvGammaBlue) {
         *value = pXGI->XvGammaBlue;
-		
   }
   else if (attribute == pXGI->xvColorKey) {
         *value = pPriv->colorKey;
-		  
   }
 # ifdef VC
   else if(attribute == xvEncoding) {
@@ -1043,10 +1038,8 @@ XGIPutImage(
    XGIPortPrivPtr pPriv = (XGIPortPrivPtr)data;
 
    int i;
-
    int totalSize=0;
-/*   int depth = pXGI->CurrentLayout.bitsPerPixel >> 3; */
- 
+
    pPriv->drw_x = drw_x;
    pPriv->drw_y = drw_y;
    pPriv->drw_w = drw_w;
@@ -1107,18 +1100,17 @@ XGIPutImage(
     /* allocate memory */
     do {
       int lines, pitch, depth;
-      BoxPtr pBox;
-      
+
       if(totalSize == pPriv->fbSize)
         break;
-      
+
       pPriv->fbSize = totalSize;
 
       depth = (pScrn->bitsPerPixel + 7 ) / 8;
       pitch = pScrn->displayWidth * depth;
       lines = ((totalSize * 2) / pitch) + 1;
    } while(0);
-	
+
    /* copy data */
    if((pXGI->XvUseMemcpy) || (totalSize < 16)) {
        #ifdef NewPath

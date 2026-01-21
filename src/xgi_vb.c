@@ -169,7 +169,7 @@ void XGILCDPreInit(ScrnInfoPtr pScrn)
 void XGITVPreInit(ScrnInfoPtr pScrn)
 {
     XGIPtr  pXGI = XGIPTR(pScrn);
-    unsigned char SR16, SR38, CR32, CR35=0, CR38=0, CR39;
+    unsigned char SR16, CR32, CR38=0, CR39;
     int temp = 0;
 
     if(!(pXGI->XGI_Pr->VBType & VB_XGIVB)) return;
