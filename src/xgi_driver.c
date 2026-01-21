@@ -188,14 +188,6 @@ static SymTabRec XGIChipsets[] = {
     {-1, NULL}
 };
 
-static PciChipsets XGIPciChipsets[] = {
-    {PCI_CHIP_XGIXG40, PCI_CHIP_XGIXG40, RES_SHARED_VGA},
-    {PCI_CHIP_XGIXG20, PCI_CHIP_XGIXG20, RES_SHARED_VGA},
-    {PCI_CHIP_XGIXG21, PCI_CHIP_XGIXG21, RES_SHARED_VGA },
-    {PCI_CHIP_XGIXG27, PCI_CHIP_XGIXG27, RES_SHARED_VGA },
-    {-1, -1, RES_UNDEFINED}
-};
-
 static MODULESETUPPROTO(xgiSetup);
 
 static XF86ModuleVersionInfo xgiVersRec = {
@@ -311,12 +303,7 @@ static void xgiSaveUnlockExtRegisterLock(XGIPtr pXGI, unsigned char *reg1,
                                          unsigned char *reg2);
 static void xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1,
                                       unsigned char reg2);
-
-/* Jong 12/05/2007; check mode with monitor DDC */
 static bool XGICheckModeByDDC(DisplayModePtr pMode, xf86MonPtr pMonitorDDC);
-
-/* Jong 12/05/2007; filter mode list by monitor DDC */
-static void XGIFilterModeByDDC(DisplayModePtr pModeList, xf86MonPtr pMonitorDDC);
 
 static void*
 xgiSetup(void *module, void *opts, int *errmaj, int *errmin)
@@ -447,10 +434,7 @@ XGIDisplayPowerManagementSet(ScrnInfoPtr pScrn, int PowerManagementMode,
                              int flags)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
-    BOOLEAN docrt1 = TRUE, docrt2 = TRUE;
-    unsigned char sr1 = 0, cr17 = 0, cr63 = 0, sr11 = 0, pmreg = 0, sr7 = 0;
-    unsigned char p1_13 = 0, p2_0 = 0, oldpmreg = 0;
-    BOOLEAN backlight = TRUE;
+    unsigned char cr63 = 0, pmreg = 0;
 
     xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
                    "XGIDisplayPowerManagementSet(%d)\n", PowerManagementMode);
@@ -504,7 +488,6 @@ void XGIAddAvailableModes(DisplayModePtr availModes)
 	DisplayModePtr p;
 	DisplayModePtr q;
 	DisplayModePtr last;
-	DisplayModePtr first;
 	int	i;
 
 	/* Scan to last node */
@@ -1145,11 +1128,7 @@ XGIInternalDDC(ScrnInfoPtr pScrn, int crtno)
     XGIPtr pXGI = XGIPTR(pScrn);
     unsigned char buffer[256];
 
-    int RealOff;
-    unsigned char *page;
-
     xf86MonPtr pMonitor = NULL;
-    xf86Int10InfoPtr pInt = NULL;       /* Our int10 */
 
 	/*yilin 03/10/2008: set the monitor default size to 310mm x 240mm to fix KDE font too small problem*/
 	pScrn->monitor->widthmm = 310;
@@ -1615,7 +1594,6 @@ XGIGetMonitorRangeByDDC(MonitorRangePtr range, xf86MonPtr pMonitor)
 static void
 XGISyncDDCMonitorRange(MonPtr monitor, MonitorRangePtr range)
 {
-    int i;
     if ((monitor == NULL) || (range == NULL)) {
         return;
     }
@@ -5414,31 +5392,9 @@ xgiRestoreExtRegisterLock(XGIPtr pXGI, unsigned char reg1, unsigned char reg2)
     outXGIIDXREG(XGISR, 0x05, reg1 == 0xA1 ? 0x86 : 0x00);
 }
 
-/* Jong 12/05/2007; filter mode list by monitor DDC */
-static void XGIFilterModeByDDC(DisplayModePtr pModeList, xf86MonPtr pMonitorDDC)
-{
-    DisplayModePtr first, p;
-
-    if ((p = first = pModeList)) 
-	{
-        do 
-		{
-			if(XGICheckModeByDDC(p, pMonitorDDC) == FALSE)
-				xf86DeleteMode(&pModeList, pModeList);
-
-            p = p->next;
-        } while (p != NULL && p != first);
-    }
-}
-
-/* Jong 12/05/2007; filter mode list by monitor DDC */
 static bool XGICheckModeByDDC(DisplayModePtr pMode, xf86MonPtr pMonitorDDC)
 {
     int i, j;
-    float VF, HF;
-    struct detailed_timings *pd_timings;
-    struct monitor_ranges *pranges;
-    struct std_timings *pstd_t;
 
 	int VRefresh=pMode->VRefresh;
 
@@ -5581,11 +5537,10 @@ XGIDumpRegs(ScrnInfoPtr pScrn)
 #endif /* DEBUG */
 }
 
-
+#ifdef DEBUG
 void
 XGIDumpPalette(ScrnInfoPtr pScrn)
 {
-#ifdef DEBUG
     XGIPtr pXGI = XGIPTR(pScrn);
     unsigned temp[3];
     int i, j;
@@ -5608,5 +5563,5 @@ XGIDumpPalette(ScrnInfoPtr pScrn)
         ErrorF("\n");
     }
     ErrorF("\n");
-#endif
 }
+#endif

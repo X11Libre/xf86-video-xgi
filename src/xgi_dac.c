@@ -281,14 +281,12 @@ static void
 Volari_Save(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
-    int vgaIOBase;
     int i; 
 
     PDEBUG(xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 3,
            "Volari_Save(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)\n"));
 
     vgaHWGetIOBase(VGAHWPTR(pScrn));
-    vgaIOBase = VGAHWPTR(pScrn)->IOBase;
 
 #if !defined(__arm__) 
     outw(VGA_SEQ_INDEX, 0x8605);
@@ -342,7 +340,6 @@ static void
 Volari_Restore(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
 {
     XGIPtr pXGI = XGIPTR(pScrn);
-    int vgaIOBase;
     int i;
 
 	PDEBUG(ErrorF("--- Volari_Restore(). \n")) ;
@@ -350,11 +347,10 @@ Volari_Restore(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)
                 "Volari_Restore(ScrnInfoPtr pScrn, XGIRegPtr xgiReg)\n");
 
     vgaHWGetIOBase(VGAHWPTR(pScrn));
-    vgaIOBase = VGAHWPTR(pScrn)->IOBase;
 
     outXGIIDXREG(XGISR, 0x05, 0x86);
 
-	PDEBUG(XGIDumpRegs(pScrn)) ; //yilin
+    PDEBUG(XGIDumpRegs(pScrn));
 
     for (i = 0x19; i < 0x5C; i++)  {
      if((i!=0x48 && i!=0x4a)|| ((pXGI->Chipset != PCI_CHIP_XGIXG20)&&(pXGI->Chipset != PCI_CHIP_XGIXG21)&&(pXGI->Chipset != PCI_CHIP_XGIXG27)))
@@ -396,10 +392,8 @@ Volari_Threshold(ScrnInfoPtr pScrn, DisplayModePtr mode,
 		 unsigned short *Low, unsigned short *High)
 {
         XGIPtr pXGI = XGIPTR(pScrn);
-
         orXGIIDXREG(XGISR, 0x3D, 0x01);
 }
-
 
 /**
  * Calculate available memory bandwidth for an XG40 series chip.
@@ -427,7 +421,6 @@ static int XG40_MemBandWidth(ScrnInfoPtr pScrn)
 
     return  (int)(total / magic);
 }
-
 
 /**
  * Calculate available memory bandwidth for an XG20 series chip.
@@ -631,7 +624,6 @@ PDEBUG(ErrorF("XGIDACPreInit()\n"));
 	? XG20_MemBandWidth(pScrn) : XG40_MemBandWidth(pScrn);
 }
 
-
 int
 XG40Mclk(XGIPtr pXGI)
 {
@@ -659,7 +651,6 @@ XG40Mclk(XGIPtr pXGI)
     return mclk;
 }
 
-
 static int
 retrace_signals_active(XGIIOADDRESS RelIO)
 {
@@ -679,7 +670,6 @@ retrace_signals_active(XGIIOADDRESS RelIO)
 
     return 1;
 }
-
 
 /**
  * Wait for beginning of next vertical retrace.
@@ -706,7 +696,6 @@ XGI_WaitBeginRetrace(XGIIOADDRESS RelIO)
 	    /* empty */ ;
     }
 }
-
 
 /**
  * Wait for end of next vertical retrace.

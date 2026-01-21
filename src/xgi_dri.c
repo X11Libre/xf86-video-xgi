@@ -105,7 +105,6 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
     int major, minor, patch;
     drmVersionPtr drm_ver;
 
-
    /* Check that the DRI, and DRM modules have been loaded by testing
     * for canonical symbols in each module. */
    if (!xf86LoaderCheckSymbol("DRIScreenInit"))       return FALSE;
@@ -248,7 +247,6 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
                pXGI->DRIheapstart, pXGI->DRIheapend,
                (int)((pXGI->DRIheapend - pXGI->DRIheapstart) >> 10));
 
-
   /* AGP */
   do{
     pXGI->agpSize = 0;
@@ -383,9 +381,7 @@ XGIDRICloseScreen(ScreenPtr pScreen)
   }
 
   if(pXGI->agpSize){
-/* ErrorF("Freeing agp memory\n"); */
      drmAgpFree(pXGI->drmSubFD, pXGI->agpHandle);
-/* ErrorF("releasing agp module\n"); */
      drmAgpRelease(pXGI->drmSubFD);
   }
 }
@@ -489,6 +485,6 @@ ULONG IsXGIAGPCard(ScreenPtr pScreen)
 
     const struct pci_agp_info *agp_info =
 	pci_device_get_agp_info(pXGI->PciInfo);
-    
+
     return (agp_info == NULL) ? PCI_BUS_TYPE : AGP_BUS_TYPE;
 }
