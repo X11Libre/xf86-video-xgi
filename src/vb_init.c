@@ -171,7 +171,6 @@ static void DualChipInit(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static void XGINew_DisableRefresh(PXGI_HW_DEVICE_INFO ,PVB_DEVICE_INFO);
 static void XGINew_EnableRefresh(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 
-static void XGINew_Delay15us(ULONG);
 static void SetPowerConsume(PXGI_HW_DEVICE_INFO, USHORT);
 static void XGINew_DDR1x_MRS_XG20(USHORT, PVB_DEVICE_INFO);
 static void XGINew_SetDRAMModeRegister_XG20(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
