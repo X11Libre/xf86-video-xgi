@@ -102,7 +102,6 @@ USHORT XGINew_DDRDRAM_TYPE20[12][5]=
 static void XGINew_SetDRAMSize_340(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static void XGINew_SetDRAMSize_XG45(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static void XGINew_SetMemoryClock(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
-static void XGINew_SetDRAMModeRegister340(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static void XGINew_SetDRAMDefaultRegister340(PXGI_HW_DEVICE_INFO, USHORT,
     PVB_DEVICE_INFO);
 static void XGINew_SetDRAMDefaultRegisterXG45(PXGI_HW_DEVICE_INFO, USHORT, 
@@ -1619,41 +1618,6 @@ void XGINew_SetDRAMSize_XG45( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE
     data=XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x21 ) ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x21 , ( USHORT )( data | 0x20 ) ) ;	/*enable read cache*/
 }
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_SetDRAMModeRegister340 */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-
-void XGINew_SetDRAMModeRegister340(PXGI_HW_DEVICE_INFO HwDeviceExtension,
-				   PVB_DEVICE_INFO pVBInfo)
-{
-    UCHAR data ;
-
-    ReadVBIOSTablData( HwDeviceExtension->jChipType , pVBInfo) ;
-
-    if (HwDeviceExtension->jChipType == XG45)
-        XGINew_DDR1x_MRS_340( HwDeviceExtension, pVBInfo->P3c4, pVBInfo ) ;
-    else
-    {
-    if ( XGINew_Get340DRAMType( HwDeviceExtension, pVBInfo) == 0 )
-    {
-        data = ( XGI_GetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x39 ) & 0x02 ) >> 1 ;
-        if ( data == 0x01 )
-            XGINew_DDR2x_MRS_340( HwDeviceExtension, pVBInfo->P3c4, pVBInfo ) ;
-        else
-            XGINew_DDR1x_MRS_340( HwDeviceExtension, pVBInfo->P3c4, pVBInfo ) ;
-    }
-    else
-        XGINew_DDR2_MRS_340( HwDeviceExtension, pVBInfo->P3c4, pVBInfo);
-    }    
-
-    XGI_SetReg((XGIIOADDRESS) pVBInfo->P3c4 , 0x1B , 0x03 ) ;
-}
-
 
 /* --------------------------------------------------------------------- */
 /* Function : XGINew_DisableRefresh */
