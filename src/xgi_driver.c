@@ -44,6 +44,8 @@
  */
 #include "config.h"
 
+#include <stdint.h>
+
 #include "extinit.h"
 #include "fb.h"
 #include "micmap.h"
@@ -1230,9 +1232,9 @@ static void
 XGIDumpMonitorInfo(xf86MonPtr pMonitor)
 {
     struct detailed_timings *pd_timings;
-    Uchar *pserial;
-    Uchar *pascii_data;
-    Uchar *pname;
+    uint8_t *pserial;
+    uint8_t *pascii_data;
+    uint8_t *pname;
     struct monitor_ranges *pranges;
     struct std_timings *pstd_t;
     struct whitePoints *pwp;
