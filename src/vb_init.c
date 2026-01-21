@@ -138,7 +138,6 @@ static int XGINew_CheckColumn(int index, const USHORT DRAMTYPE_TABLE[][5],
 
 static int XGINew_DDRSizing340(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static int XGINew_DDRSizingXG45(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
-static int XGINew_SDRSizing(PVB_DEVICE_INFO);
 static int XGINew_DDRSizing(PVB_DEVICE_INFO);
 
 /* Jong 10/05/2007; merge code */
@@ -1977,37 +1976,6 @@ int XGINew_CheckDDRRanks(int RankNo, int index,
 
     return( 1 ) ;
 }
-
-
-/* --------------------------------------------------------------------- */
-/* Function : */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-int XGINew_SDRSizing(PVB_DEVICE_INFO pVBInfo)
-{
-    int    i ;
-    UCHAR  j ;
-
-    for( i = 0 ; i < 13 ; i++ )
-    {
-        XGINew_SetDRAMSizingType( i , XGINew_SDRDRAM_TYPE , pVBInfo) ;
-
-        for( j = 2 ; j > 0 ; j-- )
-        {
-            if ( !XGINew_SetRank( i , ( UCHAR )j , XGINew_ChannelAB , XGINew_SDRDRAM_TYPE , pVBInfo) )
-                continue ;
-            else
-            {
-                if ( XGINew_CheckRanks( j , i , XGINew_SDRDRAM_TYPE, pVBInfo) )
-                    return( 1 ) ;
-            }
-        }
-    }
-    return( 0 ) ;
-}
-
 
 /* --------------------------------------------------------------------- */
 /* Function : XGINew_SetDRAMSizeReg */
