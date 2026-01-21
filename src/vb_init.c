@@ -139,8 +139,6 @@ static int XGINew_CheckColumn(int index, const USHORT DRAMTYPE_TABLE[][5],
 static int XGINew_DDRSizing340(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static int XGINew_DDRSizingXG45(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 
-/* Jong 10/05/2007; merge code */
-static void     XGINew_GetXG21Sense(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo) ;
 static UCHAR    GetXG21FPBits(PVB_DEVICE_INFO pVBInfo);
 static void     XGINew_GetXG27Sense(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo) ;
 static UCHAR    GetXG27FPBits(PVB_DEVICE_INFO pVBInfo);
@@ -3332,45 +3330,6 @@ void XGINew_SetModeScratch ( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_
     CR38Data |= tempch ;
     XGI_SetReg((XGIIOADDRESS) pVBInfo->P3d4, 0x38 , CR38Data ) ;
 
-}
-
-/* -------------------------------------------------------- */
-/* Function : XGINew_GetXG21Sense */
-/* Input : */
-/* Output : */
-/* Description : */
-/* -------------------------------------------------------- */
-void XGINew_GetXG21Sense(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo)
-{
-    UCHAR Temp;
-    PUCHAR  volatile pVideoMemory = ( PUCHAR )pVBInfo->ROMAddr ;
-
-    pVBInfo->IF_DEF_LVDS = 0 ;
-     
-    if ( ( pVideoMemory[ 0x65 ] & 0x01 ) )			/* For XG21 LVDS */
-    {
-        pVBInfo->IF_DEF_LVDS = 1 ;
-        XGI_SetRegOR( (XGIIOADDRESS) pVBInfo->P3d4 , 0x32 , LCDSense ) ;
-        XGI_SetRegANDOR( (XGIIOADDRESS) pVBInfo->P3d4 , 0x38 , ~0xE0 , 0xC0 ) ; /* LVDS on chip */
-    }
-    else
-    {
-        XGI_SetRegANDOR( (XGIIOADDRESS) pVBInfo->P3d4 , 0x4A , ~0x03 , 0x03 ) ; /* Enable GPIOA/B read  */
-        Temp = XGI_GetReg( (XGIIOADDRESS) pVBInfo->P3d4 , 0x48 ) & 0xC0;
-        if ( Temp == 0xC0 )
-        {								/* DVI & DVO GPIOA/B pull high */
-          XGINew_SenseLCD( HwDeviceExtension, pVBInfo ) ;
-          XGI_SetRegOR( (XGIIOADDRESS) pVBInfo->P3d4 , 0x32 , LCDSense ) ;
-          XGI_SetRegANDOR( (XGIIOADDRESS) pVBInfo->P3d4 , 0x4A , ~0x20 , 0x20 ) ;   /* Enable read GPIOF */
-          Temp = XGI_GetReg( (XGIIOADDRESS) pVBInfo->P3d4 , 0x48 ) & 0x04 ;
-          if ( !Temp )
-            XGI_SetRegANDOR( (XGIIOADDRESS) pVBInfo->P3d4 , 0x38 , ~0xE0 , 0x80 ) ; /* TMDS on chip */
-          else
-            XGI_SetRegANDOR( (XGIIOADDRESS) pVBInfo->P3d4 , 0x38 , ~0xE0 , 0xA0 ) ; /* Only DVO on chip */
-
-          XGI_SetRegAND( (XGIIOADDRESS)pVBInfo->P3d4 , 0x4A , ~0x20 ) ;	    /* Disable read GPIOF */
-        }
-    }
 }
 
 /* -------------------------------------------------------- */
