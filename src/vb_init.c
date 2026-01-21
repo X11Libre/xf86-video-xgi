@@ -138,7 +138,6 @@ static int XGINew_CheckColumn(int index, const USHORT DRAMTYPE_TABLE[][5],
 
 static int XGINew_DDRSizing340(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
 static int XGINew_DDRSizingXG45(PXGI_HW_DEVICE_INFO, PVB_DEVICE_INFO);
-static int XGINew_DDRSizing(PVB_DEVICE_INFO);
 
 /* Jong 10/05/2007; merge code */
 static void     XGINew_GetXG21Sense(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo) ;
@@ -2599,37 +2598,6 @@ int XGINew_DDRSizingXG45( PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO
             
         if ( XGI45New_ReadWriteRest( addr , 9, pVBInfo ) == 1 )
             return( 1 ) ;
-    }
-    return( 0 ) ;
-}
-
-
-/* --------------------------------------------------------------------- */
-/* Function : XGINew_DDRSizing */
-/* Input : */
-/* Output : */
-/* Description : */
-/* --------------------------------------------------------------------- */
-int XGINew_DDRSizing(PVB_DEVICE_INFO pVBInfo)
-{
-    int    i ;
-    UCHAR  j ;
-
-    for( i = 0 ; i < 4 ; i++ )
-    {
-        XGINew_SetDRAMSizingType( i , XGINew_DDRDRAM_TYPE, pVBInfo ) ;
-        XGINew_DisableChannelInterleaving( i , XGINew_DDRDRAM_TYPE , pVBInfo) ;
-        for( j = 2 ; j > 0 ; j-- )
-        {
-            XGINew_SetDDRChannel( i , j , XGINew_ChannelAB , XGINew_DDRDRAM_TYPE , pVBInfo ) ;
-            if ( !XGINew_SetRank( i , ( UCHAR )j , XGINew_ChannelAB , XGINew_DDRDRAM_TYPE, pVBInfo ) )
-                continue ;
-            else
-            {
-                if ( XGINew_CheckDDRRanks( j , i , XGINew_DDRDRAM_TYPE,  pVBInfo ) )
-                return( 1 ) ;
-            }
-        }
     }
     return( 0 ) ;
 }
