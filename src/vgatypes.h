@@ -115,10 +115,6 @@ typedef void *PVOID;
 typedef UCHAR BOOLEAN;
 #endif
 
-#ifndef bool
-typedef UCHAR bool;
-#endif
-
 typedef unsigned long XGIIOADDRESS;
 
 #ifndef VBIOS_VER_MAX_LENGTH

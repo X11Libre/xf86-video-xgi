@@ -1,11 +1,10 @@
-/* Jong 03/12/2009; added for supporting Xorg 7.0 */
 #include "config.h"
 
 #include <unistd.h>
+#include <stdbool.h>
 
 #include "osdef.h"
 #include "vgatypes.h"
-/* #include "vb_util.h" */ /* Jong@08032009 */
 #include "vb_def.h"
 
 #include "xf86.h"
