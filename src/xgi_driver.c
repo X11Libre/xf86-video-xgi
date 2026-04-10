@@ -98,6 +98,7 @@
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <stdbool.h>
 
 static Bool XGIPciProbe(DriverPtr drv, int entity_num,
     struct pci_device *dev, intptr_t match_data);
