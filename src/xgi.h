@@ -598,7 +598,7 @@ typedef struct {
      */
     unsigned int        agpWantedPages;
 
-    unsigned long 	agpHandle;
+    drm_handle_t	agpHandle;
     unsigned long	agpAddr;
     unsigned char 	*agpBase;
     unsigned int 	agpSize;
