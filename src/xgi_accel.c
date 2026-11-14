@@ -51,6 +51,9 @@
 
 #define DEV_HEIGHT	0xfff	/* "Device height of destination bitmap" */
 
+unsigned long	r_port, w_port;
+int		Alignment;
+
 /* Jong 07/24/2008; performance tuning */
 long	g_srcbase=-1;
 long	g_dstbase=-1;
