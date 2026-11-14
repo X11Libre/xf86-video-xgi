@@ -3391,7 +3391,7 @@ void XGINew_GetXG21Sense(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO 
         Temp = XGI_GetReg( (XGIIOADDRESS) pVBInfo->P3d4 , 0x48 ) & 0xC0;
         if ( Temp == 0xC0 )
         {								/* DVI & DVO GPIOA/B pull high */
-          XGINew_SenseLCD( HwDeviceExtension, pVBInfo ) ;
+          XGINew_GetLCDDDCInfo( HwDeviceExtension, pVBInfo ) ;
           XGI_SetRegOR( (XGIIOADDRESS) pVBInfo->P3d4 , 0x32 , LCDSense ) ;
           XGI_SetRegANDOR( (XGIIOADDRESS) pVBInfo->P3d4 , 0x4A , ~0x20 , 0x20 ) ;   /* Enable read GPIOF */
           Temp = XGI_GetReg( (XGIIOADDRESS) pVBInfo->P3d4 , 0x48 ) & 0x04 ;

@@ -36,9 +36,6 @@
 #include "vb_ext.h"
 #include "vb_init.h"
 
-static int XGINew_GetLCDDDCInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension,
-    PVB_DEVICE_INFO pVBInfo);
-
 static BOOLEAN XGINew_BridgeIsEnable(PXGI_HW_DEVICE_INFO,
     PVB_DEVICE_INFO pVBInfo);
 

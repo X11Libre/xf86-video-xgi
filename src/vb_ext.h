@@ -59,6 +59,6 @@ extern   void     XGIInitMiscVBInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_D
 extern   void     XGISetDPMS(ScrnInfoPtr pScrn, PVB_DEVICE_INFO pVBInfo, PXGI_HW_DEVICE_INFO pXGIHWDE , ULONG VESA_POWER_STATE ) ; /* Jong@08212009 */
 extern   void     XGINew_SetModeScratch ( PXGI_HW_DEVICE_INFO HwDeviceExtension , PVB_DEVICE_INFO pVBInfo ) ;
 extern   void 	  ReadVBIOSTablData( UCHAR ChipType , PVB_DEVICE_INFO pVBInfo);
-extern   USHORT   XGINew_SenseLCD(PXGI_HW_DEVICE_INFO,PVB_DEVICE_INFO pVBInfo);
+extern   int      XGINew_GetLCDDDCInfo(PXGI_HW_DEVICE_INFO HwDeviceExtension, PVB_DEVICE_INFO pVBInfo);
 
 #endif
