@@ -3305,6 +3305,14 @@ XGIPreInit(ScrnInfoPtr pScrn, int flags)
 }
 
 
+static void
+XGIUnmapRegion(struct pci_device *dev, unsigned region)
+{
+    if (!pci_device_unmap_range(dev, dev->regions[region].memory,
+                                dev->regions[region].size))
+        dev->regions[region].memory = NULL;
+}
+
 /*
  * Map the framebuffer and MMIO memory.
  */
@@ -3317,9 +3325,11 @@ XGIMapMem(ScrnInfoPtr pScrn)
     unsigned i;
 
     for (i = 0; i < 2; i++) {
+        struct pci_mem_region *r = &pXGI->PciInfo->regions[i];
         int err;
         
-        err = pci_device_map_region(pXGI->PciInfo, i, TRUE);
+        err = pci_device_map_range(pXGI->PciInfo, r->base_addr, r->size,
+                                   PCI_DEV_MAP_FLAG_WRITABLE, &r->memory);
         if (err) {
             xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
                        "Internal error: could not map PCI region %u\n", i);
@@ -3352,7 +3362,7 @@ XGIUnmapMem(ScrnInfoPtr pScrn)
         if (pXGIEnt->MapCountIOBase) {
             pXGIEnt->MapCountIOBase--;
             if ((pXGIEnt->MapCountIOBase == 0) || (pXGIEnt->forceUnmapIOBase)) {
-                pci_device_unmap_region(pXGI->PciInfo, 1);
+                XGIUnmapRegion(pXGI->PciInfo, 1);
                 pXGIEnt->IOBase = NULL;
                 pXGIEnt->MapCountIOBase = 0;
                 pXGIEnt->forceUnmapIOBase = FALSE;
@@ -3365,7 +3375,7 @@ XGIUnmapMem(ScrnInfoPtr pScrn)
         if (pXGIEnt->MapCountFbBase) {
             pXGIEnt->MapCountFbBase--;
             if ((pXGIEnt->MapCountFbBase == 0) || (pXGIEnt->forceUnmapFbBase)) {
-                pci_device_unmap_region(pXGI->PciInfo, 0);
+                XGIUnmapRegion(pXGI->PciInfo, 0);
                 pXGIEnt->FbBase = NULL;
                 pXGIEnt->MapCountFbBase = 0;
                 pXGIEnt->forceUnmapFbBase = FALSE;
@@ -3375,8 +3385,8 @@ XGIUnmapMem(ScrnInfoPtr pScrn)
         }
     }
     else {
-        pci_device_unmap_region(pXGI->PciInfo, 0);
-        pci_device_unmap_region(pXGI->PciInfo, 1);
+        XGIUnmapRegion(pXGI->PciInfo, 0);
+        XGIUnmapRegion(pXGI->PciInfo, 1);
         pXGI->IOBase = NULL;
         pXGI->FbBase = NULL;
 
