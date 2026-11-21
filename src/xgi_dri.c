@@ -138,9 +138,9 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
     pDRIInfo->drmDriverName = XGIKernelDriverName;
     pDRIInfo->clientDriverName = XGIClientDriverName;
     pDRIInfo->busIdString = DRICreatePCIBusID(pXGI->PciInfo);
-    pDRIInfo->ddxDriverMajorVersion = PACKAGE_VERSION_MAJOR;
-    pDRIInfo->ddxDriverMinorVersion = PACKAGE_VERSION_MINOR;
-    pDRIInfo->ddxDriverPatchVersion = PACKAGE_VERSION_PATCHLEVEL;
+    pDRIInfo->ddxDriverMajorVersion = XGI_VERSION_MAJOR;
+    pDRIInfo->ddxDriverMinorVersion = XGI_VERSION_MINOR;
+    pDRIInfo->ddxDriverPatchVersion = XGI_VERSION_PATCH;
     pDRIInfo->frameBufferPhysicalAddress = (void*)pXGI->FbAddress;
     pDRIInfo->frameBufferSize = pXGI->FbMapSize;
 

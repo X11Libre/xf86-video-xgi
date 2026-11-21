@@ -198,9 +198,12 @@ extern Bool g_bRunTimeDebug;
 
 #define XGI_NAME                "XGI"
 #define XGI_DRIVER_NAME         "xgi"
-#define XGI_CURRENT_VERSION     ((PACKAGE_VERSION_MAJOR << 16) | \
-                                 (PACKAGE_VERSION_MINOR << 8) | \
-				 PACKAGE_VERSION_PATCHLEVEL)
+#define XGI_VERSION_MAJOR       PACKAGE_VERSION_MAJOR
+#define XGI_VERSION_MINOR       PACKAGE_VERSION_MINOR
+#define XGI_VERSION_PATCH       PACKAGE_VERSION_PATCHLEVEL
+#define XGI_CURRENT_VERSION     ((XGI_VERSION_MAJOR << 16) | \
+                                 (XGI_VERSION_MINOR << 8) | \
+				 XGI_VERSION_PATCH)
 
 /* pXGI->Flags (old series only) */
 #define SYNCDRAM                0x00000001
