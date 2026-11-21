@@ -68,9 +68,9 @@
  * Support for XG40 chips is included in the SiS DRM because the DMA and
  * interrupt handling for the chips is identical.
  */
-static const char XGIKernelDriverName[] = "sis";
+static char XGIKernelDriverName[] = "sis";
 
-static const char XGIClientDriverName[] = "xgi";
+static char XGIClientDriverName[] = "xgi";
 
 static Bool XGICreateContext(ScreenPtr pScreen, VisualPtr visual,
 			      drm_context_t hwContext, void *pVisualConfigPriv,
