@@ -244,7 +244,7 @@ Bool XGIDRIScreenInit(ScreenPtr pScreen)
     fb.size = pXGI->DRIheapend - pXGI->DRIheapstart;
     drmCommandWrite(pXGI->drmSubFD, DRM_XGI_FB_INIT, &fb, sizeof(fb));
     xf86DrvMsg(pScreen->myNum, X_INFO,
-               "[dri] Video RAM memory heap: 0x%0x to 0x%0x (%dKB)\n",
+               "[dri] Video RAM memory heap: 0x%lx to 0x%lx (%dKB)\n",
                pXGI->DRIheapstart, pXGI->DRIheapend,
                (int)((pXGI->DRIheapend - pXGI->DRIheapstart) >> 10));
 
