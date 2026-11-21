@@ -37,6 +37,11 @@ m4_ifndef([XORG_MACROS_VERSION],
 XORG_MACROS_VERSION(1.8)
 XORG_DEFAULT_OPTIONS
 
+# XORG_RELEASE_VERSION drops a pre-release suffix such as "-rc1"; keep it.
+version_suffix=`echo "$PACKAGE_VERSION" | sed 's/^[[^-]]*//'`
+AC_DEFINE_UNQUOTED([PACKAGE_VERSION_SUFFIX], ["$version_suffix"],
+                   [Pre-release suffix of the version])
+
 # Initialize Automake
 AM_INIT_AUTOMAKE([foreign dist-xz])
 

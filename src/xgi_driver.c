@@ -214,6 +214,10 @@ static XF86ModuleVersionInfo xgiVersRec = {
 
 _X_EXPORT XF86ModuleData xgiModuleData = { &xgiVersRec, xgiSetup, NULL };
 
+#ifdef XF86_MODULE_VERSION_SUFFIX
+XF86_MODULE_VERSION_SUFFIX(xgi, XGI_VERSION_SUFFIX);
+#endif
+
 /*** static string ***/
 static const char *mergednocrt1 = "CRT1 not detected or forced off. %s.\n";
 static const char *mergednocrt2 =
